@@ -1,0 +1,14 @@
+/*
+Custom Cybrid SDK stylesheet example
+*/
+
+/*
+Style through the shadow dom with explicit styling using exposed part pseudo elements
+*/
+html, body {
+  height: 100%;
+}
+
+body {
+  background: black;
+}

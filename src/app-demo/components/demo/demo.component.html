@@ -1,0 +1,11 @@
+<span *ngIf="tokenService.invalidCredentials$ | async"
+  >Error: Invalid authentication. Check you have correctly set the demo
+  environment variables.</span
+>
+<span
+  *ngIf="
+    (loading$ | async) && (tokenService.invalidCredentials$ | async) !== true
+  "
+  >Loading demo...</span
+>
+<ng-template #viewContainer></ng-template>

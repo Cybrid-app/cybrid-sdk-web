@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8'>
+    <title>Host</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <script type='module' src='cybrid-sdk-ui.min.js'></script>
+  </head>
+  <body>
+  </body>
+  <script>
+    const list = document.createElement("cybrid-price-list");
+    list.auth = 'eyJraWQiOiJsWTdPaTI2SXZaWXhwSXJuUzJsZGp1ODZUWGZxcnlKVDlZNnZVc1hzRUNFIiwiYWxnIjoiUlM1MTIifQ.eyJpc3MiOiJodHRwczovL2lkLmRlbW8uY3licmlkLmFwcCIsImF1ZCI6WyJodHRwczovL2JhbmsuZGVtby5jeWJyaWQuYXBwIiwiaHR0cHM6Ly9hcGktaW50ZXJuYWwta2V5Lmhlcm9rdWFwcC5jb20iLCJodHRwczovL2lkLmRlbW8uY3licmlkLmFwcCIsImh0dHBzOi8vYXBpLWludGVybmFsLWFjY291bnRzLmhlcm9rdWFwcC5jb20iLCJodHRwczovL2FwaS1pbnRlcm5hbC1pZGVudGl0eS5oZXJva3VhcHAuY29tIiwiaHR0cHM6Ly9hcGktaW50ZWdyYXRpb24tZXhjaGFuZ2UuaGVyb2t1YXBwLmNvbSJdLCJzdWIiOiJiMzZjZjkwMjhlMjM1NmRlNzczMmU0YzUwNWM4NGZiYyIsInN1Yl90eXBlIjoiYmFuayIsInNjb3BlIjpbImJhbmtzOnJlYWQiLCJiYW5rczp3cml0ZSIsImFjY291bnRzOnJlYWQiLCJhY2NvdW50czpleGVjdXRlIiwiY3VzdG9tZXJzOnJlYWQiLCJjdXN0b21lcnM6d3JpdGUiLCJjdXN0b21lcnM6ZXhlY3V0ZSIsInByaWNlczpyZWFkIiwicXVvdGVzOmV4ZWN1dGUiLCJ0cmFkZXM6ZXhlY3V0ZSIsInRyYWRlczpyZWFkIl0sImlhdCI6MTY1MzY2NjAwNSwiZXhwIjoxNjUzNjk0ODA1LCJqdGkiOiIxNmFiYzE1Ny1iNTJhLTQzYjEtYTI4YS03N2NmNDhlZDllODAiLCJ0b2tlbl90eXBlIjoiYWNjZXNzIiwicHJvcGVydGllcyI6eyJ0eXBlIjoic2FuZGJveCJ9fQ.MLJgmpSlq4iEsuQpVF3QMx5spc-Mw7azuavqrTjM_0q17LGN1pqboOuYfbP4HfwuR1AU3tDMgqjZf8MalHIC0uL47sRepsvZ9wFjOBb-nOlolsqIL74VaB3RKBEHeu7tIcKYL4csbkvX1TZpJplMwEqpZAb7Df1wa10TN7EkCQd0i-vlOHlXS-VrdJi4lWvLifw4Gi9ECNfGmvsGNvLIWQI_V-SR879unoAJuGPIYUTYlizEbFvKMTeac_RvUR3zvymQs2RakUGw9lcQ_H36tvrtt1jJqz7_PmePoc-ELPxD9zQ0Jt60d0vSDiJ6d1LX_PXfdR5ssaXEcpGZnQr0HNl41oGVq5GWHUDV25OlM8k4oyW5LJ4KQiFX4ZEQOrf32trfYAmc-L7NkMpRH0luOPw1tGW7SEb5RRL33-UTVAmz9afh_0JsRL8J9JonuttQyjK-okt-Nf08dPq5rvZsYfM8WP5Y411Rb1TJaUFeEhdo6nDkvXAMXfP9YLQKjmdNpmXkxTM3-RnG3LQ-DlzWNTaT9dvkn00hj_15WCj9taXDXhknbIIEuqDm0Ap6uF9TUSY4qYMOH3aFxFRCQNfs4cbJnycdnbNOZgprSA-nMIGAKggCA65MybW8i9g_Wzo4KDNG4VDJQyS3a0K2_KTgAFo9RYd1rMTA9iyjlw_EraY';
+    list.hostConfig = {
+      refreshInterval: 20000,
+      locale: 'en-US',
+      theme: 'DARK'
+    };
+    document.body.append(list);
+  </script>
+</html>

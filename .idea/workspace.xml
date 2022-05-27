@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="5e93a03c-0cb9-40b0-9aea-ccf1e785d1c0" name="Changes" comment="clone project">
+      <change afterPath="$PROJECT_DIR$/.browserslistrc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.circleci/config.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.editorconfig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.eslintignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.eslintrc.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.prettierrc.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/NOTICE" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/angular.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/codecov.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/test/.browserslistrc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/test/.eslintrc.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/test/karma.conf.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/test/src/app/app.component.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/test/src/app/app.component.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/test/src/app/app.component.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/test/src/app/app.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/test/src/assets/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/test/src/environments/environment.prod.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/test/src/environments/environment.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/test/src/favicon.ico" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/test/src/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/test/src/main.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/test/src/polyfills.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/test/src/styles.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/test/src/test.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/test/tsconfig.app.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/test/tsconfig.spec.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cypress.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cypress/integration/spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cypress/plugins/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cypress/support/commands.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cypress/support/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cypress/tsconfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html-test/cybrid-sdk-ui.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html-test/style.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html-test/test.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/karma.conf.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/.browserslistrc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/cypress.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/cypress/integration/spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/cypress/plugins/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/cypress/support/commands.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/cypress/support/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/cypress/tsconfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/karma.conf.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/src/app/components/price-list/price-list.component.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/src/app/components/price-list/price-list.component.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/src/app/components/price-list/price-list.component.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/src/app/components/price-list/price-list.component.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/src/app/modules/library.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/src/environments/environment.prod.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/src/environments/environment.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/src/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/src/main.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/src/polyfills.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/src/styles.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/src/test.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/tsconfig.app.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/tsconfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library/tsconfig.spec.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/licenseHeader.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app-demo/components/app/app.component.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app-demo/components/app/app.component.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app-demo/components/app/app.component.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app-demo/components/demo/demo.component.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app-demo/components/demo/demo.component.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app-demo/components/demo/demo.component.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app-demo/modules/app.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app-demo/services/token/token.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/environments/environment.prod.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/environments/environment.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/favicon.ico" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/polyfills.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/constants/constants.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/constants/test.constants.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/i18n/en.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/i18n/fr.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/interceptors/auth/retry.interceptor.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/interceptors/auth/retry.interceptor.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/interceptors/error/error.interceptor.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/interceptors/error/error.interceptor.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/modules/material-module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/modules/shared.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/pipes/asset.pipe.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/pipes/asset.pipe.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/services/asset/asset.service.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/services/asset/asset.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/services/auth/auth.service.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/services/auth/auth.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/services/config/config.service.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/services/config/config.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/services/error/error.service.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/services/error/error.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/services/event/event.service.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/services/event/event.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/styles/theme.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/utility/symbol-split.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/styles.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tsconfig.app.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tsconfig.spec.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webpack.config.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
+  </component>
+  <component name="KotlinMultiplatform">
+    <allAvailableExecutables />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="29lBQr1RGISspewHbh32z2n9V16" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/Users/dcocking/Dev/Cybrid/cybrid-sdk-web",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "configurable.group.build",
+    "ts.external.directory.path": "/Applications/IntelliJ IDEA.app/Contents/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="Demo Application" type="js.build_tools.npm">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="start" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5e93a03c-0cb9-40b0-9aea-ccf1e785d1c0" name="Changes" comment="" />
+      <created>1653677778725</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1653677778725</updated>
+      <workItem from="1653677779968" duration="670000" />
+      <workItem from="1653678462690" duration="2591000" />
+      <workItem from="1653681079575" duration="1857000" />
+    </task>
+    <task id="LOCAL-00001" summary="initial commit">
+      <created>1653677960531</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1653677960531</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="initial commit" />
+    <MESSAGE value="clone project" />
+    <option name="LAST_COMMIT_MESSAGE" value="clone project" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
