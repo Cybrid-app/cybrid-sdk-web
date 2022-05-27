@@ -11,7 +11,7 @@ workflows:
   web-build-and-test:
     jobs:
       - node/test:
-          name: test
+          name: build and test
           version: 16.14.2-browsers
           setup:
             - browser-tools/install-chrome
@@ -36,7 +36,7 @@ workflows:
                   npm audit
                 name: Audit
       - cypress/run:
-          name: web-e2e
+          name: e2e
           executor:
             name: cypress/default
             node: 14.15.0
@@ -53,7 +53,6 @@ workflows:
 #      - node/run:
 #          name: publish
 #          version: 16.14.2-browsers
-#          app-dir: sdk-web
 #          npm-run: package:library
 #          post-steps:
 #            - jq/install
