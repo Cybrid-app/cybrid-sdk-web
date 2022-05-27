@@ -8,7 +8,7 @@ orbs:
   jq: circleci/jq@2.2.0
 
 workflows:
-  web-test:
+  web-build-and-test:
     jobs:
       - node/test:
           name: test
@@ -25,7 +25,6 @@ workflows:
                 command: |
                   npm install
                 name: Update package-lock.json
-          app-dir: sdk-web
           post-steps:
             - codecov/upload
             - run:
@@ -41,7 +40,7 @@ workflows:
           executor:
             name: cypress/default
             node: 14.15.0
-          cache-key: cache-{{ .Branch }}-{{ checksum "sdk-web/package-lock.json"}}
+          cache-key: cache-{{ .Branch }}-{{ checksum "package-lock.json"}}
           start: npm start
           wait-on: http://localhost:4200
           store_artifacts: true
