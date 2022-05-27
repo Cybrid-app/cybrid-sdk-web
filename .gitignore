@@ -10,6 +10,7 @@ npm-debug.log
 
 # Miscellaneous
 /.angular
+/cybrid-sdk-web.iml
 
 # Testing
 /html-test
