@@ -45,28 +45,28 @@ workflows:
           wait-on: http://localhost:4200
           store_artifacts: true
 
-#  web-publish:
-#    when:
-#      and:
-#        - equal: [ main, << pipeline.git.branch >> ]
-#    jobs:
-#      - node/run:
-#          name: publish
-#          version: 16.14.2-browsers
-#          npm-run: package:library
-#          post-steps:
-#            - jq/install
-#            - run:
-#                name: Update version tag
-#                command: |
-#                  cd sdk-web/dist/library
-#                  export TAG=$(git describe --tags --abbrev=0)
-#                  contents="$(jq -r --arg tag "$TAG" '.version = $tag' package.json)" && \
-#                  echo "${contents}" > package.json
-#            - run:
-#                name: Authenticate with registry
-#                command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/.npmrc
-#            - run:
-#                name: Publish library
-#                command: |
-#                  npm run publish:library --prefix sdk-web
+  web-publish:
+    when:
+      and:
+        - equal: [ main, << pipeline.git.branch >> ]
+    jobs:
+      - node/run:
+          name: publish
+          version: 16.14.2-browsers
+          npm-run: package:library
+          post-steps:
+            - jq/install
+            - run:
+                name: Update version tag
+                command: |
+                  cd dist/library
+                  export TAG=$(git describe --tags --abbrev=0)
+                  contents="$(jq -r --arg tag "$TAG" '.version = $tag' package.json)" && \
+                  echo "${contents}" > package.json
+            - run:
+                name: Authenticate with registry
+                command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/.npmrc
+            - run:
+                name: Publish library
+                command: |
+                  npm run publish:library

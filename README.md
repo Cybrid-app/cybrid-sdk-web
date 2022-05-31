@@ -1,3 +1,4 @@
+![CircleCI](https://circleci.com/gh/Cybrid-app/cybrid-sdk-web.svg?style=svg)
 ![](https://github.com/Cybrid-app/Cybrid-SDK/workflows/tests/badge.svg)
 [![Codecov](https://img.shields.io/codecov/c/github/Cybrid-app/Cybrid-SDK?token=ONZBDNW37S)](https://codecov.io/gh/Cybrid-app/Cybrid-SDK)
 
