@@ -1,0 +1,22 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: 60px;
+  padding: 0 1rem;
+  background: #2442b1;
+  box-shadow: 0 4px 5px rgb(0 0 0 / 50%);
+}
+.package {
+  margin-left: auto;
+  color: white;
+}
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  max-width: 700px;
+  margin: auto;
+  padding: 2rem 1rem 1rem;
+}

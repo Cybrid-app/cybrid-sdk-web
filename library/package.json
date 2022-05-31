@@ -1,0 +1,13 @@
+{
+  "name": "@cybrid/cybrid-sdk-ui-js",
+  "version": "0.0.0",
+  "description": "A javascript library of web components that integrate with Cybrid's api. View our documentation at https://github.com/Cybrid-app/cybrid-sdk-ui-js/",
+  "author": "Cybrid",
+  "keywords": [
+    "cybrid",
+    "@cybrid/cybrid-sdk-ui-js"
+  ],
+  "homepage": "https://github.com/Cybrid-app/cybrid-sdk-web",
+  "license": "Apache-2.0",
+  "files": ["cybrid-sdk-ui.min.js", "README.md"]
+}

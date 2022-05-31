@@ -1,0 +1,25 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# Compiled output
+/dist
+/tmp
+
+# Node
+/node_modules
+npm-debug.log
+
+# Miscellaneous
+/.idea
+/.angular
+/cybrid-sdk-web.iml
+
+# Testing
+/html-test
+/coverage
+/library/coverage
+/cypress/videos/
+/cypress/screenshots
+
+# System files
+.DS_Store
+Thumbs.db

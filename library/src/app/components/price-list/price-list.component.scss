@@ -1,0 +1,66 @@
+@use '@angular/material' as mat;
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import '../../../../../src/shared/styles/theme.scss';
+
+mat-form-field {
+  width: 100%;
+  > * .mat-form-field-outline {
+    @include mat.elevation(2);
+    border-radius: 5px;
+  }
+}
+
+.mat-form-field-prefix {
+  margin-right: 0.5rem;
+}
+
+table {
+  width: 100%;
+  @include mat.elevation(2);
+  border-radius: 5px;
+  .mat-column-price {
+    width: 80px;
+  }
+  th:first-of-type {
+    border-top-left-radius: 5px;
+  }
+  th:last-of-type {
+    border-top-right-radius: 5px;
+    text-align: end;
+  }
+  > * tr:last-of-type {
+    td {
+      border-bottom: none;
+    }
+    td:first-of-type {
+      border-bottom-left-radius: 5px;
+    }
+    td:last-of-type {
+      border-bottom-right-radius: 5px;
+    }
+  }
+}
+
+.name {
+  font-weight: 500;
+}
+
+.code {
+  @extend .mat-hint;
+  @extend .mat-h5;
+  margin: 2px 0 0 0;
+  line-height: 0.8rem;
+}
+
+.fiat {
+  @extend .code;
+  margin: 0;
+}
+
+.icon {
+  height: 1.7rem;
+}
+
+.no-data {
+  text-align: center;
+}
