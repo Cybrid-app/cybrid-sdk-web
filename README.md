@@ -1,50 +1,31 @@
-# Shell
+![](https://github.com/Cybrid-app/Cybrid-SDK/workflows/tests/badge.svg)
+[![Codecov](https://img.shields.io/codecov/c/github/Cybrid-app/Cybrid-SDK?token=ONZBDNW37S)](https://codecov.io/gh/Cybrid-app/Cybrid-SDK)
 
-This project is an Angular shell that acts as factory and demo for Cybrid SDK ui components.
+# Cybrid SDK Web
+
+This project contains a [Library](/library) of web components that interface with Cybrid's api, and a [Demo Application](/src) containing them
 
 ## Installation
 
-Run `npm i` from the project root `/sdk-ui-web` to install dependencies.
+Run `npm i` from the project root to install dependencies
 
-## Development server
+## Run Demo
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. Changes made to component source files will not be reflected on refresh of the running application. To see changes you will have to rebuild the component library.
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. While running locally, most browsers will block Cybrid api requests due to Cross-Origin Resource Sharing (CORS) rules. You must disable CORS to properly view the demo. Here's a handy script (for Mac OSX) that opens a developer friendly instance of Google Chrome:
+```shell
+open -n -a /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --args --user-data-dir="/tmp/chrome_dev_test" --disable-web-security
+```
 
 ## Component overview
 
-The ui components are stored in `/components`. Each component is an Angular Element which bootstraps and wraps itself in a Web Component. For more information visit [Angular Elements](https://angular.io/guide/elements) or [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components).
-
-## Library requirements
-
-To include the ui library, simply load it into your index.html as a script. All included ui components will be accessible via their html tag names. In the example below we are using the `<list-element>`'
-```shell
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <script src="cybrid-ui.js"></script>
-  </head>
-  <body>
-  <list-element></list-element>
-  </body>
-</html>
-```
+The ui components are stored in [library](/library). The components are Angular Elements which bootstrap and wraps themselves in a Web Component. For more information visit [Angular Elements](https://angular.io/guide/elements) or [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components).
 
 ## Build
 
-To build the shell project run `ng build`.
+To build the demo project run `ng build`
 
-### Component and library build commands
+To build the component library run `ng run package:library`
 
-```shell
-# Build a component to dist/element-name/
-ng run component-name:build
-
-# Build and bundle component to dist/element-name/element-name.js
-npm run component:element-name
-
-# Build ui and core libraries
-npm run component:library
-```
 ## Running unit tests
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).

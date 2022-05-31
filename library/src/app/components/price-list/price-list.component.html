@@ -56,9 +56,13 @@
             {{ 'priceList.table.price' | translate }}
           </th>
           <td part="td" id="price" mat-cell *matCellDef="let symbol">
-            <div fxLayout='row' fxLayoutGap='0.25rem' fxLayoutAlign='end'>
+            <div
+              fxLayout="row"
+              fxLayoutGap="0.25rem"
+              fxLayoutAlign="end center"
+            >
               <span>{{ symbol.buy_price | asset: symbol.counter_asset }} </span>
-              <span class='code'>({{ symbol.counter_asset.code }})</span>
+              <span class="fiat">({{ symbol.counter_asset.code }})</span>
             </div>
           </td>
         </ng-container>

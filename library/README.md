@@ -11,6 +11,11 @@ npm install @cybrid/cybrid-sdk-ui-js@latest --save
 ```
 ## Quick Start
 
+### Cross-Origin Resource Sharing (CORS)
+The following URL's will have to be whitelisted to properly view the components:
+
+Crypto currency icon assets: [https://images.cybrid.xyz/](https://images.cybrid.xyz/color/)
+
 ### HTML
 
 To use the ui library via html, simply load it into your index.html as a script. All included ui components will be accessible via their html selector. In the example below we are using the `<cybrid-price-list>`

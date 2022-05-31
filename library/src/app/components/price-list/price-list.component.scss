@@ -52,6 +52,11 @@ table {
   line-height: 0.8rem;
 }
 
+.fiat {
+  @extend .code;
+  margin: 0;
+}
+
 .icon {
   height: 1.7rem;
 }
