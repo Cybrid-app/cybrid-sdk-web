@@ -1,7 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: "npm"
-    directory: "/sdk-ui-web"
+    directory: ""
     schedule:
       interval: "daily"
     assignees:
