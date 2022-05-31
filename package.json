@@ -6,7 +6,7 @@
     "start": "ng serve",
     "build": "ng build --output-hashing=none",
     "package:library": "ng build library && cat dist/library/*.js > dist/library/library.js && cp library/README.md dist/library && cp library/package.json dist/library && npx webpack --mode=production",
-    "publish:library": "cd dist/library && npm publish",
+    "publish:library": "cd dist/library && npm publish --access public",
     "watch": "ng build --watch --configuration development",
     "test": "echo 'clearing angular cache...' && rm -rf .angular && ng run demo:test && echo 'clearing angular cache...' && rm -rf .angular && ng run library:test",
     "lint": "ng lint ",
@@ -16,7 +16,7 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run"
   },
-  "private": true,
+  "private": false,
   "dependencies": {
     "@angular/animations": "13.3.10",
     "@angular/cdk": "13.3.8",
