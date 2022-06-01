@@ -7,6 +7,11 @@ orbs:
   codecov: codecov/codecov@3.2.2
   jq: circleci/jq@2.2.0
 
+parameters:
+  GHA_Event:
+    type: string
+    default: ""
+
 workflows:
   web-build-and-test:
     jobs:
@@ -49,6 +54,7 @@ workflows:
     when:
       and:
         - equal: [ main, << pipeline.git.branch >> ]
+        - equal: [ "release", << pipeline.parameters.GHA_Event >> ]
     jobs:
       - node/run:
           name: publish
