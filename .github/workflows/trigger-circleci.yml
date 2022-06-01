@@ -1,3 +1,4 @@
+name: trigger-circleci
 on:
   release:
     types: [published]
@@ -6,6 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger circleci
-        uses: circleci/trigger_circleci_pipeline@v1.0
+        uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.0.4
         env:
-          CCI_TOKEN: $
+          CCI_TOKEN: ${{ secrets.CCI_TOKEN }}
