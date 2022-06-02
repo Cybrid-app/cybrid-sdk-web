@@ -11,12 +11,8 @@ import { PricesService } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
 import { AuthService } from '../../../../../src/shared/services/auth/auth.service';
-import {
-  EventService
-} from '../../../../../src/shared/services/event/event.service';
-import {
-  ErrorService
-} from '../../../../../src/shared/services/error/error.service';
+import { EventService } from '../../../../../src/shared/services/event/event.service';
+import { ErrorService } from '../../../../../src/shared/services/error/error.service';
 import {
   ComponentConfig,
   ConfigService
