@@ -3,32 +3,25 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
-  Output,
   ViewEncapsulation
 } from '@angular/core';
 import {
   BehaviorSubject,
   catchError,
-  combineLatest,
   map,
   of,
   Subject,
   Subscription,
   switchMap,
-  take,
   takeUntil,
-  tap,
   timer
 } from 'rxjs';
 import { MatTableDataSource } from '@angular/material/table';
 import { symbolSplit } from '../../../../../src/shared/utility/symbol-split';
 
 // Services
-import { AuthService } from '../../../../../src/shared/services/auth/auth.service';
 import {
   AssetBankModel,
   PricesService,
@@ -37,14 +30,10 @@ import {
 import { FormControl } from '@angular/forms';
 import {
   CODE,
-  EventLog,
   EventService,
   LEVEL
 } from '../../../../../src/shared/services/event/event.service';
-import {
-  ErrorLog,
-  ErrorService
-} from '../../../../../src/shared/services/error/error.service';
+import { ErrorService } from '../../../../../src/shared/services/error/error.service';
 import {
   ComponentConfig,
   ConfigService
@@ -60,25 +49,12 @@ export interface SymbolPrice extends SymbolPriceBankModel {
 
 @Component({
   selector: 'app-list',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: 'price-list.component.html',
   styleUrls: ['price-list.component.scss'],
-  encapsulation: ViewEncapsulation.ShadowDom
+  encapsulation: ViewEncapsulation.ShadowDom,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
-  @Input()
-  set auth(token: string) {
-    this.authService.setToken(token);
-    if (this.refreshSub.closed) {
-      this.getPrices();
-    }
-  }
-  @Input()
-  set hostConfig(config: ComponentConfig) {
-    this.configService.setConfig(config);
-  }
-  @Output() eventLog = new EventEmitter<EventLog>();
-  @Output() errorLog = new EventEmitter<ErrorLog>();
   config$ = this.configService.getConfig$();
   isLoading$ = new BehaviorSubject(true);
   isRecoverable$ = new BehaviorSubject(true);
@@ -95,43 +71,19 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
     private eventService: EventService,
     public configService: ConfigService,
     private assetService: AssetService,
-    private authService: AuthService,
     private pricesService: PricesService,
     private chdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this.initEventService();
-    this.initErrorService();
-    combineLatest([
-      this.configService.getConfig$(),
-      this.assetService.getAssets$()
-    ])
-      .pipe(
-        take(1),
-        tap(() => {
-          this.eventLog.emit({
-            level: LEVEL.INFO,
-            code: CODE.COMPONENT_INIT,
-            message: 'Initializing price list'
-          });
-          this.initFilterForm();
-          this.getPrices();
-          this.refreshData();
-        }),
-        catchError((err) => {
-          this.eventService.handleEvent(
-            LEVEL.FATAL,
-            CODE.COMPONENT_ERROR,
-            'Fatal error initializing price list'
-          );
-          this.errorService.handleError(
-            new Error('Fatal error initializing price list')
-          );
-          return of(err);
-        })
-      )
-      .subscribe();
+    this.eventService.handleEvent(
+      LEVEL.INFO,
+      CODE.COMPONENT_INIT,
+      'Initializing price list'
+    );
+    this.initFilterForm();
+    this.getPrices();
+    this.refreshData();
   }
 
   ngAfterViewChecked(): void {
@@ -141,49 +93,6 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
   ngOnDestroy(): void {
     this.unsubscribe$.next('');
     this.unsubscribe$.complete();
-  }
-
-  initEventService(): void {
-    this.eventService
-      .getEvent()
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe({
-        next: (event: EventLog) => {
-          this.eventLog.emit(event);
-        },
-        error: (err: Error) => {
-          this.eventLog.next({
-            level: LEVEL.ERROR,
-            code: CODE.SERVICE_ERROR,
-            message: 'There was a failure initializing the Event service',
-            data: err
-          });
-          this.errorService.handleError(err);
-        }
-      });
-  }
-
-  initErrorService(): void {
-    this.errorService
-      .getError()
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe({
-        next: (err: ErrorLog) => {
-          this.errorLog.emit(err);
-        },
-        error: (err: Error) => {
-          this.eventService.handleEvent(
-            LEVEL.ERROR,
-            CODE.SERVICE_ERROR,
-            'There was a failure initializing the error service'
-          );
-          this.errorLog.emit({
-            code: err.name,
-            message: 'There was a failure initializing the error service',
-            data: err
-          });
-        }
-      });
   }
 
   initFilterForm(): void {

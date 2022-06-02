@@ -7,7 +7,8 @@ import {
 } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CommonModule } from '@angular/common';
+import { APP_BASE_HREF, CommonModule } from '@angular/common';
+import { RoutingModule } from './routing.module';
 import {
   HTTP_INTERCEPTORS,
   HttpClientModule,
@@ -31,7 +32,9 @@ import { ErrorInterceptor } from '../../../../src/shared/interceptors/error/erro
 import { RetryInterceptor } from '../../../../src/shared/interceptors/auth/retry.interceptor';
 
 // Components
+import { AppComponent } from '../components/app/app.component';
 import { PriceListComponent } from '../components/price-list/price-list.component';
+import { TradeComponent } from '../components/trade/trade.component';
 
 // Utility
 import { environment } from '../../environments/environment';
@@ -43,7 +46,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 }
 
 @NgModule({
-  declarations: [PriceListComponent, AssetPipe],
+  declarations: [AppComponent, PriceListComponent, TradeComponent, AssetPipe],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -59,7 +62,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     ApiModule,
     TranslateModule,
     ReactiveFormsModule,
-    MaterialModule
+    MaterialModule,
+    RoutingModule
   ],
   providers: [
     {
@@ -77,6 +81,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ConfigService,
     EventService,
     AssetService,
+    { provide: APP_BASE_HREF, useValue: '' },
     { provide: HTTP_INTERCEPTORS, useClass: RetryInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: ErrorHandler, useClass: ErrorService }
@@ -87,9 +92,9 @@ export class LibraryModule implements DoBootstrap {
   constructor(private injector: Injector) {}
 
   ngDoBootstrap() {
-    const PriceListElement = createCustomElement(PriceListComponent, {
+    const AppElement = createCustomElement(AppComponent, {
       injector: this.injector
     });
-    customElements.define('cybrid-price-list', PriceListElement);
+    customElements.define('cybrid-price-list', AppElement);
   }
 }
