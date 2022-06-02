@@ -1,7 +1,6 @@
 import {
   discardPeriodicTasks,
   fakeAsync,
-  flushMicrotasks,
   TestBed,
   tick
 } from '@angular/core/testing';
@@ -12,16 +11,8 @@ import { PricesService } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
 import { AuthService } from '../../../../../src/shared/services/auth/auth.service';
-import {
-  CODE,
-  EventLog,
-  LEVEL,
-  EventService
-} from '../../../../../src/shared/services/event/event.service';
-import {
-  ErrorLog,
-  ErrorService
-} from '../../../../../src/shared/services/error/error.service';
+import { EventService } from '../../../../../src/shared/services/event/event.service';
+import { ErrorService } from '../../../../../src/shared/services/error/error.service';
 import {
   ComponentConfig,
   ConfigService
@@ -107,130 +98,22 @@ describe('ListComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should set the auth token', fakeAsync(() => {
-    const fixture = TestBed.createComponent(PriceListComponent);
-    const component = fixture.componentInstance;
-    const testToken = '';
-    expect(component.auth).toBeUndefined();
-    component.auth = testToken;
-    tick();
-    expect(MockAuthService.setToken).toHaveBeenCalledWith(testToken);
-    flushMicrotasks();
-  }));
-
-  it('should set the config', fakeAsync(() => {
-    const fixture = TestBed.createComponent(PriceListComponent);
-    const component = fixture.componentInstance;
-    const testConfig: ComponentConfig = {
-      refreshInterval: 5000,
-      locale: 'en-US',
-      theme: 'LIGHT'
-    };
-    component.hostConfig = testConfig;
-    tick();
-    expect(MockConfigService.setConfig).toHaveBeenCalledWith(testConfig);
-  }));
-
   it('should call init functions in ngOnInit()', () => {
     const fixture = TestBed.createComponent(PriceListComponent);
     const component = fixture.componentInstance;
     MockConfigService.getConfig$.and.returnValue(of(true));
     MockAssetService.getAssets$.and.returnValue(of(true));
-    component.initEventService = () => undefined;
-    component.initErrorService = () => undefined;
     component.initFilterForm = () => undefined;
     component.getPrices = () => undefined;
     component.refreshData = () => undefined;
-    const eventService = spyOn(component, 'initEventService').and.callThrough();
-    const errorService = spyOn(component, 'initErrorService').and.callThrough();
     const filterForm = spyOn(component, 'initFilterForm').and.callThrough();
     const prices = spyOn(component, 'getPrices').and.callThrough();
     const refresh = spyOn(component, 'refreshData').and.callThrough();
     component.ngOnInit();
     fixture.detectChanges();
-    expect(eventService).toHaveBeenCalled();
-    expect(errorService).toHaveBeenCalled();
     expect(filterForm).toHaveBeenCalled();
     expect(prices).toHaveBeenCalled();
     expect(refresh).toHaveBeenCalled();
-  });
-
-  it('should log an event and error if it fails to initialize', () => {
-    const fixture = TestBed.createComponent(PriceListComponent);
-    const component = fixture.componentInstance;
-    const error$ = throwError(() => {
-      return new Error('Error');
-    });
-    MockConfigService.getConfig$.and.returnValue(error$);
-    MockAssetService.getAssets$.and.returnValue(error$);
-    component.initEventService = () => undefined;
-    component.initErrorService = () => undefined;
-    component.ngOnInit();
-    expect(MockEventService.handleEvent).toHaveBeenCalledWith(
-      LEVEL.FATAL,
-      CODE.COMPONENT_ERROR,
-      'Fatal error initializing price list'
-    );
-    expect(MockErrorService.handleError).toHaveBeenCalledWith(
-      new Error('Fatal error initializing price list')
-    );
-  });
-
-  it('should log an event when the event service is initialized', () => {
-    const fixture = TestBed.createComponent(PriceListComponent);
-    const component = fixture.componentInstance;
-    const eventLog: EventLog = {
-      level: LEVEL.INFO,
-      code: CODE.SERVICE_INIT,
-      message: 'test'
-    };
-    MockEventService.getEvent.and.returnValue(of(eventLog));
-    component.eventLog.subscribe((log) => {
-      expect(log).toEqual(eventLog);
-    });
-    component.initEventService();
-  });
-
-  it('should log an event and error when the event service fails to initialize', () => {
-    const fixture = TestBed.createComponent(PriceListComponent);
-    const component = fixture.componentInstance;
-    const error$ = throwError(() => {
-      return new Error('Error');
-    });
-    MockEventService.getEvent.and.returnValue(error$);
-    component.eventLog.subscribe((event) => {
-      expect(event.level).toEqual('ERROR');
-    });
-    component.initEventService();
-    expect(MockErrorService.handleError).toHaveBeenCalled();
-  });
-
-  it('should log an event when the error service is initialized', () => {
-    const fixture = TestBed.createComponent(PriceListComponent);
-    const component = fixture.componentInstance;
-    const errorLog: ErrorLog = {
-      code: 400,
-      message: 'test'
-    };
-    MockErrorService.getError.and.returnValue(of(errorLog));
-    component.errorLog.subscribe((log) => {
-      expect(log).toEqual(errorLog);
-    });
-    component.initErrorService();
-  });
-
-  it('should log an event and error when the error service fails to initialize', () => {
-    const fixture = TestBed.createComponent(PriceListComponent);
-    const component = fixture.componentInstance;
-    const error$ = throwError(() => {
-      return new Error('err');
-    });
-    MockErrorService.getError.and.returnValue(error$);
-    component.errorLog.subscribe((error) => {
-      expect(error.code).toEqual('Error');
-    });
-    component.initErrorService();
-    expect(MockEventService.handleEvent).toHaveBeenCalled();
   });
 
   it('should log an event when getPrices() is called', () => {
@@ -240,17 +123,6 @@ describe('ListComponent', () => {
     component.getPrices();
     expect(MockEventService.handleEvent).toHaveBeenCalled();
   });
-
-  it('should getPrice() when a valid auth token is set', fakeAsync(() => {
-    const fixture = TestBed.createComponent(PriceListComponent);
-    const component = fixture.componentInstance;
-    const getPricesSpy = spyOn(component, 'getPrices');
-    const validToken = TestConstants.JWT;
-    component.refreshSub.unsubscribe();
-    component.auth = validToken;
-    tick();
-    expect(getPricesSpy).toHaveBeenCalled();
-  }));
 
   it('should getPrices() automatically on refreshData() interval', fakeAsync(() => {
     const fixture = TestBed.createComponent(PriceListComponent);

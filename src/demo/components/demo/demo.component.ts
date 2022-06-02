@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { PriceListComponent } from '../../../../library/src/app/components/price-list/price-list.component';
+import { AppComponent } from '../../../../library/src/app/components/app/app.component';
 import { TokenService } from '../../services/token/token.service';
 import { BehaviorSubject, map, take } from 'rxjs';
 
@@ -24,8 +24,7 @@ export class DemoComponent implements OnInit {
       .pipe(
         take(1),
         map((token) => {
-          const elementRef =
-            this.viewContainer.createComponent(PriceListComponent);
+          const elementRef = this.viewContainer.createComponent(AppComponent);
           elementRef.instance.auth = token;
         })
       )
