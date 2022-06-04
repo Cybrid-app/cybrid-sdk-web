@@ -3,7 +3,14 @@ import {
   AssetListBankModel,
   AssetsService
 } from '@cybrid/cybrid-api-bank-angular';
-import { map, Observable, Subject, switchMap, catchError, of } from 'rxjs';
+import {
+  map,
+  Observable,
+  switchMap,
+  catchError,
+  of,
+  ReplaySubject
+} from 'rxjs';
 import { CODE, EventService, LEVEL } from '../event/event.service';
 import { ErrorService } from '../error/error.service';
 import { AssetBankModel } from '@cybrid/cybrid-api-bank-angular/model/asset';
@@ -13,7 +20,7 @@ import { AuthService } from '../auth/auth.service';
   providedIn: 'root'
 })
 export class AssetService {
-  assetList$ = new Subject<Array<AssetBankModel>>();
+  assetList$ = new ReplaySubject<Array<AssetBankModel>>(1);
   assetList: Array<AssetBankModel> = [];
 
   constructor(

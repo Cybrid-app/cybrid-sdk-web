@@ -22,7 +22,7 @@ const routes: Routes = [
         component: PriceListComponent
       },
       {
-        path: 'buy',
+        path: 'trade',
         component: TradeComponent
       }
     ]

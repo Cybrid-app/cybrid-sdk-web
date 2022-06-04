@@ -67,7 +67,11 @@
           </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          (click)="onRowClick(row)"
+        ></tr>
         <tr class="mat-row" *matNoDataRow>
           <td part="td" id="warning" class="mat-cell no-data" colspan="2">
             {{
@@ -84,7 +88,7 @@
     <mat-card>
       <mat-card-content>
         <div fxLayout="column" fxLayoutAlign="center center">
-          <p>{{ 'priceList.fatal' | translate }}</p>
+          <p>{{ 'fatal' | translate }}</p>
         </div>
       </mat-card-content>
     </mat-card>

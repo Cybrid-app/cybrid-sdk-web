@@ -56,12 +56,21 @@ export class AssetPipe implements PipeTransform, OnDestroy {
       if (decimal.length < Constants.MIN_FRACTION_DIGITS) {
         decimal += '0';
       }
-      return (
-        asset.symbol +
-        formatNumber(new Big(integer).toNumber(), this.locale) +
-        separator!.char +
-        decimal
-      );
+      if (asset.type == 'fiat') {
+        return (
+          asset.symbol +
+          formatNumber(new Big(integer).toNumber(), this.locale) +
+          separator!.char +
+          decimal.slice(0, 2)
+        );
+      } else {
+        return (
+          asset.symbol +
+          formatNumber(new Big(integer).toNumber(), this.locale) +
+          separator!.char +
+          decimal
+        );
+      }
     } else {
       const digitsInfo =
         Constants.MIN_INTEGER_DIGITS.toString() +

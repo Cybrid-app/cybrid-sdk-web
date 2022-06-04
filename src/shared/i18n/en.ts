@@ -7,8 +7,8 @@ export default {
       filter: 'Search for crypto currency'
     },
     error: 'Error fetching coins',
-    fatal: 'An unrecoverable error occurred',
     empty: 'No coins found',
     refreshButton: 'Refresh'
-  }
+  },
+  fatal: 'An unrecoverable error occurred'
 };

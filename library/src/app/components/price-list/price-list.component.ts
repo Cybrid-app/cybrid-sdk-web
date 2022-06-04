@@ -40,6 +40,7 @@ import {
 } from '../../../../../src/shared/services/config/config.service';
 import { AssetService } from '../../../../../src/shared/services/asset/asset.service';
 import { Constants } from '../../../../../src/shared/constants/constants';
+import { NavigationExtras, Router } from '@angular/router';
 
 export interface SymbolPrice extends SymbolPriceBankModel {
   asset: AssetBankModel;
@@ -72,6 +73,7 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
     public configService: ConfigService,
     private assetService: AssetService,
     private pricesService: PricesService,
+    private router: Router,
     private chdRef: ChangeDetectorRef
   ) {}
 
@@ -187,5 +189,15 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
           this.getPrices();
         }
       });
+  }
+
+  onRowClick(row: SymbolPrice): void {
+    const extras: NavigationExtras = {
+      queryParams: {
+        asset: JSON.stringify(row.asset),
+        symbol_pair: row.symbol
+      }
+    };
+    this.router.navigate(['app/trade'], extras);
   }
 }

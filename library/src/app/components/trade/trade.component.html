@@ -1,0 +1,54 @@
+<div
+  [ngClass]="{
+    'cybrid-dark-theme': (configService.config$ | async)?.theme === 'DARK'
+  }"
+>
+  <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
+    <ng-container *ngIf="(isLoading$ | async) !== true">
+      <ng-container [formGroup]="quoteGroup">
+        <div fxLayout="column" fxLayoutAlign="center">
+          <span class="price">
+            {{ (price$ | async)! | asset: counterAsset }}
+          </span>
+          <div fxLayout="row" fxLayoutAlign="center" fxLayoutGap="1rem">
+            <mat-form-field appearance="fill">
+              <mat-label>Select Asset</mat-label>
+              <mat-select
+                [compareWith]="compareObjects"
+                formControlName="asset"
+              >
+                <mat-option
+                  *ngFor="let asset of filteredAssetList"
+                  [value]="asset"
+                >
+                  {{ asset.symbol + ' ' + asset.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Quantity</mat-label>
+              <input matInput formControlName="quantity" type="number" />
+            </mat-form-field>
+          </div>
+          <button
+            class="get-quote"
+            mat-flat-button
+            color="primary"
+            [disabled]="!quoteGroup.valid"
+          >
+            Get Quote
+          </button>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+  <ng-template #error>
+    <mat-card>
+      <mat-card-content>
+        <div fxLayout="column" fxLayoutAlign="center center">
+          <p>{{ 'fatal' | translate }}</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </ng-template>
+</div>

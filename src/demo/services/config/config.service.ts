@@ -19,7 +19,7 @@ import { environment } from '../../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class TokenService {
+export class ConfigService {
   token$ = new Subject<string>();
   invalidCredentials$ = new BehaviorSubject(false);
   constructor(private http: HttpClient) {

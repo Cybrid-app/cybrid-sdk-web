@@ -1,0 +1,20 @@
+@use '@angular/material' as mat;
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import '../../../../../src/shared/styles/theme.scss';
+
+mat-form-field {
+  width: 100%;
+  > * .mat-form-field-outline {
+    @include mat.elevation(2);
+    border-radius: 5px;
+  }
+}
+
+.price {
+  align-self: center;
+  margin-bottom: 1rem;
+}
+
+.get-quote {
+  align-self: end;
+}
