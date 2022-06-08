@@ -49,12 +49,26 @@ describe('AssetPipe', () => {
     ).toEqual('Ξ123,456,789,123.456789123456789123');
     expect(
       pipe.transform('123456789123456789123456789123', TestConstants.CAD_ASSET)
-    ).toEqual('$1.23456789123456789123456789123e+27');
+    ).toEqual('$1.23');
   });
 
   it('should adjust to a minimum of 2 decimal places', () => {
     const pipe = new AssetPipe(MockConfigService);
     expect(pipe.transform(36010, TestConstants.CAD_ASSET)).toEqual('$360.10');
+  });
+
+  it('should return a trade unit when the param is set to trade', () => {
+    const pipe = new AssetPipe(MockConfigService);
+    expect(pipe.transform(36010, TestConstants.BTC_ASSET, 'trade')).toEqual(
+      '0.0003601'
+    );
+  });
+
+  it('should return a base unit when the param is set to base', () => {
+    const pipe = new AssetPipe(MockConfigService);
+    expect(pipe.transform(36010, TestConstants.BTC_ASSET, 'base')).toEqual(
+      '3601000000000'
+    );
   });
 
   it('should unsubscribe from getConfig$() onDestroy', () => {

@@ -11,16 +11,26 @@
             <mat-label>
               <span>Amount</span>
               <span class="code">
-                {{ input === 'fiat' ? quote.asset.code : counterAssetCode }}
+                {{
+                  input === 'fiat' ? quote.asset.code : quote.counterAsset.code
+                }}
               </span>
             </mat-label>
             <input
               matInput
               #amount="matInput"
               formControlName="amount"
-              type="text"
+              type="number"
               placeholder="0"
             />
+            <button
+              *ngIf="amount.value"
+              mat-icon-button
+              matSuffix
+              (click)="quoteGroup.get('amount')?.reset()"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Currency</mat-label>
@@ -39,7 +49,7 @@
             fxLayoutAlign="start center"
             fxLayoutGap="0.25rem"
           >
-            <ng-container *ngIf="!quoteGroup.dirty">
+            <ng-container *ngIf="!amount.value">
               <span> 1 </span>
               <span class="code">
                 {{ quote.asset.code }}
@@ -47,21 +57,25 @@
               <span>=</span>
               <span>
                 {{
-                  price.buy_price! | asset: counterAsset:'display' | currency
+                  price.buy_price!
+                    | asset: quote.counterAsset:'trade'
+                    | currency
                 }}
               </span>
-              <span class="code">{{ ' ' + counterAssetCode }}</span>
+              <span class="code">{{ ' ' + quote.counterAsset.code }}</span>
             </ng-container>
-            <ng-container *ngIf="quoteGroup.dirty">
+            <ng-container *ngIf="amount.value">
               <span>
                 {{
                   input === 'fiat'
-                    ? (quote.value | asset: counterAsset)
+                    ? (quote.value | asset: quote.counterAsset)
                     : quote.amount
                 }}
               </span>
               <span class="code">
-                {{ input === 'fiat' ? counterAssetCode : quote.asset.code }}
+                {{
+                  input === 'fiat' ? quote.counterAsset.code : quote.asset.code
+                }}
               </span>
             </ng-container>
             <div fxFlex="1 0 auto"></div>
@@ -69,14 +83,7 @@
               <mat-icon>swap_vert</mat-icon>
             </button>
           </div>
-          <button
-            class="align-end"
-            mat-flat-button
-            color="primary"
-            [disabled]="!quoteGroup.valid"
-          >
-            Buy
-          </button>
+          <button class="align-end" mat-flat-button color="primary">Buy</button>
         </div>
       </ng-container>
     </ng-container>

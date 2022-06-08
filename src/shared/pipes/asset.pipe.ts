@@ -47,26 +47,26 @@ export class AssetPipe implements PipeTransform, OnDestroy {
   transform(
     value: string | number,
     asset: AssetBankModel,
-    unit: 'display' | 'base' | 'formatted' = 'formatted'
+    unit: 'trade' | 'base' | 'formatted' = 'formatted'
   ): string | number {
     const divisor = new Big(10).pow(asset.decimals);
+    const tradeUnit = new Big(value).div(divisor);
     const baseUnit = new Big(value).mul(divisor);
-    const displayUnit = new Big(value).div(divisor);
 
     switch (unit) {
+      case 'trade': {
+        return tradeUnit.toString();
+      }
       case 'base': {
         return baseUnit.toString();
       }
-      case 'display': {
-        return displayUnit.toString();
-      }
       case 'formatted': {
-        if (baseUnit.toString().includes('.')) {
+        if (tradeUnit.toString().includes('.')) {
           let separator = this.separator.find((value) => {
             return value.locale == this.locale;
           });
-          let integer = displayUnit.toString().split('.')[0];
-          let decimal = displayUnit.toString().split('.')[1];
+          let integer = tradeUnit.toString().split('.')[0];
+          let decimal = tradeUnit.toString().split('.')[1];
           if (decimal.length < Constants.MIN_FRACTION_DIGITS) {
             decimal += '0';
           }
@@ -94,7 +94,7 @@ export class AssetPipe implements PipeTransform, OnDestroy {
             asset.decimals.toString();
           return (
             asset.symbol +
-            formatNumber(displayUnit.toNumber(), this.locale, digitsInfo)
+            formatNumber(tradeUnit.toNumber(), this.locale, digitsInfo)
           );
         }
       }

@@ -81,6 +81,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ConfigService,
     EventService,
     AssetService,
+    AssetPipe,
     { provide: APP_BASE_HREF, useValue: '' },
     { provide: HTTP_INTERCEPTORS, useClass: RetryInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
