@@ -57,7 +57,7 @@
     "@typescript-eslint/parser": "5.27.1",
     "css-loader": "^6.7.1",
     "cypress": "latest",
-    "eslint": "8.16.0",
+    "eslint": "8.17.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-prettier": "4.0.0",
     "jasmine-core": "4.1.1",
