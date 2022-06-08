@@ -5,38 +5,77 @@
 >
   <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
     <ng-container *ngIf="(isLoading$ | async) !== true">
-      <ng-container [formGroup]="quoteGroup">
+      <ng-container [formGroup]="quoteGroup" *ngIf="quote$ | async as quote">
         <div fxLayout="column" fxLayoutAlign="center">
-          <span class="price">
-            {{ (price$ | async)! | asset: counterAsset }}
-          </span>
-          <div fxLayout="row" fxLayoutAlign="center" fxLayoutGap="1rem">
-            <mat-form-field appearance="fill">
-              <mat-label>Select Asset</mat-label>
-              <mat-select
-                [compareWith]="compareObjects"
-                formControlName="asset"
+          <mat-form-field appearance="outline">
+            <mat-label>
+              <span>Amount</span>
+              <span class="code">
+                {{ input === 'fiat' ? quote.asset.code : counterAssetCode }}
+              </span>
+            </mat-label>
+            <input
+              matInput
+              #amount="matInput"
+              formControlName="amount"
+              type="text"
+              placeholder="0"
+            />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Currency</mat-label>
+            <mat-select [compareWith]="compareObjects" formControlName="asset">
+              <mat-option
+                *ngFor="let asset of filteredAssetList"
+                [value]="asset"
               >
-                <mat-option
-                  *ngFor="let asset of filteredAssetList"
-                  [value]="asset"
-                >
-                  {{ asset.symbol + ' ' + asset.name }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="fill">
-              <mat-label>Quantity</mat-label>
-              <input matInput formControlName="quantity" type="number" />
-            </mat-form-field>
+                {{ asset.symbol + ' ' + asset.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div
+            class="hint"
+            fxLayout="row"
+            fxLayoutAlign="start center"
+            fxLayoutGap="0.25rem"
+          >
+            <ng-container *ngIf="!quoteGroup.dirty">
+              <span> 1 </span>
+              <span class="code">
+                {{ quote.asset.code }}
+              </span>
+              <span>=</span>
+              <span>
+                {{
+                  price.buy_price! | asset: counterAsset:'display' | currency
+                }}
+              </span>
+              <span class="code">{{ ' ' + counterAssetCode }}</span>
+            </ng-container>
+            <ng-container *ngIf="quoteGroup.dirty">
+              <span>
+                {{
+                  input === 'fiat'
+                    ? (quote.value | asset: counterAsset)
+                    : quote.amount
+                }}
+              </span>
+              <span class="code">
+                {{ input === 'fiat' ? counterAssetCode : quote.asset.code }}
+              </span>
+            </ng-container>
+            <div fxFlex="1 0 auto"></div>
+            <button mat-icon-button color="primary" (click)="onSwitchInput()">
+              <mat-icon>swap_vert</mat-icon>
+            </button>
           </div>
           <button
-            class="get-quote"
+            class="align-end"
             mat-flat-button
             color="primary"
             [disabled]="!quoteGroup.valid"
           >
-            Get Quote
+            Buy
           </button>
         </div>
       </ng-container>

@@ -2,19 +2,23 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 @import '../../../../../src/shared/styles/theme.scss';
 
-mat-form-field {
-  width: 100%;
-  > * .mat-form-field-outline {
-    @include mat.elevation(2);
-    border-radius: 5px;
-  }
+.code {
+  @extend .mat-hint;
+  @extend .mat-h5;
+  color: inherit;
+  margin: 2px 0 0 0;
+  line-height: 0.8rem;
+}
+
+.hint {
+  margin-left: 3px;
 }
 
 .price {
   align-self: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
 }
 
-.get-quote {
+.align-end {
   align-self: end;
 }

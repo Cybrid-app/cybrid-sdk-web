@@ -32,49 +32,60 @@ import {
   ConfigService
 } from '../../../../../src/shared/services/config/config.service';
 import { AssetService } from '../../../../../src/shared/services/asset/asset.service';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Constants } from '../../../../../src/shared/constants/constants';
+import { AssetPipe } from '../../../../../src/shared/pipes/asset.pipe';
 import { compareObjects } from '../../../../../src/shared/utility/compare-object';
 import { symbolSplit } from '../../../../../src/shared/utility/symbol-split';
 import { symbolBuild } from '../../../../../src/shared/utility/symbol-build';
 import { TradeBankModel } from '@cybrid/cybrid-api-bank-angular/model/trade';
 import SideEnum = PostQuoteBankModel.SideEnum;
 
-interface Trade {
+interface Quote {
   asset: AssetBankModel;
-  quantity: number;
+  amount: string;
+  value: string;
 }
 
 @Component({
   selector: 'app-trade',
   templateUrl: './trade.component.html',
   styleUrls: ['./trade.component.scss'],
-  encapsulation: ViewEncapsulation.ShadowDom,
+  encapsulation: ViewEncapsulation.Emulated,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TradeComponent implements OnInit, OnDestroy {
   assetList: AssetBankModel[] = [];
+  price$ = new BehaviorSubject<string>('0');
+  price!: SymbolPriceBankModel;
+  assetPipe: AssetPipe = new AssetPipe(this.configService);
   filteredAssetList: AssetBankModel[] = [];
-  asset = Constants.ASSET;
-  price$ = new BehaviorSubject<string | number>(0);
   symbolPrice: SymbolPriceBankModel = {};
+
   quoteGroup: FormGroup = new FormGroup({
-    asset: new FormControl(this.asset, Validators.required),
-    quantity: new FormControl(0, Validators.required)
+    asset: new FormControl(),
+    amount: new FormControl()
   });
+
+  quote: Quote = {
+    asset: Constants.ASSET,
+    amount: '0',
+    value: '0'
+  };
+
   counterAssetCode = Constants.COUNTER_ASSET.code;
   counterAsset: AssetBankModel = Constants.COUNTER_ASSET;
-  type: TradeBankModel.SideEnum = SideEnum.Buy;
-  trade: Trade = {
-    asset: Constants.ASSET,
-    quantity: 0
-  };
+
+  side: TradeBankModel.SideEnum = SideEnum.Buy;
+  input: AssetBankModel.TypeEnum = 'fiat';
+
   compareObjects = compareObjects;
+  quote$ = new BehaviorSubject<Quote>(this.quote);
 
   isLoading$ = new BehaviorSubject(true);
   isRecoverable$ = new BehaviorSubject(true);
-  private unsubscribe$ = new Subject();
+  unsubscribe$ = new Subject();
   refreshSub: Subscription = new Subscription();
 
   constructor(
@@ -87,7 +98,7 @@ export class TradeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.isLoading$.next(false);
+    this.isLoading$.next(true);
     this.eventService.handleEvent(
       LEVEL.INFO,
       CODE.COMPONENT_INIT,
@@ -96,24 +107,42 @@ export class TradeComponent implements OnInit, OnDestroy {
     this.getRouterParams();
     this.getAssets();
     this.initQuoteGroup();
+    this.getPrice();
     this.refreshData();
   }
 
-  getPrice(trade: Trade): void {
+  getPrice(): void {
     this.pricesService
-      .listPrices(symbolBuild(trade.asset.code, this.counterAsset.code))
+      .listPrices(symbolBuild(this.quote.asset.code, this.counterAsset.code))
       .pipe(
         map((priceArray) => {
-          const buyPrice = priceArray[0].buy_price;
-          const sellPrice = priceArray[0].sell_price;
-          if (this.type == 'buy') {
-            this.price$.next(trade.quantity * buyPrice!);
-          } else {
-            this.price$.next(trade.quantity * sellPrice!);
+          this.price = priceArray[0];
+          const buyPrice = priceArray[0].buy_price!;
+          let amount = this.quoteGroup.get('amount')?.value;
+          switch (this.input) {
+            case 'fiat': {
+              this.quote.amount = amount;
+              this.quote.value = (amount * buyPrice).toString();
+              this.quote$.next(this.quote);
+              break;
+            }
+            case 'crypto': {
+              let baseValue = this.assetPipe.transform(
+                amount,
+                this.counterAsset,
+                'base'
+              ) as number;
+              this.quote.amount = (baseValue / buyPrice).toString();
+              this.quote.value = baseValue.toString();
+              this.quote$.next(this.quote);
+            }
           }
         })
       )
-      .subscribe();
+      .subscribe(() => {
+        console.log(this.quote);
+        this.isLoading$.next(false);
+      });
   }
 
   refreshData(): void {
@@ -130,9 +159,9 @@ export class TradeComponent implements OnInit, OnDestroy {
           this.eventService.handleEvent(
             LEVEL.INFO,
             CODE.DATA_FETCHING,
-            'Refreshing trade price...'
+            'Refreshing quote price...'
           );
-          this.getPrice(this.trade);
+          this.getPrice();
         }
       });
   }
@@ -160,7 +189,7 @@ export class TradeComponent implements OnInit, OnDestroy {
       .pipe(
         takeUntil(this.unsubscribe$),
         map((params) => {
-          this.asset = JSON.parse(params['asset']);
+          this.quote.asset = JSON.parse(params['asset']);
           this.counterAssetCode = symbolSplit(params['symbol_pair'])[1];
         })
       )
@@ -169,19 +198,41 @@ export class TradeComponent implements OnInit, OnDestroy {
 
   initQuoteGroup(): void {
     this.quoteGroup.patchValue({
-      asset: this.asset
+      asset: this.quote.asset
     });
     this.quoteGroup.valueChanges
-      .pipe(
-        takeUntil(this.unsubscribe$),
-        map((value: any) => {
-          if (value.asset && value.quantity) {
-            this.getPrice(value);
-            this.trade = value;
-          }
-        })
-      )
-      .subscribe();
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.getPrice();
+      });
+    this.quoteGroup
+      .get('asset')
+      ?.valueChanges.pipe(takeUntil(this.unsubscribe$))
+      .subscribe((asset: AssetBankModel) => {
+        this.quote.asset = asset;
+      });
+  }
+
+  onSwitchInput(): void {
+    switch (this.input) {
+      case 'fiat': {
+        this.input = 'crypto';
+        this.quoteGroup.patchValue({
+          amount: this.quote.amount
+        });
+        break;
+      }
+      case 'crypto': {
+        this.input = 'fiat';
+        const value = this.assetPipe.transform(
+          this.quote.value,
+          this.counterAsset,
+          'display'
+        ) as number;
+        this.quoteGroup.get('amount')?.patchValue(value);
+        break;
+      }
+    }
   }
 
   ngOnDestroy() {

@@ -44,44 +44,60 @@ export class AssetPipe implements PipeTransform, OnDestroy {
       .subscribe();
   }
 
-  transform(value: string | number, asset: AssetBankModel): string {
+  transform(
+    value: string | number,
+    asset: AssetBankModel,
+    unit: 'display' | 'base' | 'formatted' = 'formatted'
+  ): string | number {
     const divisor = new Big(10).pow(asset.decimals);
-    const baseUnit = new Big(value).div(divisor);
-    if (baseUnit.toString().includes('.')) {
-      let separator = this.separator.find((value) => {
-        return value.locale == this.locale;
-      });
-      let integer = baseUnit.toString().split('.')[0];
-      let decimal = baseUnit.toString().split('.')[1];
-      if (decimal.length < Constants.MIN_FRACTION_DIGITS) {
-        decimal += '0';
+    const baseUnit = new Big(value).mul(divisor);
+    const displayUnit = new Big(value).div(divisor);
+
+    switch (unit) {
+      case 'base': {
+        return baseUnit.toString();
       }
-      if (asset.type == 'fiat') {
-        return (
-          asset.symbol +
-          formatNumber(new Big(integer).toNumber(), this.locale) +
-          separator!.char +
-          decimal.slice(0, 2)
-        );
-      } else {
-        return (
-          asset.symbol +
-          formatNumber(new Big(integer).toNumber(), this.locale) +
-          separator!.char +
-          decimal
-        );
+      case 'display': {
+        return displayUnit.toString();
       }
-    } else {
-      const digitsInfo =
-        Constants.MIN_INTEGER_DIGITS.toString() +
-        '.' +
-        Constants.MIN_FRACTION_DIGITS.toString() +
-        '-' +
-        asset.decimals.toString();
-      return (
-        asset.symbol +
-        formatNumber(baseUnit.toNumber(), this.locale, digitsInfo)
-      );
+      case 'formatted': {
+        if (baseUnit.toString().includes('.')) {
+          let separator = this.separator.find((value) => {
+            return value.locale == this.locale;
+          });
+          let integer = displayUnit.toString().split('.')[0];
+          let decimal = displayUnit.toString().split('.')[1];
+          if (decimal.length < Constants.MIN_FRACTION_DIGITS) {
+            decimal += '0';
+          }
+          if (asset.type == 'fiat') {
+            return (
+              asset.symbol +
+              formatNumber(new Big(integer).toNumber(), this.locale) +
+              separator!.char +
+              decimal.slice(0, 2)
+            );
+          } else {
+            return (
+              asset.symbol +
+              formatNumber(new Big(integer).toNumber(), this.locale) +
+              separator!.char +
+              decimal
+            );
+          }
+        } else {
+          const digitsInfo =
+            Constants.MIN_INTEGER_DIGITS.toString() +
+            '.' +
+            Constants.MIN_FRACTION_DIGITS.toString() +
+            '-' +
+            asset.decimals.toString();
+          return (
+            asset.symbol +
+            formatNumber(displayUnit.toNumber(), this.locale, digitsInfo)
+          );
+        }
+      }
     }
   }
 }
