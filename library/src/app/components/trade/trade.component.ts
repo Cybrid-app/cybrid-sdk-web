@@ -150,14 +150,9 @@ export class TradeComponent implements OnInit, OnDestroy {
     });
     this.quoteGroup.valueChanges
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(() => {
+      .subscribe((value) => {
+        this.quote.asset = value.asset;
         this.getPrice();
-      });
-    this.quoteGroup
-      .get('asset')
-      ?.valueChanges.pipe(takeUntil(this.unsubscribe$))
-      .subscribe((asset: AssetBankModel) => {
-        this.quote.asset = asset;
       });
   }
 
@@ -251,7 +246,7 @@ export class TradeComponent implements OnInit, OnDestroy {
             this.quote.value,
             this.quote.counterAsset,
             'trade'
-          ) as number;
+          );
           amount!.patchValue(displayValue);
         }
         break;

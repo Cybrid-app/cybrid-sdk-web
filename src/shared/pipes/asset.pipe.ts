@@ -55,10 +55,10 @@ export class AssetPipe implements PipeTransform, OnDestroy {
 
     switch (unit) {
       case 'trade': {
-        return tradeUnit.toString();
+        return tradeUnit.toNumber();
       }
       case 'base': {
-        return baseUnit.toString();
+        return baseUnit.toNumber();
       }
       case 'formatted': {
         if (tradeUnit.toString().includes('.')) {

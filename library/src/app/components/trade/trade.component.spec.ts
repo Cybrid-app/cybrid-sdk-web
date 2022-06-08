@@ -149,7 +149,7 @@ describe('TradeComponent', () => {
     component.input = 'crypto';
     component.getPrice();
     expect(component.quote.amount).toEqual(1000);
-    expect(component.quote.value).toEqual('1000');
+    expect(component.quote.value).toEqual(1000);
   });
 
   it('should log an event when getPrice() is called', () => {
@@ -178,13 +178,21 @@ describe('TradeComponent', () => {
 
   it('should switch the input between fiat and crypto', () => {
     component.ngOnInit();
+    component.onSwitchInput(); // Default starts on 'fiat'
+    expect(component.input).toEqual('crypto');
+    expect(component.quote.amount).toBeNull();
+    component.onSwitchInput();
+    expect(component.input).toEqual('fiat');
+    expect(component.quote.amount).toBeNull();
+
+    // Test input patch value branch case
     component.quoteGroup.patchValue({
       asset: TestConstants.BTC_ASSET,
       amount: 10
     });
     component.onSwitchInput();
-    expect(component.input).toEqual('crypto');
+    expect(component.quote.amount).toEqual(1000);
     component.onSwitchInput();
-    expect(component.input).toEqual('fiat');
+    expect(component.quote.amount).toEqual(10);
   });
 });
