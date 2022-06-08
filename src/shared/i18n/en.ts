@@ -10,5 +10,10 @@ export default {
     empty: 'No coins found',
     refreshButton: 'Refresh'
   },
+  trade: {
+    amount: 'Amount',
+    currency: 'Currency',
+    getQuote: 'Buy'
+  },
   fatal: 'An unrecoverable error occurred'
 };

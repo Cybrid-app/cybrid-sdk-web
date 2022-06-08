@@ -10,5 +10,10 @@ export default {
     empty: 'Aucune pièce trouvée',
     refreshButton: 'Rafraîchir'
   },
+  trade: {
+    amount: 'Montant',
+    currency: 'Devise',
+    getQuote: 'Acheter'
+  },
   fatal: "Une erreur irrécupérable s'est produite"
 };

@@ -9,7 +9,7 @@
         <div fxLayout="column" fxLayoutAlign="center">
           <mat-form-field appearance="outline">
             <mat-label>
-              <span>Amount</span>
+              <span>{{ 'trade.amount' | translate }}</span>
               <span class="code">
                 {{
                   input === 'fiat' ? quote.asset.code : quote.counterAsset.code
@@ -33,7 +33,7 @@
             </button>
           </mat-form-field>
           <mat-form-field appearance="outline">
-            <mat-label>Currency</mat-label>
+            <mat-label>{{ 'trade.currency' | translate }}</mat-label>
             <mat-select [compareWith]="compareObjects" formControlName="asset">
               <mat-option
                 *ngFor="let asset of filteredAssetList"
@@ -83,7 +83,9 @@
               <mat-icon>swap_vert</mat-icon>
             </button>
           </div>
-          <button class="align-end" mat-flat-button color="primary">Buy</button>
+          <button class="align-end" mat-flat-button color="primary">
+            {{ 'trade.getQuote' | translate }}
+          </button>
         </div>
       </ng-container>
     </ng-container>
