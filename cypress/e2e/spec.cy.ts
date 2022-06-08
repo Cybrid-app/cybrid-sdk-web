@@ -5,11 +5,12 @@ describe('price-list test', () => {
       req.body.client_secret = Cypress.env('CLIENT_SECRET');
       req.continue();
     });
-    cy.visit('/demo');
+    cy.visit('/');
     cy.intercept('/api/prices').as('getPrices');
     cy.wait('@getPrices')
-      .get('app-list')
+      .get('app-app')
       .should('exist')
+      .get('app-list')
       .shadow()
       .find('#asset')
       .should('contain', 'BTC')
@@ -18,14 +19,15 @@ describe('price-list test', () => {
       .should('not.equal', '$0.00');
   });
   it('should filter results', () => {
-    cy.get('app-list').shadow().find('#filter').should('exist').type('bitcoin');
-    cy.get('app-list')
+    cy.get('app-app').shadow().find('#filter').should('exist').type('bitcoin');
+    cy.get('app-app')
       .shadow()
+      .get('app-list')
       .find('tr')
       .should('contain', 'BTC')
       .and('not.contain', 'ETH')
       .click({ multiple: true });
-    cy.get('app-list')
+    cy.get('app-app')
       .shadow()
       .find('#filter')
       .type('test')
@@ -33,12 +35,12 @@ describe('price-list test', () => {
       .as('getPrices')
       .wait('@getPrices')
       .then(() => {
-        cy.get('app-list')
+        cy.get('app-app')
           .shadow()
           .find('#warning')
           .should('contain', 'No coins found');
-        cy.get('app-list').shadow().find('#filter').click().clear();
-        cy.get('app-list')
+        cy.get('app-app').shadow().find('#filter').click().clear();
+        cy.get('app-app')
           .shadow()
           .find('#asset')
           .should('contain', 'BTC')
@@ -48,12 +50,12 @@ describe('price-list test', () => {
   it('should refresh the price list', () => {
     cy.intercept('/api/prices').as('getPrices');
     cy.wait('@getPrices')
-      .get('app-list')
+      .get('app-app')
       .shadow()
       .find('tr')
       .should('not.contain', 'Error fetching coins')
       .then(() => {
-        cy.get('app-list')
+        cy.get('app-app')
           .shadow()
           .find('#asset')
           .should('contain', 'BTC')
