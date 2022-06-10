@@ -15,19 +15,23 @@ executors:
 parameters:
   GHA_Event:
     type: string
-    default: ""
+    default: ''
   GHA_Actor:
     type: string
-    default: ""
+    default: ''
   GHA_Action:
     type: string
-    default: ""
+    default: ''
   GHA_Meta:
     type: string
-    default: ""
+    default: ''
 
 workflows:
   web-build-and-test:
+    when:
+      and:
+        # check for default parameter to ensure that the workflow is not triggered from gitHub actions
+        - equal: [ '', << pipeline.parameters.GHA_Event >> ]
     jobs:
       - node/test:
           name: test
@@ -64,11 +68,12 @@ workflows:
   web-publish:
     when:
       and:
-        - equal: [ main, << pipeline.git.branch >> ]
-        - equal: [ "release", << pipeline.parameters.GHA_Event >> ]
+        - equal: ['release', << pipeline.parameters.GHA_Event >>]
     jobs:
       - node/run:
           name: publish
+          requires:
+            - cypress/run
           version: 16.14.2-browsers
           npm-run: package:library
           post-steps:
