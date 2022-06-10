@@ -7,6 +7,11 @@ orbs:
   codecov: codecov/codecov@3.2.3
   jq: circleci/jq@2.2.0
 
+executors:
+  cypress:
+    docker:
+      - image: 'cypress/base:16.13.0'
+
 parameters:
   GHA_Event:
     type: string
@@ -51,10 +56,7 @@ workflows:
                 name: Audit
       - cypress/run:
           name: e2e
-          executor:
-            name: cypress/default
-            node: 14.15.0
-          build: npm install
+          executor: cypress
           start: npm start
           wait-on: http://localhost:4200
           store_artifacts: true
