@@ -53,8 +53,8 @@ workflows:
           name: e2e
           executor:
             name: cypress/default
-            node: 14.15.0
           cache-key: cache-{{ .Branch }}-{{ checksum "package-lock.json"}}
+          build: npm install
           start: npm start
           wait-on: http://localhost:4200
           store_artifacts: true
