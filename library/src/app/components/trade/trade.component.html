@@ -21,6 +21,7 @@
               #amount="matInput"
               formControlName="amount"
               type="number"
+              min="0"
               placeholder="0"
             />
             <button
@@ -31,6 +32,7 @@
             >
               <mat-icon>close</mat-icon>
             </button>
+            <mat-error>{{ 'trade.error' | translate }}</mat-error>
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>{{ 'trade.currency' | translate }}</mat-label>
@@ -83,7 +85,14 @@
               <mat-icon>swap_vert</mat-icon>
             </button>
           </div>
-          <button class="align-end" mat-flat-button color="primary">
+          <button
+            class="align-end"
+            mat-flat-button
+            color="primary"
+            [disabled]="
+              !quoteGroup.valid || !(amount.value.toString().length > 0)
+            "
+          >
             {{ 'trade.getQuote' | translate }}
           </button>
         </div>

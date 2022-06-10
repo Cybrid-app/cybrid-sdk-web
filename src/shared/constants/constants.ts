@@ -6,6 +6,8 @@ export enum THEME {
 }
 
 export class Constants {
+  static REPO_URL =
+    'https://api.github.com/repos/Cybrid-app/cybrid-sdk-web/releases/latest';
   // The number of times to retry a failed http request
   static RETRY = 3;
   // How often to request new data
