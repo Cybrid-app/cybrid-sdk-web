@@ -2,8 +2,9 @@ import { NgModule } from '@angular/core';
 import { RouterTestingModule } from '@angular/router/testing';
 import { PriceListComponent } from '../components/price-list/price-list.component';
 import { TradeComponent } from '../components/trade/trade.component';
+import { Routes } from '@angular/router';
 
-const routes = [
+const routes: Routes = [
   {
     path: '',
     redirectTo: 'app/price-list',

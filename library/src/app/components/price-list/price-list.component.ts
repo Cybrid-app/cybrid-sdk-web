@@ -27,7 +27,7 @@ import {
   PricesService,
   SymbolPriceBankModel
 } from '@cybrid/cybrid-api-bank-angular';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import {
   CODE,
   EventService,
@@ -63,7 +63,7 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   dataSource: MatTableDataSource<SymbolPrice> = new MatTableDataSource();
   displayedColumns: string[] = ['symbol', 'price'];
-  filterControl: FormControl = new FormControl();
+  filterControl: UntypedFormControl = new UntypedFormControl();
   getPricesError = false;
 
   constructor(
@@ -96,7 +96,7 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   initFilterForm(): void {
-    this.filterControl = new FormControl();
+    this.filterControl = new UntypedFormControl();
     this.filterControl.valueChanges
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe({
