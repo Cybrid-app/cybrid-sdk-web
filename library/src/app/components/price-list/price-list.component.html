@@ -6,7 +6,7 @@
   <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
     <ng-container *ngIf="(isLoading$ | async) !== true">
       <ng-container>
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="outline">
           <mat-label>{{ 'priceList.table.filter' | translate }}</mat-label>
           <input
             part="input"
