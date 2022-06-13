@@ -2,6 +2,10 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 @import '../../../../../src/shared/styles/theme.scss';
 
+.tab-wrapper {
+  margin-top: calc(1rem + 0.25em);
+}
+
 .code {
   @extend .mat-hint;
   @extend .mat-h5;
