@@ -12,26 +12,8 @@ executors:
     docker:
       - image: 'cypress/base:17.8.0'
 
-parameters:
-  GHA_Event:
-    type: string
-    default: ''
-  GHA_Actor:
-    type: string
-    default: ''
-  GHA_Action:
-    type: string
-    default: ''
-  GHA_Meta:
-    type: string
-    default: ''
-
 workflows:
   web-build-and-test:
-    when:
-      and:
-        # check for default parameter to ensure that the workflow is not triggered from gitHub actions
-        - equal: [ '', << pipeline.parameters.GHA_Event >> ]
     jobs:
       - node/test:
           name: test
@@ -58,6 +40,7 @@ workflows:
                 command: |
                   npm audit
                 name: Audit
+
       - cypress/run:
           name: e2e
           executor: cypress
@@ -65,15 +48,10 @@ workflows:
           wait-on: http://localhost:4200
           store_artifacts: true
 
-  web-publish:
-    when:
-      and:
-        - equal: ['release', << pipeline.parameters.GHA_Event >>]
-    jobs:
       - node/run:
           name: publish
           requires:
-            - cypress/run
+            - e2e
           version: 16.14.2-browsers
           npm-run: package:library
           post-steps:
