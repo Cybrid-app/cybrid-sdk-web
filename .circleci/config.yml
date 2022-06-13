@@ -48,11 +48,21 @@ workflows:
           wait-on: http://localhost:4200
           store_artifacts: true
 
+  publish:
+    when:
+      and: [ main, << pipeline.git.branch >> ]
+    jobs:
+      - cypress/run:
+          name: e2e
+          executor: cypress
+          start: npm start
+          wait-on: http://localhost:4200
+          store_artifacts: true
+
       - node/run:
-          name: publish
           requires:
             - e2e
-          version: 16.14.2-browsers
+          name: publish
           npm-run: package:library
           post-steps:
             - jq/install
