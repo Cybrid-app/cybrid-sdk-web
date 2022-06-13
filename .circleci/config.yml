@@ -50,7 +50,8 @@ workflows:
 
   publish:
     when:
-      and: [ main, << pipeline.git.branch >> ]
+      and:
+        - equal: [ main, << pipeline.git.branch >> ]
     jobs:
       - cypress/run:
           name: e2e
