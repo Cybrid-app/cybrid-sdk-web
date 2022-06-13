@@ -10,7 +10,7 @@ orbs:
 executors:
   cypress:
     docker:
-      - image: 'cypress/base:16.14.2'
+      - image: 'cypress/base:17.8.0'
 
 parameters:
   GHA_Event:
