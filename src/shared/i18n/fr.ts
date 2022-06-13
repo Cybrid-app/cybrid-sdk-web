@@ -15,7 +15,6 @@ export default {
     currency: 'Devise',
     buy: 'Acheter',
     sell: 'Vendre',
-    swap: 'Échanger',
     error: 'Nombre positif requis'
   },
   fatal: "Une erreur irrécupérable s'est produite"

@@ -40,7 +40,6 @@ import { AssetPipe } from '../../../../../src/shared/pipes/asset.pipe';
 import { compareObjects } from '../../../../../src/shared/utility/compare-object';
 import { symbolSplit } from '../../../../../src/shared/utility/symbol-split';
 import { symbolBuild } from '../../../../../src/shared/utility/symbol-build';
-import { TradeBankModel } from '@cybrid/cybrid-api-bank-angular/model/trade';
 import SideEnum = PostQuoteBankModel.SideEnum;
 
 interface Quote {
@@ -48,6 +47,7 @@ interface Quote {
   counterAsset: AssetBankModel;
   amount: number;
   value: number;
+  side: SideEnum;
 }
 
 @Component({
@@ -74,10 +74,10 @@ export class TradeComponent implements OnInit, OnDestroy {
     asset: Constants.ASSET,
     counterAsset: Constants.COUNTER_ASSET,
     amount: 0,
-    value: 0
+    value: 0,
+    side: SideEnum.Buy
   };
 
-  side: TradeBankModel.SideEnum = SideEnum.Buy;
   input: AssetBankModel.TypeEnum = 'fiat';
 
   quote$ = new BehaviorSubject<Quote>(this.quote);
@@ -249,6 +249,19 @@ export class TradeComponent implements OnInit, OnDestroy {
           );
           amount!.patchValue(displayValue);
         }
+        break;
+      }
+    }
+  }
+
+  onSwitchSide(tab: string): void {
+    switch (tab) {
+      case 'Buy': {
+        this.quote.side = 'buy';
+        break;
+      }
+      case 'Sell': {
+        this.quote.side = 'sell';
         break;
       }
     }

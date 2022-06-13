@@ -105,8 +105,8 @@ describe('TradeComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TradeComponent);
     component = fixture.componentInstance;
-    component.isLoading$.next(false);
     fixture.detectChanges();
+    component.isLoading$.next(false);
   });
 
   it('should create', () => {
@@ -194,5 +194,21 @@ describe('TradeComponent', () => {
     expect(component.quote.amount).toEqual(1000);
     component.onSwitchInput();
     expect(component.quote.amount).toEqual(10);
+  });
+
+  it('should not switch the input if there is no amount specified', () => {
+    component.ngOnInit();
+    expect(component.quote.amount).toBeNull();
+    component.onSwitchInput();
+    expect(component.quote.amount).toBeNull();
+  });
+
+  it('should switch sides of the trade', () => {
+    component.ngOnInit();
+    expect(component.quote.side).toEqual('buy'); // Default starts on 'Buy'
+    component.onSwitchSide('Sell');
+    expect(component.quote.side).toEqual('sell');
+    component.onSwitchSide('Buy');
+    expect(component.quote.side).toEqual('buy');
   });
 });

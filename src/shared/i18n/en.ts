@@ -15,7 +15,6 @@ export default {
     currency: 'Currency',
     buy: 'Buy',
     sell: 'Sell',
-    swap: 'Swap',
     error: 'Positive number required'
   },
   fatal: 'An unrecoverable error occurred'
