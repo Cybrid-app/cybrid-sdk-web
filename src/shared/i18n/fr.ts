@@ -13,7 +13,9 @@ export default {
   trade: {
     amount: 'Montant',
     currency: 'Devise',
-    getQuote: 'Acheter',
+    buy: 'Acheter',
+    sell: 'Vendre',
+    swap: 'Échanger',
     error: 'Nombre positif requis'
   },
   fatal: "Une erreur irrécupérable s'est produite"

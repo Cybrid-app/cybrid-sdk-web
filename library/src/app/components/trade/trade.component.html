@@ -6,17 +6,22 @@
   <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
     <ng-container *ngIf="(isLoading$ | async) !== true">
       <mat-tab-group animationDuration="0ms">
-        <mat-tab label="Buy">
-          <ng-container [formGroup]="quoteGroup" *ngIf="quote$ | async as quote">
+        <mat-tab label="{{ 'trade.buy' | translate }}">
+          <ng-container
+            [formGroup]="quoteGroup"
+            *ngIf="quote$ | async as quote"
+          >
             <div fxLayout="column" fxLayoutAlign="center" class="tab-wrapper">
               <mat-form-field appearance="outline">
                 <mat-label>
                   <span>{{ 'trade.amount' | translate }}</span>
                   <span class="code">
-                {{
-                    input === 'fiat' ? quote.asset.code : quote.counterAsset.code
+                    {{
+                      input === 'fiat'
+                        ? quote.asset.code
+                        : quote.counterAsset.code
                     }}
-              </span>
+                  </span>
                 </mat-label>
                 <input
                   matInput
@@ -38,7 +43,10 @@
               </mat-form-field>
               <mat-form-field appearance="outline">
                 <mat-label>{{ 'trade.currency' | translate }}</mat-label>
-                <mat-select [compareWith]="compareObjects" formControlName="asset">
+                <mat-select
+                  [compareWith]="compareObjects"
+                  formControlName="asset"
+                >
                   <mat-option
                     *ngFor="let asset of filteredAssetList"
                     [value]="asset"
@@ -56,34 +64,40 @@
                 <ng-container *ngIf="!amount.value">
                   <span> 1 </span>
                   <span class="code">
-                {{ quote.asset.code }}
-              </span>
+                    {{ quote.asset.code }}
+                  </span>
                   <span>=</span>
                   <span>
-                {{
-                    price.buy_price!
-                      | asset: quote.counterAsset:'trade'
-                      | currency
+                    {{
+                      price.buy_price!
+                        | asset: quote.counterAsset:'trade'
+                        | currency
                     }}
-              </span>
+                  </span>
                   <span class="code">{{ ' ' + quote.counterAsset.code }}</span>
                 </ng-container>
                 <ng-container *ngIf="amount.value">
-              <span>
-                {{
-                input === 'fiat'
-                  ? (quote.value | asset: quote.counterAsset)
-                  : quote.amount
-                }}
-              </span>
-                  <span class="code">
-                {{
-                    input === 'fiat' ? quote.counterAsset.code : quote.asset.code
+                  <span>
+                    {{
+                      input === 'fiat'
+                        ? (quote.value | asset: quote.counterAsset)
+                        : quote.amount
                     }}
-              </span>
+                  </span>
+                  <span class="code">
+                    {{
+                      input === 'fiat'
+                        ? quote.counterAsset.code
+                        : quote.asset.code
+                    }}
+                  </span>
                 </ng-container>
                 <div fxFlex="1 0 auto"></div>
-                <button mat-icon-button color="primary" (click)="onSwitchInput()">
+                <button
+                  mat-icon-button
+                  color="primary"
+                  (click)="onSwitchInput()"
+                >
                   <mat-icon>swap_vert</mat-icon>
                 </button>
               </div>
@@ -92,16 +106,16 @@
                 mat-flat-button
                 color="primary"
                 [disabled]="
-              !quoteGroup.valid || !(amount.value.toString().length > 0)
-            "
+                  !quoteGroup.valid || !(amount.value.toString().length > 0)
+                "
               >
-                {{ 'trade.getQuote' | translate }}
+                {{ 'trade.buy' | translate }}
               </button>
             </div>
           </ng-container>
         </mat-tab>
-        <mat-tab label="Sell"></mat-tab>
-        <mat-tab label="Swap"></mat-tab>
+        <mat-tab label="{{ 'trade.sell' | translate }}"></mat-tab>
+        <mat-tab label="{{ 'trade.swap' | translate }}"></mat-tab>
       </mat-tab-group>
     </ng-container>
   </ng-container>

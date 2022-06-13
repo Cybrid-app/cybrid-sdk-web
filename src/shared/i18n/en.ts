@@ -13,7 +13,9 @@ export default {
   trade: {
     amount: 'Amount',
     currency: 'Currency',
-    getQuote: 'Buy',
+    buy: 'Buy',
+    sell: 'Sell',
+    swap: 'Swap',
     error: 'Positive number required'
   },
   fatal: 'An unrecoverable error occurred'
