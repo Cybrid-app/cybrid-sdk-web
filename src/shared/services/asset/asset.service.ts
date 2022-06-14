@@ -3,14 +3,7 @@ import {
   AssetListBankModel,
   AssetsService
 } from '@cybrid/cybrid-api-bank-angular';
-import {
-  map,
-  Observable,
-  Subject,
-  switchMap,
-  catchError,
-  of,
-} from 'rxjs';
+import { map, Observable, Subject, switchMap, catchError, of } from 'rxjs';
 import { CODE, EventService, LEVEL } from '../event/event.service';
 import { ErrorService } from '../error/error.service';
 import { AssetBankModel } from '@cybrid/cybrid-api-bank-angular/model/asset';
