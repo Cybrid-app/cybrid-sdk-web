@@ -6,21 +6,31 @@ import {
 import {
   map,
   Observable,
+  Subject,
   switchMap,
   catchError,
   of,
-  ReplaySubject
 } from 'rxjs';
 import { CODE, EventService, LEVEL } from '../event/event.service';
 import { ErrorService } from '../error/error.service';
 import { AssetBankModel } from '@cybrid/cybrid-api-bank-angular/model/asset';
 import { AuthService } from '../auth/auth.service';
+import { Constants } from '../../constants/constants';
+
+export interface Asset extends AssetBankModel {
+  type: AssetBankModel.TypeEnum;
+  code: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  url: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AssetService {
-  assetList$ = new ReplaySubject<Array<AssetBankModel>>(1);
+  assetList$ = new Subject<Array<AssetBankModel>>();
   assetList: Array<AssetBankModel> = [];
 
   constructor(
@@ -38,8 +48,18 @@ export class AssetService {
       .pipe(
         switchMap(() => this.assetsService.listAssets()),
         map((list: AssetListBankModel) => {
-          this.assetList$.next(list.objects);
-          this.assetList = list.objects;
+          const assetList = list.objects.map((asset: AssetBankModel) => {
+            return {
+              type: asset.type,
+              code: asset.code,
+              name: asset.name,
+              symbol: asset.symbol,
+              decimals: asset.decimals,
+              url: Constants.ICON_HOST + asset.code.toLowerCase() + '.svg'
+            };
+          });
+          this.assetList$.next(assetList);
+          this.assetList = assetList;
         }),
         catchError((err) => {
           this.eventService.handleEvent(
