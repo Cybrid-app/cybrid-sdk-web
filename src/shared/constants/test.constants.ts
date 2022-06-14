@@ -29,6 +29,11 @@ export class TestConstants {
     symbol: '$',
     type: 'fiat'
   };
+  static ASSETS: AssetBankModel[] = [
+    TestConstants.BTC_ASSET,
+    TestConstants.ETH_ASSET,
+    TestConstants.CAD_ASSET
+  ];
   static SYMBOL_PRICE: SymbolPrice = {
     asset: TestConstants.BTC_ASSET,
     counter_asset: TestConstants.BTC_ASSET,
@@ -40,9 +45,9 @@ export class TestConstants {
     sell_price_last_updated_at: ''
   };
   static SYMBOL_PRICE_BANK_MODEL: SymbolPriceBankModel = {
-    symbol: 'BTC-USD',
-    buy_price: 0,
-    sell_price: 0,
+    symbol: 'BTC-CAD',
+    buy_price: 1,
+    sell_price: 1,
     buy_price_last_updated_at: '',
     sell_price_last_updated_at: ''
   };

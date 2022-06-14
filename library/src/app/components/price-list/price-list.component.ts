@@ -40,6 +40,7 @@ import {
 } from '../../../../../src/shared/services/config/config.service';
 import { AssetService } from '../../../../../src/shared/services/asset/asset.service';
 import { Constants } from '../../../../../src/shared/constants/constants';
+import { Router } from '@angular/router';
 
 export interface SymbolPrice extends SymbolPriceBankModel {
   asset: AssetBankModel;
@@ -72,6 +73,7 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
     public configService: ConfigService,
     private assetService: AssetService,
     private pricesService: PricesService,
+    private router: Router,
     private chdRef: ChangeDetectorRef
   ) {}
 

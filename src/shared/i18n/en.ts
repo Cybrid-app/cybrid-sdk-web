@@ -7,8 +7,15 @@ export default {
       filter: 'Search for crypto currency'
     },
     error: 'Error fetching coins',
-    fatal: 'An unrecoverable error occurred',
     empty: 'No coins found',
     refreshButton: 'Refresh'
-  }
+  },
+  trade: {
+    amount: 'Amount',
+    currency: 'Currency',
+    buy: 'Buy',
+    sell: 'Sell',
+    error: 'Positive number required'
+  },
+  fatal: 'An unrecoverable error occurred'
 };

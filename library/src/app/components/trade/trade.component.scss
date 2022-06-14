@@ -1,0 +1,28 @@
+@use '@angular/material' as mat;
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import '../../../../../src/shared/styles/theme.scss';
+
+.tab-wrapper {
+  margin-top: calc(1rem + 0.25em);
+}
+
+.code {
+  @extend .mat-hint;
+  @extend .mat-h5;
+  color: inherit;
+  margin: 2px 0 0 0;
+  line-height: 0.8rem;
+}
+
+.hint {
+  margin-left: 3px;
+}
+
+.price {
+  align-self: center;
+  margin-bottom: 0;
+}
+
+.align-end {
+  align-self: end;
+}

@@ -44,35 +44,60 @@ export class AssetPipe implements PipeTransform, OnDestroy {
       .subscribe();
   }
 
-  transform(value: string | number, asset: AssetBankModel): string {
+  transform(
+    value: string | number,
+    asset: AssetBankModel,
+    unit: 'trade' | 'base' | 'formatted' = 'formatted'
+  ): string | number {
     const divisor = new Big(10).pow(asset.decimals);
-    const baseUnit = new Big(value).div(divisor);
-    if (baseUnit.toString().includes('.')) {
-      let separator = this.separator.find((value) => {
-        return value.locale == this.locale;
-      });
-      let integer = baseUnit.toString().split('.')[0];
-      let decimal = baseUnit.toString().split('.')[1];
-      if (decimal.length < Constants.MIN_FRACTION_DIGITS) {
-        decimal += '0';
+    const tradeUnit = new Big(value).div(divisor);
+    const baseUnit = new Big(value).mul(divisor);
+
+    switch (unit) {
+      case 'trade': {
+        return tradeUnit.toNumber();
       }
-      return (
-        asset.symbol +
-        formatNumber(new Big(integer).toNumber(), this.locale) +
-        separator!.char +
-        decimal
-      );
-    } else {
-      const digitsInfo =
-        Constants.MIN_INTEGER_DIGITS.toString() +
-        '.' +
-        Constants.MIN_FRACTION_DIGITS.toString() +
-        '-' +
-        asset.decimals.toString();
-      return (
-        asset.symbol +
-        formatNumber(baseUnit.toNumber(), this.locale, digitsInfo)
-      );
+      case 'base': {
+        return baseUnit.toNumber();
+      }
+      case 'formatted': {
+        if (tradeUnit.toString().includes('.')) {
+          let separator = this.separator.find((value) => {
+            return value.locale == this.locale;
+          });
+          let integer = tradeUnit.toString().split('.')[0];
+          let decimal = tradeUnit.toString().split('.')[1];
+          if (decimal.length < Constants.MIN_FRACTION_DIGITS) {
+            decimal += '0';
+          }
+          if (asset.type == 'fiat') {
+            return (
+              asset.symbol +
+              formatNumber(new Big(integer).toNumber(), this.locale) +
+              separator!.char +
+              decimal.slice(0, 2)
+            );
+          } else {
+            return (
+              asset.symbol +
+              formatNumber(new Big(integer).toNumber(), this.locale) +
+              separator!.char +
+              decimal
+            );
+          }
+        } else {
+          const digitsInfo =
+            Constants.MIN_INTEGER_DIGITS.toString() +
+            '.' +
+            Constants.MIN_FRACTION_DIGITS.toString() +
+            '-' +
+            asset.decimals.toString();
+          return (
+            asset.symbol +
+            formatNumber(tradeUnit.toNumber(), this.locale, digitsInfo)
+          );
+        }
+      }
     }
   }
 }

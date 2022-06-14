@@ -25,13 +25,13 @@ import { SharedModule } from '../../../../../src/shared/modules/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 
 // Testing
-import { expect } from '@angular/flex-layout/_private-utils/testing';
 import { of, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { AssetService } from '../../../../../src/shared/services/asset/asset.service';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { HttpLoaderFactory } from '../../modules/library.module';
 import { TestConstants } from '../../../../../src/shared/constants/test.constants';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('ListComponent', () => {
   let MockAuthService = jasmine.createSpyObj('AuthService', [
@@ -63,6 +63,7 @@ describe('ListComponent', () => {
         HttpClientTestingModule,
         SharedModule,
         ReactiveFormsModule,
+        RouterTestingModule,
         TranslateModule.forRoot({
           loader: {
             provide: TranslateLoader,

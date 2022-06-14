@@ -6,7 +6,7 @@
   <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
     <ng-container *ngIf="(isLoading$ | async) !== true">
       <ng-container>
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="outline">
           <mat-label>{{ 'priceList.table.filter' | translate }}</mat-label>
           <input
             part="input"
@@ -67,7 +67,7 @@
           </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr class="pointer" mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         <tr class="mat-row" *matNoDataRow>
           <td part="td" id="warning" class="mat-cell no-data" colspan="2">
             {{
@@ -84,7 +84,7 @@
     <mat-card>
       <mat-card-content>
         <div fxLayout="column" fxLayoutAlign="center center">
-          <p>{{ 'priceList.fatal' | translate }}</p>
+          <p>{{ 'fatal' | translate }}</p>
         </div>
       </mat-card-content>
     </mat-card>

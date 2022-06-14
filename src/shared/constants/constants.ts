@@ -1,9 +1,13 @@
+import { AssetBankModel } from '@cybrid/cybrid-api-bank-angular';
+
 export enum THEME {
   LIGHT = 'LIGHT',
   DARK = 'DARK'
 }
 
 export class Constants {
+  static REPO_URL =
+    'https://api.github.com/repos/Cybrid-app/cybrid-sdk-web/releases/latest';
   // The number of times to retry a failed http request
   static RETRY = 3;
   // How often to request new data
@@ -16,4 +20,18 @@ export class Constants {
   static MIN_FRACTION_DIGITS = 2;
   static THEME = THEME.LIGHT;
   static ICON_HOST = 'https://images.cybrid.xyz/color/';
+  static COUNTER_ASSET: AssetBankModel = {
+    type: 'fiat',
+    code: 'CAD',
+    name: 'Canadian Dollar',
+    symbol: '$',
+    decimals: 2
+  };
+  static ASSET: AssetBankModel = {
+    type: 'crypto',
+    code: 'BTC',
+    name: 'Bitcoin',
+    symbol: '₿',
+    decimals: 8
+  };
 }

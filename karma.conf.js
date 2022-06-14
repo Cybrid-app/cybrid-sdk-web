@@ -22,7 +22,7 @@ module.exports = function (config) {
       suppressAll: false // removes the duplicated traces
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/shell'),
+      dir: require('path').join(__dirname, './coverage/demo'),
       subdir: '.',
       reporters: [{ type: 'lcov' }],
       check: {

@@ -5,6 +5,7 @@ export default defineConfig({
   screenshotsFolder: 'cypress/screenshots',
   fixturesFolder: 'cypress/fixtures',
   chromeWebSecurity: false,
+  includeShadowDom: true,
   env: {
     CLIENT_ID: '',
     CLIENT_SECRET: ''

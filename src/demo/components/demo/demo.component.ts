@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { AppComponent } from '../../../../library/src/app/components/app/app.component';
-import { TokenService } from '../../services/token/token.service';
+import { ConfigService } from '../../services/config/config.service';
 import { BehaviorSubject, map, take } from 'rxjs';
 
 @Component({
@@ -13,7 +13,7 @@ export class DemoComponent implements OnInit {
   public viewContainer!: ViewContainerRef;
   loading$ = new BehaviorSubject(true);
 
-  constructor(public tokenService: TokenService) {}
+  constructor(public tokenService: ConfigService) {}
 
   ngOnInit(): void {
     this.initDemo();
