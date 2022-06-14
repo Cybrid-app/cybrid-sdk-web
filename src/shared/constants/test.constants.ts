@@ -55,5 +55,5 @@ export class TestConstants {
     locale: 'en-US',
     theme: 'LIGHT'
   };
-  static ICON_URL: string = 'https://images.cybrid.xyz/color/eth.svg'
+  static ICON_URL: string = 'https://images.cybrid.xyz/color/eth.svg';
 }
