@@ -5,9 +5,8 @@ import {
   tick
 } from '@angular/core/testing';
 
-import { AssetService } from './asset.service';
+import { Asset, AssetService } from './asset.service';
 import {
-  AssetBankModel,
   AssetListBankModel,
   AssetsService
 } from '@cybrid/cybrid-api-bank-angular';
@@ -16,15 +15,17 @@ import { EventService } from '../event/event.service';
 import { ErrorService } from '../error/error.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { of, throwError } from 'rxjs';
+import { TestConstants } from '../../constants/test.constants';
 
 describe('AssetService', () => {
   let assetService: AssetService;
-  const testAssetModel: AssetBankModel = {
+  const testAssetModel: Asset = {
     type: 'crypto',
     code: 'ETH',
     name: 'Ethereum',
     decimals: 18,
-    symbol: ''
+    symbol: '',
+    url: TestConstants.ICON_URL
   };
   const testAssetList: AssetListBankModel = {
     total: 0,

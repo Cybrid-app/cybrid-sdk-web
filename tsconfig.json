@@ -18,12 +18,22 @@
     "target": "es2020",
     "module": "es2020",
     "lib": ["es2020", "dom"],
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
-  }
+  },
+  "include": [
+    "src/main.ts",
+    "src/polyfills.ts",
+    "node_modules/cypress"
+  ],
+  "exclude": [
+    "**/*.spec.ts",
+    "src/test.ts",
+    "node_modules/cypress",
+  ]
 }

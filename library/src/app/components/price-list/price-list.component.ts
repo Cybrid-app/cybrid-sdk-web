@@ -39,13 +39,10 @@ import {
   ConfigService
 } from '../../../../../src/shared/services/config/config.service';
 import { AssetService } from '../../../../../src/shared/services/asset/asset.service';
-import { Constants } from '../../../../../src/shared/constants/constants';
-import { Router } from '@angular/router';
 
 export interface SymbolPrice extends SymbolPriceBankModel {
   asset: AssetBankModel;
   counter_asset: AssetBankModel;
-  icon_url: string;
 }
 
 @Component({
@@ -73,7 +70,6 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
     public configService: ConfigService,
     private assetService: AssetService,
     private pricesService: PricesService,
-    private router: Router,
     private chdRef: ChangeDetectorRef
   ) {}
 
@@ -132,8 +128,6 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
               const symbol: SymbolPrice = {
                 asset: this.assetService.getAsset(asset),
                 counter_asset: this.assetService.getAsset(counter_asset),
-                icon_url:
-                  Constants.ICON_HOST + asset.toString().toLowerCase() + '.svg',
                 symbol: model.symbol,
                 buy_price: model.buy_price,
                 sell_price: model.sell_price,

@@ -25,7 +25,6 @@ import {
   ComponentConfig,
   ConfigService
 } from '../../../../../src/shared/services/config/config.service';
-import { expect } from '@angular/flex-layout/_private-utils/testing';
 import { of, throwError } from 'rxjs';
 
 describe('AppComponent', () => {

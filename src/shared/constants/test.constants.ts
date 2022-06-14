@@ -37,7 +37,6 @@ export class TestConstants {
   static SYMBOL_PRICE: SymbolPrice = {
     asset: TestConstants.BTC_ASSET,
     counter_asset: TestConstants.BTC_ASSET,
-    icon_url: 'https://images.cybrid.xyz/color/btc.svg',
     symbol: 'BTC-USD',
     buy_price: 0,
     sell_price: 0,
@@ -56,4 +55,5 @@ export class TestConstants {
     locale: 'en-US',
     theme: 'LIGHT'
   };
+  static ICON_URL: string = 'https://images.cybrid.xyz/color/eth.svg';
 }

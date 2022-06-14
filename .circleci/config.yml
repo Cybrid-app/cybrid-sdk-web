@@ -64,6 +64,7 @@ workflows:
           requires:
             - e2e
           name: publish
+          override-ci-command: npm install --legacy-peer-deps
           npm-run: package:library
           post-steps:
             - jq/install
