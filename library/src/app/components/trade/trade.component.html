@@ -6,21 +6,20 @@
   <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
     <ng-container *ngIf="(isLoading$ | async) !== true">
       <mat-tab-group
-        #tabGroup
         animationDuration="0ms"
         (selectedTabChange)="onSwitchSide($event.tab.textLabel)"
       >
         <mat-tab label="{{ 'trade.buy' | translate }}"> </mat-tab>
         <mat-tab label="{{ 'trade.sell' | translate }}"></mat-tab>
       </mat-tab-group>
-      <ng-container [formGroup]="quoteGroup" *ngIf="quote$ | async as quote">
-        <div class="tab-wrapper">
+      <ng-container [formGroup]="quoteGroup">
+        <div fxLayout="column" fxLayoutAlign="center" class="tab-wrapper">
           <mat-form-field appearance="outline">
             <mat-label>
               <span>{{ 'trade.amount' | translate }}</span>
               <span class="code">
                 {{
-                  input === 'fiat' ? quote.asset.code : quote.counterAsset.code
+                  input === 'receive_amount' ? asset.code : counterAsset.code
                 }}
               </span>
             </mat-label>
@@ -42,6 +41,14 @@
             </button>
             <mat-error>{{ 'trade.error' | translate }}</mat-error>
           </mat-form-field>
+          <button
+            class="switch"
+            mat-icon-button
+            color="primary"
+            (click)="onSwitchInput()"
+          >
+            <mat-icon>swap_vert</mat-icon>
+          </button>
           <mat-form-field appearance="outline">
             <mat-label>{{ 'trade.currency' | translate }}</mat-label>
             <mat-select [compareWith]="compareObjects" formControlName="asset">
@@ -53,50 +60,48 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-          <div class="hint">
+          <div
+            class="hint"
+            fxLayout="row"
+            fxLayoutAlign="start center"
+            fxLayoutGap="0.25rem"
+          >
             <ng-container *ngIf="!amount.value">
               <span> 1 </span>
               <span class="code">
-                {{ quote.asset.code }}
+                {{ asset.code }}
               </span>
               <span>=</span>
               <span>
-                {{
-                  price.buy_price!
-                    | asset: quote.counterAsset:'trade'
-                    | currency
-                }}
+                {{ price.buy_price! | asset: counterAsset:'trade' | currency }}
               </span>
-              <span class="code">{{ ' ' + quote.counterAsset.code }}</span>
+              <span class="code">{{ ' ' + counterAsset.code }}</span>
             </ng-container>
             <ng-container *ngIf="amount.value">
               <span>
                 {{
-                  input === 'fiat'
-                    ? (quote.value | asset: quote.counterAsset)
-                    : quote.amount
+                  input === 'receive_amount'
+                    ? (display.value | asset: counterAsset)
+                    : display.amount
                 }}
               </span>
               <span class="code">
                 {{
-                  input === 'fiat' ? quote.counterAsset.code : quote.asset.code
+                  input === 'receive_amount' ? counterAsset.code : asset.code
                 }}
               </span>
             </ng-container>
-            <div class="spacer"></div>
-            <button mat-icon-button color="primary" (click)="onSwitchInput()">
-              <mat-icon>swap_vert</mat-icon>
-            </button>
           </div>
           <button
-            class="action"
+            class="align-end"
             mat-flat-button
             color="primary"
             [disabled]="
               !quoteGroup.valid || !(amount.value.toString().length > 0)
             "
+            (click)="onTrade()"
           >
-            {{ quote.side.toString() | translate | titlecase }}
+            {{ postQuoteBankModel.side.toString() | translate | titlecase }}
           </button>
         </div>
       </ng-container>
@@ -105,7 +110,7 @@
   <ng-template #error>
     <mat-card>
       <mat-card-content>
-        <div class="fatal">
+        <div fxLayout="column" fxLayoutAlign="center center">
           <p>{{ 'fatal' | translate }}</p>
         </div>
       </mat-card-content>

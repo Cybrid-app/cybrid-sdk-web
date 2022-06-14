@@ -11,6 +11,7 @@ export interface ComponentConfig {
   refreshInterval: number;
   locale: string;
   theme: string;
+  customer: string; // Temporary solution until the JWT embeds a customer GUID
 }
 
 @Injectable({
@@ -20,7 +21,8 @@ export class ConfigService implements OnDestroy {
   defaultConfig: ComponentConfig = {
     refreshInterval: Constants.REFRESH_INTERVAL,
     locale: Constants.LOCALE,
-    theme: Constants.THEME
+    theme: Constants.THEME,
+    customer: ''
   };
   config$: BehaviorSubject<ComponentConfig> =
     new BehaviorSubject<ComponentConfig>(this.defaultConfig);

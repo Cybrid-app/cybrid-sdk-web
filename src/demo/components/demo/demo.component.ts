@@ -26,6 +26,12 @@ export class DemoComponent implements OnInit {
         map((token) => {
           const elementRef = this.viewContainer.createComponent(AppComponent);
           elementRef.instance.auth = token;
+          elementRef.instance.hostConfig = {
+            refreshInterval: 50000,
+            locale: 'en-US',
+            theme: 'LIGHT',
+            customer: '378c691c1b5ba3b938e17c1726202fe4'
+          };
         })
       )
       .subscribe(() => {

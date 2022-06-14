@@ -3,9 +3,6 @@
 @import '../../../../../src/shared/styles/theme.scss';
 
 .tab-wrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   margin-top: calc(1rem + 0.25em);
 }
 
@@ -18,12 +15,13 @@
 }
 
 .hint {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 0.25rem;
+  min-height: 1rem;
   margin-left: 3px;
+}
+
+.switch {
+  align-self: end;
+  margin-top: -1rem;
 }
 
 .price {
@@ -31,17 +29,6 @@
   margin-bottom: 0;
 }
 
-.spacer {
-  flex: 1 0 auto;
-}
-
-.action {
-  align-self: flex-end;
-}
-
-.fatal {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+.align-end {
+  align-self: end;
 }
