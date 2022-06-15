@@ -26,10 +26,6 @@ workflows:
                   google-chrome --version
                   chromedriver --version
                 name: Check install
-            - run:
-                command: |
-                  npm install
-                name: Update package-lock.json
           post-steps:
             - codecov/upload
             - run:

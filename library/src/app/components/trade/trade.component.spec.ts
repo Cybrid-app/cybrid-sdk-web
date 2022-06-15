@@ -204,7 +204,6 @@ describe('TradeComponent', () => {
   });
 
   it('should format the amount', () => {
-    component.getSymbol(); // Set the counter asset code
     component.price.buy_price = 1;
     component.price.sell_price = 2;
     let amount = 10;
@@ -221,7 +220,7 @@ describe('TradeComponent', () => {
     // input = deliver_amount, side = 'sell'
     component.input = 'deliver_amount';
     component.formatAmount(amount);
-    expect(component.postQuoteBankModel.deliver_amount).toEqual(500);
+    expect(component.postQuoteBankModel.deliver_amount).toEqual(50000);
 
     // input = deliver_amount, side = 'buy'
     component.postQuoteBankModel.side = 'buy';

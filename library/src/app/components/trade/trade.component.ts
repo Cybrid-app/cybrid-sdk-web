@@ -177,8 +177,8 @@ export class TradeComponent implements OnInit, OnDestroy {
             this.counterAsset.code
           );
         }
-        this.formatAmount(value.amount);
         this.getPrice();
+        this.formatAmount(value.amount);
       });
   }
 
@@ -260,13 +260,17 @@ export class TradeComponent implements OnInit, OnDestroy {
               'base'
             ) as number;
           } else {
-            const value = this.assetPipe.transform(
-              amount,
-              this.counterAsset,
+            const value =
+              (this.assetPipe.transform(
+                amount,
+                this.counterAsset,
+                'base'
+              ) as number) / this.price.sell_price!;
+            this.postQuoteBankModel.deliver_amount = this.assetPipe.transform(
+              value,
+              this.asset,
               'base'
             ) as number;
-            this.postQuoteBankModel.deliver_amount =
-              value / this.price.sell_price!;
           }
           break;
         }
@@ -331,6 +335,7 @@ export class TradeComponent implements OnInit, OnDestroy {
         break;
       }
     }
+    this.formatAmount(amount.value);
     this.getPrice();
   }
 

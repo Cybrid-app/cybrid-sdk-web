@@ -136,7 +136,7 @@
               <span>
                 {{
                   input === 'receive_amount'
-                    ? (display.value | asset: counterAsset)
+                    ? (display.value | asset: counterAsset:'trade' | currency)
                     : display.amount
                 }}
               </span>
