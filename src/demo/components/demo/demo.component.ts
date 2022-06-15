@@ -27,7 +27,7 @@ export class DemoComponent implements OnInit {
           const elementRef = this.viewContainer.createComponent(AppComponent);
           elementRef.instance.auth = token;
           elementRef.instance.hostConfig = {
-            refreshInterval: 50000,
+            refreshInterval: 2000,
             locale: 'en-US',
             theme: 'LIGHT',
             customer: '378c691c1b5ba3b938e17c1726202fe4'
