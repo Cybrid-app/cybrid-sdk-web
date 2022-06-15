@@ -28,7 +28,6 @@ import { EventService } from '../../../../../src/shared/services/event/event.ser
 import { ErrorService } from '../../../../../src/shared/services/error/error.service';
 import { ConfigService } from '../../../../../src/shared/services/config/config.service';
 import { MatDialog } from '@angular/material/dialog';
-import { TradeQuoteComponent } from './trade-quote/trade-quote.component';
 
 describe('TradeComponent', () => {
   let component: TradeComponent;
@@ -299,12 +298,5 @@ describe('TradeComponent', () => {
 
     component.onSwitchSide('Sell');
     expect(component.postQuoteBankModel.side).toEqual('sell');
-  });
-
-  it('should should route to the TradeQuoteComponent onTrade()', () => {
-    component.onTrade();
-    expect(MockDialogService.open).toHaveBeenCalledWith(TradeQuoteComponent, {
-      data: component.postQuoteBankModel
-    });
   });
 });

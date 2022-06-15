@@ -35,7 +35,6 @@ import { RetryInterceptor } from '../../../../src/shared/interceptors/auth/retry
 import { AppComponent } from '../components/app/app.component';
 import { PriceListComponent } from '../components/price-list/price-list.component';
 import { TradeComponent } from '../components/trade/trade.component';
-import { TradeQuoteComponent } from '../components/trade/trade-quote/trade-quote.component';
 
 // Utility
 import { environment } from '../../environments/environment';
@@ -47,13 +46,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 }
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    PriceListComponent,
-    TradeComponent,
-    TradeQuoteComponent,
-    AssetPipe
-  ],
+  declarations: [AppComponent, PriceListComponent, TradeComponent, AssetPipe],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

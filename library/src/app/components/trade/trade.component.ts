@@ -39,7 +39,6 @@ import { symbolSplit } from '../../../../../src/shared/utility/symbol-split';
 import { symbolBuild } from '../../../../../src/shared/utility/symbol-build';
 import SideEnum = PostQuoteBankModel.SideEnum;
 import { MatDialog } from '@angular/material/dialog';
-import { TradeQuoteComponent } from './trade-quote/trade-quote.component';
 import { Constants } from '../../../../../src/shared/constants/constants';
 
 @Component({
@@ -356,11 +355,5 @@ export class TradeComponent implements OnInit, OnDestroy {
     }
     this.formatAmount(amount);
     this.getPrice();
-  }
-
-  onTrade(): void {
-    this.dialog.open(TradeQuoteComponent, {
-      data: this.postQuoteBankModel
-    });
   }
 }
