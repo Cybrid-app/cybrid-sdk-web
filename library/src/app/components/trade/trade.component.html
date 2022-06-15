@@ -154,7 +154,6 @@
             [disabled]="
               !quoteGroup.valid || !(amount.value.toString().length > 0)
             "
-            (click)="onTrade()"
           >
             {{ postQuoteBankModel.side.toString() | translate | titlecase }}
           </button>
