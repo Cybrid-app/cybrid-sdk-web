@@ -1,4 +1,3 @@
-/* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
   "compileOnSave": false,
   "compilerOptions": {
@@ -16,10 +15,10 @@
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "importHelpers": true,
-    "target": "es2017",
-    "module": "esnext",
+    "target": "es2020",
+    "module": "es2020",
     "lib": ["es2020", "dom"],
-    "allowSyntheticDefaultImports": true,
+    "allowSyntheticDefaultImports": true
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
@@ -27,5 +26,6 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true
   },
-  "exclude": ["**/*.spec.ts", "src/test.ts"]
+  "include": ["src/main.ts", "src/polyfills.ts", "node_modules/cypress"],
+  "exclude": ["node_modules/cypress"]
 }
