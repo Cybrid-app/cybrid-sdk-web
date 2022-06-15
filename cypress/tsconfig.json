@@ -3,10 +3,8 @@
   "compilerOptions": {
     "sourceMap": false,
     "noEmit": true,
-    "types": ["cypress"],
+    "types": ["cypress", "node"]
   },
-  "include": [
-    "**/*.ts"
-  ],
+  "include": ["**/*.ts"],
   "exclude": []
 }

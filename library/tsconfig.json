@@ -27,4 +27,5 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true
   },
+  "exclude": ["**/*.spec.ts", "src/test.ts"]
 }

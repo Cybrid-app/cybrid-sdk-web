@@ -31,9 +31,6 @@ describe('price-list test', () => {
       .shadow()
       .find('#filter')
       .type('test')
-      .intercept('/api/prices')
-      .as('getPrices')
-      .wait('@getPrices')
       .then(() => {
         cy.get('app-app')
           .shadow()
