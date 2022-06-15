@@ -51,13 +51,68 @@
           </button>
           <mat-form-field appearance="outline">
             <mat-label>{{ 'trade.currency' | translate }}</mat-label>
-            <mat-select [compareWith]="compareObjects" formControlName="asset">
-              <mat-option
-                *ngFor="let asset of filteredAssetList"
-                [value]="asset"
-              >
-                {{ asset.symbol + ' ' + asset.name }}
-              </mat-option>
+            <mat-select
+              #matSelect
+              [compareWith]="compareObjects"
+              formControlName="asset"
+            >
+              <mat-select-trigger>
+                <div
+                  fxLayout="row"
+                  fxLayoutAlign="start center"
+                  fxLayoutGap="0.5rem"
+                >
+                  <img
+                    *ngIf="input === 'receive_amount'"
+                    class="icon"
+                    src="{{ matSelect.value.url }}"
+                    alt="Crypto currency icon"
+                  />
+                  <img
+                    *ngIf="input === 'deliver_amount'"
+                    class="icon"
+                    src="{{
+                      matSelect.value.code === 'USD' ? usd_icon : cad_icon
+                    }}"
+                    alt="Crypto currency icon"
+                  />
+                  <span class="asset-name">{{ matSelect.value.name }}</span>
+                </div>
+              </mat-select-trigger>
+              <ng-container *ngIf="input === 'receive_amount'">
+                <mat-option *ngFor="let asset of cryptoAssets" [value]="asset">
+                  <div
+                    fxLayout="row"
+                    fxLayoutAlign="start center"
+                    fxLayoutGap="0.5rem"
+                  >
+                    <img
+                      class="icon"
+                      src="{{ asset.url }}"
+                      alt="Crypto currency icon"
+                    />
+                    <span class="asset-name">{{ asset.name }}</span>
+                  </div>
+                </mat-option>
+              </ng-container>
+              <ng-container *ngIf="input === 'deliver_amount'">
+                <mat-option *ngFor="let asset of fiatAssets" [value]="asset">
+                  <div
+                    fxLayout="row"
+                    fxLayoutAlign="start center"
+                    fxLayoutGap="0.5rem"
+                  >
+                    <img
+                      class="icon"
+                      src="{{
+                        matSelect.value.code === 'USD' ? usd_icon : cad_icon
+                      }}"
+                      alt="Crypto currency icon"
+                    />
+                    <span class="asset-name">{{ asset.name }}</span>
+                  </div>
+                </mat-option>
+              </ng-container>
             </mat-select>
           </mat-form-field>
           <div

@@ -13,10 +13,7 @@ import { PricesService } from '@cybrid/cybrid-api-bank-angular';
 import { AuthService } from '../../../../../src/shared/services/auth/auth.service';
 import { EventService } from '../../../../../src/shared/services/event/event.service';
 import { ErrorService } from '../../../../../src/shared/services/error/error.service';
-import {
-  ComponentConfig,
-  ConfigService
-} from '../../../../../src/shared/services/config/config.service';
+import { ConfigService } from '../../../../../src/shared/services/config/config.service';
 
 // Modules
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -129,11 +126,7 @@ describe('ListComponent', () => {
     const fixture = TestBed.createComponent(PriceListComponent);
     const component = fixture.componentInstance;
     const getPricesSpy = spyOn(component, 'getPrices');
-    const config: ComponentConfig = {
-      refreshInterval: 5000,
-      locale: 'en-US',
-      theme: 'LIGHT'
-    };
+    const config = TestConstants.CONFIG;
     MockConfigService.getConfig$.and.returnValue(of(config));
     component.refreshData();
     tick(5000);
