@@ -46,7 +46,7 @@
     "@angular-eslint/eslint-plugin-template": "14.0.0-alpha.3",
     "@angular-eslint/schematics": "14.0.0-alpha.3",
     "@angular-eslint/template-parser": "14.0.0-alpha.3",
-    "@angular/cli": "14.0.1",
+    "@angular/cli": "14.0.2",
     "@angular/compiler-cli": "14.0.2",
     "@cypress/schematic": "2.0.0",
     "@types/big.js": "6.1.3",
