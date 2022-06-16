@@ -62,11 +62,6 @@ workflows:
           name: publish
           override-ci-command: npm install --legacy-peer-deps
           version: 16.14.2-browsers
-          setup:
-            - run:
-                command: |
-                  rm -rf package-lock.json
-                name: Remove package-lock
           npm-run: package:library
 #          post-steps:
 #            - jq/install
