@@ -11,7 +11,6 @@ describe('price-list test', () => {
       .get('app-app')
       .should('exist')
       .get('app-list')
-      .shadow()
       .find('#asset')
       .should('contain', 'BTC')
       .and('contain', 'ETH')
