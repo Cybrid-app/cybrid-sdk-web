@@ -24,7 +24,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { expect } from '@angular/flex-layout/_private-utils/testing';
 import { EventService } from '../../../../../src/shared/services/event/event.service';
 import { ErrorService } from '../../../../../src/shared/services/error/error.service';
 import { ConfigService } from '../../../../../src/shared/services/config/config.service';

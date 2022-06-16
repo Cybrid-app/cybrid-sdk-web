@@ -24,7 +24,6 @@
     "@angular/compiler": "14.0.1",
     "@angular/core": "14.0.1",
     "@angular/elements": "14.0.1",
-    "@angular/flex-layout": "github:angular/flex-layout-builds",
     "@angular/forms": "14.0.1",
     "@angular/material": "^14.0.1",
     "@angular/platform-browser": "14.0.1",

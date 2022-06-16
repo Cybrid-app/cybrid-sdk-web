@@ -14,7 +14,7 @@
         <mat-tab label="{{ 'trade.sell' | translate }}"></mat-tab>
       </mat-tab-group>
       <ng-container [formGroup]="quoteGroup" *ngIf="quote$ | async as quote">
-        <div fxLayout="column" fxLayoutAlign="center" class="tab-wrapper">
+        <div class="tab-wrapper">
           <mat-form-field appearance="outline">
             <mat-label>
               <span>{{ 'trade.amount' | translate }}</span>
@@ -53,12 +53,7 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-          <div
-            class="hint"
-            fxLayout="row"
-            fxLayoutAlign="start center"
-            fxLayoutGap="0.25rem"
-          >
+          <div class="hint">
             <ng-container *ngIf="!amount.value">
               <span> 1 </span>
               <span class="code">
@@ -88,13 +83,13 @@
                 }}
               </span>
             </ng-container>
-            <div fxFlex="1 0 auto"></div>
+            <div class="spacer"></div>
             <button mat-icon-button color="primary" (click)="onSwitchInput()">
               <mat-icon>swap_vert</mat-icon>
             </button>
           </div>
           <button
-            class="align-end"
+            class="action"
             mat-flat-button
             color="primary"
             [disabled]="
@@ -110,7 +105,7 @@
   <ng-template #error>
     <mat-card>
       <mat-card-content>
-        <div fxLayout="column" fxLayoutAlign="center center">
+        <div class="fatal">
           <p>{{ 'fatal' | translate }}</p>
         </div>
       </mat-card-content>

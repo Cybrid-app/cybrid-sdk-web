@@ -30,7 +30,6 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
-import { FlexModule } from '@angular/flex-layout';
 import { OverlayModule } from '@angular/cdk/overlay';
 
 @NgModule({
@@ -66,8 +65,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
     MatSortModule,
     MatAutocompleteModule,
     MatButtonToggleModule,
-    OverlayModule,
-    FlexModule
+    OverlayModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

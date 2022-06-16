@@ -37,6 +37,29 @@ table {
   }
 }
 
+.currency-cell {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.currency-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.symbol {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
 .name {
   font-weight: 500;
 }
@@ -46,6 +69,14 @@ table {
   @extend .mat-h5;
   margin: 2px 0 0 0;
   line-height: 0.8rem;
+}
+
+.price-cell {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .fiat {
@@ -63,4 +94,20 @@ table {
 
 .no-data {
   text-align: center;
+}
+
+.fatal {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+@media screen and (max-width: 599px) {
+  .currency-wrapper {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 0;
+  }
 }
