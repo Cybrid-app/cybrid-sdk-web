@@ -25,25 +25,14 @@
             {{ 'priceList.table.symbol' | translate }}
           </th>
           <td part="td" id="asset" mat-cell *matCellDef="let symbol">
-            <div
-              fxLayout="row"
-              fxLayoutAlign="start center"
-              fxLayoutGap="0.5rem"
-            >
+            <div class="currency-cell">
               <img
                 class="icon"
                 src="{{ symbol.asset.url }}"
                 alt="Crypto currency icon"
               />
-              <div
-                fxLayout.lt-sm="column"
-                fxLayout.gt-sm="row"
-                fxLayoutAlign.gt-xs="start center"
-                fxLayoutAlign.xs="start start"
-                fxLayoutGap.gt-xs="0.25rem"
-                fxLayoutGap.xs="0rem"
-              >
-                <div fxLayout="row" fxLayoutAlign="start center">
+              <div class="currency-wrapper">
+                <div class="symbol">
                   <span class="name">{{ symbol.asset.name }}</span>
                 </div>
                 <span class="code">{{ symbol.asset.code }}</span>
@@ -56,11 +45,7 @@
             {{ 'priceList.table.price' | translate }}
           </th>
           <td part="td" id="price" mat-cell *matCellDef="let symbol">
-            <div
-              fxLayout="row"
-              fxLayoutGap="0.25rem"
-              fxLayoutAlign="end center"
-            >
+            <div class="price-cell">
               <span>{{ symbol.buy_price | asset: symbol.counter_asset }} </span>
               <span class="fiat">({{ symbol.counter_asset.code }})</span>
             </div>
@@ -87,7 +72,7 @@
   <ng-template #error>
     <mat-card>
       <mat-card-content>
-        <div fxLayout="column" fxLayoutAlign="center center">
+        <div class="fatal">
           <p>{{ 'fatal' | translate }}</p>
         </div>
       </mat-card-content>

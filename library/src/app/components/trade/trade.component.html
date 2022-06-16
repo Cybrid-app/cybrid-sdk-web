@@ -13,7 +13,7 @@
         <mat-tab label="{{ 'trade.sell' | translate }}"></mat-tab>
       </mat-tab-group>
       <ng-container [formGroup]="quoteGroup">
-        <div fxLayout="column" fxLayoutAlign="center" class="tab-wrapper">
+        <div class="tab-wrapper">
           <mat-form-field appearance="outline">
             <mat-label>
               <span>{{ 'trade.amount' | translate }}</span>
@@ -57,11 +57,7 @@
               formControlName="asset"
             >
               <mat-select-trigger>
-                <div
-                  fxLayout="row"
-                  fxLayoutAlign="start center"
-                  fxLayoutGap="0.5rem"
-                >
+                <div class="option">
                   <img
                     *ngIf="input === 'receive_amount'"
                     class="icon"
@@ -81,11 +77,7 @@
               </mat-select-trigger>
               <ng-container *ngIf="input === 'receive_amount'">
                 <mat-option *ngFor="let asset of cryptoAssets" [value]="asset">
-                  <div
-                    fxLayout="row"
-                    fxLayoutAlign="start center"
-                    fxLayoutGap="0.5rem"
-                  >
+                  <div class="option">
                     <img
                       class="icon"
                       src="{{ asset.url }}"
@@ -97,11 +89,7 @@
               </ng-container>
               <ng-container *ngIf="input === 'deliver_amount'">
                 <mat-option *ngFor="let asset of fiatAssets" [value]="asset">
-                  <div
-                    fxLayout="row"
-                    fxLayoutAlign="start center"
-                    fxLayoutGap="0.5rem"
-                  >
+                  <div class="option">
                     <img
                       class="icon"
                       src="{{
@@ -115,12 +103,7 @@
               </ng-container>
             </mat-select>
           </mat-form-field>
-          <div
-            class="hint"
-            fxLayout="row"
-            fxLayoutAlign="start center"
-            fxLayoutGap="0.25rem"
-          >
+          <div class="hint">
             <ng-container *ngIf="!amount.value">
               <span> 1 </span>
               <span class="code">
@@ -148,7 +131,7 @@
             </ng-container>
           </div>
           <button
-            class="align-end"
+            class="action"
             mat-flat-button
             color="primary"
             [disabled]="
@@ -164,7 +147,7 @@
   <ng-template #error>
     <mat-card>
       <mat-card-content>
-        <div fxLayout="column" fxLayoutAlign="center center">
+        <div class="fatal">
           <p>{{ 'fatal' | translate }}</p>
         </div>
       </mat-card-content>

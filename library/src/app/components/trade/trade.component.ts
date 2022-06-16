@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import {
   AssetBankModel,
   CustomersService,
@@ -44,7 +44,8 @@ import { Constants } from '../../../../../src/shared/constants/constants';
 @Component({
   selector: 'app-trade',
   templateUrl: './trade.component.html',
-  styleUrls: ['./trade.component.scss']
+  styleUrls: ['./trade.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class TradeComponent implements OnInit, OnDestroy {
   compareObjects = compareObjects;

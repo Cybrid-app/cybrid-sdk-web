@@ -1,6 +1,5 @@
 import {
   AfterViewChecked,
-  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   OnDestroy,
@@ -50,8 +49,7 @@ export interface SymbolPrice extends SymbolPriceBankModel {
   selector: 'app-list',
   templateUrl: 'price-list.component.html',
   styleUrls: ['price-list.component.scss'],
-  encapsulation: ViewEncapsulation.ShadowDom,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  encapsulation: ViewEncapsulation.None
 })
 export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
   config$ = this.configService.getConfig$();
