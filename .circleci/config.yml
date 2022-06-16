@@ -45,36 +45,42 @@ workflows:
           store_artifacts: true
 
   publish:
-    when:
-      and:
-        - equal: [ main, << pipeline.git.branch >> ]
+#    when:
+#      and:
+#        - equal: [ main, << pipeline.git.branch >> ]
     jobs:
-      - cypress/run:
-          name: e2e
-          executor: cypress
-          start: npm start
-          wait-on: http://localhost:4200
-          store_artifacts: true
+#      - cypress/run:
+#          name: e2e
+#          executor: cypress
+#          start: npm start
+#          wait-on: http://localhost:4200
+#          store_artifacts: true
 
       - node/run:
-          requires:
-            - e2e
+#          requires:
+#            - e2e
           name: publish
           override-ci-command: npm install --legacy-peer-deps
+          version: 16.14.2-browsers
+          setup:
+            - run:
+                command: |
+                  rm -rf package-lock.json
+                name: Remove package-lock
           npm-run: package:library
-          post-steps:
-            - jq/install
-            - run:
-                name: Update version tag
-                command: |
-                  cd dist/library
-                  export TAG=$(git describe --tags --abbrev=0)
-                  contents="$(jq -r --arg tag "$TAG" '.version = $tag' package.json)" && \
-                  echo "${contents}" > package.json
-            - run:
-                name: Authenticate with registry
-                command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/.npmrc
-            - run:
-                name: Publish library
-                command: |
-                  npm run publish:library
+#          post-steps:
+#            - jq/install
+#            - run:
+#                name: Update version tag
+#                command: |
+#                  cd dist/library
+#                  export TAG=$(git describe --tags --abbrev=0)
+#                  contents="$(jq -r --arg tag "$TAG" '.version = $tag' package.json)" && \
+#                  echo "${contents}" > package.json
+#            - run:
+#                name: Authenticate with registry
+#                command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/.npmrc
+#            - run:
+#                name: Publish library
+#                command: |
+#                  npm run publish:library
