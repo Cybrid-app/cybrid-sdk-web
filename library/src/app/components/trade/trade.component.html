@@ -15,13 +15,37 @@
       <ng-container [formGroup]="quoteGroup">
         <div class="tab-wrapper">
           <mat-form-field appearance="outline">
+            <mat-label>{{ 'trade.currency' | translate }}</mat-label>
+            <mat-select
+              #matSelect
+              [compareWith]="compareObjects"
+              formControlName="asset"
+            >
+              <mat-select-trigger>
+                <div class="option">
+                  <img
+                    class="select-icon"
+                    src="{{ matSelect.value.url }}"
+                    alt="Crypto currency icon"
+                  />
+                  <span class="asset-name">{{ matSelect.value.name }}</span>
+                </div>
+              </mat-select-trigger>
+              <mat-option *ngFor="let asset of cryptoAssets" [value]="asset">
+                <div class="option">
+                  <img
+                    class="icon"
+                    src="{{ asset.url }}"
+                    alt="Crypto currency icon"
+                  />
+                  <span class="asset-name">{{ asset.name }}</span>
+                </div>
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
             <mat-label>
               <span>{{ 'trade.amount' | translate }}</span>
-              <span class="code">
-                {{
-                  input === 'receive_amount' ? asset.code : counterAsset.code
-                }}
-              </span>
             </mat-label>
             <input
               matInput
@@ -31,6 +55,14 @@
               min="0"
               placeholder="0"
             />
+            <div
+              *ngIf="amount.value && input === 'counter_asset'"
+              class="display-code prefix"
+              matPrefix
+            >
+              <span>{{ counterAsset.code }}</span>
+              <div class="test"></div>
+            </div>
             <button
               *ngIf="amount.value"
               mat-icon-button
@@ -41,94 +73,43 @@
             </button>
             <mat-error>{{ 'trade.error' | translate }}</mat-error>
           </mat-form-field>
-          <button
-            class="switch"
-            mat-icon-button
-            color="primary"
-            (click)="onSwitchInput()"
-          >
-            <mat-icon>swap_vert</mat-icon>
-          </button>
-          <mat-form-field appearance="outline">
-            <mat-label>{{ 'trade.currency' | translate }}</mat-label>
-            <mat-select
-              #matSelect
-              [compareWith]="compareObjects"
-              formControlName="asset"
-            >
-              <mat-select-trigger>
-                <div class="option">
-                  <img
-                    *ngIf="input === 'receive_amount'"
-                    class="icon"
-                    src="{{ matSelect.value.url }}"
-                    alt="Crypto currency icon"
-                  />
-                  <img
-                    *ngIf="input === 'deliver_amount'"
-                    class="icon"
-                    src="{{
-                      matSelect.value.code === 'USD' ? usd_icon : cad_icon
-                    }}"
-                    alt="Crypto currency icon"
-                  />
-                  <span class="asset-name">{{ matSelect.value.name }}</span>
-                </div>
-              </mat-select-trigger>
-              <ng-container *ngIf="input === 'receive_amount'">
-                <mat-option *ngFor="let asset of cryptoAssets" [value]="asset">
-                  <div class="option">
-                    <img
-                      class="icon"
-                      src="{{ asset.url }}"
-                      alt="Crypto currency icon"
-                    />
-                    <span class="asset-name">{{ asset.name }}</span>
-                  </div>
-                </mat-option>
-              </ng-container>
-              <ng-container *ngIf="input === 'deliver_amount'">
-                <mat-option *ngFor="let asset of fiatAssets" [value]="asset">
-                  <div class="option">
-                    <img
-                      class="icon"
-                      src="{{
-                        matSelect.value.code === 'USD' ? usd_icon : cad_icon
-                      }}"
-                      alt="Crypto currency icon"
-                    />
-                    <span class="asset-name">{{ asset.name }}</span>
-                  </div>
-                </mat-option>
-              </ng-container>
-            </mat-select>
-          </mat-form-field>
           <div class="hint">
             <ng-container *ngIf="!amount.value">
               <span> 1 </span>
-              <span class="code">
+              <span class="display-code">
                 {{ asset.code }}
               </span>
               <span>=</span>
               <span>
                 {{ price.buy_price! | asset: counterAsset:'trade' | currency }}
               </span>
-              <span class="code">{{ ' ' + counterAsset.code }}</span>
+              <span class="display-code">{{ ' ' + counterAsset.code }}</span>
             </ng-container>
             <ng-container *ngIf="amount.value">
+              <img
+                *ngIf="input === 'asset'"
+                class="display-icon"
+                src="{{ counterAsset.code === 'USD' ? usd_icon : cad_icon }}"
+              />
               <span>
                 {{
-                  input === 'receive_amount'
-                    ? (display.value | asset: counterAsset:'trade' | currency)
-                    : display.amount
+                  input === 'asset'
+                    ? (display.counter_asset | asset: counterAsset)
+                    : display.asset
                 }}
               </span>
-              <span class="code">
-                {{
-                  input === 'receive_amount' ? counterAsset.code : asset.code
-                }}
+              <span class="display-code">
+                {{ input === 'asset' ? counterAsset.code : asset.code }}
               </span>
             </ng-container>
+            <button
+              class="switch"
+              mat-icon-button
+              color="primary"
+              (click)="onSwitchInput()"
+            >
+              <mat-icon>swap_vert</mat-icon>
+            </button>
           </div>
           <button
             class="action"
@@ -138,7 +119,7 @@
               !quoteGroup.valid || !(amount.value.toString().length > 0)
             "
           >
-            {{ postQuoteBankModel.side.toString() | translate | titlecase }}
+            {{ side.toString() | translate | titlecase }}
           </button>
         </div>
       </ng-container>

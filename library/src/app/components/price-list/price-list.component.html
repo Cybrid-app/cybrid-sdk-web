@@ -56,6 +56,7 @@
           class="pointer"
           mat-row
           *matRowDef="let row; columns: displayedColumns"
+          (click)="onRowClick(row)"
         ></tr>
         <tr class="mat-row" *matNoDataRow>
           <td part="td" id="warning" class="mat-cell no-data" colspan="2">

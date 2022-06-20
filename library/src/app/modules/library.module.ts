@@ -27,6 +27,7 @@ import { AuthService } from '../../../../src/shared/services/auth/auth.service';
 import { EventService } from '../../../../src/shared/services/event/event.service';
 import { ErrorService } from '../../../../src/shared/services/error/error.service';
 import { ConfigService } from '../../../../src/shared/services/config/config.service';
+import { QuoteService } from '../../../../src/shared/services/quote/quote.service';
 import { AssetService } from '../../../../src/shared/services/asset/asset.service';
 import { ErrorInterceptor } from '../../../../src/shared/interceptors/error/error.interceptor';
 import { RetryInterceptor } from '../../../../src/shared/interceptors/auth/retry.interceptor';
@@ -79,6 +80,7 @@ export function HttpLoaderFactory(http: HttpClient) {
       multi: false
     },
     ConfigService,
+    QuoteService,
     EventService,
     AssetService,
     AssetPipe,

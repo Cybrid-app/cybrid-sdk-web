@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import {
   AssetBankModel,
-  CustomersService,
   PostQuoteBankModel,
   PricesService,
   SymbolPriceBankModel
@@ -38,8 +37,8 @@ import { compareObjects } from '../../../../../src/shared/utility/compare-object
 import { symbolSplit } from '../../../../../src/shared/utility/symbol-split';
 import { symbolBuild } from '../../../../../src/shared/utility/symbol-build';
 import SideEnum = PostQuoteBankModel.SideEnum;
-import { MatDialog } from '@angular/material/dialog';
 import { Constants } from '../../../../../src/shared/constants/constants';
+import { QuoteService } from '../../../../../src/shared/services/quote/quote.service';
 
 @Component({
   selector: 'app-trade',
@@ -50,33 +49,30 @@ import { Constants } from '../../../../../src/shared/constants/constants';
 export class TradeComponent implements OnInit, OnDestroy {
   compareObjects = compareObjects;
 
+  asset!: AssetBankModel;
+  counterAsset!: AssetBankModel;
   cryptoAssets!: Asset[];
   fiatAssets!: Asset[];
 
+  side: SideEnum = SideEnum.Buy;
+  input: 'asset' | 'counter_asset' = 'asset';
+  amount: number = 0;
   price: SymbolPriceBankModel = {};
+
+  quote$: Subject<PostQuoteBankModel> = new Subject<PostQuoteBankModel>();
 
   quoteGroup: FormGroup = new FormGroup({
     asset: new FormControl(),
     amount: new FormControl()
   });
 
-  postQuoteBankModel: PostQuoteBankModel = {
-    customer_guid: '',
-    symbol: '',
-    side: PostQuoteBankModel.SideEnum.Buy
-  };
-
   display = {
-    amount: 0,
-    value: 0
+    asset: 0,
+    counter_asset: 0
   };
 
   usd_icon = Constants.USD_ICON;
   cad_icon = Constants.CAD_ICON;
-
-  input: 'receive_amount' | 'deliver_amount' = 'receive_amount';
-  asset!: AssetBankModel;
-  counterAsset!: AssetBankModel;
 
   isLoading$ = new BehaviorSubject(true);
   isRecoverable$ = new BehaviorSubject(true);
@@ -87,10 +83,9 @@ export class TradeComponent implements OnInit, OnDestroy {
     private eventService: EventService,
     private assetService: AssetService,
     public configService: ConfigService,
+    private quoteService: QuoteService,
     private pricesService: PricesService,
-    private customerService: CustomersService,
     private assetPipe: AssetPipe,
-    public dialog: MatDialog,
     private route: ActivatedRoute
   ) {}
 
@@ -100,8 +95,6 @@ export class TradeComponent implements OnInit, OnDestroy {
       CODE.COMPONENT_INIT,
       'Initializing trade component'
     );
-    this.getCustomer();
-    this.getSymbol();
     this.getAssets();
     this.initQuoteGroup();
     this.getPrice();
@@ -113,19 +106,11 @@ export class TradeComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  getCustomer(): void {
-    this.configService
-      .getConfig$()
-      .pipe(
-        take(1),
-        map((config: ComponentConfig) => {
-          this.postQuoteBankModel.customer_guid = config.customer;
-        })
-      )
-      .subscribe();
-  }
-
-  getSymbol(): void {
+  /*
+  Set the current asset and counter-asset from routing data.
+  Set the list of available crypto and fiat assets.
+  * */
+  getAssets(): void {
     this.route.queryParams
       .pipe(
         take(1),
@@ -136,13 +121,10 @@ export class TradeComponent implements OnInit, OnDestroy {
           this.counterAsset = this.assetService.getAsset(
             symbolSplit(params['symbol_pair'])[1]
           );
-          this.postQuoteBankModel.symbol = params['symbol_pair'];
         })
       )
       .subscribe();
-  }
 
-  getAssets(): void {
     this.assetService
       .getAssets$()
       .pipe(
@@ -170,18 +152,18 @@ export class TradeComponent implements OnInit, OnDestroy {
     this.quoteGroup.valueChanges
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((value) => {
-        if (this.input == 'receive_amount') {
+        if (this.input == 'asset') {
           this.asset = value.asset;
-          this.postQuoteBankModel.symbol = symbolBuild(
-            value.asset.code,
-            this.counterAsset.code
-          );
         }
+        this.amount = value.amount;
         this.getPrice();
-        this.formatAmount(value.amount);
       });
   }
 
+  /*
+  Set the price passed to the quote service.
+  Format the displayed data.
+  * */
   getPrice(): void {
     this.pricesService
       .listPrices(symbolBuild(this.asset.code, this.counterAsset.code))
@@ -189,26 +171,28 @@ export class TradeComponent implements OnInit, OnDestroy {
         map((priceArray) => {
           this.price = priceArray[0];
 
-          const amount = this.quoteGroup.get('amount')!.value;
-          const sidePrice =
-            this.postQuoteBankModel.side == 'buy'
-              ? this.price.buy_price
-              : this.price.sell_price;
-
           switch (this.input) {
-            case 'receive_amount': {
-              this.display.amount = amount;
-              this.display.value = amount * sidePrice!;
+            case 'asset': {
+              const sidePrice =
+                this.side == 'buy'
+                  ? this.price.sell_price
+                  : this.price.buy_price;
+              this.display.asset = this.amount;
+              this.display.counter_asset = this.amount * sidePrice!;
               break;
             }
-            case 'deliver_amount': {
+            case 'counter_asset': {
+              const sidePrice =
+                this.side == 'buy'
+                  ? this.price.buy_price
+                  : this.price.sell_price;
               let baseValue = this.assetPipe.transform(
-                amount,
+                this.amount,
                 this.counterAsset,
                 'base'
               ) as number;
-              this.display.amount = baseValue / sidePrice!;
-              this.display.value = baseValue;
+              this.display.asset = baseValue / sidePrice!;
+              this.display.counter_asset = baseValue;
               break;
             }
           }
@@ -235,52 +219,6 @@ export class TradeComponent implements OnInit, OnDestroy {
       });
   }
 
-  formatAmount(amount: number | undefined): void {
-    if (amount) {
-      switch (this.input) {
-        case 'receive_amount':
-          delete this.postQuoteBankModel.deliver_amount;
-          if (this.postQuoteBankModel.side == 'buy') {
-            this.postQuoteBankModel.receive_amount = this.assetPipe.transform(
-              amount,
-              this.asset,
-              'base'
-            ) as number;
-          } else {
-            this.postQuoteBankModel.receive_amount =
-              amount * this.price.sell_price!;
-          }
-          break;
-        case 'deliver_amount': {
-          delete this.postQuoteBankModel.receive_amount;
-          if (this.postQuoteBankModel.side == 'buy') {
-            this.postQuoteBankModel.deliver_amount = this.assetPipe.transform(
-              amount,
-              this.counterAsset,
-              'base'
-            ) as number;
-          } else {
-            const value =
-              (this.assetPipe.transform(
-                amount,
-                this.counterAsset,
-                'base'
-              ) as number) / this.price.sell_price!;
-            this.postQuoteBankModel.deliver_amount = this.assetPipe.transform(
-              value,
-              this.asset,
-              'base'
-            ) as number;
-          }
-          break;
-        }
-      }
-    } else {
-      delete this.postQuoteBankModel.deliver_amount;
-      delete this.postQuoteBankModel.receive_amount;
-    }
-  }
-
   refreshData(): void {
     this.configService
       .getConfig$()
@@ -302,59 +240,43 @@ export class TradeComponent implements OnInit, OnDestroy {
       });
   }
 
-  /*
-  Switch between input field modes based off the postQuoteBankModel.
-  * */
   onSwitchInput(): void {
-    const amount = this.quoteGroup.get('amount')!;
     switch (this.input) {
-      case 'deliver_amount': {
-        this.input = 'receive_amount';
-        this.quoteGroup.patchValue({ asset: this.asset });
-        if (amount.value) {
-          delete this.postQuoteBankModel.deliver_amount;
-          this.postQuoteBankModel.receive_amount = this.assetPipe.transform(
-            amount.value,
-            this.asset,
-            'base'
-          ) as number;
-        }
+      case 'asset': {
+        this.input = 'counter_asset';
         break;
       }
-      case 'receive_amount': {
-        this.input = 'deliver_amount';
-        this.quoteGroup.patchValue({ asset: this.counterAsset });
-        if (amount.value) {
-          delete this.postQuoteBankModel.receive_amount;
-          this.postQuoteBankModel.deliver_amount = this.assetPipe.transform(
-            amount.value,
-            this.counterAsset,
-            'base'
-          ) as number;
-        }
+      case 'counter_asset': {
+        this.input = 'asset';
         break;
       }
     }
-    this.formatAmount(amount.value);
     this.getPrice();
   }
 
-  /*
-  Switch between 'sides'. Prices differ between 'buy' and 'sell'.
-  * */
   onSwitchSide(tab: string): void {
-    const amount = this.quoteGroup.get('amount')!.value;
     switch (tab) {
       case 'Buy': {
-        this.postQuoteBankModel.side = SideEnum.Buy;
+        this.side = SideEnum.Buy;
         break;
       }
       case 'Sell': {
-        this.postQuoteBankModel.side = SideEnum.Sell;
+        this.side = SideEnum.Sell;
         break;
       }
     }
-    this.formatAmount(amount);
     this.getPrice();
+  }
+
+  onTrade(): void {
+    this.quote$.next(
+      this.quoteService.getQuote(
+        this.amount,
+        this.input,
+        this.side,
+        this.asset,
+        this.counterAsset
+      )
+    );
   }
 }

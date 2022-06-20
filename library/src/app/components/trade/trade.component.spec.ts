@@ -111,9 +111,7 @@ describe('TradeComponent', () => {
     fixture = TestBed.createComponent(TradeComponent);
     component = fixture.componentInstance;
     MockAssetService.getAsset.and.returnValue(TestConstants.BTC_ASSET);
-    component.getSymbol(); // Set the asset code
-    MockAssetService.getAsset.and.returnValue(TestConstants.USD_ASSET);
-    component.getSymbol(); // Set the counter asset code
+    component.getAssets(); // Set the asset code
   });
 
   it('should create', () => {
@@ -121,39 +119,27 @@ describe('TradeComponent', () => {
   });
 
   it('should call init functions in ngOnInit()', () => {
-    component.getCustomer = () => undefined;
-    component.getSymbol = () => undefined;
     component.getAssets = () => undefined;
     component.initQuoteGroup = () => undefined;
     component.getPrice = () => undefined;
     component.refreshData = () => undefined;
-    const getCustomer = spyOn(component, 'getCustomer').and.callThrough();
-    const getSymbol = spyOn(component, 'getSymbol').and.callThrough();
     const getAssets = spyOn(component, 'getAssets').and.callThrough();
     const initQuoteGroup = spyOn(component, 'initQuoteGroup').and.callThrough();
     const getPrice = spyOn(component, 'getPrice').and.callThrough();
     const refreshData = spyOn(component, 'refreshData').and.callThrough();
     component.ngOnInit();
-    expect(getCustomer).toHaveBeenCalled();
-    expect(getSymbol).toHaveBeenCalled();
     expect(getAssets).toHaveBeenCalled();
     expect(initQuoteGroup).toHaveBeenCalled();
     expect(getPrice).toHaveBeenCalled();
     expect(refreshData).toHaveBeenCalled();
   });
 
-  it('should get the customer GUID', () => {
-    component.getCustomer();
-    expect(MockConfigService.getConfig$).toHaveBeenCalled();
-    expect(component.postQuoteBankModel.customer_guid).toEqual('');
-  });
-
   it('should get router parameters', () => {
     MockAssetService.getAsset.and.returnValue(TestConstants.BTC_ASSET);
-    component.getSymbol();
+    component.getAssets();
     expect(component.counterAsset.code).toEqual('BTC');
     MockAssetService.getAsset.and.returnValue(TestConstants.USD_ASSET);
-    component.getSymbol();
+    component.getAssets();
     expect(component.counterAsset.code).toEqual('USD');
   });
 
@@ -161,40 +147,51 @@ describe('TradeComponent', () => {
     const cryptoAssets = [TestConstants.BTC_ASSET, TestConstants.ETH_ASSET];
     const fiatAssets = [TestConstants.USD_ASSET]; // Filtering here for only one fiat
     MockAssetService.getAsset.and.returnValue(TestConstants.USD_ASSET);
-    component.getSymbol(); // Set the counter asset code needed in getAssets();
     component.getAssets();
     expect(component.cryptoAssets).toEqual(cryptoAssets);
     expect(component.fiatAssets).toEqual(fiatAssets);
   });
 
   it('should initialize the quote group', () => {
+    MockAssetService.getAsset.and.returnValue(TestConstants.BTC_ASSET);
     const getPriceSpy = spyOn(component, 'getPrice');
-    const formatAmountSpy = spyOn(component, 'formatAmount');
-    MockAssetService.getAsset.and.returnValue(TestConstants.USD_ASSET);
-    component.getSymbol(); // Set the counter asset code needed in getAssets();
     component.initQuoteGroup();
-    component.quoteGroup.patchValue({ asset: TestConstants.BTC_ASSET });
+    expect(component.asset).toEqual(TestConstants.BTC_ASSET);
+    component.quoteGroup.patchValue({
+      asset: TestConstants.ETH_ASSET,
+      amount: 10
+    });
     expect(getPriceSpy).toHaveBeenCalled();
-    expect(formatAmountSpy).toHaveBeenCalled();
+    expect(component.amount).toEqual(10);
   });
 
   it('should get prices', () => {
     component.price.buy_price = 1;
     component.price.sell_price = 1;
+    component.initQuoteGroup();
     component.quoteGroup.patchValue({
       amount: 1,
       asset: TestConstants.BTC_ASSET
     });
 
-    component.getPrice();
-    expect(component.display.amount).toEqual(1);
-    expect(component.display.value).toEqual(1);
+    expect(component.display.asset).toEqual(1);
+    expect(component.display.counter_asset).toEqual(1);
 
-    component.postQuoteBankModel.side = 'sell';
-    component.input = 'deliver_amount';
+    component.input = 'counter_asset';
     component.getPrice();
-    expect(component.display.amount).toEqual(100);
-    expect(component.display.value).toEqual(100);
+    expect(component.display.asset).toEqual(100000000);
+    expect(component.display.counter_asset).toEqual(100000000);
+
+    component.side = 'sell';
+    component.input = 'asset';
+    component.getPrice();
+    expect(component.display.asset).toEqual(1);
+    expect(component.display.counter_asset).toEqual(1);
+
+    component.input = 'counter_asset';
+    component.getPrice();
+    expect(component.display.asset).toEqual(100000000);
+    expect(component.display.counter_asset).toEqual(100000000);
 
     MockPricesService.listPrices.and.returnValue(error$);
     component.getPrice();
@@ -202,101 +199,43 @@ describe('TradeComponent', () => {
     expect(MockErrorService.handleError).toHaveBeenCalled();
   });
 
-  it('should format the amount', () => {
-    component.price.buy_price = 1;
-    component.price.sell_price = 2;
-    let amount = 10;
-
-    // Default: input = receive_amount, side = 'buy'
-    component.formatAmount(amount);
-    expect(component.postQuoteBankModel.receive_amount).toEqual(1000);
-
-    // input = receive_amount, side = 'sell'
-    component.postQuoteBankModel.side = 'sell';
-    component.formatAmount(amount);
-    expect(component.postQuoteBankModel.receive_amount).toEqual(20);
-
-    // input = deliver_amount, side = 'sell'
-    component.input = 'deliver_amount';
-    component.formatAmount(amount);
-    expect(component.postQuoteBankModel.deliver_amount).toEqual(50000);
-
-    // input = deliver_amount, side = 'buy'
-    component.postQuoteBankModel.side = 'buy';
-    component.formatAmount(amount);
-    expect(component.postQuoteBankModel.deliver_amount).toEqual(1000);
-
-    // Test no parameters deleting amounts
-    component.postQuoteBankModel = {
-      side: 'buy',
-      symbol: 'BTC-USD',
-      customer_guid: '',
-      deliver_amount: 100,
-      receive_amount: 100
-    };
-    component.formatAmount(undefined);
-    expect(component.postQuoteBankModel).toEqual({
-      side: 'buy',
-      symbol: 'BTC-USD',
-      customer_guid: ''
-    });
-  });
-
-  it('should log an event when it refreshes data', fakeAsync(() => {
+  it('should refresh data', fakeAsync(() => {
     const getPriceSpy = spyOn(component, 'getPrice');
     component.ngOnInit();
     tick(TestConstants.CONFIG.refreshInterval);
     expect(getPriceSpy).toHaveBeenCalledTimes(2);
+    expect(MockEventService.handleEvent).toHaveBeenCalled();
     discardPeriodicTasks();
   }));
 
-  it('should switch the input between fiat and crypto', () => {
-    component.cryptoAssets = [TestConstants.BTC_ASSET, TestConstants.ETH_ASSET];
-    component.fiatAssets = [TestConstants.USD_ASSET]; // Filtering here for only one fiat
-    component.postQuoteBankModel = {
-      side: 'buy',
-      symbol: 'BTC-USD',
-      customer_guid: '',
-      deliver_amount: 100,
-      receive_amount: 100
-    };
-
-    // Default: input = 'receive_amount', amount = undefined
+  it('should switch the input between asset and counter_asset', () => {
+    const getPriceSpy = spyOn(component, 'getPrice');
+    component.ngOnInit();
+    expect(component.input).toEqual('asset'); // Default value
     component.onSwitchInput();
-    expect(component.input).toEqual('deliver_amount');
-
-    // Test input = 'deliver_amount', amount = 10
-    component.quoteGroup.patchValue({ amount: 10 });
+    expect(component.input).toEqual('counter_asset');
+    expect(getPriceSpy).toHaveBeenCalled();
     component.onSwitchInput();
-    expect(component.postQuoteBankModel.deliver_amount).toBeFalsy();
-    expect(component.postQuoteBankModel.receive_amount).toEqual(1000);
-
-    // Test input = 'deliver_amount', amount = undefined
-    component.input = 'deliver_amount';
-    component.quoteGroup.patchValue({ amount: undefined });
-    component.onSwitchInput();
-    expect(component.input).toEqual('receive_amount');
-
-    // Test input = 'receive_amount', amount = 10
-    component.input = 'receive_amount';
-    component.quoteGroup.patchValue({ amount: 10 });
-    component.onSwitchInput();
-    expect(component.input).toEqual('deliver_amount');
-    expect(component.postQuoteBankModel.deliver_amount).toEqual(1000);
+    expect(component.input).toEqual('asset');
+    expect(getPriceSpy).toHaveBeenCalled();
   });
 
   it('should switch sides', () => {
-    component.postQuoteBankModel = {
-      side: 'buy',
-      symbol: 'BTC-USD',
-      customer_guid: ''
-    };
-    component.quoteGroup.patchValue({ amount: 10 });
-
-    component.onSwitchSide('Buy');
-    expect(component.postQuoteBankModel.side).toEqual('buy');
-
+    const getPriceSpy = spyOn(component, 'getPrice');
+    component.ngOnInit();
+    expect(component.side).toEqual('buy'); // Default value
     component.onSwitchSide('Sell');
-    expect(component.postQuoteBankModel.side).toEqual('sell');
+    expect(component.side).toEqual('sell');
+    expect(getPriceSpy).toHaveBeenCalled();
+    component.onSwitchSide('Buy');
+    expect(component.side).toEqual('buy');
+    expect(getPriceSpy).toHaveBeenCalled();
+  });
+
+  it('should call the quote service and build quote onTrade()', () => {
+    const quote$Spy = spyOn(component.quote$, 'next');
+    component.ngOnInit();
+    component.onTrade();
+    expect(quote$Spy).toHaveBeenCalled();
   });
 });
