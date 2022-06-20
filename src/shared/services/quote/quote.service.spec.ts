@@ -110,5 +110,39 @@ describe('QuoteService', () => {
       'counter_asset'
     ).map((quote) => quote.receive_amount) as number[];
     expect(testedAmounts).toEqual(expectedAmounts);
+
+    /* Testing with ETH asset and USD counter_asset
+     *
+     * Until openAPI Generator is configured to use the BigInt type instead of Number we
+     * are limited by the amount of ETH this service can convert.
+     */
+
+    /* Side = 'buy', Input = 'asset' */
+    testAmounts = [0.01, 12, 1234];
+    asset = TestConstants.ETH_ASSET;
+    expectedAmounts = [
+      // Wei
+      10000000000000000, 12000000000000000000, 1234000000000000000000
+    ];
+    testedAmounts = testQuote(
+      testAmounts,
+      PostQuoteBankModel.SideEnum.Buy,
+      'asset'
+    ).map((quote) => quote.receive_amount) as number[];
+    expect(testedAmounts).toEqual(expectedAmounts);
+
+    /* Side = 'sell', Input = 'asset' */
+    testAmounts = [0.01, 12, 1234];
+    asset = TestConstants.ETH_ASSET;
+    expectedAmounts = [
+      // Wei
+      10000000000000000, 12000000000000000000, 1234000000000000000000
+    ];
+    testedAmounts = testQuote(
+      testAmounts,
+      PostQuoteBankModel.SideEnum.Sell,
+      'asset'
+    ).map((quote) => quote.deliver_amount) as number[];
+    expect(testedAmounts).toEqual(expectedAmounts);
   });
 });
