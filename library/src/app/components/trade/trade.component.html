@@ -61,7 +61,7 @@
               matPrefix
             >
               <span>{{ counterAsset.code }}</span>
-              <div class="test"></div>
+              <div class="divider"></div>
             </div>
             <button
               *ngIf="amount.value"
@@ -89,7 +89,8 @@
               <img
                 *ngIf="input === 'asset'"
                 class="display-icon"
-                src="{{ counterAsset.code === 'USD' ? usd_icon : cad_icon }}"
+                alt="Fiat asset national flag"
+                src="{{ getFiatIcon(counterAsset.code) }}"
               />
               <span>
                 {{

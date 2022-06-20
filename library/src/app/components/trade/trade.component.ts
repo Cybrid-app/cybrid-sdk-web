@@ -36,6 +36,7 @@ import { AssetPipe } from '../../../../../src/shared/pipes/asset.pipe';
 import { compareObjects } from '../../../../../src/shared/utility/compare-object';
 import { symbolSplit } from '../../../../../src/shared/utility/symbol-split';
 import { symbolBuild } from '../../../../../src/shared/utility/symbol-build';
+import { getFiatIcon } from '../../../../../src/shared/utility/fiat-icon';
 import SideEnum = PostQuoteBankModel.SideEnum;
 import { Constants } from '../../../../../src/shared/constants/constants';
 import { QuoteService } from '../../../../../src/shared/services/quote/quote.service';
@@ -48,6 +49,7 @@ import { QuoteService } from '../../../../../src/shared/services/quote/quote.ser
 })
 export class TradeComponent implements OnInit, OnDestroy {
   compareObjects = compareObjects;
+  getFiatIcon = getFiatIcon;
 
   asset!: AssetBankModel;
   counterAsset!: AssetBankModel;
