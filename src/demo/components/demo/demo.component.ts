@@ -30,7 +30,7 @@ export class DemoComponent implements OnInit {
             refreshInterval: 2000,
             locale: 'en-US',
             theme: 'LIGHT',
-            customer: '378c691c1b5ba3b938e17c1726202fe4'
+            customer: ''
           };
         })
       )
