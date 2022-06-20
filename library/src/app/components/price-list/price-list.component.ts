@@ -184,14 +184,4 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
         }
       });
   }
-
-  onRowClick(row: SymbolPrice): void {
-    const extras: NavigationExtras = {
-      queryParams: {
-        asset: JSON.stringify(row.asset),
-        symbol_pair: row.symbol
-      }
-    };
-    this.router.navigate(['app/trade'], extras);
-  }
 }
