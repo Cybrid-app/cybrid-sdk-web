@@ -26,10 +26,6 @@ workflows:
                   google-chrome --version
                   chromedriver --version
                 name: Check install
-            - run:
-                command: |
-                  npm install
-                name: Update package-lock.json
           post-steps:
             - codecov/upload
             - run:
@@ -65,6 +61,7 @@ workflows:
             - e2e
           name: publish
           override-ci-command: npm install --legacy-peer-deps
+          version: 16.14.2
           npm-run: package:library
           post-steps:
             - jq/install

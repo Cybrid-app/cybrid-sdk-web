@@ -1,9 +1,0 @@
-{
-  "integrationFolder": "components/price-list/cypress/integration",
-  "supportFile": "components/price-list/cypress/support/index.ts",
-  "videosFolder": "components/price-list/cypress/videos",
-  "screenshotsFolder": "components/price-list/cypress/screenshots",
-  "pluginsFile": "components/price-list/cypress/plugins/index.ts",
-  "fixturesFolder": "components/price-list/cypress/fixtures",
-  "baseUrl": "http://localhost:4200"
-}

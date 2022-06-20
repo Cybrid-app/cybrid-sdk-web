@@ -9,12 +9,37 @@
   margin-top: calc(1rem + 0.25em);
 }
 
-.code {
+.mat-tab-label {
+  flex-grow: 1;
+}
+
+.select-code {
   @extend .mat-hint;
   @extend .mat-h5;
   color: inherit;
-  margin: 2px 0 0 0;
-  line-height: 0.8rem;
+  margin: 0;
+}
+
+.display-code {
+  @extend .mat-hint;
+  margin: 0;
+}
+
+.mat-form-field-flex {
+  align-items: center;
+}
+
+.prefix {
+  margin-top: 4px;
+  position: relative;
+  .divider {
+    position: absolute;
+    height: 1rem;
+    width: 1px;
+    top: 0;
+    right: -4px;
+    background: currentColor;
+  }
 }
 
 .hint {
@@ -23,12 +48,40 @@
   justify-content: flex-start;
   align-items: center;
   gap: 0.25rem;
+  min-height: 1rem;
   margin-left: 3px;
+}
+
+.option {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.select-icon {
+  position: fixed;
+  max-height: 1.7rem;
+  max-width: 1.7rem;
+}
+
+.display-icon {
+  max-height: 1.7rem;
+  max-width: 1.7rem;
+}
+
+.switch {
+  align-self: end;
+  margin-top: -1rem;
 }
 
 .price {
   align-self: center;
   margin-bottom: 0;
+}
+
+.asset-name {
+  margin-left: 2.2rem;
 }
 
 .spacer {

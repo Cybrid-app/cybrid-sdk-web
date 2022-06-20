@@ -21,11 +21,9 @@ import {
   ErrorLog,
   ErrorService
 } from '../../../../../src/shared/services/error/error.service';
-import {
-  ComponentConfig,
-  ConfigService
-} from '../../../../../src/shared/services/config/config.service';
+import { ConfigService } from '../../../../../src/shared/services/config/config.service';
 import { of, throwError } from 'rxjs';
+import { TestConstants } from '../../../../../src/shared/constants/test.constants';
 
 describe('AppComponent', () => {
   let MockAuthService = jasmine.createSpyObj('AuthService', [
@@ -95,11 +93,7 @@ describe('AppComponent', () => {
   it('should set the config', fakeAsync(() => {
     const fixture = TestBed.createComponent(AppComponent);
     const component = fixture.componentInstance;
-    const testConfig: ComponentConfig = {
-      refreshInterval: 5000,
-      locale: 'en-US',
-      theme: 'LIGHT'
-    };
+    const testConfig = TestConstants.CONFIG;
     component.hostConfig = testConfig;
     tick();
     expect(MockConfigService.setConfig).toHaveBeenCalledWith(testConfig);

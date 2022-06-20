@@ -3,14 +3,11 @@ import { ComponentConfig, ConfigService } from './config.service';
 import { ErrorService } from '../error/error.service';
 import { EventService } from '../event/event.service';
 import { TranslateService } from '@ngx-translate/core';
+import { TestConstants } from '../../constants/test.constants';
 
 describe('ConfigService', () => {
   let service: ConfigService;
-  let testConfig: ComponentConfig = {
-    refreshInterval: 5000,
-    locale: 'en-US',
-    theme: 'LIGHT'
-  };
+  let testConfig = TestConstants.CONFIG;
   let MockErrorService = jasmine.createSpyObj('ErrorService', ['handleError']);
   let MockEventService = jasmine.createSpyObj('EventService', ['handleEvent']);
   let MockTranslateService = jasmine.createSpyObj('TranslateService', [
@@ -41,7 +38,8 @@ describe('ConfigService', () => {
     expect(service.defaultConfig).toEqual({
       refreshInterval: 5000,
       locale: 'en-US',
-      theme: 'LIGHT'
+      theme: 'LIGHT',
+      customer: ''
     });
   });
 
@@ -55,7 +53,8 @@ describe('ConfigService', () => {
     const hostConfig: ComponentConfig = {
       refreshInterval: 1000,
       locale: 'en-US',
-      theme: 'LIGHT'
+      theme: 'LIGHT',
+      customer: ''
     };
     let testConfig!: ComponentConfig;
     service.config$.subscribe((cfg) => {

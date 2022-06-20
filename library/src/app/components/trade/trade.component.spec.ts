@@ -27,6 +27,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EventService } from '../../../../../src/shared/services/event/event.service';
 import { ErrorService } from '../../../../../src/shared/services/error/error.service';
 import { ConfigService } from '../../../../../src/shared/services/config/config.service';
+import { MatDialog } from '@angular/material/dialog';
 
 describe('TradeComponent', () => {
   let component: TradeComponent;
@@ -50,8 +51,11 @@ describe('TradeComponent', () => {
   ]);
   let MockPricesService = jasmine.createSpyObj('PricesService', ['listPrices']);
   let MockQueryParams = of({
-    asset: JSON.stringify(TestConstants.BTC_ASSET),
-    symbol_pair: TestConstants.SYMBOL_PRICE_BANK_MODEL.symbol
+    symbol_pair: 'BTC-USD'
+  });
+  let MockDialogService = jasmine.createSpyObj('MockDialogService', ['open']);
+  const error$ = throwError(() => {
+    new Error('Error');
   });
 
   beforeEach(async () => {
@@ -79,6 +83,7 @@ describe('TradeComponent', () => {
         { provide: EventService, useValue: MockEventService },
         { provide: ErrorService, useValue: MockErrorService },
         { provide: ConfigService, useValue: MockConfigService },
+        { provide: MatDialog, useValue: MockDialogService },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -99,115 +104,138 @@ describe('TradeComponent', () => {
     MockErrorService = TestBed.inject(ErrorService);
     MockConfigService = TestBed.inject(ConfigService);
     MockConfigService.getConfig$.and.returnValue(of(TestConstants.CONFIG));
+    MockDialogService = TestBed.inject(MatDialog);
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(TradeComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
-    component.isLoading$.next(false);
+    MockAssetService.getAsset.and.returnValue(TestConstants.BTC_ASSET);
+    component.getAssets(); // Set the asset code
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should get router parameters', () => {
-    expect(component.quote.asset).toEqual(TestConstants.BTC_ASSET);
-    expect(component.quote.counterAsset.code).toEqual('CAD');
+  it('should call init functions in ngOnInit()', () => {
+    component.getAssets = () => undefined;
+    component.initQuoteGroup = () => undefined;
+    component.getPrice = () => undefined;
+    component.refreshData = () => undefined;
+    const getAssets = spyOn(component, 'getAssets').and.callThrough();
+    const initQuoteGroup = spyOn(component, 'initQuoteGroup').and.callThrough();
+    const getPrice = spyOn(component, 'getPrice').and.callThrough();
+    const refreshData = spyOn(component, 'refreshData').and.callThrough();
+    component.ngOnInit();
+    expect(getAssets).toHaveBeenCalled();
+    expect(initQuoteGroup).toHaveBeenCalled();
+    expect(getPrice).toHaveBeenCalled();
+    expect(refreshData).toHaveBeenCalled();
   });
 
-  it('should get assets and filter them', () => {
-    const filteredAssetList = [
-      TestConstants.BTC_ASSET,
-      TestConstants.ETH_ASSET
-    ];
-    component.ngOnInit();
-    expect(component.assetList).toEqual(TestConstants.ASSETS);
-    expect(component.filteredAssetList).toEqual(filteredAssetList);
+  it('should get router parameters', () => {
+    MockAssetService.getAsset.and.returnValue(TestConstants.BTC_ASSET);
+    component.getAssets();
+    expect(component.counterAsset.code).toEqual('BTC');
+    MockAssetService.getAsset.and.returnValue(TestConstants.USD_ASSET);
+    component.getAssets();
+    expect(component.counterAsset.code).toEqual('USD');
+  });
+
+  it('should get and filter assets', () => {
+    const cryptoAssets = [TestConstants.BTC_ASSET, TestConstants.ETH_ASSET];
+    const fiatAssets = [TestConstants.USD_ASSET]; // Filtering here for only one fiat
+    MockAssetService.getAsset.and.returnValue(TestConstants.USD_ASSET);
+    component.getAssets();
+    expect(component.cryptoAssets).toEqual(cryptoAssets);
+    expect(component.fiatAssets).toEqual(fiatAssets);
   });
 
   it('should initialize the quote group', () => {
+    MockAssetService.getAsset.and.returnValue(TestConstants.BTC_ASSET);
     const getPriceSpy = spyOn(component, 'getPrice');
-    component.ngOnInit();
+    component.initQuoteGroup();
+    expect(component.asset).toEqual(TestConstants.BTC_ASSET);
+    component.quoteGroup.patchValue({
+      asset: TestConstants.ETH_ASSET,
+      amount: 10
+    });
     expect(getPriceSpy).toHaveBeenCalled();
-    expect(component.quote.asset).toEqual(TestConstants.BTC_ASSET);
+    expect(component.amount).toEqual(10);
   });
 
   it('should get prices', () => {
-    // Test with default input of 'fiat'
+    component.price.buy_price = 1;
+    component.price.sell_price = 1;
+    component.initQuoteGroup();
     component.quoteGroup.patchValue({
-      asset: TestConstants.BTC_ASSET,
-      amount: 10
+      amount: 1,
+      asset: TestConstants.BTC_ASSET
     });
-    expect(component.price).toEqual(TestConstants.SYMBOL_PRICE_BANK_MODEL);
-    expect(component.quote.amount).toEqual(10);
-    expect(component.quote.value).toEqual(10);
 
-    // Test with input set to 'crypto'
-    component.input = 'crypto';
+    expect(component.display.asset).toEqual(1);
+    expect(component.display.counter_asset).toEqual(1);
+
+    component.input = 'counter_asset';
     component.getPrice();
-    expect(component.quote.amount).toEqual(1000);
-    expect(component.quote.value).toEqual(1000);
-  });
+    expect(component.display.asset).toEqual(100000000);
+    expect(component.display.counter_asset).toEqual(100000000);
 
-  it('should log an event when getPrice() is called', () => {
-    component.ngOnInit();
-    expect(MockEventService.handleEvent).toHaveBeenCalled();
-  });
+    component.side = 'sell';
+    component.input = 'asset';
+    component.getPrice();
+    expect(component.display.asset).toEqual(1);
+    expect(component.display.counter_asset).toEqual(1);
 
-  it('should log an event and error if getPrice() is unsuccessful', () => {
-    const error$ = throwError(() => {
-      return new Error('Error');
-    });
-    MockPricesService.listPrices.and.returnValue(of(error$));
-    component.ngOnInit();
+    component.input = 'counter_asset';
+    component.getPrice();
+    expect(component.display.asset).toEqual(100000000);
+    expect(component.display.counter_asset).toEqual(100000000);
+
+    MockPricesService.listPrices.and.returnValue(error$);
     component.getPrice();
     expect(MockEventService.handleEvent).toHaveBeenCalled();
     expect(MockErrorService.handleError).toHaveBeenCalled();
   });
 
-  it('should log an event when it refreshes data', fakeAsync(() => {
+  it('should refresh data', fakeAsync(() => {
     const getPriceSpy = spyOn(component, 'getPrice');
     component.ngOnInit();
     tick(TestConstants.CONFIG.refreshInterval);
-    expect(getPriceSpy).toHaveBeenCalledTimes(3);
+    expect(getPriceSpy).toHaveBeenCalledTimes(2);
+    expect(MockEventService.handleEvent).toHaveBeenCalled();
     discardPeriodicTasks();
   }));
 
-  it('should switch the input between fiat and crypto', () => {
+  it('should switch the input between asset and counter_asset', () => {
+    const getPriceSpy = spyOn(component, 'getPrice');
     component.ngOnInit();
-    component.onSwitchInput(); // Default starts on 'fiat'
-    expect(component.input).toEqual('crypto');
-    expect(component.quote.amount).toBeNull();
+    expect(component.input).toEqual('asset'); // Default value
     component.onSwitchInput();
-    expect(component.input).toEqual('fiat');
-    expect(component.quote.amount).toBeNull();
-
-    // Test input patch value branch case
-    component.quoteGroup.patchValue({
-      asset: TestConstants.BTC_ASSET,
-      amount: 10
-    });
+    expect(component.input).toEqual('counter_asset');
+    expect(getPriceSpy).toHaveBeenCalled();
     component.onSwitchInput();
-    expect(component.quote.amount).toEqual(1000);
-    component.onSwitchInput();
-    expect(component.quote.amount).toEqual(10);
+    expect(component.input).toEqual('asset');
+    expect(getPriceSpy).toHaveBeenCalled();
   });
 
-  it('should not switch the input if there is no amount specified', () => {
+  it('should switch sides', () => {
+    const getPriceSpy = spyOn(component, 'getPrice');
     component.ngOnInit();
-    expect(component.quote.amount).toBeNull();
-    component.onSwitchInput();
-    expect(component.quote.amount).toBeNull();
-  });
-
-  it('should switch sides of the trade', () => {
-    component.ngOnInit();
-    expect(component.quote.side).toEqual('buy'); // Default starts on 'Buy'
+    expect(component.side).toEqual('buy'); // Default value
     component.onSwitchSide('Sell');
-    expect(component.quote.side).toEqual('sell');
+    expect(component.side).toEqual('sell');
+    expect(getPriceSpy).toHaveBeenCalled();
     component.onSwitchSide('Buy');
-    expect(component.quote.side).toEqual('buy');
+    expect(component.side).toEqual('buy');
+    expect(getPriceSpy).toHaveBeenCalled();
+  });
+
+  it('should call the quote service and build quote onTrade()', () => {
+    const quote$Spy = spyOn(component.quote$, 'next');
+    component.ngOnInit();
+    component.onTrade();
+    expect(quote$Spy).toHaveBeenCalled();
   });
 });

@@ -3,7 +3,14 @@ import {
   AssetListBankModel,
   AssetsService
 } from '@cybrid/cybrid-api-bank-angular';
-import { map, Observable, Subject, switchMap, catchError, of } from 'rxjs';
+import {
+  map,
+  Observable,
+  switchMap,
+  catchError,
+  of,
+  ReplaySubject
+} from 'rxjs';
 import { CODE, EventService, LEVEL } from '../event/event.service';
 import { ErrorService } from '../error/error.service';
 import { AssetBankModel } from '@cybrid/cybrid-api-bank-angular/model/asset';
@@ -23,8 +30,8 @@ export interface Asset extends AssetBankModel {
   providedIn: 'root'
 })
 export class AssetService {
-  assetList$ = new Subject<Array<AssetBankModel>>();
-  assetList: Array<AssetBankModel> = [];
+  assetList$ = new ReplaySubject<Asset[]>(1);
+  assetList: Asset[] = [];
 
   constructor(
     private assetsService: AssetsService,
@@ -41,16 +48,18 @@ export class AssetService {
       .pipe(
         switchMap(() => this.assetsService.listAssets()),
         map((list: AssetListBankModel) => {
-          const assetList = list.objects.map((asset: AssetBankModel) => {
-            return {
-              type: asset.type,
-              code: asset.code,
-              name: asset.name,
-              symbol: asset.symbol,
-              decimals: asset.decimals,
-              url: Constants.ICON_HOST + asset.code.toLowerCase() + '.svg'
-            };
-          });
+          const assetList: Asset[] = list.objects.map(
+            (asset: AssetBankModel) => {
+              return {
+                type: asset.type,
+                code: asset.code,
+                name: asset.name,
+                symbol: asset.symbol,
+                decimals: asset.decimals,
+                url: Constants.ICON_HOST + asset.code.toLowerCase() + '.svg'
+              } as Asset;
+            }
+          );
           this.assetList$.next(assetList);
           this.assetList = assetList;
         }),
@@ -67,7 +76,7 @@ export class AssetService {
       .subscribe();
   }
 
-  getAssets$(): Observable<Array<AssetBankModel>> {
+  getAssets$(): Observable<Asset[]> {
     return this.assetList$.asObservable();
   }
 

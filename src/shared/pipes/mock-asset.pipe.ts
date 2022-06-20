@@ -1,12 +1,11 @@
 import { OnDestroy, Pipe, PipeTransform } from '@angular/core';
 import { AssetBankModel } from '@cybrid/cybrid-api-bank-angular';
-import { ConfigService } from '../services/config/config.service';
 import { Constants } from '../constants/constants';
-import { Asset } from '../services/asset/asset.service';
-import { map, Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 import { formatNumber } from '@angular/common';
 import { Big } from 'big.js';
 import '@angular/common/locales/global/fr';
+import { Asset } from '../services/asset/asset.service';
 
 interface NumberSeparator {
   locale: string;
@@ -16,33 +15,19 @@ interface NumberSeparator {
 @Pipe({
   name: 'asset'
 })
-export class AssetPipe implements PipeTransform, OnDestroy {
-  locale = '';
+export class MockAssetPipe implements PipeTransform, OnDestroy {
+  locale = 'en-US';
   separator: NumberSeparator[] = [
     { locale: 'en-US', char: '.' },
     { locale: 'fr-CA', char: ',' }
   ];
   unsubscribe$: Subject<any> = new Subject();
 
-  constructor(private configService: ConfigService) {
-    this.initLocale();
-  }
+  constructor() {}
 
   ngOnDestroy() {
     this.unsubscribe$.next('');
     this.unsubscribe$.complete();
-  }
-
-  initLocale(): void {
-    this.configService
-      .getConfig$()
-      .pipe(
-        takeUntil(this.unsubscribe$),
-        map((config) => {
-          return (this.locale = config.locale);
-        })
-      )
-      .subscribe();
   }
 
   transform(

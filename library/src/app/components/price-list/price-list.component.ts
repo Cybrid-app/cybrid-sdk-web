@@ -1,6 +1,5 @@
 import {
   AfterViewChecked,
-  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   OnDestroy,
@@ -39,6 +38,7 @@ import {
   ConfigService
 } from '../../../../../src/shared/services/config/config.service';
 import { AssetService } from '../../../../../src/shared/services/asset/asset.service';
+import { NavigationExtras, Router } from '@angular/router';
 
 export interface SymbolPrice extends SymbolPriceBankModel {
   asset: AssetBankModel;
@@ -49,8 +49,7 @@ export interface SymbolPrice extends SymbolPriceBankModel {
   selector: 'app-list',
   templateUrl: 'price-list.component.html',
   styleUrls: ['price-list.component.scss'],
-  encapsulation: ViewEncapsulation.ShadowDom,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  encapsulation: ViewEncapsulation.None
 })
 export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
   config$ = this.configService.getConfig$();
@@ -70,6 +69,7 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
     public configService: ConfigService,
     private assetService: AssetService,
     private pricesService: PricesService,
+    private router: Router,
     private chdRef: ChangeDetectorRef
   ) {}
 
