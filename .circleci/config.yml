@@ -18,6 +18,7 @@ workflows:
       - node/test:
           name: test
           version: 16.14.2-browsers
+          cache-version: v2
           setup:
             - browser-tools/install-chrome
             - browser-tools/install-chromedriver
@@ -47,7 +48,7 @@ workflows:
   publish:
     when:
       and:
-        - equal: [ main, << pipeline.git.branch >> ]
+        - equal: [ dustin/circle-cache, << pipeline.git.branch >> ]
     jobs:
       - cypress/run:
           name: e2e
@@ -60,8 +61,8 @@ workflows:
           requires:
             - e2e
           name: publish
-          override-ci-command: npm install --legacy-peer-deps
           version: 16.14.2
+          cache-version: v2
           npm-run: package:library
           post-steps:
             - jq/install
@@ -75,7 +76,7 @@ workflows:
             - run:
                 name: Authenticate with registry
                 command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/.npmrc
-            - run:
-                name: Publish library
-                command: |
-                  npm run publish:library
+#            - run:
+#                name: Publish library
+#                command: |
+#                  npm run publish:library
