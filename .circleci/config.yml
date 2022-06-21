@@ -48,7 +48,7 @@ workflows:
   publish:
     when:
       and:
-        - equal: [ dustin/circle-cache, << pipeline.git.branch >> ]
+        - equal: [ main, << pipeline.git.branch >> ]
     jobs:
       - cypress/run:
           name: e2e
@@ -76,7 +76,7 @@ workflows:
             - run:
                 name: Authenticate with registry
                 command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/.npmrc
-#            - run:
-#                name: Publish library
-#                command: |
-#                  npm run publish:library
+            - run:
+                name: Publish library
+                command: |
+                  npm run publish:library
