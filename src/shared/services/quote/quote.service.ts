@@ -41,7 +41,7 @@ export class QuoteService {
     side: PostQuoteBankModel.SideEnum,
     asset: AssetBankModel,
     counterAsset: AssetBankModel
-  ): any {
+  ): PostQuoteBankModel {
     const symbol = symbolBuild(asset.code, counterAsset.code);
     let postQuoteBankModel: PostQuoteBankModel = {
       customer_guid: this.customer_guid,
