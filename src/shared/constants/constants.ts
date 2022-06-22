@@ -19,18 +19,14 @@ export class Constants {
   static MIN_INTEGER_DIGITS = 0;
   static MIN_FRACTION_DIGITS = 2;
   static THEME = THEME.LIGHT;
-  static ICON_HOST = 'https://images.cybrid.xyz/color/';
-  static CAD_ICON =
-    'https://upload.wikimedia.org/wikipedia/commons/c/cf/Flag_of_Canada.svg'; // Temporary Wikipedia svg for demo purposes
-  static USD_ICON =
-    'https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg'; // Temporary Wikipedia svg for demo purposes
+  static ICON_HOST = 'https://images.cybrid.xyz/sdk/assets/svg/color/';
   static COUNTER_ASSET: Asset = {
     type: 'fiat',
     code: 'CAD',
     name: 'Canadian Dollar',
     symbol: '$',
     decimals: 2,
-    url: Constants.CAD_ICON
+    url: Constants.ICON_HOST + 'cad.svg'
   };
   static ASSET: Asset = {
     type: 'crypto',
@@ -62,7 +58,7 @@ export class Constants {
     name: 'Canadian Dollar',
     symbol: '$',
     type: 'fiat',
-    url: Constants.CAD_ICON
+    url: Constants.ICON_HOST + 'cad.svg'
   };
   static USD_ASSET: Asset = {
     code: 'USD',
@@ -70,7 +66,7 @@ export class Constants {
     name: 'United States Dollar',
     symbol: '$',
     type: 'fiat',
-    url: Constants.USD_ICON
+    url: Constants.ICON_HOST + 'usd.svg'
   };
   static ASSETS: Asset[] = [
     Constants.BTC_ASSET,

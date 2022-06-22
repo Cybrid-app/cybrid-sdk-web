@@ -15,7 +15,7 @@ import { EventService } from '../event/event.service';
 import { ErrorService } from '../error/error.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { of, throwError } from 'rxjs';
-import { TestConstants } from '../../constants/test.constants';
+import { Constants } from '../../constants/constants';
 
 describe('AssetService', () => {
   let assetService: AssetService;
@@ -25,7 +25,7 @@ describe('AssetService', () => {
     name: 'Ethereum',
     decimals: 18,
     symbol: '',
-    url: TestConstants.ICON_URL
+    url: Constants.ICON_HOST + 'eth.svg'
   };
   const testAssetList: AssetListBankModel = {
     total: 0,

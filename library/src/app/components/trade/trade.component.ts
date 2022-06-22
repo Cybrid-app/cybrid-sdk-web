@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import {
-  AssetBankModel,
   PostQuoteBankModel,
   PricesService,
   SymbolPriceBankModel
@@ -36,9 +35,7 @@ import { AssetPipe } from '../../../../../src/shared/pipes/asset.pipe';
 import { compareObjects } from '../../../../../src/shared/utility/compare-object';
 import { symbolSplit } from '../../../../../src/shared/utility/symbol-split';
 import { symbolBuild } from '../../../../../src/shared/utility/symbol-build';
-import { getFiatIcon } from '../../../../../src/shared/utility/fiat-icon';
 import SideEnum = PostQuoteBankModel.SideEnum;
-import { Constants } from '../../../../../src/shared/constants/constants';
 import { QuoteService } from '../../../../../src/shared/services/quote/quote.service';
 import { TradeConfirmComponent } from '../trade-confirm/trade-confirm.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -51,10 +48,9 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class TradeComponent implements OnInit, OnDestroy {
   compareObjects = compareObjects;
-  getFiatIcon = getFiatIcon;
 
-  asset!: AssetBankModel;
-  counterAsset!: AssetBankModel;
+  asset!: Asset;
+  counterAsset!: Asset;
   cryptoAssets!: Asset[];
   fiatAssets!: Asset[];
 
@@ -74,9 +70,6 @@ export class TradeComponent implements OnInit, OnDestroy {
     asset: 0,
     counter_asset: 0
   };
-
-  usd_icon = Constants.USD_ICON;
-  cad_icon = Constants.CAD_ICON;
 
   isLoading$ = new BehaviorSubject(true);
   isRecoverable$ = new BehaviorSubject(true);
