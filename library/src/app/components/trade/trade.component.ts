@@ -40,6 +40,8 @@ import { getFiatIcon } from '../../../../../src/shared/utility/fiat-icon';
 import SideEnum = PostQuoteBankModel.SideEnum;
 import { Constants } from '../../../../../src/shared/constants/constants';
 import { QuoteService } from '../../../../../src/shared/services/quote/quote.service';
+import { TradeConfirmComponent } from '../trade-confirm/trade-confirm.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-trade',
@@ -87,6 +89,7 @@ export class TradeComponent implements OnInit, OnDestroy {
     public configService: ConfigService,
     private quoteService: QuoteService,
     private pricesService: PricesService,
+    public dialog: MatDialog,
     private assetPipe: AssetPipe,
     private route: ActivatedRoute
   ) {}
@@ -154,9 +157,7 @@ export class TradeComponent implements OnInit, OnDestroy {
     this.quoteGroup.valueChanges
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((value) => {
-        if (this.input == 'asset') {
-          this.asset = value.asset;
-        }
+        this.asset = value.asset;
         this.amount = value.amount;
         this.getPrice();
       });
@@ -256,13 +257,13 @@ export class TradeComponent implements OnInit, OnDestroy {
     this.getPrice();
   }
 
-  onSwitchSide(tab: string): void {
+  onSwitchSide(tab: number | null): void {
     switch (tab) {
-      case 'Buy': {
+      case -1: {
         this.side = SideEnum.Buy;
         break;
       }
-      case 'Sell': {
+      case 1: {
         this.side = SideEnum.Sell;
         break;
       }
@@ -271,14 +272,19 @@ export class TradeComponent implements OnInit, OnDestroy {
   }
 
   onTrade(): void {
-    this.quote$.next(
-      this.quoteService.getQuote(
-        this.amount,
-        this.input,
-        this.side,
-        this.asset,
-        this.counterAsset
-      )
+    const postQuoteBankModel: PostQuoteBankModel = this.quoteService.getQuote(
+      this.amount,
+      this.input,
+      this.side,
+      this.asset,
+      this.counterAsset
     );
+    this.dialog.open(TradeConfirmComponent, {
+      data: {
+        model: postQuoteBankModel,
+        asset: this.asset,
+        counter_asset: this.counterAsset
+      }
+    });
   }
 }

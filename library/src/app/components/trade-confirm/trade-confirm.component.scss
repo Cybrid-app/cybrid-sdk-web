@@ -1,0 +1,13 @@
+@use '@angular/material' as mat;
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import '../../../../../src/shared/styles/theme.scss';
+
+.list-item {
+  display: flex;
+  flex-grow: 1;
+  justify-content: space-between;
+}
+
+mat-divider {
+  margin: 0 1rem;
+}

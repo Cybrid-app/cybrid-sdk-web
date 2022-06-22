@@ -28,6 +28,8 @@ import { EventService } from '../../../../../src/shared/services/event/event.ser
 import { ErrorService } from '../../../../../src/shared/services/error/error.service';
 import { ConfigService } from '../../../../../src/shared/services/config/config.service';
 import { MatDialog } from '@angular/material/dialog';
+import { QuoteService } from '../../../../../src/shared/services/quote/quote.service';
+import { TradeConfirmComponent } from '../trade-confirm/trade-confirm.component';
 
 describe('TradeComponent', () => {
   let component: TradeComponent;
@@ -57,6 +59,7 @@ describe('TradeComponent', () => {
   const error$ = throwError(() => {
     new Error('Error');
   });
+  let MockQuoteService = jasmine.createSpyObj('QuoteService', ['getQuote']);
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -83,6 +86,7 @@ describe('TradeComponent', () => {
         { provide: EventService, useValue: MockEventService },
         { provide: ErrorService, useValue: MockErrorService },
         { provide: ConfigService, useValue: MockConfigService },
+        { provide: QuoteService, useValue: MockQuoteService },
         { provide: MatDialog, useValue: MockDialogService },
         {
           provide: ActivatedRoute,
@@ -105,6 +109,8 @@ describe('TradeComponent', () => {
     MockConfigService = TestBed.inject(ConfigService);
     MockConfigService.getConfig$.and.returnValue(of(TestConstants.CONFIG));
     MockDialogService = TestBed.inject(MatDialog);
+    MockQuoteService = TestBed.inject(QuoteService);
+    MockQuoteService.getQuote.and.returnValue(TestConstants.POST_QUOTE);
   });
 
   beforeEach(() => {
@@ -224,18 +230,29 @@ describe('TradeComponent', () => {
     const getPriceSpy = spyOn(component, 'getPrice');
     component.ngOnInit();
     expect(component.side).toEqual('buy'); // Default value
-    component.onSwitchSide('Sell');
+    component.onSwitchSide(1);
     expect(component.side).toEqual('sell');
     expect(getPriceSpy).toHaveBeenCalled();
-    component.onSwitchSide('Buy');
+    component.onSwitchSide(-1);
     expect(component.side).toEqual('buy');
     expect(getPriceSpy).toHaveBeenCalled();
   });
 
   it('should call the quote service and build quote onTrade()', () => {
-    const quote$Spy = spyOn(component.quote$, 'next');
     component.ngOnInit();
     component.onTrade();
-    expect(quote$Spy).toHaveBeenCalled();
+    expect(MockQuoteService.getQuote).toHaveBeenCalled();
+  });
+
+  it('should open the trade confirm component and pass it a PostQuoteBankModel onTrade()', () => {
+    component.ngOnInit();
+    component.onTrade();
+    expect(MockDialogService.open).toHaveBeenCalledWith(TradeConfirmComponent, {
+      data: {
+        model: TestConstants.POST_QUOTE,
+        asset: component.asset,
+        counter_asset: component.counterAsset
+      }
+    });
   });
 });

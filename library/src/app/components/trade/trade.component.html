@@ -7,7 +7,7 @@
     <ng-container *ngIf="(isLoading$ | async) !== true">
       <mat-tab-group
         animationDuration="0ms"
-        (selectedTabChange)="onSwitchSide($event.tab.textLabel)"
+        (selectedTabChange)="onSwitchSide($event.tab.origin)"
       >
         <mat-tab label="{{ 'trade.buy' | translate }}"> </mat-tab>
         <mat-tab label="{{ 'trade.sell' | translate }}"></mat-tab>
@@ -45,7 +45,7 @@
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>
-              <span>{{ 'trade.amount' | translate }}</span>
+              <span>{{ 'trade.amount' | translate | titlecase }}</span>
             </mat-label>
             <input
               matInput
@@ -116,11 +116,12 @@
             class="action"
             mat-flat-button
             color="primary"
+            (click)="onTrade()"
             [disabled]="
               !quoteGroup.valid || !(amount.value.toString().length > 0)
             "
           >
-            {{ side.toString() | translate | titlecase }}
+            {{ 'trade.' + side.toString() | translate | titlecase }}
           </button>
         </div>
       </ng-container>
