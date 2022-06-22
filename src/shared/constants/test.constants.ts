@@ -17,7 +17,7 @@ export class TestConstants {
     name: 'Bitcoin',
     symbol: '₿',
     type: 'crypto',
-    url: Constants.ICON_HOST + 'btc.svg'
+    url: Constants.BTC_ICON
   };
   static ETH_ASSET: Asset = {
     code: 'ETH',
@@ -33,7 +33,7 @@ export class TestConstants {
     name: 'Canadian Dollar',
     symbol: '$',
     type: 'fiat',
-    url: Constants.CAD_ICON
+    url: Constants.ICON_HOST + 'cad.svg'
   };
   static USD_ASSET: Asset = {
     code: 'USD',
@@ -41,7 +41,7 @@ export class TestConstants {
     name: 'United States Dollar',
     symbol: '$',
     type: 'fiat',
-    url: Constants.USD_ICON
+    url: Constants.ICON_HOST + 'usd.svg'
   };
   static ASSETS: Asset[] = [
     TestConstants.BTC_ASSET,
@@ -71,7 +71,6 @@ export class TestConstants {
     theme: 'LIGHT',
     customer: ''
   };
-  static ICON_URL: string = 'https://images.cybrid.xyz/color/eth.svg';
   static POST_QUOTE: PostQuoteBankModel = {
     customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
     symbol: 'BTC-USD',
