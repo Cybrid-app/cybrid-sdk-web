@@ -18,7 +18,11 @@ import { createCustomElement } from '@angular/elements';
 
 // Modules
 import { ApiModule, Configuration } from '@cybrid/cybrid-api-bank-angular';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import {
+  TranslateModule,
+  TranslateLoader,
+  TranslatePipe
+} from '@ngx-translate/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../src/shared/modules/material-module';
 
@@ -36,6 +40,7 @@ import { RetryInterceptor } from '../../../../src/shared/interceptors/auth/retry
 import { AppComponent } from '../components/app/app.component';
 import { PriceListComponent } from '../components/price-list/price-list.component';
 import { TradeComponent } from '../components/trade/trade.component';
+import { TradeConfirmComponent } from '../components/trade-confirm/trade-confirm.component';
 
 // Utility
 import { environment } from '../../environments/environment';
@@ -47,7 +52,13 @@ export function HttpLoaderFactory(http: HttpClient) {
 }
 
 @NgModule({
-  declarations: [AppComponent, PriceListComponent, TradeComponent, AssetPipe],
+  declarations: [
+    AppComponent,
+    PriceListComponent,
+    TradeComponent,
+    TradeConfirmComponent,
+    AssetPipe
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -84,6 +95,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     EventService,
     AssetService,
     AssetPipe,
+    TranslatePipe,
     { provide: APP_BASE_HREF, useValue: '' },
     { provide: HTTP_INTERCEPTORS, useClass: RetryInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },

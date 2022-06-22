@@ -1,0 +1,128 @@
+<div
+  [ngClass]="{
+    'cybrid-dark-theme': (configService.config$ | async)?.theme === 'DARK'
+  }"
+>
+  <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
+    <ng-container *ngIf="quote$ | async as quote; else loading">
+      <h2 mat-dialog-title>{{ 'trade.confirm.header' | translate }}</h2>
+      <mat-dialog-content>
+        <span class="mat-hint"
+          >{{ 'trade.confirm.refresh.message' | translate }}
+          {{ ' ' + refreshInterval / 1000 + ' ' }}
+          {{ 'trade.confirm.refresh.unit' | translate }}</span
+        >
+        <mat-list *ngIf="data.model.side === 'buy'" role="list">
+          <mat-list-item>
+            <div class="list-item">
+              <span>{{
+                ('trade.confirm.purchase' | translate) +
+                  ' ' +
+                  ('trade.amount' | translate)
+              }}</span>
+              <div>
+                <span class="mat-body">
+                  {{ (quote.deliver_amount! | asset: counter_asset) + ' ' }}
+                </span>
+                <span class="mat-body mat-hint">{{ counter_asset.code }}</span>
+              </div>
+            </div>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          <mat-list-item>
+            <div class="list-item">
+              <span>{{
+                ('trade.confirm.purchase' | translate) +
+                  ' ' +
+                  ('trade.quantity' | translate)
+              }}</span>
+              <div>
+                <span class="mat-body">{{
+                  (quote.receive_amount! | asset: asset:'trade') + ' '
+                }}</span>
+                <span class="mat-body mat-hint">{{ asset.code }}</span>
+              </div>
+            </div>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          <mat-list-item>
+            <div class="list-item">
+              <span>{{ 'trade.confirm.transaction' | translate }}</span>
+              <div>
+                <span class="mat-body"
+                  >{{ (quote.fee! | asset: counter_asset:'trade') + ' ' }}
+                </span>
+                <span class="mat-body mat-hint">{{ counter_asset.code }}</span>
+              </div>
+            </div>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+        </mat-list>
+        <mat-list *ngIf="data.model.side === 'sell'" role="list">
+          <mat-list-item>
+            <div class="list-item">
+              <span>{{
+                ('trade.sell' | translate) + ' ' + ('trade.amount' | translate)
+              }}</span>
+              <div>
+                <span class="mat-body">{{
+                  (quote.receive_amount! | asset: counter_asset) + ' '
+                }}</span>
+                <span class="mat-body mat-hint"> {{ counter_asset.code }}</span>
+              </div>
+            </div>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          <mat-list-item>
+            <div class="list-item">
+              <span>{{
+                ('trade.sell' | translate) +
+                  ' ' +
+                  ('trade.quantity' | translate)
+              }}</span>
+              <div>
+                <span>{{
+                  (quote.deliver_amount! | asset: asset:'trade') + ' '
+                }}</span>
+                <span class="mat-body mat-hint">{{ asset.code }}</span>
+              </div>
+            </div>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          <mat-list-item>
+            <div class="list-item">
+              <span>{{ 'trade.confirm.transaction' | translate }}</span>
+              <div>
+                <span class="mat-body">{{
+                  (quote.fee! | asset: counter_asset) + ' '
+                }}</span>
+                <span class="mat-body mat-hint">{{ counter_asset.code }}</span>
+              </div>
+            </div>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+        </mat-list>
+      </mat-dialog-content>
+      <mat-dialog-actions align="end">
+        <button mat-button [mat-dialog-close]>
+          {{ 'cancel' | translate }}
+        </button>
+        <button mat-flat-button color="primary" (click)="onConfirmTrade()">
+          {{ 'confirm' | translate }}
+        </button>
+      </mat-dialog-actions>
+    </ng-container>
+  </ng-container>
+  <ng-template #loading>
+    <mat-spinner diameter="40"></mat-spinner>
+  </ng-template>
+  <ng-template #error>
+    <mat-card>
+      <mat-card-content>
+        <div class="fatal">
+          <p>{{ 'fatal' | translate }}</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </ng-template>
+</div>

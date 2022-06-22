@@ -1,4 +1,8 @@
-import { SymbolPriceBankModel } from '@cybrid/cybrid-api-bank-angular';
+import {
+  PostQuoteBankModel,
+  QuoteBankModel,
+  SymbolPriceBankModel
+} from '@cybrid/cybrid-api-bank-angular';
 import { SymbolPrice } from '../../../library/src/app/components/price-list/price-list.component';
 import { ComponentConfig } from '../services/config/config.service';
 import { Asset } from '../services/asset/asset.service';
@@ -68,4 +72,21 @@ export class TestConstants {
     customer: ''
   };
   static ICON_URL: string = 'https://images.cybrid.xyz/color/eth.svg';
+  static POST_QUOTE: PostQuoteBankModel = {
+    customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+    symbol: 'BTC-USD',
+    side: 'buy',
+    receive_amount: 100000000
+  };
+  static QUOTE: QuoteBankModel = {
+    guid: 'f92faf30047aca08b95bf10aecb96254',
+    customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+    symbol: 'ETH-USD',
+    side: 'buy',
+    receive_amount: 1000000000000000000,
+    deliver_amount: 109028,
+    fee: 0,
+    issued_at: '2022-06-22T13:30:58.078Z',
+    expires_at: '2022-06-22T13:31:28.078Z'
+  };
 }

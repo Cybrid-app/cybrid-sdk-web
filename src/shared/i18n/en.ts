@@ -1,4 +1,10 @@
 export default {
+  // General
+  cancel: 'Cancel',
+  confirm: 'Confirm',
+  fatal: 'An unrecoverable error occurred',
+
+  // Price list component
   priceList: {
     title: 'Price List',
     table: {
@@ -10,12 +16,29 @@ export default {
     empty: 'No coins found',
     refreshButton: 'Refresh'
   },
+
+  // Trade component
   trade: {
-    amount: 'Amount',
+    amount: 'amount',
+    quantity: 'quantity',
     currency: 'Currency',
     buy: 'Buy',
     sell: 'Sell',
-    error: 'Positive number required'
-  },
-  fatal: 'An unrecoverable error occurred'
+    error: 'Positive number required',
+
+    // Confirm dialog
+    confirm: {
+      header: 'Order Quote',
+      refresh: {
+        message: 'Market rates will automatically refresh every',
+        unit: 'seconds'
+      },
+      purchase: 'Purchase',
+      transaction: 'Transaction fee',
+      error: {
+        quote: 'Error fetching quote',
+        trade: 'Error confirming trade'
+      }
+    }
+  }
 };
