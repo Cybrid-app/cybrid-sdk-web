@@ -18,6 +18,7 @@ workflows:
       - node/test:
           name: test
           version: 16.14.2-browsers
+          cache-version: v2
           setup:
             - browser-tools/install-chrome
             - browser-tools/install-chromedriver
@@ -60,8 +61,8 @@ workflows:
           requires:
             - e2e
           name: publish
-          override-ci-command: npm install --legacy-peer-deps
           version: 16.14.2
+          cache-version: v2
           npm-run: package:library
           post-steps:
             - jq/install
