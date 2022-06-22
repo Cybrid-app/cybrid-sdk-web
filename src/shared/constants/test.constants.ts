@@ -17,7 +17,7 @@ export class TestConstants {
     name: 'Bitcoin',
     symbol: '₿',
     type: 'crypto',
-    url: Constants.ICON_HOST + 'btc.svg'
+    url: Constants.BTC_ICON
   };
   static ETH_ASSET: Asset = {
     code: 'ETH',

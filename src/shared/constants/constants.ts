@@ -20,58 +20,13 @@ export class Constants {
   static MIN_FRACTION_DIGITS = 2;
   static THEME = THEME.LIGHT;
   static ICON_HOST = 'https://images.cybrid.xyz/sdk/assets/svg/color/';
-  static COUNTER_ASSET: Asset = {
-    type: 'fiat',
-    code: 'CAD',
-    name: 'Canadian Dollar',
-    symbol: '$',
-    decimals: 2,
-    url: Constants.ICON_HOST + 'cad.svg'
-  };
-  static ASSET: Asset = {
-    type: 'crypto',
-    code: 'BTC',
-    name: 'Bitcoin',
-    symbol: '₿',
-    decimals: 8,
-    url: 'https://images.cybrid.xyz/color/btc.svg'
-  };
+  static BTC_ICON = 'https://images.cybrid.xyz/sdk/assets/svg/color/btc.svg';
   static BTC_ASSET: Asset = {
     code: 'BTC',
     decimals: 8,
     name: 'Bitcoin',
     symbol: '₿',
     type: 'crypto',
-    url: Constants.ICON_HOST + 'btc.svg'
+    url: Constants.BTC_ICON
   };
-  static ETH_ASSET: Asset = {
-    code: 'ETH',
-    decimals: 18,
-    name: 'Ethereum',
-    symbol: 'Ξ',
-    type: 'crypto',
-    url: Constants.ICON_HOST + 'eth.svg'
-  };
-  static CAD_ASSET: Asset = {
-    code: 'CAD',
-    decimals: 2,
-    name: 'Canadian Dollar',
-    symbol: '$',
-    type: 'fiat',
-    url: Constants.ICON_HOST + 'cad.svg'
-  };
-  static USD_ASSET: Asset = {
-    code: 'USD',
-    decimals: 2,
-    name: 'United States Dollar',
-    symbol: '$',
-    type: 'fiat',
-    url: Constants.ICON_HOST + 'usd.svg'
-  };
-  static ASSETS: Asset[] = [
-    Constants.BTC_ASSET,
-    Constants.ETH_ASSET,
-    Constants.CAD_ASSET,
-    Constants.USD_ASSET
-  ];
 }
