@@ -1,0 +1,130 @@
+<div
+  [ngClass]="{
+    'cybrid-dark-theme': (configService.config$ | async)?.theme === 'DARK'
+  }"
+>
+  <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
+    <ng-container *ngIf="trade$ | async as trade; else loading">
+      <h2 mat-dialog-title>{{ 'trade.summary.header' | translate }}</h2>
+      <mat-dialog-content>
+        <p class="mat-hint">
+          {{ 'trade.summary.message' | translate }}
+        </p>
+        <ng-container *ngIf="trade.side === 'buy'">
+          <div class="list-item">
+            <span>
+              {{
+                ('trade.summary.purchased' | translate) +
+                  ' ' +
+                  ('trade.amount' | translate)
+              }}
+            </span>
+            <div>
+              <span>
+                {{ (trade.deliver_amount! | asset: data.counter_asset) + ' ' }}
+              </span>
+              <span class="mat-hint">{{ data.counter_asset.code }}</span>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="list-item">
+            <span
+              >{{
+                ('trade.summary.purchased' | translate) +
+                  ' ' +
+                  ('trade.quantity' | translate)
+              }}
+            </span>
+            <div>
+              <span>{{
+                (trade.receive_amount! | asset: data.asset:'trade') + ' '
+              }}</span>
+              <span class="mat-hint">{{ data.asset.code }}</span>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="list-item">
+            <span>{{ 'trade.transaction' | translate }}</span>
+            <div>
+              <span>
+                {{ (trade.fee! | asset: data.counter_asset:'trade') + ' ' }}
+              </span>
+              <span class="mat-hint">{{ data.counter_asset.code }}</span>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+        </ng-container>
+
+        <ng-container *ngIf="trade.side === 'sell'">
+          <div class="list-item">
+            <span>
+              {{
+                ('trade.summary.sold' | translate) +
+                  ' ' +
+                  ('trade.amount' | translate)
+              }}
+            </span>
+            <div>
+              <span>
+                {{ (trade.receive_amount! | asset: data.counter_asset) + ' ' }}
+              </span>
+              <span class="mat-hint">{{ data.counter_asset.code }}</span>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="list-item">
+            <span
+              >{{
+                ('trade.summary.sold' | translate) +
+                  ' ' +
+                  ('trade.quantity' | translate)
+              }}
+            </span>
+            <div>
+              <span>{{
+                (trade.deliver_amount! | asset: data.asset:'trade') + ' '
+              }}</span>
+              <span class="mat-hint">{{ data.asset.code }}</span>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="list-item">
+            <span>{{ 'trade.transaction' | translate }}</span>
+            <div>
+              <span>
+                {{ (trade.fee! | asset: data.counter_asset:'trade') + ' ' }}
+              </span>
+              <span class="mat-hint">{{ data.counter_asset.code }}</span>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+        </ng-container>
+      </mat-dialog-content>
+      <mat-dialog-actions align="end">
+        <button
+          mat-flat-button
+          [mat-dialog-close]
+          color="primary"
+          (click)="onDialogClose()"
+        >
+          {{ 'done' | translate }}
+        </button>
+      </mat-dialog-actions>
+    </ng-container>
+  </ng-container>
+  <ng-template #loading>
+    <div class="loading-wrapper">
+      <h2>{{ 'trade.summary.loading' | translate }}</h2>
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  </ng-template>
+  <ng-template #error>
+    <mat-card>
+      <mat-card-content>
+        <div class="fatal">
+          <p>{{ 'fatal' | translate }}</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </ng-template>
+</div>

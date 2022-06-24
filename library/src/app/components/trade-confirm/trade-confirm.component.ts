@@ -100,9 +100,7 @@ export class TradeConfirmComponent implements OnInit, OnDestroy {
           const message = this.translatePipe.transform(
             'trade.confirm.error.quote'
           );
-          this.snackBar.open(message, undefined, {
-            duration: 3000
-          });
+          this.snackBar.open(message, 'OK');
           this.refreshSub.unsubscribe();
           this.eventService.handleEvent(
             LEVEL.ERROR,

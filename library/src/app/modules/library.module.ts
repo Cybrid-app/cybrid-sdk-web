@@ -41,6 +41,7 @@ import { AppComponent } from '../components/app/app.component';
 import { PriceListComponent } from '../components/price-list/price-list.component';
 import { TradeComponent } from '../components/trade/trade.component';
 import { TradeConfirmComponent } from '../components/trade-confirm/trade-confirm.component';
+import { TradeSummaryComponent } from '../components/trade-summary/trade-summary.component';
 
 // Utility
 import { environment } from '../../environments/environment';
@@ -57,6 +58,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     PriceListComponent,
     TradeComponent,
     TradeConfirmComponent,
+    TradeSummaryComponent,
     AssetPipe
   ],
   imports: [

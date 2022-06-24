@@ -109,6 +109,12 @@ describe('TradeComponent', () => {
     MockConfigService = TestBed.inject(ConfigService);
     MockConfigService.getConfig$.and.returnValue(of(TestConstants.CONFIG));
     MockDialogService = TestBed.inject(MatDialog);
+    MockDialogService.open.and.returnValue({
+      afterClosed: () =>
+        of({
+          hasAccepted: true
+        })
+    });
     MockQuoteService = TestBed.inject(QuoteService);
     MockQuoteService.getQuote.and.returnValue(TestConstants.POST_QUOTE);
   });

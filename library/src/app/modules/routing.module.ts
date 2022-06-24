@@ -4,7 +4,7 @@ import { PriceListComponent } from '../components/price-list/price-list.componen
 import { TradeComponent } from '../components/trade/trade.component';
 import { Routes } from '@angular/router';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: '',
     redirectTo: 'app/price-list',

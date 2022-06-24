@@ -2,6 +2,8 @@ export default {
   // General
   cancel: 'Annuler',
   confirm: 'Confirmer',
+  done: 'Fait',
+  date: 'Date',
   fatal: "Une erreur irrécupérable s'est produite",
 
   // Price list component
@@ -25,6 +27,7 @@ export default {
     buy: 'Acheter',
     sell: 'Vendre',
     error: 'Nombre positif requis',
+    transaction: 'Frais de transaction',
 
     // Confirm dialog
     confirm: {
@@ -35,11 +38,21 @@ export default {
         unit: 'seconds'
       },
       purchase: 'Acheter',
-      transaction: 'Frais de transaction',
+      loading: 'Récupération du devis...',
       error: {
-        quote: 'Erreur lors de la récupération du devis',
-        trade: 'Erreur lors de la confirmation de léchange'
+        quote: 'Erreur lors de la récupération du devis'
       }
+    },
+
+    // Summary dialog
+    summary: {
+      header: 'Commande Finalisée',
+      message: 'Votre commande a été passée, merci.',
+      purchased: 'Acheté',
+      sold: 'Vendu',
+      id: 'Transaction ID:',
+      loading: 'Envoi de la commande...',
+      error: 'Erreur lors de la récupération de léchange'
     }
   }
 };

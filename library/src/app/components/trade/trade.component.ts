@@ -1,8 +1,9 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   PostQuoteBankModel,
   PricesService,
-  SymbolPriceBankModel
+  SymbolPriceBankModel,
+  TradeBankModel
 } from '@cybrid/cybrid-api-bank-angular';
 import {
   BehaviorSubject,
@@ -38,13 +39,13 @@ import { symbolBuild } from '../../../../../src/shared/utility/symbol-build';
 import SideEnum = PostQuoteBankModel.SideEnum;
 import { QuoteService } from '../../../../../src/shared/services/quote/quote.service';
 import { TradeConfirmComponent } from '../trade-confirm/trade-confirm.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { TradeSummaryComponent } from '../trade-summary/trade-summary.component';
 
 @Component({
   selector: 'app-trade',
   templateUrl: './trade.component.html',
-  styleUrls: ['./trade.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./trade.component.scss']
 })
 export class TradeComponent implements OnInit, OnDestroy {
   compareObjects = compareObjects;
@@ -70,6 +71,8 @@ export class TradeComponent implements OnInit, OnDestroy {
     asset: 0,
     counter_asset: 0
   };
+
+  dialogRef!: MatDialogRef<TradeConfirmComponent>;
 
   isLoading$ = new BehaviorSubject(true);
   isRecoverable$ = new BehaviorSubject(true);
@@ -272,12 +275,30 @@ export class TradeComponent implements OnInit, OnDestroy {
       this.asset,
       this.counterAsset
     );
-    this.dialog.open(TradeConfirmComponent, {
+
+    this.dialogRef = this.dialog.open(TradeConfirmComponent, {
       data: {
         model: postQuoteBankModel,
         asset: this.asset,
         counter_asset: this.counterAsset
       }
     });
+
+    this.dialogRef
+      .afterClosed()
+      .pipe(
+        map((tradeBankModel: TradeBankModel) => {
+          if (tradeBankModel) {
+            this.dialog.open(TradeSummaryComponent, {
+              data: {
+                model: tradeBankModel,
+                asset: this.asset,
+                counter_asset: this.counterAsset
+              }
+            });
+          }
+        })
+      )
+      .subscribe();
   }
 }

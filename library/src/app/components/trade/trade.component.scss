@@ -9,10 +9,6 @@
   margin-top: calc(1rem + 0.25em);
 }
 
-.mat-tab-label {
-  flex-grow: 1;
-}
-
 .select-code {
   @extend .mat-hint;
   @extend .mat-h5;
@@ -25,8 +21,8 @@
   margin: 0;
 }
 
-.mat-form-field-flex {
-  align-items: center;
+.input {
+  margin-left: 15px;
 }
 
 .prefix {
@@ -37,7 +33,7 @@
     height: 1rem;
     width: 1px;
     top: 0;
-    right: -4px;
+    right: -8px;
     background: currentColor;
   }
 }
@@ -68,11 +64,6 @@
 .display-icon {
   max-height: 1.7rem;
   max-width: 1.7rem;
-}
-
-.switch {
-  align-self: end;
-  margin-top: -1rem;
 }
 
 .price {
