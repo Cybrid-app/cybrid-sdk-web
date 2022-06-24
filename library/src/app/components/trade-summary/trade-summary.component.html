@@ -11,6 +11,21 @@
           {{ 'trade.summary.message' | translate }}
         </p>
         <ng-container *ngIf="trade.side === 'buy'">
+          <div class="subheader-item list-item">
+            <div class="inner">
+              <span class="mat-body-strong">Transaction ID:</span>
+              <span
+                class="transaction-id"
+                matTooltip="{{ trade.guid }}"
+                matTooltipPosition="above"
+                >{{ trade.guid! | truncate: 9 }}</span
+              >
+            </div>
+            <div class="inner">
+              <span class="mat-body-strong">Date:</span>
+              <span>{{ trade.created_at | date }}</span>
+            </div>
+          </div>
           <div class="list-item">
             <span>
               {{
@@ -54,8 +69,22 @@
           </div>
           <mat-divider></mat-divider>
         </ng-container>
-
         <ng-container *ngIf="trade.side === 'sell'">
+          <div class="subheader-item list-item">
+            <div class="inner">
+              <span class="mat-body-strong">Transaction ID:</span>
+              <span
+                class="transaction-id"
+                matTooltip="{{ trade.guid }}"
+                matTooltipPosition="above"
+                >{{ trade.guid! | truncate: 9 }}</span
+              >
+            </div>
+            <div class="inner">
+              <span class="mat-body-strong">Date:</span>
+              <span>{{ trade.created_at | date }}</span>
+            </div>
+          </div>
           <div class="list-item">
             <span>
               {{
@@ -101,12 +130,7 @@
         </ng-container>
       </mat-dialog-content>
       <mat-dialog-actions align="end">
-        <button
-          mat-flat-button
-          [mat-dialog-close]
-          color="primary"
-          (click)="onDialogClose()"
-        >
+        <button mat-stroked-button [mat-dialog-close] (click)="onDialogClose()">
           {{ 'done' | translate }}
         </button>
       </mat-dialog-actions>

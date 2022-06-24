@@ -4,7 +4,7 @@ import {
   PostQuoteBankModel,
   QuotesService
 } from '@cybrid/cybrid-api-bank-angular';
-import { AssetPipe } from '../../pipes/asset.pipe';
+import { AssetPipe } from '../../pipes/asset/asset.pipe';
 import { symbolBuild } from '../../utility/symbol-build';
 import { map, take } from 'rxjs';
 import { ComponentConfig, ConfigService } from '../config/config.service';

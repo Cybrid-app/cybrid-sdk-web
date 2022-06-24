@@ -32,7 +32,7 @@ import {
 } from '../../../../../src/shared/services/asset/asset.service';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { AssetPipe } from '../../../../../src/shared/pipes/asset.pipe';
+import { AssetPipe } from '../../../../../src/shared/pipes/asset/asset.pipe';
 import { compareObjects } from '../../../../../src/shared/utility/compare-object';
 import { symbolSplit } from '../../../../../src/shared/utility/symbol-split';
 import { symbolBuild } from '../../../../../src/shared/utility/symbol-build';

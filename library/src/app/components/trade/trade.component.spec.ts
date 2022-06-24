@@ -12,7 +12,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { HttpLoaderFactory } from '../../modules/library.module';
 import { HttpClient } from '@angular/common/http';
-import { AssetPipe } from '../../../../../src/shared/pipes/asset.pipe';
+import { AssetPipe } from '../../../../../src/shared/pipes/asset/asset.pipe';
 import { ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { TestConstants } from '../../../../../src/shared/constants/test.constants';

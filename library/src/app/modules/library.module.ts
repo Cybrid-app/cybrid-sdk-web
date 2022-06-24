@@ -46,7 +46,8 @@ import { TradeSummaryComponent } from '../components/trade-summary/trade-summary
 // Utility
 import { environment } from '../../environments/environment';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { AssetPipe } from '../../../../src/shared/pipes/asset.pipe';
+import { AssetPipe } from '../../../../src/shared/pipes/asset/asset.pipe';
+import { TruncatePipe } from '../../../../src/shared/pipes/truncate/tuncate.pipe';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -59,7 +60,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     TradeComponent,
     TradeConfirmComponent,
     TradeSummaryComponent,
-    AssetPipe
+    AssetPipe,
+    TruncatePipe
   ],
   imports: [
     BrowserModule,
@@ -97,6 +99,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     EventService,
     AssetService,
     AssetPipe,
+    TruncatePipe,
     TranslatePipe,
     { provide: APP_BASE_HREF, useValue: '' },
     { provide: HTTP_INTERCEPTORS, useClass: RetryInterceptor, multi: true },

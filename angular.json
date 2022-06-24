@@ -97,7 +97,7 @@
             "styles": ["src/styles.scss"],
             "scripts": [],
             "codeCoverage": true,
-            "codeCoverageExclude": ["src/shared/pipes/mock-asset.pipe.ts"]
+            "codeCoverageExclude": ["src/shared/pipes/asset/mock-asset.pipe.ts"]
           }
         },
         "lint": {

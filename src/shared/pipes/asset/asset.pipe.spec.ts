@@ -1,7 +1,7 @@
 import { AssetPipe } from './asset.pipe';
-import { ConfigService } from '../services/config/config.service';
+import { ConfigService } from '../../services/config/config.service';
 import { of } from 'rxjs';
-import { TestConstants } from '../constants/test.constants';
+import { TestConstants } from '../../constants/test.constants';
 
 describe('AssetPipe', () => {
   let MockConfigService = jasmine.createSpyObj('ConfigService', {

@@ -1,11 +1,11 @@
 import { OnDestroy, Pipe, PipeTransform } from '@angular/core';
 import { AssetBankModel } from '@cybrid/cybrid-api-bank-angular';
-import { Constants } from '../constants/constants';
+import { Constants } from '../../constants/constants';
 import { Subject } from 'rxjs';
 import { formatNumber } from '@angular/common';
 import { Big } from 'big.js';
 import '@angular/common/locales/global/fr';
-import { Asset } from '../services/asset/asset.service';
+import { Asset } from '../../services/asset/asset.service';
 
 interface NumberSeparator {
   locale: string;

@@ -38,7 +38,7 @@ export default {
         unit: 'seconds'
       },
       purchase: 'Acheter',
-      loading: 'Récupération du devis...',
+      loading: 'Devis en attente',
       error: {
         quote: 'Erreur lors de la récupération du devis'
       }
@@ -51,7 +51,7 @@ export default {
       purchased: 'Acheté',
       sold: 'Vendu',
       id: 'Transaction ID:',
-      loading: 'Envoi de la commande...',
+      loading: 'Soumettre une commande de crypto',
       error: 'Erreur lors de la récupération de léchange'
     }
   }

@@ -37,7 +37,7 @@ export default {
         unit: 'seconds'
       },
       purchase: 'Purchase',
-      loading: 'Fetching quote...',
+      loading: 'Quote Pending',
       error: {
         quote: 'Error fetching quote'
       }
@@ -50,7 +50,7 @@ export default {
       purchased: 'Purchased',
       sold: 'Sold',
       id: 'Transaction ID:',
-      loading: 'Submitting order...',
+      loading: 'Submitting Crypto Order',
       error: 'Error fetching trade'
     }
   }
