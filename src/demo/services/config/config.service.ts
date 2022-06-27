@@ -15,6 +15,7 @@ import {
   tap
 } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { ComponentConfig } from '../../../shared/services/config/config.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,14 @@ import { environment } from '../../../environments/environment';
 export class ConfigService {
   token$ = new Subject<string>();
   invalidCredentials$ = new BehaviorSubject(false);
+  config: ComponentConfig = {
+    refreshInterval: 5000,
+    locale: 'en-US',
+    theme: 'LIGHT',
+    customer: ''
+  };
+  config$ = new BehaviorSubject<ComponentConfig>(this.config);
+
   constructor(private http: HttpClient) {
     this.createToken()
       .pipe(

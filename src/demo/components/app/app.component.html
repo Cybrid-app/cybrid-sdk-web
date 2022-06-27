@@ -1,16 +1,27 @@
-<mat-toolbar color="primary">
-  <img
-    src="https://assets-global.website-files.com/6226732e4130814a4adb86c2/62430bcedab2d5494d20b601_logo-white.svg"
-    alt="Cybrid logo"
-  />
-  <div class="spacer"></div>
-  <a
-    class="package"
-    href="https://www.npmjs.com/package/@cybrid/cybrid-sdk-ui-js"
-    >{{ 'cybrid-sdk-ui-js@ ' + (version | async) }}</a
-  >
-</mat-toolbar>
-
-<div class="wrapper">
-  <app-demo></app-demo>
+<div
+  class="wrapper"
+  [ngClass]="{
+    'cybrid-dark-theme': (configService.config$ | async)?.theme === 'DARK'
+  }"
+>
+  <mat-toolbar color="primary">
+    <img
+      src="https://assets-global.website-files.com/6226732e4130814a4adb86c2/62430bcedab2d5494d20b601_logo-white.svg"
+      alt="Cybrid logo"
+    />
+    <div class="spacer"></div>
+    <a
+      class="mat-body package"
+      href="https://www.npmjs.com/package/@cybrid/cybrid-sdk-ui-js"
+      >{{ 'cybrid-sdk-ui-js@ ' + (version | async) }}</a
+    >
+    <button mat-icon-button>
+      <mat-icon (click)="toggleTheme()">{{ mode }}</mat-icon>
+    </button>
+  </mat-toolbar>
+  <mat-drawer-container>
+    <mat-drawer-content>
+      <app-demo></app-demo>
+    </mat-drawer-content>
+  </mat-drawer-container>
 </div>

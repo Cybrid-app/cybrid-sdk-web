@@ -3,10 +3,25 @@
 mat-toolbar {
   display: flex;
   align-items: center;
+  gap: 0.5rem;
   @include mat.elevation(2);
-  > a {
-    font-size: 1rem;
-  }
+}
+
+mat-drawer-container {
+  flex-grow: 1;
+}
+
+mat-drawer-content {
+  max-width: 700px;
+  margin: auto;
+  padding: 2rem 1rem 1rem;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  height: 100vh;
 }
 
 .spacer {
@@ -17,13 +32,4 @@ mat-toolbar {
   margin-left: auto;
   color: white;
   text-decoration: none;
-}
-.wrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 1rem;
-  max-width: 700px;
-  margin: auto;
-  padding: 2rem 1rem 1rem;
 }
