@@ -41,11 +41,13 @@ import { AppComponent } from '../components/app/app.component';
 import { PriceListComponent } from '../components/price-list/price-list.component';
 import { TradeComponent } from '../components/trade/trade.component';
 import { TradeConfirmComponent } from '../components/trade-confirm/trade-confirm.component';
+import { TradeSummaryComponent } from '../components/trade-summary/trade-summary.component';
 
 // Utility
 import { environment } from '../../environments/environment';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { AssetPipe } from '../../../../src/shared/pipes/asset.pipe';
+import { AssetPipe } from '../../../../src/shared/pipes/asset/asset.pipe';
+import { TruncatePipe } from '../../../../src/shared/pipes/truncate/tuncate.pipe';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -57,7 +59,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     PriceListComponent,
     TradeComponent,
     TradeConfirmComponent,
-    AssetPipe
+    TradeSummaryComponent,
+    AssetPipe,
+    TruncatePipe
   ],
   imports: [
     BrowserModule,
@@ -95,6 +99,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     EventService,
     AssetService,
     AssetPipe,
+    TruncatePipe,
     TranslatePipe,
     { provide: APP_BASE_HREF, useValue: '' },
     { provide: HTTP_INTERCEPTORS, useClass: RetryInterceptor, multi: true },

@@ -3,12 +3,12 @@ import { TestBed } from '@angular/core/testing';
 import { QuoteService } from './quote.service';
 import { TranslateService } from '@ngx-translate/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { AssetPipe } from '../../pipes/asset.pipe';
+import { AssetPipe } from '../../pipes/asset/asset.pipe';
 import { ConfigService } from '../config/config.service';
 import { of } from 'rxjs';
 import { TestConstants } from '../../constants/test.constants';
 import { PostQuoteBankModel } from '@cybrid/cybrid-api-bank-angular';
-import { MockAssetPipe } from '../../pipes/mock-asset.pipe';
+import { MockAssetPipe } from '../../pipes/asset/mock-asset.pipe';
 
 describe('QuoteService', () => {
   let service: QuoteService;

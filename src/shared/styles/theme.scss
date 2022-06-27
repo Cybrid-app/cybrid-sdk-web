@@ -187,3 +187,30 @@ body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.loading-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+// Material style overrides
+
+.mat-error {
+  display: inline;
+}
+
+.mat-form-field-flex {
+  align-items: center !important;
+}
+
+.mat-tab-label {
+  flex-grow: 1;
+}

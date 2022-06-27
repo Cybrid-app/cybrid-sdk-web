@@ -2,6 +2,8 @@ export default {
   // General
   cancel: 'Cancel',
   confirm: 'Confirm',
+  done: 'Done',
+  date: 'Date',
   fatal: 'An unrecoverable error occurred',
 
   // Price list component
@@ -25,6 +27,7 @@ export default {
     buy: 'Buy',
     sell: 'Sell',
     error: 'Positive number required',
+    transaction: 'Transaction fee',
 
     // Confirm dialog
     confirm: {
@@ -34,11 +37,21 @@ export default {
         unit: 'seconds'
       },
       purchase: 'Purchase',
-      transaction: 'Transaction fee',
+      loading: 'Quote Pending',
       error: {
-        quote: 'Error fetching quote',
-        trade: 'Error confirming trade'
+        quote: 'Error fetching quote'
       }
+    },
+
+    // Summary dialog
+    summary: {
+      header: 'Order Finalized',
+      message: 'Your order has been placed, thank you.',
+      purchased: 'Purchased',
+      sold: 'Sold',
+      id: 'Transaction ID:',
+      loading: 'Submitting Crypto Order',
+      error: 'Error fetching trade'
     }
   }
 };

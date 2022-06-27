@@ -1,8 +1,8 @@
 import { OnDestroy, Pipe, PipeTransform } from '@angular/core';
 import { AssetBankModel } from '@cybrid/cybrid-api-bank-angular';
-import { ConfigService } from '../services/config/config.service';
-import { Constants } from '../constants/constants';
-import { Asset } from '../services/asset/asset.service';
+import { ConfigService } from '../../services/config/config.service';
+import { Constants } from '../../constants/constants';
+import { Asset } from '../../services/asset/asset.service';
 import { map, Subject, takeUntil } from 'rxjs';
 import { formatNumber } from '@angular/common';
 import { Big } from 'big.js';
