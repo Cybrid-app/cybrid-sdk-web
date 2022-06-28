@@ -80,10 +80,17 @@ describe('ConfigService', () => {
     config.subscribe((cfg) => {
       expect(cfg).toEqual(testConfig);
     });
-    const darkTestConfig = testConfig;
-    darkTestConfig.theme = 'DARK';
+  });
+
+  it('should set light and dark mode', () => {
+    const darkTestConfig: ComponentConfig = {
+      refreshInterval: 5000,
+      locale: 'en-US',
+      theme: 'DARK',
+      customer: ''
+    };
     service.setConfig(darkTestConfig);
-    config.subscribe((cfg) => {
+    service.config$.subscribe((cfg) => {
       expect(cfg).toEqual(darkTestConfig);
     });
   });
