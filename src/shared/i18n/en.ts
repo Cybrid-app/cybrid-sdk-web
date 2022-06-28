@@ -1,8 +1,9 @@
 export default {
   // General
-  cancel: 'Cancel',
-  confirm: 'Confirm',
-  done: 'Done',
+  cancel: 'CANCEL',
+  confirm: 'CONFIRM',
+  done: 'DONE',
+  back: 'Back',
   date: 'Date',
   fatal: 'An unrecoverable error occurred',
 
@@ -24,8 +25,8 @@ export default {
     amount: 'amount',
     quantity: 'quantity',
     currency: 'Currency',
-    buy: 'Buy',
-    sell: 'Sell',
+    buy: 'BUY',
+    sell: 'SELL',
     error: 'Positive number required',
     transaction: 'Transaction fee',
 
@@ -45,7 +46,7 @@ export default {
 
     // Summary dialog
     summary: {
-      header: 'Order Finalized',
+      header: 'Order Submitted',
       message: 'Your order has been placed, thank you.',
       purchased: 'Purchased',
       sold: 'Sold',

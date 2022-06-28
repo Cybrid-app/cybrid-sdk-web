@@ -81,4 +81,17 @@ describe('ConfigService', () => {
       expect(cfg).toEqual(testConfig);
     });
   });
+
+  it('should set light and dark mode', () => {
+    const darkTestConfig: ComponentConfig = {
+      refreshInterval: 5000,
+      locale: 'en-US',
+      theme: 'DARK',
+      customer: ''
+    };
+    service.setConfig(darkTestConfig);
+    service.config$.subscribe((cfg) => {
+      expect(cfg).toEqual(darkTestConfig);
+    });
+  });
 });

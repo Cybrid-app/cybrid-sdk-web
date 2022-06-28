@@ -144,8 +144,8 @@ $cybrid-dark-accent-palette: (
   )
 );
 
-$dark-primary: mat.define-palette(mat.$pink-palette, 500);
-$dark-accent: mat.define-palette(mat.$blue-gray-palette, A200, A100, A400);
+$dark-primary: mat.define-palette(mat.$purple-palette, 500);
+$dark-accent: mat.define-palette(mat.$green-palette, A200, A100, A400);
 $dark-warn: mat.define-palette(mat.$red-palette);
 
 $dark-theme: mat.define-dark-theme(
@@ -176,14 +176,16 @@ $light-theme: mat.define-light-theme(
 
 .cybrid-dark-theme {
   @include mat.all-component-colors($dark-theme);
-  color: white;
+
+  // Material select not selected option color
+  .mat-option:not(.mat-selected) {
+    color: white;
+  }
 }
 
 html,
 body {
   height: 100%;
-}
-body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
@@ -199,6 +201,20 @@ input[type='number']::-webkit-outer-spin-button {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.navigation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 400;
+  mat-icon {
+    height: 1rem;
+    width: 1rem;
+    line-height: 1rem;
+    font-size: 1rem;
+  }
 }
 
 // Material style overrides

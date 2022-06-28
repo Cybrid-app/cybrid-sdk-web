@@ -1,11 +1,12 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Constants } from '../../constants/constants';
-import { BehaviorSubject, Observable, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, map, Observable, Subject, takeUntil } from 'rxjs';
 import { CODE, EventService, LEVEL } from '../event/event.service';
 import { ErrorService } from '../error/error.service';
 import { TranslateService } from '@ngx-translate/core';
 import en from '../../i18n/en';
 import fr from '../../i18n/fr';
+import { OverlayContainer } from '@angular/cdk/overlay';
 
 export interface ComponentConfig {
   refreshInterval: number;
@@ -31,7 +32,8 @@ export class ConfigService implements OnDestroy {
   constructor(
     private eventService: EventService,
     private errorService: ErrorService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private overlay: OverlayContainer
   ) {
     this.initLocale();
     this.initStyle();
@@ -85,12 +87,38 @@ export class ConfigService implements OnDestroy {
     this.translateService.setTranslation('en-US', en);
     this.translateService.setTranslation('fr-CA', fr);
     this.translateService.setDefaultLang(Constants.LOCALE);
-    this.config$.pipe(takeUntil(this.unsubscribe$)).subscribe((cfg) => {
-      this.translateService.use(cfg.locale);
-    });
+    this.config$
+      .pipe(
+        takeUntil(this.unsubscribe$),
+        map((cfg) => {
+          this.translateService.use(cfg.locale);
+        })
+      )
+      .subscribe();
   }
 
   initStyle(): void {
     document.documentElement.style.setProperty('--cybrid-t-font', 'Roboto');
+
+    /*
+    Toggles dark mode theme for Angular Material components that use overlays
+    outside the scope of other component styles
+    * */
+    this.config$
+      .pipe(
+        takeUntil(this.unsubscribe$),
+        map((config) => {
+          if (config.theme === 'DARK') {
+            this.overlay
+              .getContainerElement()
+              .classList.add('cybrid-dark-theme');
+          } else {
+            this.overlay
+              .getContainerElement()
+              .classList.remove('cybrid-dark-theme');
+          }
+        })
+      )
+      .subscribe();
   }
 }
