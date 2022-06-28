@@ -80,5 +80,11 @@ describe('ConfigService', () => {
     config.subscribe((cfg) => {
       expect(cfg).toEqual(testConfig);
     });
+    const darkTestConfig = testConfig;
+    darkTestConfig.theme = 'DARK';
+    service.setConfig(darkTestConfig);
+    config.subscribe((cfg) => {
+      expect(cfg).toEqual(darkTestConfig);
+    });
   });
 });

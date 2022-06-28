@@ -3,8 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   OnDestroy,
-  OnInit,
-  ViewEncapsulation
+  OnInit
 } from '@angular/core';
 import {
   BehaviorSubject,
@@ -38,7 +37,7 @@ import {
   ConfigService
 } from '../../../../../src/shared/services/config/config.service';
 import { AssetService } from '../../../../../src/shared/services/asset/asset.service';
-import { NavigationExtras, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 export interface SymbolPrice extends SymbolPriceBankModel {
   asset: AssetBankModel;
@@ -48,8 +47,7 @@ export interface SymbolPrice extends SymbolPriceBankModel {
 @Component({
   selector: 'app-list',
   templateUrl: 'price-list.component.html',
-  styleUrls: ['price-list.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['price-list.component.scss']
 })
 export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
   config$ = this.configService.getConfig$();

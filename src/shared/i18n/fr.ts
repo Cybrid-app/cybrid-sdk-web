@@ -1,8 +1,9 @@
 export default {
   // General
-  cancel: 'Annuler',
-  confirm: 'Confirmer',
-  done: 'Fait',
+  cancel: 'ANNULER',
+  confirm: 'CONFIRMER',
+  done: 'FAIT',
+  back: 'Retourner',
   date: 'Date',
   fatal: "Une erreur irrécupérable s'est produite",
 
@@ -24,8 +25,8 @@ export default {
     amount: 'montant',
     quantity: 'quantité',
     currency: 'Devise',
-    buy: 'Acheter',
-    sell: 'Vendre',
+    buy: 'ACHETER',
+    sell: 'VENDRE ',
     error: 'Nombre positif requis',
     transaction: 'Frais de transaction',
 
@@ -46,7 +47,7 @@ export default {
 
     // Summary dialog
     summary: {
-      header: 'Commande Finalisée',
+      header: 'Commande Soumise',
       message: 'Votre commande a été passée, merci.',
       purchased: 'Acheté',
       sold: 'Vendu',

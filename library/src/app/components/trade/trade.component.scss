@@ -9,6 +9,12 @@
   margin-top: calc(1rem + 0.25em);
 }
 
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .select-code {
   @extend .mat-hint;
   @extend .mat-h5;
@@ -88,4 +94,32 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+// XL (extra-large)
+@media screen and (min-width: 1535px) {
+  .hint-wrapper {
+    display: flex;
+    gap: 1rem;
+    .spacer {
+      flex: 1;
+    }
+    .hint {
+      flex: 1;
+      button {
+        margin-left: auto;
+      }
+    }
+  }
+  mat-form-field {
+    flex: 1;
+  }
+  .input-wrapper {
+    flex-direction: row;
+    gap: 1rem;
+  }
+  .action {
+    align-self: center;
+    width: 320px;
+  }
 }
