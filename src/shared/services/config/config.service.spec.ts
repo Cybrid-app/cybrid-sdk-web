@@ -39,7 +39,7 @@ describe('ConfigService', () => {
       refreshInterval: 5000,
       locale: 'en-US',
       theme: 'LIGHT',
-      customer: ''
+      customer: TestConstants.CUSTOMER
     });
   });
 
