@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import en from '../../i18n/en';
 import fr from '../../i18n/fr';
 import { OverlayContainer } from '@angular/cdk/overlay';
+import { TestConstants } from '../../constants/test.constants';
 
 export interface ComponentConfig {
   refreshInterval: number;
@@ -23,7 +24,7 @@ export class ConfigService implements OnDestroy {
     refreshInterval: Constants.REFRESH_INTERVAL,
     locale: Constants.LOCALE,
     theme: Constants.THEME,
-    customer: ''
+    customer: TestConstants.CUSTOMER // Temporary
   };
   config$: BehaviorSubject<ComponentConfig> =
     new BehaviorSubject<ComponentConfig>(this.defaultConfig);
