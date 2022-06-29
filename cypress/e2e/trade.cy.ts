@@ -1,0 +1,199 @@
+import {
+  QuoteBankModel,
+  TradeBankModel
+} from '@cybrid/cybrid-api-bank-angular';
+
+function app() {
+  return cy.get('app-app').shadow();
+}
+
+function tradeSetup() {
+  cy.intercept('POST', '/oauth/token', (req) => {
+    req.body.client_id = Cypress.env('CLIENT_ID');
+    req.body.client_secret = Cypress.env('CLIENT_SECRET');
+    req.continue();
+  });
+  cy.visit('/');
+  cy.intercept('/api/prices').as('getPrices');
+  cy.wait('@getPrices');
+  app().find('#filter').type('bitcoin');
+  app().find('#asset').click();
+}
+
+const quote: QuoteBankModel = {
+  guid: '04276e7c8a7feddbfe09472929f3f840',
+  customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+  symbol: 'ETH-USD',
+  side: 'buy',
+  receive_amount: 1000000000000000000,
+  deliver_amount: 108880,
+  fee: 0,
+  issued_at: '2022-06-29T17:36:12.176Z',
+  expires_at: '2022-06-29T17:36:42.176Z'
+};
+
+const trade: TradeBankModel = {
+  guid: '21f2e00447455b236a1bd676e0b64212',
+  customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+  quote_guid: '77943f3a64de065fadad8d2892bd80b0',
+  symbol: 'ETH-USD',
+  side: 'buy',
+  state: 'storing',
+  receive_amount: 1000000000000000000,
+  deliver_amount: 108938,
+  fee: 0,
+  created_at: '2022-06-29T17:37:09.177Z'
+};
+
+describe('trade test', () => {
+  beforeEach(() => {
+    cy.intercept('POST', 'api/trades', (req) => {
+      req.reply(trade);
+    });
+  });
+
+  it('should render the trade component', () => {
+    tradeSetup();
+    app().find('app-trade').should('exist');
+  });
+
+  it('should navigate back to the price list', () => {
+    app().find('.navigation').click();
+    app().find('app-trade').should('not.exist');
+    app().find('app-list').should('exist');
+
+    // Reset to trade component
+    tradeSetup();
+  });
+
+  it('should swap between buy/sell', () => {
+    app().find('#action').should('contain', 'BUY');
+    app().find('#mat-tab-label-0-1').click();
+    app().find('#action').should('contain', 'SELL');
+    app().find('#mat-tab-label-0-0').click();
+  });
+
+  it('should swap between assets', () => {
+    // Check for initial display
+    app().find('.hint').should('contain', 'BTC');
+
+    // Swap asset to ETH
+    app().find('#asset').click();
+    cy.get('mat-option').filter(':contains("Ethereum")').click();
+    app().find('#asset').should('contain', 'Ethereum');
+    app().find('.display-code').should('contain', 'ETH');
+  });
+
+  it('should display the approximate value and swap between amount units', () => {
+    // Add amount and check for prefix
+    app().find('#amount').type('1', { force: true });
+    app().find('.display-code').should('contain', 'USD');
+
+    // Swap units
+    app().find('#swap').click();
+    app().find('.display-code').should('contain', 'ETH');
+
+    // Clear amount
+    app().find('#clear').click();
+  });
+
+  it('should handle an invalid amount', () => {
+    // No amount
+    app().find('#action').should('be.disabled');
+
+    // Negative amount
+    app().find('#amount').type('-1', { force: true });
+    // Workaround for Cypress bug: https://github.com/cypress-io/cypress/issues/21433
+    // Click outside the input to force validation update
+    // eq here is selecting the index of returned form fields
+    app().get('.mat-form-field-wrapper').eq(1).dblclick();
+    app().get('#action').should('be.disabled');
+    app().find('mat-error').should('exist');
+
+    // Clear amount
+    app().find('#clear').click();
+
+    // NaN
+    app().find('#amount').type('test', { force: true });
+    // Workaround for Cypress bug: https://github.com/cypress-io/cypress/issues/21433
+    // Click outside the input to force validation update
+    // eq here is selecting the index of returned form fields
+    app().get('.mat-form-field-wrapper').eq(1).dblclick();
+    app().get('#action').should('be.disabled');
+  });
+
+  it('should handle any error returned by createQuote()', () => {
+    // Force createQuote() network error
+    cy.intercept('POST', '/api/quotes', { forceNetworkError: true });
+    app().find('#amount').type('1', { force: true });
+    app().find('#action').click();
+    cy.get('snack-bar-container').should('exist').find('button').click();
+  });
+
+  it('should fetch a quote onTrade()', () => {
+    cy.intercept('POST', 'api/quotes', (req) => {
+      req.reply(quote);
+    });
+
+    app().find('#action').click();
+
+    // Intercept quote and check for loading spinner
+    cy.intercept('POST', '/api/quotes', (req) => {
+      cy.get('.loading-wrapper').should('exist');
+      req.continue();
+    });
+    cy.get('.loading-wrapper').should('not.exist');
+
+    // Check order quote dialog
+    app()
+      .get('app-trade-confirm')
+      .find('.list-item')
+      .should('contain.text', 'Purchase')
+      .should('contain.text', 'ETH')
+      .should('contain.text', 'USD')
+      .should('contain.text', '$1,088.80');
+  });
+
+  it('should exit the dialog on cancel', () => {
+    cy.get('#cancel').click();
+    cy.get('mat-dialog-container').should('not.exist');
+  });
+
+  it('should should handle any error returned by createTrade()', () => {
+    // Force createTrade() network error
+    cy.intercept('POST', '/api/trades', { forceNetworkError: true });
+    app().find('#action').click();
+    cy.get('#confirm').click();
+    cy.get('snack-bar-container').should('exist').find('button').click();
+  });
+
+  it('should submit the trade on confirm', () => {
+    // Re-open dialog and confirm quote
+    app().find('#action').click();
+    cy.get('#confirm').click();
+
+    // Intercept quote and check for loading spinner
+    cy.intercept('POST', '/api/trades', (req) => {
+      cy.get('.loading-wrapper').should('exist');
+      req.continue();
+    });
+    cy.get('.loading-wrapper').should('not.exist');
+  });
+
+  it('should display the order summary', () => {
+    // Check order submitted dialog
+    app()
+      .get('app-trade-summary')
+      .find('.list-item')
+      .should('contain.text', 'Purchased')
+      .should('contain.text', 'ETH')
+      .should('contain.text', 'USD')
+      .should('contain.text', '$1,089.38');
+  });
+
+  it('should exit the dialog and navigate to the price-list on done', () => {
+    cy.get('#done').click();
+    app().get('app-trade-summary').should('not.exist');
+    app().get('app-list').should('exist');
+  });
+});

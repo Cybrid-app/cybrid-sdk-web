@@ -37,7 +37,7 @@ import {
   ConfigService
 } from '../../../../../src/shared/services/config/config.service';
 import { AssetService } from '../../../../../src/shared/services/asset/asset.service';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 
 export interface SymbolPrice extends SymbolPriceBankModel {
   asset: AssetBankModel;
@@ -181,5 +181,15 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
           this.getPrices();
         }
       });
+  }
+
+  onRowClick(row: SymbolPrice): void {
+    const extras: NavigationExtras = {
+      queryParams: {
+        asset: JSON.stringify(row.asset),
+        symbol_pair: row.symbol
+      }
+    };
+    this.router.navigate(['app/trade'], extras);
   }
 }

@@ -41,7 +41,8 @@ export default {
       purchase: 'Acheter',
       loading: 'Devis en attente',
       error: {
-        quote: 'Erreur lors de la récupération du devis'
+        quote: 'Erreur lors de la récupération du devis',
+        trade: 'Erreur lors de la confirmation de léchange'
       }
     },
 

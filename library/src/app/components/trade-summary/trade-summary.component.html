@@ -1,8 +1,8 @@
 <div class="wrapper">
   <div
     [ngClass]="{
-    'cybrid-dark-theme': (configService.config$ | async)?.theme === 'DARK'
-  }"
+      'cybrid-dark-theme': (configService.config$ | async)?.theme === 'DARK'
+    }"
   >
     <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
       <ng-container *ngIf="trade$ | async as trade; else loading">
@@ -15,9 +15,11 @@
             <div class="subheader-item list-item">
               <div class="inner">
                 <span class="mat-body-strong">Transaction ID:</span>
-                <span matTooltip="{{ trade.guid }}" matTooltipPosition="above">{{
-                  trade.guid! | truncate: 9
-                  }}</span>
+                <span
+                  matTooltip="{{ trade.guid }}"
+                  matTooltipPosition="above"
+                  >{{ trade.guid! | truncate: 9 }}</span
+                >
               </div>
               <div class="inner">
                 <span class="mat-body-strong">Date:</span>
@@ -25,32 +27,34 @@
               </div>
             </div>
             <div class="list-item">
-            <span>
-              {{
-              ('trade.summary.purchased' | translate) +
-              ' ' +
-              ('trade.amount' | translate)
-              }}
-            </span>
-              <div>
               <span>
-                {{ (trade.deliver_amount! | asset: data.counter_asset) + ' ' }}
+                {{
+                  ('trade.summary.purchased' | translate) +
+                    ' ' +
+                    ('trade.amount' | translate)
+                }}
               </span>
+              <div>
+                <span>
+                  {{
+                    (trade.deliver_amount! | asset: data.counter_asset) + ' '
+                  }}
+                </span>
                 <span class="mat-hint">{{ data.counter_asset.code }}</span>
               </div>
             </div>
             <mat-divider></mat-divider>
             <div class="list-item">
-            <span
-            >{{
-              ('trade.summary.purchased' | translate) +
-              ' ' +
-              ('trade.quantity' | translate)
-              }}
-            </span>
+              <span
+                >{{
+                  ('trade.summary.purchased' | translate) +
+                    ' ' +
+                    ('trade.quantity' | translate)
+                }}
+              </span>
               <div>
-              <span>{{
-                (trade.receive_amount! | asset: data.asset:'trade') + ' '
+                <span>{{
+                  (trade.receive_amount! | asset: data.asset:'trade') + ' '
                 }}</span>
                 <span class="mat-hint">{{ data.asset.code }}</span>
               </div>
@@ -59,9 +63,9 @@
             <div class="list-item">
               <span>{{ 'trade.transaction' | translate }}</span>
               <div>
-              <span>
-                {{ (trade.fee! | asset: data.counter_asset:'trade') + ' ' }}
-              </span>
+                <span>
+                  {{ (trade.fee! | asset: data.counter_asset:'trade') + ' ' }}
+                </span>
                 <span class="mat-hint">{{ data.counter_asset.code }}</span>
               </div>
             </div>
@@ -75,7 +79,7 @@
                   class="transaction-id"
                   matTooltip="{{ trade.guid }}"
                   matTooltipPosition="above"
-                >{{ trade.guid! | truncate: 9 }}</span
+                  >{{ trade.guid! | truncate: 9 }}</span
                 >
               </div>
               <div class="inner">
@@ -84,32 +88,34 @@
               </div>
             </div>
             <div class="list-item">
-            <span>
-              {{
-              ('trade.summary.sold' | translate) +
-              ' ' +
-              ('trade.amount' | translate)
-              }}
-            </span>
-              <div>
               <span>
-                {{ (trade.receive_amount! | asset: data.counter_asset) + ' ' }}
+                {{
+                  ('trade.summary.sold' | translate) +
+                    ' ' +
+                    ('trade.amount' | translate)
+                }}
               </span>
+              <div>
+                <span>
+                  {{
+                    (trade.receive_amount! | asset: data.counter_asset) + ' '
+                  }}
+                </span>
                 <span class="mat-hint">{{ data.counter_asset.code }}</span>
               </div>
             </div>
             <mat-divider></mat-divider>
             <div class="list-item">
-            <span
-            >{{
-              ('trade.summary.sold' | translate) +
-              ' ' +
-              ('trade.quantity' | translate)
-              }}
-            </span>
+              <span
+                >{{
+                  ('trade.summary.sold' | translate) +
+                    ' ' +
+                    ('trade.quantity' | translate)
+                }}
+              </span>
               <div>
-              <span>{{
-                (trade.deliver_amount! | asset: data.asset:'trade') + ' '
+                <span>{{
+                  (trade.deliver_amount! | asset: data.asset:'trade') + ' '
                 }}</span>
                 <span class="mat-hint">{{ data.asset.code }}</span>
               </div>
@@ -118,9 +124,9 @@
             <div class="list-item">
               <span>{{ 'trade.transaction' | translate }}</span>
               <div>
-              <span>
-                {{ (trade.fee! | asset: data.counter_asset:'trade') + ' ' }}
-              </span>
+                <span>
+                  {{ (trade.fee! | asset: data.counter_asset:'trade') + ' ' }}
+                </span>
                 <span class="mat-hint">{{ data.counter_asset.code }}</span>
               </div>
             </div>
@@ -128,7 +134,12 @@
           </ng-container>
         </mat-dialog-content>
         <mat-dialog-actions align="end">
-          <button mat-stroked-button [mat-dialog-close] (click)="onDialogClose()">
+          <button
+            id="done"
+            mat-stroked-button
+            [mat-dialog-close]
+            (click)="onDialogClose()"
+          >
             {{ 'done' | translate }}
           </button>
         </mat-dialog-actions>

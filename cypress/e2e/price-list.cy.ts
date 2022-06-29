@@ -24,11 +24,11 @@ describe('price-list test', () => {
       .get('app-list')
       .find('tr')
       .should('contain', 'BTC')
-      .and('not.contain', 'ETH')
-      .click({ multiple: true });
+      .and('not.contain', 'ETH');
     cy.get('app-app')
       .shadow()
       .find('#filter')
+      .click({ multiple: true })
       .type('test')
       .then(() => {
         cy.get('app-app')
