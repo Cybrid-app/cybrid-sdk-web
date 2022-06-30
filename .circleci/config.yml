@@ -66,8 +66,12 @@ workflows:
           no-workspace: true
           post-install:
             - run:
-                name: Demo app setup
-                command: npm run cypress:setup
+                name: Inject demo customer
+                command: |
+                  echo ${cypress_CUSTOMER}
+                  cat src/environments/environment.ts
+                  sed -i "s/customer_guid/$cypress_CUSTOMER/g" src/environments/environment.ts
+                  cat src/environments/environment.ts
           wait-on: http://localhost:4200
           store_artifacts: true
 
