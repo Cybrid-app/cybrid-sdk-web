@@ -42,6 +42,8 @@ workflows:
           name: e2e
           executor: cypress
           start: npm start
+          no-workspace: true
+          post-install: npm run cypress:setup
           wait-on: http://localhost:4200
           store_artifacts: true
 
@@ -54,6 +56,8 @@ workflows:
           name: e2e
           executor: cypress
           start: npm start
+          no-workspace: true
+          post-install: npm run cypress:setup
           wait-on: http://localhost:4200
           store_artifacts: true
 
