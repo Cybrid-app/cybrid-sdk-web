@@ -13,6 +13,7 @@ export class Constants {
   // How often to request new data
   static REFRESH_INTERVAL = 5000;
   static LOCALE = 'en-US';
+  static CUSTOMER = 'customer_guid';
   static SUPPORTED_LOCALES = ['en-US', 'fr-CA'];
   // The time in seconds left on a valid auth token when a session expiry warning event is sent
   static AUTH_EXPIRATION_WARNING = 120;

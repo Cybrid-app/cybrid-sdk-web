@@ -42,7 +42,7 @@ describe('QuoteService', () => {
   });
 
   it('should get the customer GUID', () => {
-    expect(service.customer_guid).toEqual('');
+    expect(service.customer_guid).toEqual(TestConstants.CUSTOMER);
   });
 
   it('should build and return a postQuoteBankModel', () => {

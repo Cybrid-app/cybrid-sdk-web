@@ -54,7 +54,7 @@ describe('ConfigService', () => {
       refreshInterval: 1000,
       locale: 'en-US',
       theme: 'LIGHT',
-      customer: ''
+      customer: TestConstants.CUSTOMER
     };
     let testConfig!: ComponentConfig;
     service.config$.subscribe((cfg) => {
@@ -87,7 +87,7 @@ describe('ConfigService', () => {
       refreshInterval: 5000,
       locale: 'en-US',
       theme: 'DARK',
-      customer: ''
+      customer: TestConstants.CUSTOMER
     };
     service.setConfig(darkTestConfig);
     service.config$.subscribe((cfg) => {
