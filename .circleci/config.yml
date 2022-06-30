@@ -43,7 +43,10 @@ workflows:
           executor: cypress
           start: npm start
           no-workspace: true
-          post-install: npm run cypress:setup
+          post-install:
+            - run:
+                name: Demo app setup
+                command: npm run cypress:setup
           wait-on: http://localhost:4200
           store_artifacts: true
 
@@ -57,7 +60,10 @@ workflows:
           executor: cypress
           start: npm start
           no-workspace: true
-          post-install: npm run cypress:setup
+          post-install:
+            - run:
+                name: Demo app setup
+                command: npm run cypress:setup
           wait-on: http://localhost:4200
           store_artifacts: true
 
