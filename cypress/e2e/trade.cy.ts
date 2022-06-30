@@ -1,7 +1,4 @@
-import {
-  QuoteBankModel,
-  TradeBankModel
-} from '@cybrid/cybrid-api-bank-angular';
+import { TestConstants } from '../../src/shared/constants/test.constants';
 
 function app() {
   return cy.get('app-app').shadow();
@@ -20,35 +17,15 @@ function tradeSetup() {
   app().find('#asset').click();
 }
 
-const quote: QuoteBankModel = {
-  guid: '04276e7c8a7feddbfe09472929f3f840',
-  customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
-  symbol: 'ETH-USD',
-  side: 'buy',
-  receive_amount: 1000000000000000000,
-  deliver_amount: 108880,
-  fee: 0,
-  issued_at: '2022-06-29T17:36:12.176Z',
-  expires_at: '2022-06-29T17:36:42.176Z'
-};
-
-const trade: TradeBankModel = {
-  guid: '21f2e00447455b236a1bd676e0b64212',
-  customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
-  quote_guid: '77943f3a64de065fadad8d2892bd80b0',
-  symbol: 'ETH-USD',
-  side: 'buy',
-  state: 'storing',
-  receive_amount: 1000000000000000000,
-  deliver_amount: 108938,
-  fee: 0,
-  created_at: '2022-06-29T17:37:09.177Z'
-};
-
 describe('trade test', () => {
   beforeEach(() => {
+    // Mock QuoteBankModel
+    cy.intercept('POST', 'api/quotes', (req) => {
+      req.reply(TestConstants.QUOTE_BANK_MODEL);
+    });
+    // Mock TradeBankModel
     cy.intercept('POST', 'api/trades', (req) => {
-      req.reply(trade);
+      req.reply(TestConstants.TRADE_BANK_MODEL);
     });
   });
 
@@ -125,16 +102,13 @@ describe('trade test', () => {
   it('should handle any error returned by createQuote()', () => {
     // Force createQuote() network error
     cy.intercept('POST', '/api/quotes', { forceNetworkError: true });
+
     app().find('#amount').type('1', { force: true });
     app().find('#action').click();
     cy.get('snack-bar-container').should('exist').find('button').click();
   });
 
   it('should fetch a quote onTrade()', () => {
-    cy.intercept('POST', 'api/quotes', (req) => {
-      req.reply(quote);
-    });
-
     app().find('#action').click();
 
     // Intercept quote and check for loading spinner
@@ -151,7 +125,7 @@ describe('trade test', () => {
       .should('contain.text', 'Purchase')
       .should('contain.text', 'ETH')
       .should('contain.text', 'USD')
-      .should('contain.text', '$1,088.80');
+      .should('contain.text', '$1,033.31');
   });
 
   it('should exit the dialog on cancel', () => {
@@ -162,6 +136,7 @@ describe('trade test', () => {
   it('should should handle any error returned by createTrade()', () => {
     // Force createTrade() network error
     cy.intercept('POST', '/api/trades', { forceNetworkError: true });
+
     app().find('#action').click();
     cy.get('#confirm').click();
     cy.get('snack-bar-container').should('exist').find('button').click();
@@ -173,9 +148,13 @@ describe('trade test', () => {
     cy.get('#confirm').click();
 
     // Intercept quote and check for loading spinner
-    cy.intercept('POST', '/api/trades', (req) => {
+    cy.intercept('POST', '/api/trades', () => {
       cy.get('.loading-wrapper').should('exist');
-      req.continue();
+    });
+
+    // Mock getTrade()
+    cy.intercept('GET', '/api/trades', (req) => {
+      req.reply(TestConstants.TRADE_BANK_MODEL);
     });
     cy.get('.loading-wrapper').should('not.exist');
   });
@@ -188,7 +167,7 @@ describe('trade test', () => {
       .should('contain.text', 'Purchased')
       .should('contain.text', 'ETH')
       .should('contain.text', 'USD')
-      .should('contain.text', '$1,089.38');
+      .should('contain.text', '$1,033.31');
   });
 
   it('should exit the dialog and navigate to the price-list on done', () => {

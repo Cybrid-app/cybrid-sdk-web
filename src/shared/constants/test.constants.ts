@@ -83,8 +83,6 @@ export class TestConstants {
   };
 
   // Trade component test models
-  static QUOTE_GUID: 'f92faf30047aca08b95bf10aecb96254';
-  static TRADE_GUID: '01ace2000b0883547f7cbcc6cd73547e';
   static POST_QUOTE: PostQuoteBankModel = {
     customer_guid: TestConstants.CUSTOMER_GUID,
     symbol: 'BTC-USD',
@@ -92,27 +90,29 @@ export class TestConstants {
     receive_amount: 100000000
   };
   static QUOTE_BANK_MODEL: QuoteBankModel = {
-    guid: TestConstants.QUOTE_GUID,
+    guid: 'ede5f73db305fbd27ec0eb0894ae8aa7',
     customer_guid: TestConstants.CUSTOMER_GUID,
     symbol: 'ETH-USD',
     side: 'buy',
     receive_amount: 1000000000000000000,
-    deliver_amount: 109028,
+    deliver_amount: 103331,
     fee: 0,
-    issued_at: '2022-06-22T13:30:58.078Z',
-    expires_at: '2022-06-22T13:31:28.078Z'
+    issued_at: '2022-06-30T17:04:37.331Z',
+    expires_at: '2022-06-30T17:05:07.331Z'
   };
 
   static TRADE_BANK_MODEL: TradeBankModel = {
-    guid: TestConstants.TRADE_GUID,
+    guid: '3a1afe49232332f69d8c52f1157fdf81',
     customer_guid: TestConstants.CUSTOMER_GUID,
-    quote_guid: TestConstants.QUOTE_GUID,
-    symbol: 'BTC-USD',
+    quote_guid: 'ede5f73db305fbd27ec0eb0894ae8aa7',
+    symbol: 'ETH-USD',
     side: 'buy',
     state: 'storing',
-    receive_amount: 100000000,
-    deliver_amount: 109028,
+    // @ts-ignore
+    failure_code: null,
+    receive_amount: 1000000000000000000,
+    deliver_amount: 103331,
     fee: 0,
-    created_at: '2022-06-24T14:31:33.244Z'
+    created_at: '2022-06-30T17:04:39.049Z'
   };
 }
