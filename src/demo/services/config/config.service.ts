@@ -27,7 +27,7 @@ export class ConfigService {
     refreshInterval: 5000,
     locale: 'en-US',
     theme: 'LIGHT',
-    customer: ''
+    customer: environment.credentials.customer
   };
   config$ = new BehaviorSubject<ComponentConfig>(this.config);
 

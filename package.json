@@ -13,7 +13,6 @@
     "format": "echo ' Formatting Demo ' && echo && echo && npx prettier 'src/**/*.{js,jsx,ts,tsx,html,css,scss}' --write && npx prettier 'cypress/**/*.{js,jsx,ts,tsx,html,css,scss}' --write && echo && echo ' Formatting Components ' && echo && echo && npx prettier 'library/**/**/*.{js,jsx,ts,tsx,html,css,scss}' --write",
     "format:client": "npx prettier 'client/**/*.{js,jsx,ts,tsx,html,css,scss}' --write",
     "e2e": "ng e2e",
-    "cypress:setup": "echo ${cypress_CUSTOMER} && cat src/environments/environment.ts && sed -i '' 's/customer_guid/$cypress_CUSOTMER/g' src/environments/environment.ts && cat src/environments/environment.ts",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run"
   },
