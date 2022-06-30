@@ -23,6 +23,9 @@ describe('QuoteService', () => {
   let asset = TestConstants.BTC_ASSET;
   let counter_asset = TestConstants.USD_ASSET;
 
+  // Reset temp customer GUID to mock prod
+  TestConstants.CONFIG.customer = '';
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
@@ -42,7 +45,7 @@ describe('QuoteService', () => {
   });
 
   it('should get the customer GUID', () => {
-    expect(service.customer_guid).toEqual(TestConstants.CUSTOMER);
+    expect(service.customer_guid).toEqual(TestConstants.CONFIG.customer);
   });
 
   it('should build and return a postQuoteBankModel', () => {

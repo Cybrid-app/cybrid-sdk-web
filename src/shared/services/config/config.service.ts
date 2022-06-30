@@ -19,14 +19,10 @@ export interface ComponentConfig {
   providedIn: 'root'
 })
 export class ConfigService implements OnDestroy {
-  defaultConfig: ComponentConfig = {
-    refreshInterval: Constants.REFRESH_INTERVAL,
-    locale: Constants.LOCALE,
-    theme: Constants.THEME,
-    customer: Constants.CUSTOMER
-  };
+  defaultConfig = Constants.DEFAULT_CONFIG;
   config$: BehaviorSubject<ComponentConfig> =
     new BehaviorSubject<ComponentConfig>(this.defaultConfig);
+
   private unsubscribe$ = new Subject();
 
   constructor(

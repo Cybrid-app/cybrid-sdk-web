@@ -7,7 +7,6 @@ import { TestConstants } from '../../constants/test.constants';
 
 describe('ConfigService', () => {
   let service: ConfigService;
-  let testConfig = TestConstants.CONFIG;
   let MockErrorService = jasmine.createSpyObj('ErrorService', ['handleError']);
   let MockEventService = jasmine.createSpyObj('EventService', ['handleEvent']);
   let MockTranslateService = jasmine.createSpyObj('TranslateService', [
@@ -15,6 +14,9 @@ describe('ConfigService', () => {
     'setDefaultLang',
     'use'
   ]);
+
+  // Reset temp customer GUID to mock prod
+  TestConstants.CONFIG.customer = '';
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -35,34 +37,29 @@ describe('ConfigService', () => {
   });
 
   it('should initialize the defaultConfig', () => {
-    expect(service.defaultConfig).toEqual({
-      refreshInterval: 5000,
-      locale: 'en-US',
-      theme: 'LIGHT',
-      customer: TestConstants.CUSTOMER
-    });
+    expect(service.defaultConfig).toEqual(TestConstants.CONFIG);
   });
 
   it('should set the initial value of config$ BehaviorSubject() to the default config', () => {
     service.config$.subscribe((config) => {
-      expect(config).toEqual(testConfig);
+      expect(config).toEqual(TestConstants.CONFIG);
     });
   });
 
   it('should set config$ with a host config when setConfig() is called', fakeAsync(() => {
-    const hostConfig: ComponentConfig = {
-      refreshInterval: 1000,
-      locale: 'en-US',
-      theme: 'LIGHT',
-      customer: TestConstants.CUSTOMER
-    };
+    // Set refresh interval to mock host config
+    TestConstants.CONFIG.refreshInterval = 1000;
     let testConfig!: ComponentConfig;
+
     service.config$.subscribe((cfg) => {
       testConfig = cfg;
     });
-    service.setConfig(hostConfig);
+    service.setConfig(TestConstants.CONFIG);
     tick();
-    expect(testConfig).toEqual(hostConfig);
+    expect(testConfig).toEqual(TestConstants.CONFIG);
+
+    // Reset interval
+    TestConstants.CONFIG.refreshInterval = 5000;
   }));
 
   it('should output an error and event if setConfig() is given an invalid config', () => {
@@ -75,23 +72,23 @@ describe('ConfigService', () => {
   });
 
   it('should return the config as an observable if getConfig() is called', () => {
-    service.setConfig(testConfig);
+    service.setConfig(TestConstants.CONFIG);
     const config = service.getConfig$();
     config.subscribe((cfg) => {
-      expect(cfg).toEqual(testConfig);
+      expect(cfg).toEqual(TestConstants.CONFIG);
     });
   });
 
   it('should set light and dark mode', () => {
-    const darkTestConfig: ComponentConfig = {
-      refreshInterval: 5000,
-      locale: 'en-US',
-      theme: 'DARK',
-      customer: TestConstants.CUSTOMER
-    };
-    service.setConfig(darkTestConfig);
+    // Modify default test config theme
+    TestConstants.CONFIG.theme = 'DARK';
+
+    service.setConfig(TestConstants.CONFIG);
     service.config$.subscribe((cfg) => {
-      expect(cfg).toEqual(darkTestConfig);
+      expect(cfg).toEqual(TestConstants.CONFIG);
     });
+
+    // Reset theme
+    TestConstants.CONFIG.theme = 'LIGHT';
   });
 });
