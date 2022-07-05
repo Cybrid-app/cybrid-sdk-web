@@ -18,17 +18,6 @@ function tradeSetup() {
 }
 
 describe('trade test', () => {
-  beforeEach(() => {
-    // Mock QuoteBankModel
-    cy.intercept('POST', 'api/quotes', (req) => {
-      req.reply(TestConstants.QUOTE_BANK_MODEL);
-    });
-    // Mock TradeBankModel
-    cy.intercept('POST', 'api/trades', (req) => {
-      req.reply(TestConstants.TRADE_BANK_MODEL);
-    });
-  });
-
   it('should render the trade component', () => {
     tradeSetup();
     app().find('app-trade').should('exist');
@@ -87,16 +76,26 @@ describe('trade test', () => {
     app().get('#action').should('be.disabled');
     app().find('mat-error').should('exist');
 
-    // Clear amount
-    app().find('#clear').click();
-
     // NaN
+    app().find('#clear').click();
     app().find('#amount').type('test', { force: true });
     // Workaround for Cypress bug: https://github.com/cypress-io/cypress/issues/21433
     // Click outside the input to force validation update
     // eq here is selecting the index of returned form fields
     app().get('.mat-form-field-wrapper').eq(1).dblclick();
     app().get('#action').should('be.disabled');
+
+    // Amount = 0
+    app().find('#amount').type('0', { force: true });
+    app().get('#action').click();
+    cy.get('snack-bar-container').should('exist').find('button').click();
+
+    // Small amounts
+    app().find('#clear').click();
+    app().find('#amount').type('0.001', { force: true });
+    app().get('#action').click();
+    cy.get('snack-bar-container').should('exist').find('button').click();
+    app().find('#clear').click();
   });
 
   it('should handle any error returned by createQuote()', () => {
@@ -109,6 +108,10 @@ describe('trade test', () => {
   });
 
   it('should fetch a quote onTrade()', () => {
+    // Mock quote
+    cy.intercept('POST', 'api/quotes', (req) => {
+      req.reply(TestConstants.QUOTE_BANK_MODEL);
+    });
     app().find('#action').click();
 
     // Intercept quote and check for loading spinner
@@ -133,6 +136,18 @@ describe('trade test', () => {
     cy.get('mat-dialog-container').should('not.exist');
   });
 
+  it('should refresh the quote', () => {
+    app().find('#action').click();
+    let quote;
+    cy.intercept('/api/quotes').as('getQuote');
+    cy.wait('@getQuote').then((interception) => {
+      // @ts-ignore
+      quote = interception.response.body;
+    });
+    cy.wait('@getQuote').its('request.body').should('not.eq', quote);
+    cy.get('#cancel').click();
+  });
+
   it('should should handle any error returned by createTrade()', () => {
     // Force createTrade() network error
     cy.intercept('POST', '/api/trades', { forceNetworkError: true });
@@ -143,6 +158,11 @@ describe('trade test', () => {
   });
 
   it('should submit the trade on confirm', () => {
+    // Mock trade
+    cy.intercept('POST', 'api/trades', (req) => {
+      req.reply(TestConstants.TRADE_BANK_MODEL);
+    });
+
     // Re-open dialog and confirm quote
     app().find('#action').click();
     cy.get('#confirm').click();
