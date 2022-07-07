@@ -90,10 +90,15 @@
         </ng-container>
       </mat-dialog-content>
       <mat-dialog-actions align="end">
-        <button mat-button [mat-dialog-close]>
+        <button id="cancel" mat-button [mat-dialog-close]>
           {{ 'cancel' | translate }}
         </button>
-        <button mat-flat-button color="primary" (click)="onConfirmTrade()">
+        <button
+          id="confirm"
+          mat-flat-button
+          color="primary"
+          (click)="onConfirmTrade()"
+        >
           {{ 'confirm' | translate }}
         </button>
       </mat-dialog-actions>

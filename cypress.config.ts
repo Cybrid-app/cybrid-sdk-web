@@ -11,6 +11,7 @@ export default defineConfig({
     CLIENT_SECRET: ''
   },
   e2e: {
-    baseUrl: 'http://localhost:4200'
+    baseUrl: 'http://localhost:4200',
+    excludeSpecPattern: ['cypress/e2e/trade.cy.ts']
   }
 });

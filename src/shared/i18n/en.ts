@@ -40,7 +40,8 @@ export default {
       purchase: 'Purchase',
       loading: 'Quote Pending',
       error: {
-        quote: 'Error fetching quote'
+        quote: 'Error fetching quote',
+        trade: 'Error confirming trade'
       }
     },
 

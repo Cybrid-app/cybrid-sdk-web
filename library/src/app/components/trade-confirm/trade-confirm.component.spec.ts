@@ -91,7 +91,9 @@ describe('TradeConfirmComponent', () => {
     MockConfigService = TestBed.inject(ConfigService);
     MockConfigService.getConfig$.and.returnValue(of(TestConstants.CONFIG));
     MockQuotesService = TestBed.inject(QuotesService);
-    MockQuotesService.createQuote.and.returnValue(of(TestConstants.QUOTE));
+    MockQuotesService.createQuote.and.returnValue(
+      of(TestConstants.QUOTE_BANK_MODEL)
+    );
     MockTradesService.createTrade.and.returnValue(of({}));
   });
 
@@ -119,10 +121,10 @@ describe('TradeConfirmComponent', () => {
 
   it('should create a quote', () => {
     expect(component.postTradeBankModel.quote_guid).toEqual(
-      TestConstants.QUOTE.guid!
+      TestConstants.QUOTE_BANK_MODEL.guid!
     );
     component.quote$.subscribe((quote) => {
-      expect(quote).toEqual(TestConstants.QUOTE);
+      expect(quote).toEqual(TestConstants.QUOTE_BANK_MODEL);
     });
   });
 

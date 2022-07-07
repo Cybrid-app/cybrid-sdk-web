@@ -21,7 +21,7 @@ export class AppComponent {
   }
 
   toggleTheme(): void {
-    const config = this.configService.config;
+    const config = this.configService.defaultConfig;
     switch (this.mode) {
       case 'light_mode': {
         this.mode = 'dark_mode';

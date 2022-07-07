@@ -16,6 +16,7 @@ import {
 } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ComponentConfig } from '../../../shared/services/config/config.service';
+import { TestConstants } from '../../../shared/constants/test.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -23,13 +24,8 @@ import { ComponentConfig } from '../../../shared/services/config/config.service'
 export class ConfigService {
   token$ = new Subject<string>();
   invalidCredentials$ = new BehaviorSubject(false);
-  config: ComponentConfig = {
-    refreshInterval: 5000,
-    locale: 'en-US',
-    theme: 'LIGHT',
-    customer: ''
-  };
-  config$ = new BehaviorSubject<ComponentConfig>(this.config);
+  defaultConfig = TestConstants.CONFIG;
+  config$ = new BehaviorSubject<ComponentConfig>(this.defaultConfig);
 
   constructor(private http: HttpClient) {
     this.createToken()

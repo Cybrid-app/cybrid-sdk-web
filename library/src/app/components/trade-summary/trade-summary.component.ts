@@ -21,7 +21,7 @@ interface DialogData {
 }
 
 @Component({
-  selector: 'app-trade-confirm',
+  selector: 'app-trade-summary',
   templateUrl: './trade-summary.component.html',
   styleUrls: ['./trade-summary.component.scss']
 })
@@ -61,9 +61,7 @@ export class TradeSummaryComponent implements OnInit {
         }),
         catchError((err: any) => {
           const message = this.translatePipe.transform('trade.summary.error');
-          this.snackBar.open(message, undefined, {
-            duration: 3000
-          });
+          this.snackBar.open(message, 'OK');
           this.eventService.handleEvent(
             LEVEL.ERROR,
             CODE.DATA_ERROR,

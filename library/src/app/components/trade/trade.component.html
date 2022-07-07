@@ -21,7 +21,7 @@
       <ng-container [formGroup]="quoteGroup">
         <div class="tab-wrapper">
           <div class="input-wrapper">
-            <mat-form-field appearance="outline">
+            <mat-form-field id="asset" appearance="outline">
               <mat-label>{{ 'trade.currency' | translate }}</mat-label>
               <mat-select
                 #matSelect
@@ -56,6 +56,7 @@
               </mat-label>
               <input
                 matInput
+                id="amount"
                 #amount="matInput"
                 formControlName="amount"
                 type="number"
@@ -69,6 +70,7 @@
               </div>
               <button
                 *ngIf="amount.value"
+                id="clear"
                 mat-icon-button
                 matSuffix
                 (click)="quoteGroup.get('amount')?.reset()"
@@ -112,12 +114,18 @@
                   {{ input === 'asset' ? counterAsset.code : asset.code }}
                 </span>
               </ng-container>
-              <button mat-icon-button color="primary" (click)="onSwitchInput()">
+              <button
+                id="swap"
+                mat-icon-button
+                color="primary"
+                (click)="onSwitchInput()"
+              >
                 <mat-icon>swap_vert</mat-icon>
               </button>
             </div>
           </div>
           <button
+            id="action"
             class="action"
             mat-flat-button
             color="primary"

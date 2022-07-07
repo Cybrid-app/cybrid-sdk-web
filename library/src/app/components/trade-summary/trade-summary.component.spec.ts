@@ -81,7 +81,7 @@ describe('TradeSummaryComponent', () => {
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
-            model: TestConstants.QUOTE,
+            model: TestConstants.QUOTE_BANK_MODEL,
             asset: TestConstants.BTC_ASSET,
             counter_asset: TestConstants.USD_ASSET
           }
@@ -96,7 +96,9 @@ describe('TradeSummaryComponent', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
     MockTradesService = TestBed.inject(TradesService);
-    MockTradesService.getTrade.and.returnValue(of(TestConstants.TRADE));
+    MockTradesService.getTrade.and.returnValue(
+      of(TestConstants.TRADE_BANK_MODEL)
+    );
     MockRouter = TestBed.inject(Router);
     MockEventService = TestBed.inject(EventService);
     MockErrorService = TestBed.inject(ErrorService);
