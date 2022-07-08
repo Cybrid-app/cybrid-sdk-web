@@ -1,1 +1,14 @@
-<router-outlet></router-outlet>
+<div
+  class="mat-typography"
+  [ngClass]="
+    (configService.config$ | async)?.theme === 'LIGHT'
+      ? 'cybrid-light-theme'
+      : 'cybrid-dark-theme'
+  "
+>
+  <mat-drawer-container>
+    <mat-drawer-content>
+      <router-outlet></router-outlet>
+    </mat-drawer-content>
+  </mat-drawer-container>
+</div>

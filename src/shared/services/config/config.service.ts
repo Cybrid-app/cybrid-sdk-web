@@ -104,14 +104,18 @@ export class ConfigService implements OnDestroy {
       .pipe(
         takeUntil(this.unsubscribe$),
         map((config) => {
+          const container = this.overlay.getContainerElement();
+
+          // Angular Material typography styles
+          container.classList.add('mat-typography');
+
+          // Selected theme styles
           if (config.theme === 'DARK') {
-            this.overlay
-              .getContainerElement()
-              .classList.add('cybrid-dark-theme');
+            container.classList.remove('cybrid-light-theme');
+            container.classList.add('cybrid-dark-theme');
           } else {
-            this.overlay
-              .getContainerElement()
-              .classList.remove('cybrid-dark-theme');
+            container.classList.remove('cybrid-dark-theme');
+            container.classList.add('cybrid-light-theme');
           }
         })
       )

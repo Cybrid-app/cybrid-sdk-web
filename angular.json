@@ -95,7 +95,6 @@
             "inlineStyleLanguage": "scss",
             "assets": ["src/assets", "src/favicon.ico"],
             "styles": ["src/styles.scss"],
-            "scripts": [],
             "codeCoverage": true,
             "codeCoverageExclude": ["src/shared/pipes/asset/mock-asset.pipe.ts"]
           }
@@ -159,9 +158,7 @@
             "polyfills": "library/src/polyfills.ts",
             "tsConfig": "library/tsconfig.json",
             "inlineStyleLanguage": "scss",
-            "assets": [],
-            "scripts": [],
-            "styles": []
+            "styles": ["src/shared/styles/theme.scss"]
           },
           "configurations": {
             "production": {
@@ -223,9 +220,7 @@
             "karmaConfig": "library/karma.conf.js",
             "codeCoverageExclude": ["library/src/app/modules/*"],
             "inlineStyleLanguage": "scss",
-            "assets": [],
-            "styles": [],
-            "scripts": [],
+            "styles": ["src/shared/styles/theme.scss"],
             "codeCoverage": true
           }
         },

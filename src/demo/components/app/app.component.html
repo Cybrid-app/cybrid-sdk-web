@@ -1,8 +1,10 @@
 <div
-  class="wrapper"
-  [ngClass]="{
-    'cybrid-dark-theme': (configService.config$ | async)?.theme === 'DARK'
-  }"
+  class="wrapper mat-body"
+  [ngClass]="
+    (configService.config$ | async)?.theme === 'LIGHT'
+      ? 'cybrid-light-theme'
+      : 'cybrid-dark-theme'
+  "
 >
   <mat-toolbar color="primary">
     <img
@@ -19,7 +21,7 @@
       <mat-icon (click)="toggleTheme()">{{ mode }}</mat-icon>
     </button>
   </mat-toolbar>
-  <mat-drawer-container>
+  <mat-drawer-container class="mat-app-background">
     <mat-drawer-content>
       <app-demo></app-demo>
     </mat-drawer-content>

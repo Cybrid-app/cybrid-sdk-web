@@ -1,22 +1,14 @@
-@use '@angular/material' as mat;
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-@import '../../../../../src/shared/styles/theme.scss';
-
-.wrapper {
+.cybrid-wrapper {
   display: flex;
 }
 
-.list-item {
-  min-height: 3rem;
+.cybrid-subheader-item {
+  height: 3rem;
   display: flex;
   flex-grow: 1;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-}
-
-.subheader-item {
-  @extend .list-item;
   margin-bottom: 0.8rem;
   gap: 1rem;
   .inner {

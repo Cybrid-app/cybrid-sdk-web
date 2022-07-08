@@ -1,81 +1,77 @@
-<div
-  [ngClass]="{
-    'cybrid-dark-theme': (configService.config$ | async)?.theme === 'DARK'
-  }"
->
-  <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
-    <ng-container *ngIf="(isLoading$ | async) !== true">
-      <ng-container>
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'priceList.table.filter' | translate }}</mat-label>
-          <input
-            part="input"
-            #filter
-            id="filter"
-            [formControl]="filterControl"
-            matInput
-            type="text"
-          />
-          <mat-icon matPrefix class="mat-hint">search</mat-icon>
-        </mat-form-field>
-      </ng-container>
-      <table part="table" id="priceList" mat-table [dataSource]="dataSource">
-        <ng-container matColumnDef="symbol">
-          <th part="th" mat-header-cell *matHeaderCellDef>
-            {{ 'priceList.table.symbol' | translate }}
-          </th>
-          <td part="td" id="asset" mat-cell *matCellDef="let symbol">
-            <div class="currency-cell">
-              <img
-                class="icon"
-                src="{{ symbol.asset.url }}"
-                alt="Crypto currency icon"
-              />
-              <div class="currency-wrapper">
-                <div class="symbol">
-                  <span class="name">{{ symbol.asset.name }}</span>
-                </div>
-                <span class="code">{{ symbol.asset.code }}</span>
-              </div>
-            </div>
-          </td>
-        </ng-container>
-        <ng-container matColumnDef="price">
-          <th part="th" mat-header-cell *matHeaderCellDef>
-            {{ 'priceList.table.price' | translate }}
-          </th>
-          <td part="td" id="price" mat-cell *matCellDef="let symbol">
-            <div class="price-cell">
-              <span>{{ symbol.buy_price | asset: symbol.counter_asset }} </span>
-              <span class="fiat">({{ symbol.counter_asset.code }})</span>
-            </div>
-          </td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr
-          class="pointer"
-          mat-row
-          *matRowDef="let row; columns: displayedColumns"
-        ></tr>
-        <tr class="mat-row" *matNoDataRow>
-          <td part="td" id="warning" class="mat-cell no-data" colspan="2">
-            {{
-              !getPricesError
-                ? ('priceList.empty' | translate)
-                : ('priceList.error' | translate)
-            }}
-          </td>
-        </tr>
-      </table>
+<ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
+  <ng-container *ngIf="(isLoading$ | async) !== true">
+    <ng-container>
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'priceList.table.filter' | translate }}</mat-label>
+        <input
+          part="input"
+          #filter
+          id="filter"
+          [formControl]="filterControl"
+          matInput
+          type="text"
+        />
+        <mat-icon matPrefix class="mat-hint">search</mat-icon>
+      </mat-form-field>
     </ng-container>
+    <table part="table" id="priceList" mat-table [dataSource]="dataSource">
+      <ng-container matColumnDef="symbol">
+        <th part="th" mat-header-cell *matHeaderCellDef>
+          {{ 'priceList.table.symbol' | translate }}
+        </th>
+        <td part="td" id="asset" mat-cell *matCellDef="let symbol">
+          <div class="currency-cell">
+            <img
+              class="icon"
+              src="{{ symbol.asset.url }}"
+              alt="Crypto currency icon"
+            />
+            <div class="currency-wrapper">
+              <div class="symbol">
+                <span class="name">{{ symbol.asset.name }}</span>
+              </div>
+              <span class="mat-hint mat-h5 code">{{ symbol.asset.code }}</span>
+            </div>
+          </div>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="price">
+        <th part="th" mat-header-cell *matHeaderCellDef>
+          {{ 'priceList.table.price' | translate }}
+        </th>
+        <td part="td" id="price" mat-cell *matCellDef="let symbol">
+          <div class="price-cell">
+            <span>{{ symbol.buy_price | asset: symbol.counter_asset }} </span>
+            <span class="mat-hint mat-h5 code fiat"
+              >({{ symbol.counter_asset.code }})</span
+            >
+          </div>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        class="pointer"
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+      ></tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td part="td" id="warning" class="mat-cell no-data" colspan="2">
+          {{
+            !getPricesError
+              ? ('priceList.empty' | translate)
+              : ('priceList.error' | translate)
+          }}
+        </td>
+      </tr>
+    </table>
   </ng-container>
-  <ng-template #error>
-    <mat-card>
-      <mat-card-content>
-        <div class="fatal">
-          <p>{{ 'fatal' | translate }}</p>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </ng-template>
-</div>
+</ng-container>
+<ng-template #error>
+  <mat-card>
+    <mat-card-content>
+      <div class="fatal">
+        <p>{{ 'fatal' | translate }}</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</ng-template>

@@ -23,7 +23,10 @@ interface DialogData {
 @Component({
   selector: 'app-trade-summary',
   templateUrl: './trade-summary.component.html',
-  styleUrls: ['./trade-summary.component.scss']
+  styleUrls: [
+    './trade-summary.component.scss',
+    '../../../../../src/shared/styles/global.scss'
+  ]
 })
 export class TradeSummaryComponent implements OnInit {
   trade$: Subject<TradeBankModel> = new Subject<TradeBankModel>();

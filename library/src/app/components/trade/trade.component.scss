@@ -1,6 +1,17 @@
-@use '@angular/material' as mat;
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-@import '../../../../../src/shared/styles/theme.scss';
+.cybrid-navigation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 400;
+
+  mat-icon {
+    height: 1rem;
+    width: 1rem;
+    line-height: 1rem;
+    font-size: 1rem;
+  }
+}
 
 .tab-wrapper {
   display: flex;
@@ -16,14 +27,11 @@
 }
 
 .select-code {
-  @extend .mat-hint;
-  @extend .mat-h5;
   color: inherit;
   margin: 0;
 }
 
 .display-code {
-  @extend .mat-hint;
   margin: 0;
 }
 
