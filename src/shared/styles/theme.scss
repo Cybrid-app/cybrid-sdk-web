@@ -172,10 +172,47 @@ $light-theme: mat.define-light-theme(
   )
 );
 
+/* Theme Class Declaration */
 .cybrid-light-theme {
   @include mat.all-component-themes($light-theme);
 }
-
 .cybrid-dark-theme {
   @include mat.all-component-colors($dark-theme);
+}
+
+/* Global Styles */
+.cybrid-global {
+  .cybrid-hint {
+    @extend .mat-hint;
+    @extend .mat-h5;
+    margin: 0;
+  }
+  .cybrid-pointer {
+    cursor: pointer;
+  }
+  .cybrid-fatal {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
+  /* Material Style Overrides */
+  .mat-tab-label {
+    flex-grow: 1;
+  }
+
+  .mat-form-field {
+    width: 100%;
+    flex: 1;
+  }
+  .mat-form-field-flex {
+    align-items: center;
+  }
 }

@@ -1,7 +1,7 @@
 <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
   <ng-container *ngIf="(isLoading$ | async) !== true">
     <button mat-button color="primary" routerLink="..">
-      <div class="navigation">
+      <div class="cybrid-navigation">
         <mat-icon>arrow_back</mat-icon>
         <div>{{ 'back' | translate }}</div>
       </div>
@@ -10,14 +10,16 @@
       animationDuration="0ms"
       (selectedTabChange)="onSwitchSide($event.tab.origin)"
     >
-      <mat-tab label="{{ 'trade.buy' | translate }}"> </mat-tab>
+      <mat-tab label="{{ 'trade.buy' | translate }}"></mat-tab>
       <mat-tab label="{{ 'trade.sell' | translate }}"></mat-tab>
     </mat-tab-group>
     <ng-container [formGroup]="quoteGroup">
-      <div class="tab-wrapper">
-        <div class="input-wrapper">
+      <div class="cybrid-tab-wrapper">
+        <div class="cybrid-input-wrapper">
+          <label class="mat-hint mat-h5 cybrid-label">{{
+            'trade.currency' | translate
+          }}</label>
           <mat-form-field id="asset" appearance="outline">
-            <mat-label>{{ 'trade.currency' | translate }}</mat-label>
             <mat-select
               #matSelect
               [compareWith]="compareObjects"
@@ -45,10 +47,10 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
+          <label class="mat-hint mat-h5 cybrid-label">{{
+            'trade.amount' | translate | titlecase
+          }}</label>
           <mat-form-field appearance="outline">
-            <mat-label>
-              <span>{{ 'trade.amount' | translate | titlecase }}</span>
-            </mat-label>
             <input
               matInput
               id="amount"
@@ -64,20 +66,20 @@
               <div class="divider"></div>
             </div>
             <button
-              *ngIf="amount.value"
-              id="clear"
+              id="swap"
               mat-icon-button
+              color="primary"
               matSuffix
-              (click)="quoteGroup.get('amount')?.reset()"
+              (click)="onSwitchInput()"
             >
-              <mat-icon>close</mat-icon>
+              <mat-icon>swap_vert</mat-icon>
             </button>
             <mat-error>{{ 'trade.error' | translate }}</mat-error>
           </mat-form-field>
         </div>
-        <div class="hint-wrapper">
-          <div class="spacer"></div>
-          <div class="hint">
+        <div class="cybrid-hint-wrapper">
+          <div class="cybrid-spacer"></div>
+          <div class="cybrid-hint">
             <ng-container *ngIf="!amount.value">
               <span> 1 </span>
               <span class="display-code">
@@ -85,9 +87,7 @@
               </span>
               <span>=</span>
               <span>
-                {{
-                  price.buy_price! | asset: counterAsset:'trade' | currency
-                }}
+                {{ price.buy_price! | asset: counterAsset:'trade' | currency }}
               </span>
               <span class="display-code">{{ ' ' + counterAsset.code }}</span>
             </ng-container>
@@ -109,14 +109,6 @@
                 {{ input === 'asset' ? counterAsset.code : asset.code }}
               </span>
             </ng-container>
-            <button
-              id="swap"
-              mat-icon-button
-              color="primary"
-              (click)="onSwitchInput()"
-            >
-              <mat-icon>swap_vert</mat-icon>
-            </button>
           </div>
         </div>
         <button

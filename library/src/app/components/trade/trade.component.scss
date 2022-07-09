@@ -13,14 +13,18 @@
   }
 }
 
-.tab-wrapper {
+.cybrid-label {
+  margin: 0 0 0 0.2rem;
+}
+
+.cybrid-tab-wrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
   margin-top: calc(1rem + 0.25em);
 }
 
-.input-wrapper {
+.cybrid-input-wrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -109,19 +113,17 @@
   .hint-wrapper {
     display: flex;
     gap: 1rem;
-    .spacer {
+    .cybrid-spacer {
       flex: 1;
     }
-    .hint {
+    .cybrid-hint {
       flex: 1;
       button {
         margin-left: auto;
       }
     }
   }
-  mat-form-field {
-    flex: 1;
-  }
+
   .input-wrapper {
     flex-direction: row;
     gap: 1rem;

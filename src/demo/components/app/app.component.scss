@@ -18,6 +18,10 @@ mat-drawer-content {
   height: auto;
 }
 
+mat-toolbar {
+  height: 56px !important;
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;

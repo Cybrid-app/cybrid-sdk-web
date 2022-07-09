@@ -4,9 +4,7 @@
     <mat-dialog-content>
       <p class="mat-hint">
         {{ 'trade.confirm.refresh.message' | translate }}
-        <span class="mat-error">{{
-          ' ' + refreshInterval / 1000 + ' '
-        }}</span>
+        <span class="mat-error">{{ ' ' + refreshInterval / 1000 + ' ' }}</span>
         {{ 'trade.confirm.refresh.unit' | translate }}
       </p>
       <ng-container *ngIf="data.model.side === 'buy'">
@@ -100,10 +98,9 @@
   </ng-container>
 </ng-container>
 <ng-template #loading>
-  <div class="loading-wrapper">
+  <app-loading>
     <h2>{{ 'trade.confirm.loading' | translate }}</h2>
-    <mat-spinner diameter="40"></mat-spinner>
-  </div>
+  </app-loading>
 </ng-template>
 <ng-template #error>
   <mat-card>
