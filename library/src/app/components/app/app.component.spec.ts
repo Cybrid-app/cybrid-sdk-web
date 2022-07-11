@@ -24,6 +24,7 @@ import {
 import { ConfigService } from '../../../../../src/shared/services/config/config.service';
 import { of, throwError } from 'rxjs';
 import { TestConstants } from '../../../../../src/shared/constants/test.constants';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 describe('AppComponent', () => {
   let MockAuthService = jasmine.createSpyObj('AuthService', [
@@ -64,7 +65,8 @@ describe('AppComponent', () => {
         { provide: EventService, useValue: MockEventService },
         { provide: ErrorService, useValue: MockErrorService },
         { provide: ConfigService, useValue: MockConfigService }
-      ]
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
     MockAuthService = TestBed.inject(AuthService);
     MockAssetService = TestBed.inject(AssetService);

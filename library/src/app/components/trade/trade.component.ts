@@ -277,8 +277,6 @@ export class TradeComponent implements OnInit, OnDestroy {
       this.counterAsset
     );
 
-    console.log(postQuoteBankModel);
-
     this.dialogRef = this.dialog.open(TradeConfirmComponent, {
       data: {
         model: postQuoteBankModel,

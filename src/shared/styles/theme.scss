@@ -177,6 +177,9 @@ $light-theme: mat.define-light-theme(
   @include mat.all-component-themes($light-theme);
 }
 .cybrid-dark-theme {
+  .mat-option:not(.mat-selected) {
+    color: white;
+  }
   @include mat.all-component-colors($dark-theme);
 }
 
@@ -187,15 +190,36 @@ $light-theme: mat.define-light-theme(
     @extend .mat-h5;
     margin: 0;
   }
+
+  .cybrid-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 400;
+    mat-icon {
+      height: 1rem;
+      width: 1rem;
+      line-height: 1rem;
+      font-size: 1rem;
+    }
+  }
+
   .cybrid-pointer {
     cursor: pointer;
   }
+
+  .cybrid-spacer {
+    flex: 1 0 auto;
+  }
+
   .cybrid-fatal {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
   }
+
   input[type='number']::-webkit-inner-spin-button,
   input[type='number']::-webkit-outer-spin-button {
     -webkit-appearance: none;

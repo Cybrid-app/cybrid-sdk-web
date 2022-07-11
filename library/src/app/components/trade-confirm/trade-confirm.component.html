@@ -8,7 +8,7 @@
         {{ 'trade.confirm.refresh.unit' | translate }}
       </p>
       <ng-container *ngIf="data.model.side === 'buy'">
-        <div class="list-item">
+        <div class="cybrid-list-item">
           <span>{{
             ('trade.confirm.purchase' | translate) +
               ' ' +
@@ -22,7 +22,7 @@
           </div>
         </div>
         <mat-divider></mat-divider>
-        <div class="list-item">
+        <div class="cybrid-list-item">
           <span>{{
             ('trade.confirm.purchase' | translate) +
               ' ' +
@@ -36,7 +36,7 @@
           </div>
         </div>
         <mat-divider></mat-divider>
-        <div class="list-item">
+        <div class="cybrid-list-item">
           <span>{{ 'trade.transaction' | translate }}</span>
           <div>
             <span
@@ -48,7 +48,7 @@
         <mat-divider></mat-divider>
       </ng-container>
       <ng-container *ngIf="data.model.side === 'sell'">
-        <div class="list-item">
+        <div class="cybrid-list-item">
           <span>{{
             ('trade.sell' | translate) + ' ' + ('trade.amount' | translate)
           }}</span>
@@ -60,7 +60,7 @@
           </div>
         </div>
         <mat-divider></mat-divider>
-        <div class="list-item">
+        <div class="cybrid-list-item">
           <span>{{
             ('trade.sell' | translate) + ' ' + ('trade.quantity' | translate)
           }}</span>
@@ -72,7 +72,7 @@
           </div>
         </div>
         <mat-divider></mat-divider>
-        <div class="list-item">
+        <div class="cybrid-list-item">
           <span>{{ 'trade.transaction' | translate }}</span>
           <div>
             <span>{{ (quote.fee! | asset: counter_asset) + ' ' }}</span>
