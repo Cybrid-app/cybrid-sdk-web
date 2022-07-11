@@ -101,6 +101,15 @@ describe('AppComponent', () => {
     expect(MockConfigService.setConfig).toHaveBeenCalledWith(testConfig);
   }));
 
+  it('should set the current component', fakeAsync(() => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const component = fixture.componentInstance;
+    const testComponent = 'test';
+    component.component = testComponent;
+    tick();
+    expect(component.currentComponent).toEqual(testComponent);
+  }));
+
   it('should call init functions in ngOnInit()', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const component = fixture.componentInstance;
