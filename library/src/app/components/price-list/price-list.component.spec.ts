@@ -29,6 +29,7 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { HttpLoaderFactory } from '../../modules/library.module';
 import { TestConstants } from '../../../../../src/shared/constants/test.constants';
 import { RouterTestingModule } from '@angular/router/testing';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 describe('ListComponent', () => {
   let MockAuthService = jasmine.createSpyObj('AuthService', [
@@ -80,7 +81,8 @@ describe('ListComponent', () => {
         { provide: EventService, useValue: MockEventService },
         { provide: ErrorService, useValue: MockErrorService },
         { provide: ConfigService, useValue: MockConfigService }
-      ]
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
     MockAuthService = TestBed.inject(AuthService);
     MockPricesService = TestBed.inject(PricesService);

@@ -55,6 +55,7 @@ export class DemoComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((config) => {
         this.componentRef.instance.hostConfig = config;
+        this.componentRef.instance.component = 'app/price-list';
       });
   }
 }

@@ -37,7 +37,7 @@ import {
   ConfigService
 } from '../../../../../src/shared/services/config/config.service';
 import { AssetService } from '../../../../../src/shared/services/asset/asset.service';
-import { NavigationExtras, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 export interface SymbolPrice extends SymbolPriceBankModel {
   asset: AssetBankModel;

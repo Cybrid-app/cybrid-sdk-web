@@ -1,13 +1,9 @@
-@use '@angular/material' as mat;
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-@import '../../../../../src/shared/styles/theme.scss';
-
-.wrapper {
+.cybrid-wrapper {
   display: flex;
 }
 
-.list-item {
-  min-height: 3rem;
+.cybrid-list-item {
+  height: 3rem;
   display: flex;
   flex-grow: 1;
   justify-content: space-between;
@@ -15,13 +11,17 @@
   flex-wrap: wrap;
 }
 
-.subheader-item {
-  @extend .list-item;
+.cybrid-subheader-item {
+  @extend .cybrid-list-item;
   margin-bottom: 0.8rem;
   gap: 1rem;
-  .inner {
+  div {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
   }
+}
+
+.mat-error {
+  display: inline;
 }

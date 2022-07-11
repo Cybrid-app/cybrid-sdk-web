@@ -42,6 +42,7 @@ import { PriceListComponent } from '../components/price-list/price-list.componen
 import { TradeComponent } from '../components/trade/trade.component';
 import { TradeConfirmComponent } from '../components/trade-confirm/trade-confirm.component';
 import { TradeSummaryComponent } from '../components/trade-summary/trade-summary.component';
+import { LoadingComponent } from '../components/loading/loading.component';
 
 // Utility
 import { environment } from '../../environments/environment';
@@ -60,6 +61,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     TradeComponent,
     TradeConfirmComponent,
     TradeSummaryComponent,
+    LoadingComponent,
     AssetPipe,
     TruncatePipe
   ],

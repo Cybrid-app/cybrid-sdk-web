@@ -1,40 +1,20 @@
-@use '@angular/material' as mat;
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-@import '../../../../../src/shared/styles/theme.scss';
-
-.tab-wrapper {
+.cybrid-tabs {
   display: flex;
   flex-direction: column;
   justify-content: center;
   margin-top: calc(1rem + 0.25em);
 }
 
-.input-wrapper {
+.cybrid-input-wrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-.select-code {
-  @extend .mat-hint;
-  @extend .mat-h5;
-  color: inherit;
-  margin: 0;
-}
-
-.display-code {
-  @extend .mat-hint;
-  margin: 0;
-}
-
-.input {
-  margin-left: 15px;
-}
-
-.prefix {
+.cybrid-prefix {
   margin-top: 4px;
   position: relative;
-  .divider {
+  .cybrid-amount-divider {
     position: absolute;
     height: 1rem;
     width: 1px;
@@ -44,81 +24,66 @@
   }
 }
 
-.hint {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 0.25rem;
-  min-height: 1rem;
-  margin-left: 3px;
-}
-
-.option {
+.cybrid-option {
   display: flex;
   justify-content: flex-start;
   align-items: center;
   gap: 0.5rem;
 }
 
-.select-icon {
+.cybrid-trigger-icon {
   position: fixed;
   max-height: 1.7rem;
   max-width: 1.7rem;
 }
 
-.display-icon {
+.cybrid-option-icon {
   max-height: 1.7rem;
   max-width: 1.7rem;
 }
 
-.price {
-  align-self: center;
-  margin-bottom: 0;
-}
-
-.asset-name {
+.cybrid-trigger-name {
   margin-left: 2.2rem;
 }
 
-.spacer {
-  flex: 1 0 auto;
+.cybrid-amount-input {
+  margin-left: 15px;
 }
 
-.action {
+.cybrid-approx {
+  margin-left: 0.65rem;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  flex-basis: 50%;
+}
+
+.cybrid-action {
   align-self: flex-end;
 }
 
-.fatal {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-// XL (extra-large)
 @media screen and (min-width: 1535px) {
-  .hint-wrapper {
+  .approx-wrapper {
+    margin-left: 0;
     display: flex;
+    margin-bottom: 1rem;
     gap: 1rem;
-    .spacer {
-      flex: 1;
-    }
-    .hint {
-      flex: 1;
-      button {
-        margin-left: auto;
-      }
+    div {
+      flex-basis: 50%;
+      margin-left: 0.7rem;
     }
   }
-  mat-form-field {
-    flex: 1;
-  }
-  .input-wrapper {
+
+  .cybrid-input-wrapper {
     flex-direction: row;
     gap: 1rem;
   }
-  .action {
+  .cybrid-input-flex {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 50%;
+  }
+  .cybrid-action {
     align-self: center;
     width: 320px;
   }

@@ -1,1 +1,14 @@
-@import '../../../../../src/shared/styles/theme.scss';
+/* The following must also be imported in the <head> of the host index.html to render material icons
+<link rel="preconnect" href="https://fonts.gstatic.com" />
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+*/
+
+/* This link can be added if the host wants to use Roboto (the default font for Angular Material)
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"/>
+*/
+
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+.mat-drawer-container {
+  background: rgba(255, 255, 255, 0);
+}

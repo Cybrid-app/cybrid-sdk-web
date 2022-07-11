@@ -36,11 +36,12 @@ import { AssetPipe } from '../../../../../src/shared/pipes/asset/asset.pipe';
 import { compareObjects } from '../../../../../src/shared/utility/compare-object';
 import { symbolSplit } from '../../../../../src/shared/utility/symbol-split';
 import { symbolBuild } from '../../../../../src/shared/utility/symbol-build';
-import SideEnum = PostQuoteBankModel.SideEnum;
 import { QuoteService } from '../../../../../src/shared/services/quote/quote.service';
 import { TradeConfirmComponent } from '../trade-confirm/trade-confirm.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TradeSummaryComponent } from '../trade-summary/trade-summary.component';
+import { Constants } from '../../../../../src/shared/constants/constants';
+import SideEnum = PostQuoteBankModel.SideEnum;
 
 @Component({
   selector: 'app-trade',
@@ -50,8 +51,8 @@ import { TradeSummaryComponent } from '../trade-summary/trade-summary.component'
 export class TradeComponent implements OnInit, OnDestroy {
   compareObjects = compareObjects;
 
-  asset!: Asset;
-  counterAsset!: Asset;
+  asset: Asset = Constants.BTC_ASSET;
+  counterAsset: Asset = Constants.USD_ASSET;
   cryptoAssets!: Asset[];
   fiatAssets!: Asset[];
 

@@ -4,8 +4,7 @@ import {
   EventEmitter,
   Input,
   OnInit,
-  Output,
-  ViewEncapsulation
+  Output
 } from '@angular/core';
 import {
   ComponentConfig,
@@ -38,7 +37,6 @@ import { AssetService } from '../../../../../src/shared/services/asset/asset.ser
   selector: 'app-app',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  encapsulation: ViewEncapsulation.ShadowDom,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
@@ -52,7 +50,12 @@ export class AppComponent implements OnInit {
   set hostConfig(config: ComponentConfig) {
     this.configService.setConfig(config);
   }
+  @Input()
+  set component(selector: string) {
+    this.currentComponent = selector;
+  }
 
+  currentComponent: string = '';
   private unsubscribe$ = new Subject();
 
   constructor(
@@ -61,7 +64,7 @@ export class AppComponent implements OnInit {
     private assetService: AssetService,
     private eventService: EventService,
     private errorService: ErrorService,
-    private configService: ConfigService
+    public configService: ConfigService
   ) {}
 
   ngOnInit(): void {
@@ -79,7 +82,6 @@ export class AppComponent implements OnInit {
             code: CODE.APPLICATION_INIT,
             message: 'Initializing application'
           });
-          this.router.initialNavigation();
         }),
         catchError((err) => {
           this.eventService.handleEvent(
@@ -93,7 +95,9 @@ export class AppComponent implements OnInit {
           return of(err);
         })
       )
-      .subscribe();
+      .subscribe(() => {
+        this.router.navigate([this.currentComponent]);
+      });
   }
 
   initEventService(): void {
