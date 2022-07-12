@@ -18,7 +18,8 @@ def main():
     testVersions.append({ 'version': unicodedata.normalize('NFKD', l[0]).encode('ascii', 'ignore').decode()})
     break
 
-  print(testVersions)
+  dump = json.dumps(testVersions)
+  print(dump)
 
 if __name__ == "__main__":
   main()
