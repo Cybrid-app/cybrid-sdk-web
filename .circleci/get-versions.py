@@ -16,10 +16,9 @@ def main():
   for version in testMajorVersions:
     l = list(filter(lambda x: x.startswith(version), versions))
     testVersions.append({ 'version': unicodedata.normalize('NFKD', l[0]).encode('ascii', 'ignore').decode()})
-    break
-
-  dump = json.dumps(testVersions)
-  print(dump)
+  else:
+    dump = json.dumps(testVersions)
+    print(dump)
 
 if __name__ == "__main__":
   main()
