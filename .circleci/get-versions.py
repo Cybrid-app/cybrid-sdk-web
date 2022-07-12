@@ -15,10 +15,11 @@ def main():
 
   for version in testMajorVersions:
     l = list(filter(lambda x: x.startswith(version), versions))
-    testVersions.append(unicodedata.normalize('NFKD', l[0]).encode('ascii', 'ignore').decode())
+    testVersions.append({ 'version': unicodedata.normalize('NFKD', l[0]).encode('ascii', 'ignore').decode()})
 
-  print(testVersions)
-  return(testVersions)
+    # convert to json
+    dump = json.dumps(testVersions)
+    print(dump)
 
 if __name__ == "__main__":
   main()
