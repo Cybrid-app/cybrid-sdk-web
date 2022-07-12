@@ -53,7 +53,9 @@ describe('price-list test', () => {
       prices = interception.response.body;
     });
 
-    cy.wait('@getPrices').its('response.body').should('not.eq', prices);
+    cy.wait('@getPrices', { timeout: 10000 })
+      .its('response.body')
+      .should('not.eq', prices);
 
     app()
       .find('tr')
