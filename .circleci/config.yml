@@ -45,7 +45,7 @@ workflows:
                 command: |
                   apt update -y
                   apt install -y python curl wget jq unzip
-                  curl https://omahaproxy.appspot.com/history.json\?channel\=stable\&os\=linux | jq '[.[].version]' > versions.json
+                  curl https://omahaproxy.appspot.com/history.json\?channel\=stable\&os\=linux | jq '[.[].version]' > .circleci/versions.json
                   VER=`python .circleci/get-versions.py`
                   echo $VER
 
