@@ -17,7 +17,6 @@ def main():
     l = list(filter(lambda x: x.startswith(version), versions))
     testVersions.append({ 'version': unicodedata.normalize('NFKD', l[0]).encode('ascii', 'ignore').decode()})
 
-    # convert to json
     dump = json.dumps(testVersions)
     print(dump)
 
