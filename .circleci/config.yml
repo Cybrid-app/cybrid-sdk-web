@@ -10,7 +10,7 @@ orbs:
 executors:
   cypress:
     docker:
-      - image: 'cypress/base:17.8.0'
+      - image: cypress/base:16.14.2
 
 workflows:
   web-build-and-test:
@@ -30,18 +30,79 @@ workflows:
           post-steps:
             - codecov/upload
             - run:
-                command: |
-                  npm run lint
+                command: npm run lint
                 name: Lint
             - run:
-                command: |
-                  npm audit
+                command: npm audit
                 name: Audit
 
       - cypress/run:
-          name: e2e
+          name: e2e chromium@101.0.4951.64
           executor: cypress
+          post-checkout:
+            - run:
+                name: Install wget/unzip
+                command: |
+                  apt update -y
+                  apt-get install -y wget
+                  apt-get install -y unzip
+            - run:
+                name: Download/Install Chromium
+                command: |
+                  wget -O chrome-linux.zip "https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2F982481%2Fchrome-linux.zip?generation=1647559751806495&alt=media"
+                  unzip chrome-linux.zip
           start: npm start
+          command: npx cypress run --browser chrome-linux/chrome
+          no-workspace: true
+          wait-on: http://localhost:4200
+          store_artifacts: true
+
+      - cypress/run:
+          name: e2e chromium@102.0.5005.61
+          executor: cypress
+          post-checkout:
+            - run:
+                name: Install wget/unzip
+                command: |
+                  apt update -y
+                  apt-get install -y wget
+                  apt-get install -y unzip
+            - run:
+                name: Download/Install Chromium
+                command: |
+                  wget -O chrome-linux.zip "https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2F992740%2Fchrome-linux.zip?generation=1649975445134595&alt=media"
+                  unzip chrome-linux.zip
+          start: npm start
+          command: npx cypress run --browser chrome-linux/chrome
+          no-workspace: true
+          wait-on: http://localhost:4200
+          store_artifacts: true
+
+      - cypress/run:
+          name: e2e chrome/edge@latest
+          executor: cypress
+          post-checkout:
+            - run:
+                name: Install libraries
+                command: |
+                  apt update -y
+                  apt install -y software-properties-common apt-transport-https wget fonts-liberation xdg-utils gnupg
+            - run:
+                name: Download/Install Chrome stable
+                command: |
+                  wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+                  apt update -y
+                  dpkg --configure -a
+                  dpkg -i google-chrome-stable_current_amd64.deb
+            - run:
+                name: Download/Install Edge stable
+                command: |
+                  wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add -
+                  add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
+                  apt update -y
+                  apt-get -f install -y microsoft-edge-stable
+          start: npm start
+          command: npx cypress run --browser chrome && npx cypress run --browser edge
           no-workspace: true
           wait-on: http://localhost:4200
           store_artifacts: true
@@ -49,7 +110,7 @@ workflows:
   publish:
     when:
       and:
-        - equal: [ main, << pipeline.git.branch >> ]
+        - equal: [main, << pipeline.git.branch >>]
     jobs:
       - cypress/run:
           name: e2e
