@@ -79,6 +79,12 @@ export class TradeSummaryComponent implements OnInit {
   }
 
   onDialogClose(): void {
+    this.eventService.handleEvent(
+      LEVEL.INFO,
+      CODE.APPLICATION_ROUTE,
+      'Routing to price list',
+      'app/price-list'
+    );
     this.router.navigate(['/app/price-list']);
   }
 }

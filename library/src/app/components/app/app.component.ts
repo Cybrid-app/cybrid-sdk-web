@@ -22,8 +22,10 @@ import {
   ErrorService
 } from '../../../../../src/shared/services/error/error.service';
 import {
+  BehaviorSubject,
   catchError,
   combineLatest,
+  map,
   of,
   Subject,
   take,
@@ -32,6 +34,7 @@ import {
 } from 'rxjs';
 import { Router } from '@angular/router';
 import { AssetService } from '../../../../../src/shared/services/asset/asset.service';
+import { Constants } from '../../../../../src/shared/constants/constants';
 
 @Component({
   selector: 'app-app',
@@ -53,9 +56,12 @@ export class AppComponent implements OnInit {
   @Input()
   set component(selector: string) {
     this.currentComponent = selector;
+    this.currentComponent$.next(selector);
   }
 
-  currentComponent: string = '';
+  currentComponent = Constants.DEFAULT_COMPONENT;
+  currentComponent$ = new BehaviorSubject(this.currentComponent);
+
   private unsubscribe$ = new Subject();
 
   constructor(
@@ -96,7 +102,7 @@ export class AppComponent implements OnInit {
         })
       )
       .subscribe(() => {
-        this.router.navigate([this.currentComponent]);
+        this.initNavigation();
       });
   }
 
@@ -141,5 +147,23 @@ export class AppComponent implements OnInit {
           });
         }
       });
+  }
+
+  initNavigation(): void {
+    this.currentComponent$
+      .pipe(
+        takeUntil(this.unsubscribe$),
+        map((component) => {
+          this.router.navigate([component]);
+          this.eventService.handleEvent(
+            LEVEL.INFO,
+            CODE.APPLICATION_ROUTE,
+            'Routing to ' + `${this.currentComponent}`,
+            this.currentComponent
+          );
+          this.currentComponent = component;
+        })
+      )
+      .subscribe();
   }
 }

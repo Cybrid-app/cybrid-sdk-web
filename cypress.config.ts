@@ -6,12 +6,12 @@ export default defineConfig({
   fixturesFolder: 'cypress/fixtures',
   chromeWebSecurity: false,
   includeShadowDom: true,
+  requestTimeout: 10000,
   env: {
     CLIENT_ID: '',
     CLIENT_SECRET: ''
   },
   e2e: {
-    baseUrl: 'http://localhost:4200',
-    excludeSpecPattern: ['cypress/e2e/trade.cy.ts']
+    baseUrl: 'http://localhost:4200'
   }
 });
