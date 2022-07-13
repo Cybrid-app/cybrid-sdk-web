@@ -1,13 +1,7 @@
 const path = require('path'); // eslint-disable-line
-const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = [
   {
-    plugins: [
-      new CopyPlugin({
-        patterns: [{ from: path.resolve(__dirname, "dist/library/styles.css") }]
-      })
-    ],
     mode: 'production',
     performance: {
       hints: false,
@@ -15,9 +9,9 @@ module.exports = [
       maxAssetSize: 512000
     },
     target: 'web',
-    entry: ['/dist/library/library.js'],
+    entry: ['/dist/library/cybrid-sdk-ui.min.js'],
     output: {
-      path: path.resolve(__dirname, 'html-test'),
+      path: path.resolve(__dirname, 'dist/library'),
       filename: 'cybrid-sdk-ui.min.js',
       library: 'cybrid-sdk-ui-js',
       libraryTarget: 'umd'

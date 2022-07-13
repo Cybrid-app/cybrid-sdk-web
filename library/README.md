@@ -20,15 +20,22 @@ Crypto currency icon assets: [https://images.cybrid.xyz/](https://images.cybrid.
 
 To use the ui library via html, simply load it into your index.html as a script. All included ui components will be accessible via their html selector. In the example below we are using the `<cybrid-price-list>`
 
+> NOTE: If you are embedding this library in an Angular application you will want to omit `cybrid-sdk-ui.polyfills.js` to avoid duplication of `zone.js`
+ 
 ```html
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <title>Host Application</title>
-    <script src="cybrid-sdk-ui.min.js"></script>
+    
+    // Omit if already importing zone.js in an Angular application
+    <script type="module" src="cybrid-sdk-ui.polyfills.js"></script>
+    
+    // Main, runtime, and css bundle
+    <script type="module" src="cybrid-sdk-ui.min.js"></script>
   </head>
   <body>
-  <cybrid-price-list></cybrid-price-list>
+  <cybrid-price-list [auth]="your_JWT"></cybrid-price-list>
   </body>
 </html>
 ```
@@ -38,7 +45,7 @@ To use the ui library via html, simply load it into your index.html as a script.
 ```html
 <script>
   const list = document.createElement("cybrid-price-list");
-  list.setAttribute("auth", "your_token")
+  list.setAttribute("auth", "your_JWT")
   document.body.append(list);
 </script>
 ```
@@ -52,7 +59,7 @@ To use the ui library via html, simply load it into your index.html as a script.
 Each component:
 - Accepts an `auth` and `config` property.
 - Emits events via `eventLog` and `errorLog`
-- Will handle changes during runtime
+- Handles changes during runtime
 
 ### Auth (required)
 
@@ -62,25 +69,29 @@ Expects a JSON Web Token. **_The component won't display unless the bound JWT is
 <cybrid-price-list [auth]='your_JWT'></cybrid-price-list>
 ```
 
-### Config (optional)
+### Config (required)
 
 A default component configuration is set if no host config is bound. The full configuration object must be defined.
+> NOTE: Config is currently required due to the necessity of a customer GUID. In the future this will be removed and revert to a default config if undefined. The customer GUID will be embedded in the JWT.
 
 ```typescript
 interface ComponentConfig {
   // The number in milliseconds the component waits before refreshing data
   // Default: 5000
   refreshInterval: number;
-  
+
   // The current locale 
   // Supports: 'en-US' | 'fr-CA' 
   // Default: 'en-US'
   locale: string;
-  
+
   // Light mode or dark mode styling
   // Supports: 'LIGHT' | 'DARK'
   // Default: 'LIGHT'
   theme: string;
+
+  // The current customer GUID
+  customer: string;
 }
 ```
 
@@ -89,7 +100,8 @@ Example:
 your_config = {
   refreshInterval: 10000,
   locale: 'fr-CA',
-  theme: 'DARK'
+  theme: 'DARK',
+  customer: '969c744a02b11ed' //example GUID
 }
 ```
 ```html
