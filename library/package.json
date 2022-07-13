@@ -9,5 +9,5 @@
   ],
   "homepage": "https://github.com/Cybrid-app/cybrid-sdk-web",
   "license": "Apache-2.0",
-  "files": ["cybrid-sdk-ui.min.js", "README.md"]
+  "files": ["cybrid-sdk-ui.min.js", "cybrid-sdk-ui.polyfills.js", "README.md", "3rdpartylicenses.txt"]
 }
