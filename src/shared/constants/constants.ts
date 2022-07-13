@@ -44,4 +44,5 @@ export class Constants {
     theme: Constants.THEME,
     customer: ''
   };
+  static DEFAULT_COMPONENT = 'app/price-list';
 }

@@ -13,7 +13,7 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { HttpLoaderFactory } from '../../modules/library.module';
 import { HttpClient } from '@angular/common/http';
 import { AssetPipe } from '../../../../../src/shared/pipes/asset/asset.pipe';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { TestConstants } from '../../../../../src/shared/constants/test.constants';
 import { AssetService } from '../../../../../src/shared/services/asset/asset.service';
@@ -60,6 +60,7 @@ describe('TradeComponent', () => {
     new Error('Error');
   });
   let MockQuoteService = jasmine.createSpyObj('QuoteService', ['getQuote']);
+  let MockRouter = jasmine.createSpyObj('Router', ['navigate']);
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -94,6 +95,7 @@ describe('TradeComponent', () => {
             queryParams: MockQueryParams
           }
         },
+        { provide: Router, useValue: MockRouter },
         AssetPipe
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -117,6 +119,8 @@ describe('TradeComponent', () => {
     });
     MockQuoteService = TestBed.inject(QuoteService);
     MockQuoteService.getQuote.and.returnValue(TestConstants.POST_QUOTE);
+    MockRouter = TestBed.inject(Router);
+    MockRouter.navigate.and.returnValue('');
   });
 
   beforeEach(() => {
@@ -242,6 +246,12 @@ describe('TradeComponent', () => {
     component.onSwitchSide(-1);
     expect(component.side).toEqual('buy');
     expect(getPriceSpy).toHaveBeenCalled();
+  });
+
+  it('should navigate to the price-list', () => {
+    component.ngOnInit();
+    component.onBack();
+    expect(MockRouter.navigate).toHaveBeenCalledWith(['app/price-list']);
   });
 
   it('should call the quote service and build quote onTrade()', () => {

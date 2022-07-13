@@ -1,6 +1,6 @@
 <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
   <ng-container *ngIf="(isLoading$ | async) !== true">
-    <button mat-button color="primary" routerLink="..">
+    <button mat-button color="primary" (click)="onBack()">
       <div class="cybrid-navigation">
         <mat-icon>arrow_back</mat-icon>
         <div>{{ 'back' | translate }}</div>

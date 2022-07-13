@@ -1,7 +1,7 @@
 import { TestConstants } from '../../src/shared/constants/test.constants';
 
 function app() {
-  return cy.get('app-app').shadow();
+  return cy.get('app-trade');
 }
 
 function tradeSetup() {
@@ -13,20 +13,19 @@ function tradeSetup() {
   cy.visit('/');
   cy.intercept('/api/prices').as('getPrices');
   cy.wait('@getPrices');
-  app().find('#filter').type('bitcoin');
-  app().find('#asset').click();
+  cy.get('#component').click().get('mat-option').contains('app/trade').click();
 }
 
 describe('trade test', () => {
   it('should render the trade component', () => {
     tradeSetup();
-    app().find('app-trade').should('exist');
+    app().should('exist');
   });
 
   it('should navigate back to the price list', () => {
-    app().find('.navigation').click();
-    app().find('app-trade').should('not.exist');
-    app().find('app-list').should('exist');
+    app().find('.cybrid-navigation').click();
+    app().should('not.exist');
+    cy.get('app-list').should('exist');
 
     // Reset to trade component
     tradeSetup();
@@ -41,26 +40,26 @@ describe('trade test', () => {
 
   it('should swap between assets', () => {
     // Check for initial display
-    app().find('.hint').should('contain', 'BTC');
+    app().find('.cybrid-approx').should('contain', 'BTC');
 
     // Swap asset to ETH
     app().find('#asset').click();
     cy.get('mat-option').filter(':contains("Ethereum")').click();
     app().find('#asset').should('contain', 'Ethereum');
-    app().find('.display-code').should('contain', 'ETH');
+    app().find('.cybrid-approx').should('contain', 'ETH');
   });
 
   it('should display the approximate value and swap between amount units', () => {
     // Add amount and check for prefix
     app().find('#amount').type('1', { force: true });
-    app().find('.display-code').should('contain', 'USD');
+    app().find('.cybrid-approx').should('contain', 'USD');
 
     // Swap units
     app().find('#swap').click();
-    app().find('.display-code').should('contain', 'ETH');
+    app().find('.cybrid-approx').should('contain', 'ETH');
 
     // Clear amount
-    app().find('#clear').click();
+    app().find('#amount').clear();
   });
 
   it('should handle an invalid amount', () => {
@@ -77,7 +76,7 @@ describe('trade test', () => {
     app().find('mat-error').should('exist');
 
     // NaN
-    app().find('#clear').click();
+    app().find('#amount').clear();
     app().find('#amount').type('test', { force: true });
     // Workaround for Cypress bug: https://github.com/cypress-io/cypress/issues/21433
     // Click outside the input to force validation update
@@ -91,11 +90,11 @@ describe('trade test', () => {
     cy.get('snack-bar-container').should('exist').find('button').click();
 
     // Small amounts
-    app().find('#clear').click();
+    app().find('#amount').clear();
     app().find('#amount').type('0.001', { force: true });
     app().get('#action').click();
     cy.get('snack-bar-container').should('exist').find('button').click();
-    app().find('#clear').click();
+    app().find('#amount').clear();
   });
 
   it('should handle any error returned by createQuote()', () => {
@@ -116,15 +115,15 @@ describe('trade test', () => {
 
     // Intercept quote and check for loading spinner
     cy.intercept('POST', '/api/quotes', (req) => {
-      cy.get('.loading-wrapper').should('exist');
+      cy.get('app-loading').should('exist');
       req.continue();
     });
-    cy.get('.loading-wrapper').should('not.exist');
+    cy.get('app-loading').should('not.exist');
 
     // Check order quote dialog
     app()
       .get('app-trade-confirm')
-      .find('.list-item')
+      .find('.cybrid-list-item')
       .should('contain.text', 'Purchase')
       .should('contain.text', 'ETH')
       .should('contain.text', 'USD')
@@ -176,14 +175,14 @@ describe('trade test', () => {
     cy.intercept('GET', '/api/trades', (req) => {
       req.reply(TestConstants.TRADE_BANK_MODEL);
     });
-    cy.get('.loading-wrapper').should('not.exist');
+    cy.get('app-loading').should('not.exist');
   });
 
   it('should display the order summary', () => {
     // Check order submitted dialog
     app()
       .get('app-trade-summary')
-      .find('.list-item')
+      .find('.cybrid-list-item')
       .should('contain.text', 'Purchased')
       .should('contain.text', 'ETH')
       .should('contain.text', 'USD')
@@ -192,7 +191,6 @@ describe('trade test', () => {
 
   it('should exit the dialog and navigate to the price-list on done', () => {
     cy.get('#done').click();
-    app().get('app-trade-summary').should('not.exist');
-    app().get('app-list').should('exist');
+    cy.get('app-list').should('exist');
   });
 });

@@ -8,4 +8,21 @@
   "
   >Loading demo...</span
 >
+<ng-container
+  *ngIf="(loading$ | async) === false"
+  [formGroup]="componentGroup"
+>
+  <mat-form-field id="component" appearance="outline">
+    <mat-label>Component Selector</mat-label>
+    <mat-select formControlName="component">
+      <mat-option
+        id="option"
+        *ngFor="let component of webComponents"
+        [value]="component"
+      >
+        {{ component }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</ng-container>
 <ng-template #viewContainer></ng-template>

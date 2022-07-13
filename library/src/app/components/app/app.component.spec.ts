@@ -25,6 +25,8 @@ import { ConfigService } from '../../../../../src/shared/services/config/config.
 import { of, throwError } from 'rxjs';
 import { TestConstants } from '../../../../../src/shared/constants/test.constants';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { PriceListComponent } from '../price-list/price-list.component';
+import { Router } from '@angular/router';
 
 describe('AppComponent', () => {
   let MockAuthService = jasmine.createSpyObj('AuthService', [
@@ -47,13 +49,16 @@ describe('AppComponent', () => {
     'setConfig',
     'getConfig$'
   ]);
+  let MockRouter = jasmine.createSpyObj('Router', ['navigate']);
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
         BrowserAnimationsModule,
         HttpClientTestingModule,
-        RouterTestingModule
+        RouterTestingModule.withRoutes([
+          { path: 'app/price-list', component: PriceListComponent }
+        ])
       ],
       declarations: [AppComponent],
       providers: [
@@ -64,7 +69,8 @@ describe('AppComponent', () => {
         },
         { provide: EventService, useValue: MockEventService },
         { provide: ErrorService, useValue: MockErrorService },
-        { provide: ConfigService, useValue: MockConfigService }
+        { provide: ConfigService, useValue: MockConfigService },
+        { provide: Router, useValue: MockRouter }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
@@ -73,6 +79,7 @@ describe('AppComponent', () => {
     MockEventService = TestBed.inject(EventService);
     MockErrorService = TestBed.inject(ErrorService);
     MockConfigService = TestBed.inject(ConfigService);
+    MockRouter = TestBed.inject(Router);
   });
 
   it('should create', () => {
@@ -104,10 +111,18 @@ describe('AppComponent', () => {
   it('should set the current component', fakeAsync(() => {
     const fixture = TestBed.createComponent(AppComponent);
     const component = fixture.componentInstance;
-    const testComponent = 'test';
-    component.component = testComponent;
+    const currentComponent$Spy = spyOn(component.currentComponent$, 'next');
+
+    // Test default currentComponent
+    component.initNavigation();
     tick();
-    expect(component.currentComponent).toEqual(testComponent);
+    expect(MockRouter.navigate).toHaveBeenCalled();
+    expect(MockEventService.handleEvent).toHaveBeenCalled();
+
+    // Set currentComponent
+    component.component = 'test';
+    tick();
+    expect(currentComponent$Spy).toHaveBeenCalledWith('test');
   }));
 
   it('should call init functions in ngOnInit()', () => {

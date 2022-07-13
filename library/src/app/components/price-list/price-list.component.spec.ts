@@ -30,6 +30,7 @@ import { HttpLoaderFactory } from '../../modules/library.module';
 import { TestConstants } from '../../../../../src/shared/constants/test.constants';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Router } from '@angular/router';
 
 describe('ListComponent', () => {
   let MockAuthService = jasmine.createSpyObj('AuthService', [
@@ -53,6 +54,7 @@ describe('ListComponent', () => {
     'setConfig',
     'getConfig$'
   ]);
+  let MockRouter = jasmine.createSpyObj('Router', ['navigate']);
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -80,7 +82,8 @@ describe('ListComponent', () => {
         },
         { provide: EventService, useValue: MockEventService },
         { provide: ErrorService, useValue: MockErrorService },
-        { provide: ConfigService, useValue: MockConfigService }
+        { provide: ConfigService, useValue: MockConfigService },
+        { provide: Router, useValue: MockRouter }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
@@ -90,6 +93,7 @@ describe('ListComponent', () => {
     MockEventService = TestBed.inject(EventService);
     MockErrorService = TestBed.inject(ErrorService);
     MockConfigService = TestBed.inject(ConfigService);
+    MockRouter = TestBed.inject(Router);
   });
 
   it('should create the list component', () => {
@@ -231,4 +235,11 @@ describe('ListComponent', () => {
     tick();
     expect(component.getPricesError).toBeTrue();
   }));
+
+  it('should navigate to the trade component on row click', () => {
+    const fixture = TestBed.createComponent(PriceListComponent);
+    const component = fixture.componentInstance;
+    component.onRowClick(TestConstants.SYMBOL_PRICE);
+    expect(MockRouter.navigate).toHaveBeenCalled();
+  });
 });
