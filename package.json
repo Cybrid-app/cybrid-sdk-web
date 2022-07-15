@@ -33,7 +33,7 @@
     "@angular/platform-browser": "14.0.6",
     "@angular/platform-browser-dynamic": "14.0.6",
     "@angular/router": "14.0.6",
-    "@cybrid/cybrid-api-bank-angular": "0.31.23",
+    "@cybrid/cybrid-api-bank-angular": "0.32.0",
     "@ngx-translate/core": "14.0.0",
     "@ngx-translate/http-loader": "^7.0.0",
     "big.js": "6.2.1",
