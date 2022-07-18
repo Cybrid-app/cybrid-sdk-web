@@ -50,10 +50,10 @@ describe('QuoteService', () => {
 
   it('should build and return a postQuoteBankModel', () => {
     /* Testing with BTC asset and USD counter_asset */
-    let testAmounts = [0.01, 12, 123456, 12345678910];
+    let testAmounts = ['0.01', '12', '123456', '12345678910'];
 
     function testQuote(
-      amounts: number[],
+      amounts: string[],
       side: PostQuoteBankModel.SideEnum,
       input: string
     ): PostQuoteBankModel[] {
@@ -69,49 +69,61 @@ describe('QuoteService', () => {
     /* Side = 'buy', Input = 'asset' */
     let expectedAmounts = [
       // Satoshi
-      1000000, 1200000000, 12345600000000, 1234567891000000000
+      '1000000',
+      '1200000000',
+      '12345600000000',
+      '1234567891000000000'
     ];
-    let testedAmounts: number[] = testQuote(
+    let testedAmounts = testQuote(
       testAmounts,
       PostQuoteBankModel.SideEnum.Buy,
       'asset'
-    ).map((quote) => quote.receive_amount) as number[];
+    ).map((quote) => quote.receive_amount);
     expect(testedAmounts).toEqual(expectedAmounts);
 
     /* Side = 'buy', Input = 'counter_asset' */
     expectedAmounts = [
       // Cents
-      1, 1200, 12345600, 1234567891000
+      '1',
+      '1200',
+      '12345600',
+      '1234567891000'
     ];
     testedAmounts = testQuote(
       testAmounts,
       PostQuoteBankModel.SideEnum.Buy,
       'counter_asset'
-    ).map((quote) => quote.deliver_amount) as number[];
+    ).map((quote) => quote.deliver_amount);
     expect(testedAmounts).toEqual(expectedAmounts);
 
     /* Side = 'sell', Input = 'asset' */
     expectedAmounts = [
       // Satoshi
-      1000000, 1200000000, 12345600000000, 1234567891000000000
+      '1000000',
+      '1200000000',
+      '12345600000000',
+      '1234567891000000000'
     ];
     testedAmounts = testQuote(
       testAmounts,
       PostQuoteBankModel.SideEnum.Sell,
       'asset'
-    ).map((quote) => quote.deliver_amount) as number[];
+    ).map((quote) => quote.deliver_amount);
     expect(testedAmounts).toEqual(expectedAmounts);
 
     /* Side = 'sell', Input = 'counter_asset' */
     expectedAmounts = [
       // Cents
-      1, 1200, 12345600, 1234567891000
+      '1',
+      '1200',
+      '12345600',
+      '1234567891000'
     ];
     testedAmounts = testQuote(
       testAmounts,
       PostQuoteBankModel.SideEnum.Sell,
       'counter_asset'
-    ).map((quote) => quote.receive_amount) as number[];
+    ).map((quote) => quote.receive_amount);
     expect(testedAmounts).toEqual(expectedAmounts);
 
     /* Testing with ETH asset and USD counter_asset
@@ -121,31 +133,35 @@ describe('QuoteService', () => {
      */
 
     /* Side = 'buy', Input = 'asset' */
-    testAmounts = [0.01, 12, 1234];
+    testAmounts = ['0.01', '12', '1234'];
     asset = TestConstants.ETH_ASSET;
     expectedAmounts = [
       // Wei
-      10000000000000000, 12000000000000000000, 1234000000000000000000
+      '10000000000000000',
+      '12000000000000000000',
+      '1234000000000000000000'
     ];
     testedAmounts = testQuote(
       testAmounts,
       PostQuoteBankModel.SideEnum.Buy,
       'asset'
-    ).map((quote) => quote.receive_amount) as number[];
+    ).map((quote) => quote.receive_amount);
     expect(testedAmounts).toEqual(expectedAmounts);
 
     /* Side = 'sell', Input = 'asset' */
-    testAmounts = [0.01, 12, 1234];
+    testAmounts = ['0.01', '12', '1234'];
     asset = TestConstants.ETH_ASSET;
     expectedAmounts = [
       // Wei
-      10000000000000000, 12000000000000000000, 1234000000000000000000
+      '10000000000000000',
+      '12000000000000000000',
+      '1234000000000000000000'
     ];
     testedAmounts = testQuote(
       testAmounts,
       PostQuoteBankModel.SideEnum.Sell,
       'asset'
-    ).map((quote) => quote.deliver_amount) as number[];
+    ).map((quote) => quote.deliver_amount);
     expect(testedAmounts).toEqual(expectedAmounts);
   });
 });

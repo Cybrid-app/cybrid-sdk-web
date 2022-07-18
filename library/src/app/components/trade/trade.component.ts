@@ -44,6 +44,11 @@ import { Constants } from '../../../../../src/shared/constants/constants';
 import SideEnum = PostQuoteBankModel.SideEnum;
 import { RoutingService } from '../../../../../src/shared/services/routing/routing.service';
 
+interface Display {
+  asset: number | string;
+  counter_asset: number | string;
+}
+
 @Component({
   selector: 'app-trade',
   templateUrl: './trade.component.html',
@@ -69,7 +74,7 @@ export class TradeComponent implements OnInit, OnDestroy {
     amount: new FormControl()
   });
 
-  display = {
+  display: Display = {
     asset: 0,
     counter_asset: 0
   };
@@ -173,6 +178,12 @@ export class TradeComponent implements OnInit, OnDestroy {
         map((priceArray) => {
           this.price = priceArray[0];
 
+          // Set amount to 0 if null
+          const amount = this.quoteGroup.get('amount')?.value;
+          if (amount == null) {
+            this.amount = 0;
+          }
+
           switch (this.input) {
             case 'asset': {
               const sidePrice =
@@ -253,7 +264,6 @@ export class TradeComponent implements OnInit, OnDestroy {
         break;
       }
     }
-    this.getPrice();
   }
 
   onSwitchSide(tab: number | null): void {

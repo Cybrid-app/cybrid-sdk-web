@@ -40,12 +40,25 @@ export class MockAssetPipe implements PipeTransform, OnDestroy {
     const baseUnit = new Big(value).mul(divisor);
 
     switch (unit) {
+      // Whole coin unit without formatting, ex. 0.0023 BTC
       case 'trade': {
         return tradeUnit.toNumber();
       }
+
+      // Base coin unit without formatting, ex. 2000000000 Wei
+      // Type 'string' is returned here to disable scientific notation from JS 'number' Type
       case 'base': {
-        return baseUnit.toNumber();
+        // Set the positive exponent value at and above which toString returns exponential notation.
+        Big.PE = 100;
+
+        let base = baseUnit.toString();
+
+        // Reset
+        Big.PE = 21;
+        return base;
       }
+
+      // Returns a formatted (localized) whole coin unit, ex. 1,230.22 ETH
       case 'formatted': {
         if (tradeUnit.toString().includes('.')) {
           let separator = this.separator.find((value) => {

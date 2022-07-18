@@ -36,7 +36,7 @@ export class QuoteService {
   }
 
   getQuote(
-    amount: number,
+    amount: string | number,
     input: string,
     side: PostQuoteBankModel.SideEnum,
     asset: AssetBankModel,
@@ -56,13 +56,13 @@ export class QuoteService {
             amount,
             asset,
             'base'
-          ) as number;
+          );
         } else {
           postQuoteBankModel.deliver_amount = this.assetPipe.transform(
             amount,
             counterAsset,
             'base'
-          ) as number;
+          );
         }
         break;
       }
@@ -72,13 +72,13 @@ export class QuoteService {
             amount,
             counterAsset,
             'base'
-          ) as number;
+          );
         } else {
           postQuoteBankModel.deliver_amount = this.assetPipe.transform(
             amount,
             asset,
             'base'
-          ) as number;
+          );
         }
       }
     }

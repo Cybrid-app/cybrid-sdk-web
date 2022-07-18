@@ -198,7 +198,12 @@ describe('TradeComponent', () => {
     component.input = 'counter_asset';
     component.getPrice();
     expect(component.display.asset).toEqual(100000000);
-    expect(component.display.counter_asset).toEqual(100000000);
+
+    /*
+     * If the input is 'counter_asset' the base value returned from the asset pipe will
+     * be of type 'string' to disable scientific notation for api calls
+     * */
+    expect(component.display.counter_asset).toEqual('100000000');
 
     component.side = 'sell';
     component.input = 'asset';
@@ -209,7 +214,7 @@ describe('TradeComponent', () => {
     component.input = 'counter_asset';
     component.getPrice();
     expect(component.display.asset).toEqual(100000000);
-    expect(component.display.counter_asset).toEqual(100000000);
+    expect(component.display.counter_asset).toEqual('100000000');
 
     MockPricesService.listPrices.and.returnValue(error$);
     component.getPrice();

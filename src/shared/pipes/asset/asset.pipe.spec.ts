@@ -65,9 +65,10 @@ describe('AssetPipe', () => {
   });
 
   it('should return a base unit when the param is set to base', () => {
+    // 'Base' returns 'string' type
     const pipe = new AssetPipe(MockConfigService);
     expect(pipe.transform(36010, TestConstants.BTC_ASSET, 'base')).toEqual(
-      3601000000000
+      '3601000000000'
     );
   });
 
