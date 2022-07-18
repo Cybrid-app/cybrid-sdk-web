@@ -78,7 +78,7 @@ describe('QuoteService', () => {
       testAmounts,
       PostQuoteBankModel.SideEnum.Buy,
       'asset'
-    ).map((quote) => quote.receive_amount) as string[];
+    ).map((quote) => quote.receive_amount) as unknown as string[];
     expect(testedAmounts).toEqual(expectedAmounts);
 
     /* Side = 'buy', Input = 'counter_asset' */
@@ -93,7 +93,7 @@ describe('QuoteService', () => {
       testAmounts,
       PostQuoteBankModel.SideEnum.Buy,
       'counter_asset'
-    ).map((quote) => quote.deliver_amount) as string[];
+    ).map((quote) => quote.deliver_amount) as unknown as string[];
     expect(testedAmounts).toEqual(expectedAmounts);
 
     /* Side = 'sell', Input = 'asset' */
@@ -108,7 +108,7 @@ describe('QuoteService', () => {
       testAmounts,
       PostQuoteBankModel.SideEnum.Sell,
       'asset'
-    ).map((quote) => quote.deliver_amount) as string[];
+    ).map((quote) => quote.deliver_amount) as unknown as string[];
     expect(testedAmounts).toEqual(expectedAmounts);
 
     /* Side = 'sell', Input = 'counter_asset' */
@@ -123,7 +123,7 @@ describe('QuoteService', () => {
       testAmounts,
       PostQuoteBankModel.SideEnum.Sell,
       'counter_asset'
-    ).map((quote) => quote.receive_amount) as string[];
+    ).map((quote) => quote.receive_amount) as unknown as string[];
     expect(testedAmounts).toEqual(expectedAmounts);
 
     /* Testing with ETH asset and USD counter_asset
@@ -145,7 +145,7 @@ describe('QuoteService', () => {
       testAmounts,
       PostQuoteBankModel.SideEnum.Buy,
       'asset'
-    ).map((quote) => quote.receive_amount) as string[];
+    ).map((quote) => quote.receive_amount) as unknown as string[];
     expect(testedAmounts).toEqual(expectedAmounts);
 
     /* Side = 'sell', Input = 'asset' */
@@ -161,7 +161,7 @@ describe('QuoteService', () => {
       testAmounts,
       PostQuoteBankModel.SideEnum.Sell,
       'asset'
-    ).map((quote) => quote.deliver_amount) as string[];
+    ).map((quote) => quote.deliver_amount) as unknown as string[];
     expect(testedAmounts).toEqual(expectedAmounts);
   });
 });
