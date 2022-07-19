@@ -70,7 +70,7 @@ export class DemoComponent implements OnInit, OnDestroy {
 
   initDemo() {
     this.componentRef = this.viewContainer.createComponent(AppComponent);
-    this.componentRef.instance.component = 'trade';
+    this.componentRef.instance.component = 'price-list';
     this.componentRef.instance.auth = this.token;
     this.loading$.next(false);
 
@@ -87,7 +87,9 @@ export class DemoComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribe$),
         filter((event: EventLog) => {
           return (
-            event.code == CODE.ROUTING_END || event.code == CODE.ROUTING_START
+            event.code == CODE.ROUTING_END ||
+            event.code == CODE.ROUTING_START ||
+            event.code == CODE.ROUTING_REQUEST
           );
         }),
         map((event) => {
