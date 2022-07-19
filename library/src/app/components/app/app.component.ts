@@ -35,6 +35,7 @@ import {
 import { Router } from '@angular/router';
 import { AssetService } from '../../../../../src/shared/services/asset/asset.service';
 import { Constants } from '../../../../../src/shared/constants/constants';
+import { RoutingService } from '../../../../../src/shared/services/routing/routing.service';
 
 @Component({
   selector: 'app-app',
@@ -55,12 +56,10 @@ export class AppComponent implements OnInit {
   }
   @Input()
   set component(selector: string) {
-    this.currentComponent = selector;
     this.currentComponent$.next(selector);
   }
 
-  currentComponent = Constants.DEFAULT_COMPONENT;
-  currentComponent$ = new BehaviorSubject(this.currentComponent);
+  currentComponent$ = new BehaviorSubject(Constants.DEFAULT_COMPONENT);
 
   private unsubscribe$ = new Subject();
 
@@ -70,7 +69,8 @@ export class AppComponent implements OnInit {
     private assetService: AssetService,
     private eventService: EventService,
     private errorService: ErrorService,
-    public configService: ConfigService
+    public configService: ConfigService,
+    private routingService: RoutingService
   ) {}
 
   ngOnInit(): void {
@@ -154,14 +154,8 @@ export class AppComponent implements OnInit {
       .pipe(
         takeUntil(this.unsubscribe$),
         map((component) => {
-          this.router.navigate([component]);
-          this.eventService.handleEvent(
-            LEVEL.INFO,
-            CODE.APPLICATION_ROUTE,
-            'Routing to ' + `${this.currentComponent}`,
-            this.currentComponent
-          );
-          this.currentComponent = component;
+          this.router.navigate(['app/' + component]);
+          this.routingService.handleRoute(component);
         })
       )
       .subscribe();

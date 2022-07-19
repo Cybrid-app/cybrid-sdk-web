@@ -35,6 +35,7 @@ import { QuoteService } from '../../../../src/shared/services/quote/quote.servic
 import { AssetService } from '../../../../src/shared/services/asset/asset.service';
 import { ErrorInterceptor } from '../../../../src/shared/interceptors/error/error.interceptor';
 import { RetryInterceptor } from '../../../../src/shared/interceptors/auth/retry.interceptor';
+import { RoutingService } from '../../../../src/shared/services/routing/routing.service';
 
 // Components
 import { AppComponent } from '../components/app/app.component';
@@ -97,6 +98,7 @@ export function HttpLoaderFactory(http: HttpClient) {
       multi: false
     },
     ConfigService,
+    RoutingService,
     QuoteService,
     EventService,
     AssetService,

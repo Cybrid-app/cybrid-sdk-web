@@ -12,6 +12,7 @@ export interface ComponentConfig {
   refreshInterval: number;
   locale: string;
   theme: string;
+  routing: boolean;
   customer: string; // Temporary solution until the JWT embeds a customer GUID
 }
 

@@ -1,11 +1,18 @@
 <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
   <ng-container *ngIf="(isLoading$ | async) !== true">
-    <button mat-button color="primary" (click)="onBack()">
-      <div class="cybrid-navigation">
-        <mat-icon>arrow_back</mat-icon>
-        <div>{{ 'back' | translate }}</div>
-      </div>
-    </button>
+    <ng-container *ngIf="configService.getConfig$() | async as config">
+      <button
+        *ngIf="config.routing"
+        mat-button
+        color="primary"
+        (click)="onBack()"
+      >
+        <div class="cybrid-navigation">
+          <mat-icon>arrow_back</mat-icon>
+          <div>{{ 'back' | translate }}</div>
+        </div>
+      </button>
+    </ng-container>
     <mat-tab-group
       animationDuration="0ms"
       (selectedTabChange)="onSwitchSide($event.tab.origin)"

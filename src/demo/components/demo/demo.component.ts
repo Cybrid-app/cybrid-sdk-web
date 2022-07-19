@@ -22,7 +22,7 @@ export class DemoComponent implements OnInit, OnDestroy {
   public viewContainer!: ViewContainerRef;
   token = '';
 
-  webComponents = ['app/price-list', 'app/trade'];
+  webComponents = ['price-list', 'trade'];
 
   componentRef!: ComponentRef<AppComponent>;
   componentGroup: FormGroup = new FormGroup({
@@ -70,6 +70,7 @@ export class DemoComponent implements OnInit, OnDestroy {
 
   initDemo() {
     this.componentRef = this.viewContainer.createComponent(AppComponent);
+    this.componentRef.instance.component = 'trade';
     this.componentRef.instance.auth = this.token;
     this.loading$.next(false);
 
@@ -85,9 +86,12 @@ export class DemoComponent implements OnInit, OnDestroy {
       .pipe(
         takeUntil(this.unsubscribe$),
         filter((event: EventLog) => {
-          return event.code == CODE.APPLICATION_ROUTE;
+          return (
+            event.code == CODE.ROUTING_END || event.code == CODE.ROUTING_START
+          );
         }),
         map((event) => {
+          console.log(event);
           this.componentGroup
             .get('component')
             ?.patchValue(event.data, { emitEvent: false, onlySelf: true });

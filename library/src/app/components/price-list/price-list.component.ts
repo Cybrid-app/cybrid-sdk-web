@@ -13,6 +13,7 @@ import {
   Subject,
   Subscription,
   switchMap,
+  take,
   takeUntil,
   timer
 } from 'rxjs';
@@ -38,6 +39,7 @@ import {
 } from '../../../../../src/shared/services/config/config.service';
 import { AssetService } from '../../../../../src/shared/services/asset/asset.service';
 import { NavigationExtras, Router } from '@angular/router';
+import { RoutingService } from '../../../../../src/shared/services/routing/routing.service';
 
 export interface SymbolPrice extends SymbolPriceBankModel {
   asset: AssetBankModel;
@@ -65,6 +67,7 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
     private errorService: ErrorService,
     private eventService: EventService,
     public configService: ConfigService,
+    private routingService: RoutingService,
     private assetService: AssetService,
     private pricesService: PricesService,
     private router: Router,
@@ -184,12 +187,21 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   onRowClick(row: SymbolPrice): void {
-    const extras: NavigationExtras = {
-      queryParams: {
-        asset: JSON.stringify(row.asset),
-        symbol_pair: row.symbol
-      }
-    };
-    this.router.navigate(['app/trade'], extras);
+    this.config$
+      .pipe(
+        take(1),
+        map((config: ComponentConfig) => {
+          if (config.routing) {
+            const extras: NavigationExtras = {
+              queryParams: {
+                asset: JSON.stringify(row.asset),
+                symbol_pair: row.symbol
+              }
+            };
+            this.routingService.handleRoute('trade', extras);
+          }
+        })
+      )
+      .subscribe();
   }
 }
