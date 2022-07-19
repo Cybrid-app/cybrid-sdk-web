@@ -56,13 +56,13 @@ export class QuoteService {
             amount,
             asset,
             'base'
-          );
+          ) as string;
         } else {
           postQuoteBankModel.deliver_amount = this.assetPipe.transform(
             amount,
             counterAsset,
             'base'
-          );
+          ) as string;
         }
         break;
       }
@@ -72,13 +72,13 @@ export class QuoteService {
             amount,
             counterAsset,
             'base'
-          );
+          ) as string;
         } else {
           postQuoteBankModel.deliver_amount = this.assetPipe.transform(
             amount,
             asset,
             'base'
-          );
+          ) as string;
         }
       }
     }

@@ -22,7 +22,7 @@ export interface Asset extends AssetBankModel {
   code: string;
   name: string;
   symbol: string;
-  decimals: number;
+  decimals: string;
   url: string;
 }
 

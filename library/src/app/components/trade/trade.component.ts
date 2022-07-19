@@ -188,8 +188,8 @@ export class TradeComponent implements OnInit, OnDestroy {
             case 'asset': {
               const sidePrice =
                 this.side == 'buy'
-                  ? this.price.sell_price
-                  : this.price.buy_price;
+                  ? Number(this.price.sell_price)
+                  : Number(this.price.buy_price);
               this.display.asset = this.amount;
               this.display.counter_asset = this.amount * sidePrice!;
               break;
@@ -197,8 +197,8 @@ export class TradeComponent implements OnInit, OnDestroy {
             case 'counter_asset': {
               const sidePrice =
                 this.side == 'buy'
-                  ? this.price.buy_price
-                  : this.price.sell_price;
+                  ? Number(this.price.buy_price)
+                  : Number(this.price.sell_price);
               let baseValue = this.assetPipe.transform(
                 this.amount,
                 this.counterAsset,
@@ -264,6 +264,7 @@ export class TradeComponent implements OnInit, OnDestroy {
         break;
       }
     }
+    this.getPrice();
   }
 
   onSwitchSide(tab: number | null): void {

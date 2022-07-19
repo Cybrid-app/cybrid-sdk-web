@@ -35,7 +35,7 @@ export class MockAssetPipe implements PipeTransform, OnDestroy {
     asset: AssetBankModel | Asset,
     unit: 'trade' | 'base' | 'formatted' = 'formatted'
   ): string | number {
-    const divisor = new Big(10).pow(asset.decimals);
+    const divisor = new Big(10).pow(Number(asset.decimals));
     const tradeUnit = new Big(value).div(divisor);
     const baseUnit = new Big(value).mul(divisor);
 

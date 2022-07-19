@@ -184,8 +184,8 @@ describe('TradeComponent', () => {
   });
 
   it('should get prices', () => {
-    component.price.buy_price = 1;
-    component.price.sell_price = 1;
+    component.price.buy_price = '1';
+    component.price.sell_price = '1';
     component.initQuoteGroup();
     component.quoteGroup.patchValue({
       amount: 1,
