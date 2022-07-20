@@ -31,7 +31,7 @@ import {
   AssetService
 } from '../../../../../src/shared/services/asset/asset.service';
 import { FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { AssetPipe } from '../../../../../src/shared/pipes/asset/asset.pipe';
 import { compareObjects } from '../../../../../src/shared/utility/compare-object';
 import { symbolSplit } from '../../../../../src/shared/utility/symbol-split';
@@ -42,6 +42,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TradeSummaryComponent } from '../trade-summary/trade-summary.component';
 import { Constants } from '../../../../../src/shared/constants/constants';
 import SideEnum = PostQuoteBankModel.SideEnum;
+import { RoutingService } from '../../../../../src/shared/services/routing/routing.service';
 
 @Component({
   selector: 'app-trade',
@@ -84,11 +85,11 @@ export class TradeComponent implements OnInit, OnDestroy {
     private eventService: EventService,
     private assetService: AssetService,
     public configService: ConfigService,
+    private routingService: RoutingService,
     private quoteService: QuoteService,
     private pricesService: PricesService,
     public dialog: MatDialog,
     private assetPipe: AssetPipe,
-    private router: Router,
     private route: ActivatedRoute
   ) {}
 
@@ -305,12 +306,6 @@ export class TradeComponent implements OnInit, OnDestroy {
   }
 
   onBack(): void {
-    this.eventService.handleEvent(
-      LEVEL.INFO,
-      CODE.APPLICATION_ROUTE,
-      'Routing to price list',
-      'app/price-list'
-    );
-    this.router.navigate(['app/price-list']);
+    this.routingService.handleRoute('price-list', 'trade');
   }
 }

@@ -8,10 +8,7 @@
   "
   >Loading demo...</span
 >
-<ng-container
-  *ngIf="(loading$ | async) === false"
-  [formGroup]="componentGroup"
->
+<ng-container *ngIf="(loading$ | async) === false" [formGroup]="componentGroup">
   <mat-form-field id="component" appearance="outline">
     <mat-label>Component Selector</mat-label>
     <mat-select formControlName="component">

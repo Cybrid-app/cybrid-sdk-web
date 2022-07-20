@@ -13,7 +13,7 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { HttpLoaderFactory } from '../../modules/library.module';
 import { HttpClient } from '@angular/common/http';
 import { AssetPipe } from '../../../../../src/shared/pipes/asset/asset.pipe';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { TestConstants } from '../../../../../src/shared/constants/test.constants';
 import { AssetService } from '../../../../../src/shared/services/asset/asset.service';
@@ -30,6 +30,7 @@ import { ConfigService } from '../../../../../src/shared/services/config/config.
 import { MatDialog } from '@angular/material/dialog';
 import { QuoteService } from '../../../../../src/shared/services/quote/quote.service';
 import { TradeConfirmComponent } from '../trade-confirm/trade-confirm.component';
+import { RoutingService } from '../../../../../src/shared/services/routing/routing.service';
 
 describe('TradeComponent', () => {
   let component: TradeComponent;
@@ -60,7 +61,9 @@ describe('TradeComponent', () => {
     new Error('Error');
   });
   let MockQuoteService = jasmine.createSpyObj('QuoteService', ['getQuote']);
-  let MockRouter = jasmine.createSpyObj('Router', ['navigate']);
+  let MockRoutingService = jasmine.createSpyObj('RoutingService', [
+    'handleRoute'
+  ]);
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -95,7 +98,7 @@ describe('TradeComponent', () => {
             queryParams: MockQueryParams
           }
         },
-        { provide: Router, useValue: MockRouter },
+        { provide: RoutingService, useValue: MockRoutingService },
         AssetPipe
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -119,8 +122,7 @@ describe('TradeComponent', () => {
     });
     MockQuoteService = TestBed.inject(QuoteService);
     MockQuoteService.getQuote.and.returnValue(TestConstants.POST_QUOTE);
-    MockRouter = TestBed.inject(Router);
-    MockRouter.navigate.and.returnValue('');
+    MockRoutingService = TestBed.inject(RoutingService);
   });
 
   beforeEach(() => {
@@ -248,10 +250,13 @@ describe('TradeComponent', () => {
     expect(getPriceSpy).toHaveBeenCalled();
   });
 
-  it('should navigate to the price-list', () => {
+  it('should navigate', () => {
     component.ngOnInit();
     component.onBack();
-    expect(MockRouter.navigate).toHaveBeenCalledWith(['app/price-list']);
+    expect(MockRoutingService.handleRoute).toHaveBeenCalledWith(
+      'price-list',
+      'trade'
+    );
   });
 
   it('should call the quote service and build quote onTrade()', () => {

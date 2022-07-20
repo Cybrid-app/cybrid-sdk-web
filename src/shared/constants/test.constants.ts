@@ -21,6 +21,7 @@ export class TestConstants {
     refreshInterval: 5000,
     locale: 'en-US',
     theme: 'LIGHT',
+    routing: true,
     customer: TestConstants.CUSTOMER_GUID
   };
 

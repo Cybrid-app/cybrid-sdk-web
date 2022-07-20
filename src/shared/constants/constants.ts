@@ -20,6 +20,7 @@ export class Constants {
   static MIN_INTEGER_DIGITS = 0;
   static MIN_FRACTION_DIGITS = 2;
   static THEME = THEME.LIGHT;
+  static ROUTING = true;
   static ICON_HOST = 'https://images.cybrid.xyz/sdk/assets/svg/color/';
   static BTC_ICON = 'https://images.cybrid.xyz/sdk/assets/svg/color/btc.svg';
   static BTC_ASSET: Asset = {
@@ -42,7 +43,8 @@ export class Constants {
     refreshInterval: Constants.REFRESH_INTERVAL,
     locale: Constants.LOCALE,
     theme: Constants.THEME,
+    routing: Constants.ROUTING,
     customer: ''
   };
-  static DEFAULT_COMPONENT = 'app/price-list';
+  static DEFAULT_COMPONENT = 'price-list';
 }

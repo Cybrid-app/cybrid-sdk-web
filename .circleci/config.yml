@@ -33,7 +33,7 @@ workflows:
                 command: npm run lint
                 name: Lint
             - run:
-                command: npm audit
+                command: npm audit --audit-level=high
                 name: Audit
 
       - cypress/run:

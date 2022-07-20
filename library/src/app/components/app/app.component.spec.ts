@@ -25,8 +25,8 @@ import { ConfigService } from '../../../../../src/shared/services/config/config.
 import { of, throwError } from 'rxjs';
 import { TestConstants } from '../../../../../src/shared/constants/test.constants';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { PriceListComponent } from '../price-list/price-list.component';
 import { Router } from '@angular/router';
+import { RoutingService } from '../../../../../src/shared/services/routing/routing.service';
 
 describe('AppComponent', () => {
   let MockAuthService = jasmine.createSpyObj('AuthService', [
@@ -49,6 +49,9 @@ describe('AppComponent', () => {
     'setConfig',
     'getConfig$'
   ]);
+  let MockRoutingService = jasmine.createSpyObj('RoutingService', [
+    'handleRoute'
+  ]);
   let MockRouter = jasmine.createSpyObj('Router', ['navigate']);
 
   beforeEach(async () => {
@@ -56,9 +59,7 @@ describe('AppComponent', () => {
       imports: [
         BrowserAnimationsModule,
         HttpClientTestingModule,
-        RouterTestingModule.withRoutes([
-          { path: 'app/price-list', component: PriceListComponent }
-        ])
+        RouterTestingModule
       ],
       declarations: [AppComponent],
       providers: [
@@ -70,6 +71,7 @@ describe('AppComponent', () => {
         { provide: EventService, useValue: MockEventService },
         { provide: ErrorService, useValue: MockErrorService },
         { provide: ConfigService, useValue: MockConfigService },
+        { provide: RoutingService, useValue: MockRoutingService },
         { provide: Router, useValue: MockRouter }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -79,6 +81,7 @@ describe('AppComponent', () => {
     MockEventService = TestBed.inject(EventService);
     MockErrorService = TestBed.inject(ErrorService);
     MockConfigService = TestBed.inject(ConfigService);
+    MockRoutingService = TestBed.inject(RoutingService);
     MockRouter = TestBed.inject(Router);
   });
 
@@ -117,7 +120,7 @@ describe('AppComponent', () => {
     component.initNavigation();
     tick();
     expect(MockRouter.navigate).toHaveBeenCalled();
-    expect(MockEventService.handleEvent).toHaveBeenCalled();
+    expect(MockRoutingService.handleRoute).toHaveBeenCalled();
 
     // Set currentComponent
     component.component = 'test';

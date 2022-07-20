@@ -12,7 +12,7 @@ import { ErrorService } from '../../../../../src/shared/services/error/error.ser
 import { TranslatePipe } from '@ngx-translate/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Asset } from '../../../../../src/shared/services/asset/asset.service';
-import { Router } from '@angular/router';
+import { RoutingService } from '../../../../../src/shared/services/routing/routing.service';
 
 interface DialogData {
   model: TradeBankModel;
@@ -38,7 +38,7 @@ export class TradeSummaryComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     public dialogRef: MatDialogRef<TradeSummaryComponent>,
     public configService: ConfigService,
-    private router: Router,
+    private routingService: RoutingService,
     private snackBar: MatSnackBar,
     private tradesService: TradesService,
     private eventService: EventService,
@@ -79,12 +79,6 @@ export class TradeSummaryComponent implements OnInit {
   }
 
   onDialogClose(): void {
-    this.eventService.handleEvent(
-      LEVEL.INFO,
-      CODE.APPLICATION_ROUTE,
-      'Routing to price list',
-      'app/price-list'
-    );
-    this.router.navigate(['/app/price-list']);
+    this.routingService.handleRoute('price-list', 'trade');
   }
 }
