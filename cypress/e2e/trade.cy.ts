@@ -13,7 +13,7 @@ function tradeSetup() {
   cy.visit('/');
   cy.intercept('/api/prices').as('getPrices');
   cy.wait('@getPrices');
-  cy.get('#component').click().get('mat-option').contains('app/trade').click();
+  cy.get('#component').click().get('mat-option').contains('trade').click();
 }
 
 describe('trade test', () => {

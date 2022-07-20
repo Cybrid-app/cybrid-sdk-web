@@ -31,7 +31,7 @@ import {
   AssetService
 } from '../../../../../src/shared/services/asset/asset.service';
 import { FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { AssetPipe } from '../../../../../src/shared/pipes/asset/asset.pipe';
 import { compareObjects } from '../../../../../src/shared/utility/compare-object';
 import { symbolSplit } from '../../../../../src/shared/utility/symbol-split';
@@ -90,7 +90,6 @@ export class TradeComponent implements OnInit, OnDestroy {
     private pricesService: PricesService,
     public dialog: MatDialog,
     private assetPipe: AssetPipe,
-    private router: Router,
     private route: ActivatedRoute
   ) {}
 
@@ -307,6 +306,6 @@ export class TradeComponent implements OnInit, OnDestroy {
   }
 
   onBack(): void {
-    this.routingService.handleRoute('price-list');
+    this.routingService.handleRoute('price-list', 'trade');
   }
 }

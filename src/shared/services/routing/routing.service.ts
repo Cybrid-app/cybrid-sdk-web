@@ -14,7 +14,7 @@ export class RoutingService {
     private configService: ConfigService
   ) {}
 
-  handleRoute(route: string, extras?: NavigationExtras): void {
+  handleRoute(route: string, origin: string, extras?: NavigationExtras): void {
     this.configService
       .getConfig$()
       .pipe(
@@ -26,7 +26,10 @@ export class RoutingService {
               LEVEL.INFO,
               CODE.ROUTING_START,
               'Routing to: ' + route,
-              route
+              {
+                origin: origin,
+                default: route
+              }
             );
 
             this.router.navigate([path], extras).then(() => {
@@ -34,23 +37,25 @@ export class RoutingService {
                 LEVEL.INFO,
                 CODE.ROUTING_END,
                 'Successfully routed to: ' + route,
-                route
+                {
+                  origin: origin,
+                  default: route
+                }
               );
             });
           } else {
-            this.notifyRoute(route);
+            this.eventService.handleEvent(
+              LEVEL.INFO,
+              CODE.ROUTING_REQUEST,
+              'Routing has been requested',
+              {
+                origin: origin,
+                default: route
+              }
+            );
           }
         })
       )
       .subscribe();
-  }
-
-  notifyRoute(route: string): void {
-    this.eventService.handleEvent(
-      LEVEL.INFO,
-      CODE.ROUTING_REQUEST,
-      'Routing has been requested',
-      route
-    );
   }
 }

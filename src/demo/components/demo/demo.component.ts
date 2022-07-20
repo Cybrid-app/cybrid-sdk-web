@@ -70,7 +70,6 @@ export class DemoComponent implements OnInit, OnDestroy {
 
   initDemo() {
     this.componentRef = this.viewContainer.createComponent(AppComponent);
-    this.componentRef.instance.component = 'price-list';
     this.componentRef.instance.auth = this.token;
     this.loading$.next(false);
 
@@ -93,10 +92,10 @@ export class DemoComponent implements OnInit, OnDestroy {
           );
         }),
         map((event) => {
-          console.log(event);
-          this.componentGroup
-            .get('component')
-            ?.patchValue(event.data, { emitEvent: false, onlySelf: true });
+          this.componentGroup.get('component')?.patchValue(event.data.default, {
+            emitEvent: false,
+            onlySelf: true
+          });
         })
       )
       .subscribe();

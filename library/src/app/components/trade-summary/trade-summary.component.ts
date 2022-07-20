@@ -12,7 +12,6 @@ import { ErrorService } from '../../../../../src/shared/services/error/error.ser
 import { TranslatePipe } from '@ngx-translate/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Asset } from '../../../../../src/shared/services/asset/asset.service';
-import { Router } from '@angular/router';
 import { RoutingService } from '../../../../../src/shared/services/routing/routing.service';
 
 interface DialogData {
@@ -80,6 +79,6 @@ export class TradeSummaryComponent implements OnInit {
   }
 
   onDialogClose(): void {
-    this.routingService.handleRoute('price-list');
+    this.routingService.handleRoute('price-list', 'trade');
   }
 }

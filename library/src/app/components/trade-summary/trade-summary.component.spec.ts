@@ -24,7 +24,7 @@ import { ConfigService } from '../../../../../src/shared/services/config/config.
 import { TradesService } from '@cybrid/cybrid-api-bank-angular';
 import { TestConstants } from '../../../../../src/shared/constants/test.constants';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { Router } from '@angular/router';
+import { RoutingService } from '../../../../../src/shared/services/routing/routing.service';
 import { PriceListComponent } from '../price-list/price-list.component';
 
 describe('TradeSummaryComponent', () => {
@@ -44,7 +44,9 @@ describe('TradeSummaryComponent', () => {
     'getConfig$'
   ]);
   let MockTradesService = jasmine.createSpyObj('TradesService', ['getTrade']);
-  let MockRouter: Router = jasmine.createSpyObj('Router', ['navigate']);
+  let MockRoutingService = jasmine.createSpyObj('RoutingService', [
+    'handleRoute'
+  ]);
   let MockSnackbar = jasmine.createSpyObj('Snackbar', ['open']);
   let MockDialogRef = jasmine.createSpyObj('MatDialogRef', ['open', 'close']);
 
@@ -77,7 +79,7 @@ describe('TradeSummaryComponent', () => {
       declarations: [TradeSummaryComponent],
       providers: [
         { provide: TradesService, useValue: MockTradesService },
-        { provide: Router, useValue: MockRouter },
+        { provide: RoutingService, useValue: MockRoutingService },
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
@@ -99,7 +101,7 @@ describe('TradeSummaryComponent', () => {
     MockTradesService.getTrade.and.returnValue(
       of(TestConstants.TRADE_BANK_MODEL)
     );
-    MockRouter = TestBed.inject(Router);
+    MockRoutingService = TestBed.inject(RoutingService);
     MockEventService = TestBed.inject(EventService);
     MockErrorService = TestBed.inject(ErrorService);
     MockConfigService = TestBed.inject(ConfigService);
@@ -137,6 +139,6 @@ describe('TradeSummaryComponent', () => {
 
   it('should route to the price-list onDialogClose()', () => {
     component.onDialogClose();
-    expect(MockRouter.navigate).toHaveBeenCalled();
+    expect(MockRoutingService.handleRoute).toHaveBeenCalled();
   });
 });

@@ -38,7 +38,7 @@ import {
   ConfigService
 } from '../../../../../src/shared/services/config/config.service';
 import { AssetService } from '../../../../../src/shared/services/asset/asset.service';
-import { NavigationExtras, Router } from '@angular/router';
+import { NavigationExtras } from '@angular/router';
 import { RoutingService } from '../../../../../src/shared/services/routing/routing.service';
 
 export interface SymbolPrice extends SymbolPriceBankModel {
@@ -70,7 +70,6 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
     private routingService: RoutingService,
     private assetService: AssetService,
     private pricesService: PricesService,
-    private router: Router,
     private chdRef: ChangeDetectorRef
   ) {}
 
@@ -198,7 +197,7 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
                 symbol_pair: row.symbol
               }
             };
-            this.routingService.handleRoute('trade', extras);
+            this.routingService.handleRoute('trade', 'price-list', extras);
           }
         })
       )

@@ -154,8 +154,11 @@ export class AppComponent implements OnInit {
       .pipe(
         takeUntil(this.unsubscribe$),
         map((component) => {
+          // Navigates whenever component is set
           this.router.navigate(['app/' + component]);
-          this.routingService.handleRoute(component);
+
+          // Handles host navigation request for events
+          this.routingService.handleRoute(component, 'cybrid-app');
         })
       )
       .subscribe();
