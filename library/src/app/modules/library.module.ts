@@ -119,6 +119,6 @@ export class LibraryModule implements DoBootstrap {
     const AppElement = createCustomElement(AppComponent, {
       injector: this.injector
     });
-    customElements.define('cybrid-price-list', AppElement);
+    customElements.define('cybrid-app', AppElement);
   }
 }
