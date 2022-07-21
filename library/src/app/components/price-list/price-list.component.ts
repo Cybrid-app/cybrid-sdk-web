@@ -77,7 +77,7 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.eventService.handleEvent(
       LEVEL.INFO,
       CODE.COMPONENT_INIT,
-      'Initializing price list'
+      'Initializing price list component'
     );
     this.initFilterForm();
     this.getPrices();
