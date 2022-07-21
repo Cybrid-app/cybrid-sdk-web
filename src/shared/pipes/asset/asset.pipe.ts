@@ -63,13 +63,15 @@ export class AssetPipe implements PipeTransform, OnDestroy {
       // Base coin unit without formatting, ex. 2000000000 Wei
       // Type 'string' is returned here to disable scientific notation from JS 'number' Type
       case 'base': {
+        const defaultPE = Big.PE;
+
         // Set the positive exponent value at and above which toString returns exponential notation.
         Big.PE = 100;
 
         let base = baseUnit.toString();
 
-        // Reset
-        Big.PE = 21;
+        // Reset to default
+        Big.PE = defaultPE;
         return base;
       }
 
