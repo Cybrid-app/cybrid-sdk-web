@@ -25,7 +25,7 @@ export class Constants {
   static BTC_ICON = 'https://images.cybrid.xyz/sdk/assets/svg/color/btc.svg';
   static BTC_ASSET: Asset = {
     code: 'BTC',
-    decimals: 8,
+    decimals: '8',
     name: 'Bitcoin',
     symbol: '₿',
     type: 'crypto',
@@ -33,7 +33,7 @@ export class Constants {
   };
   static USD_ASSET: Asset = {
     code: 'USD',
-    decimals: 2,
+    decimals: '2',
     name: 'Dollar',
     symbol: '$',
     type: 'fiat',

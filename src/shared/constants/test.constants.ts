@@ -28,7 +28,7 @@ export class TestConstants {
   // Extension of AssetBankModel to include urls
   static BTC_ASSET: Asset = {
     code: 'BTC',
-    decimals: 8,
+    decimals: '8',
     name: 'Bitcoin',
     symbol: '₿',
     type: 'crypto',
@@ -36,7 +36,7 @@ export class TestConstants {
   };
   static ETH_ASSET: Asset = {
     code: 'ETH',
-    decimals: 18,
+    decimals: '18',
     name: 'Ethereum',
     symbol: 'Ξ',
     type: 'crypto',
@@ -44,7 +44,7 @@ export class TestConstants {
   };
   static CAD_ASSET: Asset = {
     code: 'CAD',
-    decimals: 2,
+    decimals: '2',
     name: 'Canadian Dollar',
     symbol: '$',
     type: 'fiat',
@@ -52,7 +52,7 @@ export class TestConstants {
   };
   static USD_ASSET: Asset = {
     code: 'USD',
-    decimals: 2,
+    decimals: '2',
     name: 'United States Dollar',
     symbol: '$',
     type: 'fiat',
@@ -70,15 +70,15 @@ export class TestConstants {
     asset: TestConstants.BTC_ASSET,
     counter_asset: TestConstants.BTC_ASSET,
     symbol: 'BTC-USD',
-    buy_price: 0,
-    sell_price: 0,
+    buy_price: '0',
+    sell_price: '0',
     buy_price_last_updated_at: '',
     sell_price_last_updated_at: ''
   };
   static SYMBOL_PRICE_BANK_MODEL: SymbolPriceBankModel = {
     symbol: 'BTC-CAD',
-    buy_price: 1,
-    sell_price: 1,
+    buy_price: '1',
+    sell_price: '1',
     buy_price_last_updated_at: '',
     sell_price_last_updated_at: ''
   };
@@ -88,16 +88,16 @@ export class TestConstants {
     customer_guid: TestConstants.CUSTOMER_GUID,
     symbol: 'BTC-USD',
     side: 'buy',
-    receive_amount: 100000000
+    receive_amount: '100000000'
   };
   static QUOTE_BANK_MODEL: QuoteBankModel = {
     guid: 'ede5f73db305fbd27ec0eb0894ae8aa7',
     customer_guid: TestConstants.CUSTOMER_GUID,
     symbol: 'ETH-USD',
     side: 'buy',
-    receive_amount: 1000000000000000000,
-    deliver_amount: 103331,
-    fee: 0,
+    receive_amount: '1000000000000000000',
+    deliver_amount: '103331',
+    fee: '0',
     issued_at: '2022-06-30T17:04:37.331Z',
     expires_at: '2022-06-30T17:05:07.331Z'
   };
@@ -111,9 +111,9 @@ export class TestConstants {
     state: 'storing',
     // @ts-ignore
     failure_code: null,
-    receive_amount: 1000000000000000000,
-    deliver_amount: 103331,
-    fee: 0,
+    receive_amount: '1000000000000000000',
+    deliver_amount: '103331',
+    fee: '0',
     created_at: '2022-06-30T17:04:39.049Z'
   };
 }

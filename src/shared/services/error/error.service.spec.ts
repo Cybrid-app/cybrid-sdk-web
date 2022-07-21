@@ -1,11 +1,6 @@
-import {
-  discardPeriodicTasks,
-  fakeAsync,
-  TestBed,
-  tick
-} from '@angular/core/testing';
+import { fakeAsync, TestBed } from '@angular/core/testing';
 
-import { ErrorLog, ErrorService } from './error.service';
+import { ErrorService } from './error.service';
 import { HttpErrorResponse } from '@angular/common/http';
 
 describe('HttpErrorService', () => {
@@ -20,76 +15,44 @@ describe('HttpErrorService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should output http errors through the error Subject()', (done) => {
+  it('should output http errors through the error Subject()', fakeAsync(() => {
     const testError: HttpErrorResponse = new HttpErrorResponse({
-      status: 400,
-      statusText: 'Bad Request'
+      error: {
+        status: 400,
+        message_code: 'test error',
+        error_message: 'test error message'
+      }
     });
-    const testErrorLog: ErrorLog = {
-      code: testError.status,
-      message: testError.message
-    };
-    service.getError().subscribe((err) => {
-      done();
-      expect(err).toEqual(testErrorLog);
-    });
-    service.handleError(testError);
-  });
 
-  it('should output application errors through the error Subject()', (done) => {
-    const testError: Error = new Error('test');
-    const testErrorLog: ErrorLog = {
-      code: testError.name,
-      message: testError.message
-    };
-    service.getError().subscribe((err) => {
-      done();
-      expect(err).toEqual(testErrorLog);
-    });
     service.handleError(testError);
-  });
-
-  it('should output unknown errors through the error Subject()', (done) => {
-    const testError = 'error';
-    service.getError().subscribe((err) => {
-      done();
-      expect(err.data).toEqual(testError);
+    service.getError().subscribe((error) => {
+      expect(error).toEqual({
+        code: 'test error',
+        message: 'test error message',
+        data: error.data
+      });
     });
-    service.handleError(testError);
-  });
-
-  it('should return http errors as an observable when getError() is called', fakeAsync(() => {
-    const testError: HttpErrorResponse = new HttpErrorResponse({
-      status: 400,
-      statusText: 'Bad Request'
-    });
-    const testErrorLog: ErrorLog = {
-      code: testError.status,
-      message: testError.message
-    };
-    let error: any = {};
-    service.getError().subscribe((err) => {
-      error = err;
-    });
-    service.handleError(testError);
-    tick(5000);
-    discardPeriodicTasks();
-    expect(error).toEqual(testErrorLog);
   }));
 
-  it('should return application errors as an observable when getError() is called', fakeAsync(() => {
-    const testError: Error = new Error('test');
-    const testErrorLog: ErrorLog = {
-      code: testError.name,
-      message: testError.message
-    };
-    let error: any = {};
-    service.getError().subscribe((err) => {
-      error = err;
-    });
+  it('should output application errors through the error Subject()', fakeAsync(() => {
+    const testError = new Error('test');
     service.handleError(testError);
-    tick(5000);
-    discardPeriodicTasks();
-    expect(error).toEqual(testErrorLog);
+    service.getError().subscribe((error) => {
+      expect(error).toEqual({
+        code: 'Error',
+        message: 'test'
+      });
+    });
+  }));
+
+  it('should pass through unknown errors', fakeAsync(() => {
+    const testError = 'test';
+    service.handleError(testError);
+    service.getError().subscribe((error) => {
+      expect(error).toEqual({
+        code: 'Error',
+        message: 'Unknown error'
+      });
+    });
   }));
 });

@@ -23,14 +23,14 @@ describe('AssetService', () => {
     type: 'crypto',
     code: 'ETH',
     name: 'Ethereum',
-    decimals: 18,
+    decimals: '18',
     symbol: '',
     url: Constants.ICON_HOST + 'eth.svg'
   };
   const testAssetList: AssetListBankModel = {
-    total: 0,
-    page: 0,
-    per_page: 0,
+    total: '0',
+    page: '0',
+    per_page: '0',
     objects: [testAssetModel]
   };
   let MockAssetsService = jasmine.createSpyObj('AssetsService', {

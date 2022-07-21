@@ -1,5 +1,5 @@
 import { ErrorHandler, Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 export interface ErrorLog {
@@ -12,14 +12,15 @@ export interface ErrorLog {
   providedIn: 'root'
 })
 export class ErrorService implements ErrorHandler {
-  error: Subject<ErrorLog> = new Subject();
+  error: ReplaySubject<ErrorLog> = new ReplaySubject(1);
   constructor() {}
 
   handleError(err: any) {
     if (err instanceof HttpErrorResponse) {
       this.error.next({
-        code: err.status,
-        message: err.message
+        code: err.error.message_code,
+        message: err.error.error_message,
+        data: err.error
       });
     } else if (err instanceof Error) {
       this.error.next({
@@ -29,8 +30,7 @@ export class ErrorService implements ErrorHandler {
     } else {
       this.error.next({
         code: 'Error',
-        message: 'Unknown error',
-        data: err
+        message: 'Unknown error'
       });
     }
   }
