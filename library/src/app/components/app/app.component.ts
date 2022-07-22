@@ -6,21 +6,8 @@ import {
   OnInit,
   Output
 } from '@angular/core';
-import {
-  ComponentConfig,
-  ConfigService
-} from '../../../shared/services/config/config.service';
-import { AuthService } from '../../../shared/services/auth/auth.service';
-import {
-  CODE,
-  EventLog,
-  EventService,
-  LEVEL
-} from '../../../shared/services/event/event.service';
-import {
-  ErrorLog,
-  ErrorService
-} from '../../../shared/services/error/error.service';
+import { Router } from '@angular/router';
+
 import {
   BehaviorSubject,
   catchError,
@@ -32,10 +19,24 @@ import {
   takeUntil,
   tap
 } from 'rxjs';
-import { Router } from '@angular/router';
-import { AssetService } from '../../../shared/services/asset/asset.service';
-import { Constants } from '../../../shared/constants/constants';
-import { RoutingService } from '../../../shared/services/routing/routing.service';
+
+// Services
+import {
+  AuthService,
+  AssetService,
+  RoutingService,
+  ConfigService,
+  ComponentConfig,
+  ErrorService,
+  ErrorLog,
+  EventService,
+  EventLog,
+  CODE,
+  LEVEL
+} from '@services';
+
+// Constants
+import { Constants } from '@constants';
 
 @Component({
   selector: 'app-app',

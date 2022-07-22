@@ -1,18 +1,25 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { TradeBankModel, TradesService } from '@cybrid/cybrid-api-bank-angular';
-import { BehaviorSubject, catchError, map, of, Subject } from 'rxjs';
-import { ConfigService } from '../../../shared/services/config/config.service';
-import {
-  CODE,
-  EventService,
-  LEVEL
-} from '../../../shared/services/event/event.service';
-import { ErrorService } from '../../../shared/services/error/error.service';
-import { TranslatePipe } from '@ngx-translate/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Asset } from '../../../shared/services/asset/asset.service';
-import { RoutingService } from '../../../shared/services/routing/routing.service';
+
+import { BehaviorSubject, catchError, map, of, Subject } from 'rxjs';
+
+// Client
+import { TradeBankModel, TradesService } from '@cybrid/cybrid-api-bank-angular';
+
+// Services
+import {
+  ConfigService,
+  EventService,
+  CODE,
+  LEVEL,
+  ErrorService,
+  Asset,
+  RoutingService
+} from '@services';
+
+// Utility
+import { TranslatePipe } from '@ngx-translate/core';
 
 interface DialogData {
   model: TradeBankModel;
