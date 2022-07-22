@@ -16,6 +16,7 @@ jobs:
   publish:
     docker:
       - image: cimg/node:16.15.0
+    working_directory: ~/project/library
     steps:
       - run:
           name: Install node modules
@@ -26,7 +27,7 @@ jobs:
       - run:
           name: Update version tag
           command: |
-            cd dist/library
+            cd ../dist
             export TAG=$(git describe --tags --abbrev=0)
             contents="$(jq -r --arg tag "$TAG" '.version = $tag' package.json)" && \
             echo "${contents}" > package.json
