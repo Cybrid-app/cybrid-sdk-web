@@ -12,6 +12,31 @@ executors:
     docker:
       - image: cypress/base:16.14.2
 
+jobs:
+  publish:
+    docker:
+      - image: cimg/node:16.15.0
+    steps:
+      - run:
+          name: Install node modules
+          command: npm install
+      - run:
+          name: Package library
+          command: npm run package:library
+      - run:
+          name: Update version tag
+          command: |
+            cd dist/library
+            export TAG=$(git describe --tags --abbrev=0)
+            contents="$(jq -r --arg tag "$TAG" '.version = $tag' package.json)" && \
+            echo "${contents}" > package.json
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/.npmrc
+      - run:
+          name: Publish library
+          command: echo publishing :)
+
 workflows:
   web-build-and-test:
     jobs:
@@ -122,39 +147,13 @@ workflows:
           wait-on: http://localhost:4200
           store_artifacts: true
 
-  publish:
-    when:
-      and:
-        - equal: [main, << pipeline.git.branch >>]
-    jobs:
-      - cypress/run:
-          name: e2e
-          executor: cypress
-          start: npm start
-          no-workspace: true
-          wait-on: http://localhost:4200
-          store_artifacts: true
-
-      - node/run:
+      - publish:
           requires:
-            - e2e
-          name: publish
-          version: 16.14.2
-          cache-version: v2
-          npm-run: package:library
-          post-steps:
-            - jq/install
-            - run:
-                name: Update version tag
-                command: |
-                  cd dist/library
-                  export TAG=$(git describe --tags --abbrev=0)
-                  contents="$(jq -r --arg tag "$TAG" '.version = $tag' package.json)" && \
-                  echo "${contents}" > package.json
-            - run:
-                name: Authenticate with registry
-                command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/.npmrc
-            - run:
-                name: Publish library
-                command: |
-                  npm run publish:library
+            - e2e chromium@101.0.4951.64
+            - e2e chromium@102.0.5005.61
+            - e2e chrome@latest
+            - e2e edge@latest
+          filters:
+            branches:
+              only:
+                - dustin/project-cleanup
