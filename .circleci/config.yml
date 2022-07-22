@@ -37,7 +37,7 @@ jobs:
           command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/.npmrc
       - run:
           name: Publish library
-          command: echo publishing :)
+          command: npm run publish:library
 
 workflows:
   web-build-and-test:
@@ -158,4 +158,4 @@ workflows:
           filters:
             branches:
               only:
-                - dustin/project-cleanup
+                - main
