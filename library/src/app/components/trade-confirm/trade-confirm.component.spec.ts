@@ -1,3 +1,4 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import {
   ComponentFixture,
   discardPeriodicTasks,
@@ -5,30 +6,35 @@ import {
   TestBed,
   tick
 } from '@angular/core/testing';
-
-import { TradeConfirmComponent } from './trade-confirm.component';
+import { HttpClient } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
   MatDialogRef
 } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+
+import { HttpLoaderFactory } from '../../modules/library.module';
 import {
   TranslateLoader,
   TranslateModule,
   TranslatePipe
 } from '@ngx-translate/core';
-import { HttpLoaderFactory } from '../../modules/library.module';
-import { HttpClient } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { EventService } from '../../../shared/services/event/event.service';
-import { ErrorService } from '../../../shared/services/error/error.service';
-import { ConfigService } from '../../../shared/services/config/config.service';
 import { of, throwError } from 'rxjs';
-import { TestConstants } from '../../../shared/constants/test.constants';
+
+// Client
 import { QuotesService, TradesService } from '@cybrid/cybrid-api-bank-angular';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+// Components
+import { TradeConfirmComponent } from '@components';
+
+// Services
+import { EventService, ErrorService, ConfigService } from '@services';
+
+// Utility
+import { TestConstants } from '@constants';
 
 describe('TradeConfirmComponent', () => {
   let component: TradeConfirmComponent;
