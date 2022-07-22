@@ -15,8 +15,8 @@ import {
   tap
 } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { ComponentConfig } from '../../../shared/services/config/config.service';
-import { TestConstants } from '../../../shared/constants/test.constants';
+import { ComponentConfig } from '../../../../library/src/shared/services/config/config.service';
+import { TestConstants } from '../../../../library/src/shared/constants/test.constants';
 
 @Injectable({
   providedIn: 'root'

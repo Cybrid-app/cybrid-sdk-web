@@ -18,13 +18,13 @@ import {
 import { HttpLoaderFactory } from '../../modules/library.module';
 import { HttpClient } from '@angular/common/http';
 import { RouterTestingModule } from '@angular/router/testing';
-import { EventService } from '../../../../../src/shared/services/event/event.service';
-import { ErrorService } from '../../../../../src/shared/services/error/error.service';
-import { ConfigService } from '../../../../../src/shared/services/config/config.service';
+import { EventService } from '../../../shared/services/event/event.service';
+import { ErrorService } from '../../../shared/services/error/error.service';
+import { ConfigService } from '../../../shared/services/config/config.service';
 import { TradesService } from '@cybrid/cybrid-api-bank-angular';
-import { TestConstants } from '../../../../../src/shared/constants/test.constants';
+import { TestConstants } from '../../../shared/constants/test.constants';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { RoutingService } from '../../../../../src/shared/services/routing/routing.service';
+import { RoutingService } from '../../../shared/services/routing/routing.service';
 import { PriceListComponent } from '../price-list/price-list.component';
 
 describe('TradeSummaryComponent', () => {

@@ -5,7 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 // Custom Modules
 import { LibraryModule } from '../../../library/src/app/modules/library.module';
-import { SharedModule } from '../../shared/modules/shared.module';
+import { SharedModule } from '../../../library/src/shared/modules/shared.module';
 
 // Services
 import { ConfigService } from '../services/config/config.service';

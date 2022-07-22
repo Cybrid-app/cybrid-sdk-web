@@ -18,7 +18,7 @@ import {
   timer
 } from 'rxjs';
 import { MatTableDataSource } from '@angular/material/table';
-import { symbolSplit } from '../../../../../src/shared/utility/symbol-split';
+import { symbolSplit } from '../../../shared/utility/symbol-split';
 
 // Services
 import {
@@ -31,15 +31,15 @@ import {
   CODE,
   EventService,
   LEVEL
-} from '../../../../../src/shared/services/event/event.service';
-import { ErrorService } from '../../../../../src/shared/services/error/error.service';
+} from '../../../shared/services/event/event.service';
+import { ErrorService } from '../../../shared/services/error/error.service';
 import {
   ComponentConfig,
   ConfigService
-} from '../../../../../src/shared/services/config/config.service';
-import { AssetService } from '../../../../../src/shared/services/asset/asset.service';
+} from '../../../shared/services/config/config.service';
+import { AssetService } from '../../../shared/services/asset/asset.service';
 import { NavigationExtras } from '@angular/router';
-import { RoutingService } from '../../../../../src/shared/services/routing/routing.service';
+import { RoutingService } from '../../../shared/services/routing/routing.service';
 
 export interface SymbolPrice extends SymbolPriceBankModel {
   asset: AssetBankModel;

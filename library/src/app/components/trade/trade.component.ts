@@ -20,29 +20,29 @@ import {
   CODE,
   EventService,
   LEVEL
-} from '../../../../../src/shared/services/event/event.service';
-import { ErrorService } from '../../../../../src/shared/services/error/error.service';
+} from '../../../shared/services/event/event.service';
+import { ErrorService } from '../../../shared/services/error/error.service';
 import {
   ComponentConfig,
   ConfigService
-} from '../../../../../src/shared/services/config/config.service';
+} from '../../../shared/services/config/config.service';
 import {
   Asset,
   AssetService
-} from '../../../../../src/shared/services/asset/asset.service';
+} from '../../../shared/services/asset/asset.service';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { AssetPipe } from '../../../../../src/shared/pipes/asset/asset.pipe';
-import { compareObjects } from '../../../../../src/shared/utility/compare-object';
-import { symbolSplit } from '../../../../../src/shared/utility/symbol-split';
-import { symbolBuild } from '../../../../../src/shared/utility/symbol-build';
-import { QuoteService } from '../../../../../src/shared/services/quote/quote.service';
+import { AssetPipe } from '../../../shared/pipes/asset/asset.pipe';
+import { compareObjects } from '../../../shared/utility/compare-object';
+import { symbolSplit } from '../../../shared/utility/symbol-split';
+import { symbolBuild } from '../../../shared/utility/symbol-build';
+import { QuoteService } from '../../../shared/services/quote/quote.service';
 import { TradeConfirmComponent } from '../trade-confirm/trade-confirm.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TradeSummaryComponent } from '../trade-summary/trade-summary.component';
-import { Constants } from '../../../../../src/shared/constants/constants';
+import { Constants } from '../../../shared/constants/constants';
 import SideEnum = PostQuoteBankModel.SideEnum;
-import { RoutingService } from '../../../../../src/shared/services/routing/routing.service';
+import { RoutingService } from '../../../shared/services/routing/routing.service';
 
 interface Display {
   asset: number | string;

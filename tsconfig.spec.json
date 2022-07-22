@@ -8,6 +8,6 @@
   "files": ["src/test.ts", "src/polyfills.ts"],
   "include": ["**/*.spec.ts", "**/*.d.ts"],
   "exclude": [
-    "src/shared/pipes/asset/mock-asset.pipe.ts"
+    "library/src/shared/pipes/asset/mock-asset.pipe.ts"
   ]
 }

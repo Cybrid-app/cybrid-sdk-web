@@ -8,8 +8,8 @@ export default defineConfig({
   includeShadowDom: true,
   requestTimeout: 10000,
   env: {
-    CLIENT_ID: '',
-    CLIENT_SECRET: ''
+    CLIENT_ID: 'gtlpql9qUwhhhRBKemkWG2aIofhUZBf-J_1QY-nsNg8',
+    CLIENT_SECRET: '2eEo_u3MYyzawlB7Cm4-mP397EzOz5tAZwQFTiF6EKc'
   },
   e2e: {
     baseUrl: 'http://localhost:4200'

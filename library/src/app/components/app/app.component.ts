@@ -9,18 +9,18 @@ import {
 import {
   ComponentConfig,
   ConfigService
-} from '../../../../../src/shared/services/config/config.service';
-import { AuthService } from '../../../../../src/shared/services/auth/auth.service';
+} from '../../../shared/services/config/config.service';
+import { AuthService } from '../../../shared/services/auth/auth.service';
 import {
   CODE,
   EventLog,
   EventService,
   LEVEL
-} from '../../../../../src/shared/services/event/event.service';
+} from '../../../shared/services/event/event.service';
 import {
   ErrorLog,
   ErrorService
-} from '../../../../../src/shared/services/error/error.service';
+} from '../../../shared/services/error/error.service';
 import {
   BehaviorSubject,
   catchError,
@@ -33,9 +33,9 @@ import {
   tap
 } from 'rxjs';
 import { Router } from '@angular/router';
-import { AssetService } from '../../../../../src/shared/services/asset/asset.service';
-import { Constants } from '../../../../../src/shared/constants/constants';
-import { RoutingService } from '../../../../../src/shared/services/routing/routing.service';
+import { AssetService } from '../../../shared/services/asset/asset.service';
+import { Constants } from '../../../shared/constants/constants';
+import { RoutingService } from '../../../shared/services/routing/routing.service';
 
 @Component({
   selector: 'app-app',

@@ -1,4 +1,4 @@
-import { TestConstants } from '../../src/shared/constants/test.constants';
+import { TestConstants } from '../../library/src/shared/constants/test.constants';
 
 function app() {
   return cy.get('app-trade');

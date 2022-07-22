@@ -24,18 +24,18 @@ import {
   TranslatePipe
 } from '@ngx-translate/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../../src/shared/modules/material-module';
+import { MaterialModule } from '../../shared/modules/material-module';
 
 // Services
-import { AuthService } from '../../../../src/shared/services/auth/auth.service';
-import { EventService } from '../../../../src/shared/services/event/event.service';
-import { ErrorService } from '../../../../src/shared/services/error/error.service';
-import { ConfigService } from '../../../../src/shared/services/config/config.service';
-import { QuoteService } from '../../../../src/shared/services/quote/quote.service';
-import { AssetService } from '../../../../src/shared/services/asset/asset.service';
-import { ErrorInterceptor } from '../../../../src/shared/interceptors/error/error.interceptor';
-import { RetryInterceptor } from '../../../../src/shared/interceptors/auth/retry.interceptor';
-import { RoutingService } from '../../../../src/shared/services/routing/routing.service';
+import { AuthService } from '../../shared/services/auth/auth.service';
+import { EventService } from '../../shared/services/event/event.service';
+import { ErrorService } from '../../shared/services/error/error.service';
+import { ConfigService } from '../../shared/services/config/config.service';
+import { QuoteService } from '../../shared/services/quote/quote.service';
+import { AssetService } from '../../shared/services/asset/asset.service';
+import { ErrorInterceptor } from '../../shared/interceptors/error/error.interceptor';
+import { RetryInterceptor } from '../../shared/interceptors/auth/retry.interceptor';
+import { RoutingService } from '../../shared/services/routing/routing.service';
 
 // Components
 import { AppComponent } from '../components/app/app.component';
@@ -48,8 +48,8 @@ import { LoadingComponent } from '../components/loading/loading.component';
 // Utility
 import { environment } from '../../environments/environment';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { AssetPipe } from '../../../../src/shared/pipes/asset/asset.pipe';
-import { TruncatePipe } from '../../../../src/shared/pipes/truncate/tuncate.pipe';
+import { AssetPipe } from '../../shared/pipes/asset/asset.pipe';
+import { TruncatePipe } from '../../shared/pipes/truncate/tuncate.pipe';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
