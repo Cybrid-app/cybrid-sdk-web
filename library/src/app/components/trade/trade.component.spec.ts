@@ -1,3 +1,4 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import {
   ComponentFixture,
   discardPeriodicTasks,
@@ -5,32 +6,40 @@ import {
   TestBed,
   tick
 } from '@angular/core/testing';
-
-import { TradeComponent } from './trade.component';
-import { RouterTestingModule } from '@angular/router/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { HttpLoaderFactory } from '../../modules/library.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClient } from '@angular/common/http';
-import { AssetPipe } from '../../../shared/pipes/asset/asset.pipe';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
-import { of, throwError } from 'rxjs';
-import { TestConstants } from '../../../shared/constants/test.constants';
-import { AssetService } from '../../../shared/services/asset/asset.service';
-import { PricesService } from '@cybrid/cybrid-api-bank-angular';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { RouterTestingModule } from '@angular/router/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { EventService } from '../../../shared/services/event/event.service';
-import { ErrorService } from '../../../shared/services/error/error.service';
-import { ConfigService } from '../../../shared/services/config/config.service';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialog } from '@angular/material/dialog';
-import { QuoteService } from '../../../shared/services/quote/quote.service';
-import { TradeConfirmComponent } from '../trade-confirm/trade-confirm.component';
-import { RoutingService } from '../../../shared/services/routing/routing.service';
+
+import { of, throwError } from 'rxjs';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { HttpLoaderFactory } from '../../modules/library.module';
+
+// Client
+import { PricesService } from '@cybrid/cybrid-api-bank-angular';
+
+// Components
+import { TradeComponent, TradeConfirmComponent } from '@components';
+import { AssetPipe } from '@pipes';
+
+// Services
+import {
+  AssetService,
+  EventService,
+  ErrorService,
+  ConfigService,
+  QuoteService,
+  RoutingService
+} from '@services';
+
+// Utility
+import { TestConstants } from '@constants';
 
 describe('TradeComponent', () => {
   let component: TradeComponent;

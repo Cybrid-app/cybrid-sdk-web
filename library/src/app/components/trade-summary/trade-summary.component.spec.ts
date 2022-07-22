@@ -1,31 +1,40 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { TradeSummaryComponent } from './trade-summary.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClient } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
   MatDialogRef
 } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { of, throwError } from 'rxjs';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+
 import {
   TranslateLoader,
   TranslateModule,
   TranslatePipe
 } from '@ngx-translate/core';
 import { HttpLoaderFactory } from '../../modules/library.module';
-import { HttpClient } from '@angular/common/http';
-import { RouterTestingModule } from '@angular/router/testing';
-import { EventService } from '../../../shared/services/event/event.service';
-import { ErrorService } from '../../../shared/services/error/error.service';
-import { ConfigService } from '../../../shared/services/config/config.service';
+import { of, throwError } from 'rxjs';
+
+// Client
 import { TradesService } from '@cybrid/cybrid-api-bank-angular';
-import { TestConstants } from '../../../shared/constants/test.constants';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { RoutingService } from '../../../shared/services/routing/routing.service';
-import { PriceListComponent } from '../price-list/price-list.component';
+
+// Services
+import {
+  EventService,
+  ErrorService,
+  ConfigService,
+  RoutingService
+} from '@services';
+
+// Utility
+import { TestConstants } from '@constants';
+
+// Components
+import { PriceListComponent, TradeSummaryComponent } from '@components';
 
 describe('TradeSummaryComponent', () => {
   let component: TradeSummaryComponent;
