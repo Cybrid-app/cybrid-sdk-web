@@ -18,6 +18,7 @@ jobs:
       - image: cimg/node:16.15.0
     working_directory: ~/project/library
     steps:
+      - checkout
       - run:
           name: Install node modules
           command: npm install
