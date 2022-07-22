@@ -79,7 +79,7 @@ workflows:
           store_artifacts: true
 
       - cypress/run:
-          name: e2e chrome/edge@latest
+          name: e2e chrome@latest
           executor: cypress
           post-checkout:
             - run:
@@ -94,6 +94,21 @@ workflows:
                   apt update -y
                   dpkg --configure -a
                   dpkg -i google-chrome-stable_current_amd64.deb
+          start: npm start
+          command: npx cypress run --browser chrome
+          no-workspace: true
+          wait-on: http://localhost:4200
+          store_artifacts: true
+
+      - cypress/run:
+          name: e2e edge@latest
+          executor: cypress
+          post-checkout:
+            - run:
+                name: Install libraries
+                command: |
+                  apt update -y
+                  apt install -y software-properties-common apt-transport-https wget fonts-liberation xdg-utils gnupg
             - run:
                 name: Download/Install Edge stable
                 command: |
@@ -102,7 +117,7 @@ workflows:
                   apt update -y
                   apt-get -f install -y microsoft-edge-stable
           start: npm start
-          command: npx cypress run --browser chrome && npx cypress run --browser edge
+          command: npx cypress run --browser edge
           no-workspace: true
           wait-on: http://localhost:4200
           store_artifacts: true
