@@ -10,8 +10,8 @@ export const environment = {
   production: false,
   authUrl: 'https://id.demo.cybrid.app/oauth/token',
   credentials: {
-    clientId: 'gtlpql9qUwhhhRBKemkWG2aIofhUZBf-J_1QY-nsNg8',
-    clientSecret: '2eEo_u3MYyzawlB7Cm4-mP397EzOz5tAZwQFTiF6EKc'
+    clientId: '',
+    clientSecret: ''
   },
   grant_type: 'client_credentials',
   scope:
