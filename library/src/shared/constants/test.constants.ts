@@ -4,7 +4,7 @@ import {
   SymbolPriceBankModel,
   TradeBankModel
 } from '@cybrid/cybrid-api-bank-angular';
-import { SymbolPrice } from '../../../library/src/app/components/price-list/price-list.component';
+import { SymbolPrice } from '../../app/components/price-list/price-list.component';
 import { ComponentConfig } from '../services/config/config.service';
 import { Asset } from '../services/asset/asset.service';
 import { Constants } from './constants';

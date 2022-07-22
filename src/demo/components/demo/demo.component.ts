@@ -10,7 +10,10 @@ import { AppComponent } from '../../../../library/src/app/components/app/app.com
 import { ConfigService } from '../../services/config/config.service';
 import { BehaviorSubject, filter, map, Subject, take, takeUntil } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
-import { CODE, EventLog } from '../../../shared/services/event/event.service';
+import {
+  CODE,
+  EventLog
+} from '../../../../library/src/shared/services/event/event.service';
 
 @Component({
   selector: 'app-demo',

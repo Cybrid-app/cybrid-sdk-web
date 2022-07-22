@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map, pluck } from 'rxjs';
 import { ConfigService } from '../../services/config/config.service';
-import { Constants } from '../../../shared/constants/constants';
+import { Constants } from '../../../../library/src/shared/constants/constants';
 
 @Component({
   selector: 'app-root',

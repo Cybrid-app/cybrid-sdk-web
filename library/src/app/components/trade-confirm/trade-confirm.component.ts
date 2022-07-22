@@ -20,14 +20,14 @@ import {
 import {
   ComponentConfig,
   ConfigService
-} from '../../../../../src/shared/services/config/config.service';
+} from '../../../shared/services/config/config.service';
 import {
   CODE,
   EventService,
   LEVEL
-} from '../../../../../src/shared/services/event/event.service';
-import { ErrorService } from '../../../../../src/shared/services/error/error.service';
-import { Asset } from '../../../../../src/shared/services/asset/asset.service';
+} from '../../../shared/services/event/event.service';
+import { ErrorService } from '../../../shared/services/error/error.service';
+import { Asset } from '../../../shared/services/asset/asset.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -36,7 +36,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   templateUrl: './trade-confirm.component.html',
   styleUrls: [
     './trade-confirm.component.scss',
-    '../../../../../src/shared/styles/global.scss'
+    '../../../shared/styles/global.scss'
   ]
 })
 export class TradeConfirmComponent implements OnInit, OnDestroy {

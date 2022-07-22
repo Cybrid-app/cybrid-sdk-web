@@ -9,24 +9,24 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { AssetService } from '../../../../../src/shared/services/asset/asset.service';
-import { AuthService } from '../../../../../src/shared/services/auth/auth.service';
+import { AssetService } from '../../../shared/services/asset/asset.service';
+import { AuthService } from '../../../shared/services/auth/auth.service';
 import {
   CODE,
   EventLog,
   EventService,
   LEVEL
-} from '../../../../../src/shared/services/event/event.service';
+} from '../../../shared/services/event/event.service';
 import {
   ErrorLog,
   ErrorService
-} from '../../../../../src/shared/services/error/error.service';
-import { ConfigService } from '../../../../../src/shared/services/config/config.service';
+} from '../../../shared/services/error/error.service';
+import { ConfigService } from '../../../shared/services/config/config.service';
 import { of, throwError } from 'rxjs';
-import { TestConstants } from '../../../../../src/shared/constants/test.constants';
+import { TestConstants } from '../../../shared/constants/test.constants';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Router } from '@angular/router';
-import { RoutingService } from '../../../../../src/shared/services/routing/routing.service';
+import { RoutingService } from '../../../shared/services/routing/routing.service';
 
 describe('AppComponent', () => {
   let MockAuthService = jasmine.createSpyObj('AuthService', [

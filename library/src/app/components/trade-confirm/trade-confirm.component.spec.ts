@@ -21,11 +21,11 @@ import {
 import { HttpLoaderFactory } from '../../modules/library.module';
 import { HttpClient } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { EventService } from '../../../../../src/shared/services/event/event.service';
-import { ErrorService } from '../../../../../src/shared/services/error/error.service';
-import { ConfigService } from '../../../../../src/shared/services/config/config.service';
+import { EventService } from '../../../shared/services/event/event.service';
+import { ErrorService } from '../../../shared/services/error/error.service';
+import { ConfigService } from '../../../shared/services/config/config.service';
 import { of, throwError } from 'rxjs';
-import { TestConstants } from '../../../../../src/shared/constants/test.constants';
+import { TestConstants } from '../../../shared/constants/test.constants';
 import { QuotesService, TradesService } from '@cybrid/cybrid-api-bank-angular';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
