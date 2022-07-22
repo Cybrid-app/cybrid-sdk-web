@@ -18,7 +18,17 @@
     "target": "es2020",
     "module": "es2020",
     "lib": ["es2020", "dom"],
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "@environment": ["src/environments/index"],
+      "@modules": ["src/shared/modules/index"],
+      "@components": ["src/app/components/index"],
+      "@services": ["src/shared/services/index"],
+      "@interceptors": ["src/shared/interceptors/index"],
+      "@pipes": ["src/shared/pipes/index"],
+      "@constants": ["src/shared/constants/index"],
+      "@utility": ["src/shared/utility/index"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

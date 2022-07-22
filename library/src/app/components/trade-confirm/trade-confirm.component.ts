@@ -1,11 +1,7 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import {
-  PostTradeBankModel,
-  QuoteBankModel,
-  QuotesService,
-  TradesService
-} from '@cybrid/cybrid-api-bank-angular';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 import {
   BehaviorSubject,
   catchError,
@@ -17,18 +13,27 @@ import {
   takeUntil,
   timer
 } from 'rxjs';
+
+// Client
+import {
+  PostTradeBankModel,
+  QuoteBankModel,
+  QuotesService,
+  TradesService
+} from '@cybrid/cybrid-api-bank-angular';
+
+// Services
 import {
   ComponentConfig,
-  ConfigService
-} from '../../../shared/services/config/config.service';
-import {
-  CODE,
+  ConfigService,
   EventService,
-  LEVEL
-} from '../../../shared/services/event/event.service';
-import { ErrorService } from '../../../shared/services/error/error.service';
-import { Asset } from '../../../shared/services/asset/asset.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+  CODE,
+  LEVEL,
+  ErrorService,
+  Asset
+} from '@services';
+
+// Utility
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({

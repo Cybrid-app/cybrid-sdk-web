@@ -5,6 +5,10 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
+import { NavigationExtras } from '@angular/router';
+import { UntypedFormControl } from '@angular/forms';
+import { MatTableDataSource } from '@angular/material/table';
+
 import {
   BehaviorSubject,
   catchError,
@@ -17,29 +21,28 @@ import {
   takeUntil,
   timer
 } from 'rxjs';
-import { MatTableDataSource } from '@angular/material/table';
-import { symbolSplit } from '../../../shared/utility/symbol-split';
 
-// Services
+// Client
 import {
   AssetBankModel,
   PricesService,
   SymbolPriceBankModel
 } from '@cybrid/cybrid-api-bank-angular';
-import { UntypedFormControl } from '@angular/forms';
+
+// Services
 import {
-  CODE,
+  AssetService,
   EventService,
-  LEVEL
-} from '../../../shared/services/event/event.service';
-import { ErrorService } from '../../../shared/services/error/error.service';
-import {
+  CODE,
+  LEVEL,
+  ErrorService,
+  ConfigService,
   ComponentConfig,
-  ConfigService
-} from '../../../shared/services/config/config.service';
-import { AssetService } from '../../../shared/services/asset/asset.service';
-import { NavigationExtras } from '@angular/router';
-import { RoutingService } from '../../../shared/services/routing/routing.service';
+  RoutingService
+} from '@services';
+
+// Utility
+import { symbolSplit } from '@utility';
 
 export interface SymbolPrice extends SymbolPriceBankModel {
   asset: AssetBankModel;
