@@ -1,7 +1,7 @@
 import { fakeAsync, TestBed } from '@angular/core/testing';
-
-import { ErrorService } from './error.service';
 import { HttpErrorResponse } from '@angular/common/http';
+
+import { ErrorService } from '@services';
 
 describe('HttpErrorService', () => {
   let service: ErrorService;

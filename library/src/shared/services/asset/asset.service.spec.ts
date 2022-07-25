@@ -4,18 +4,27 @@ import {
   TestBed,
   tick
 } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-import { Asset, AssetService } from './asset.service';
+import { of, throwError } from 'rxjs';
+
+// Client
 import {
   AssetListBankModel,
   AssetsService
 } from '@cybrid/cybrid-api-bank-angular';
-import { AuthService } from '../auth/auth.service';
-import { EventService } from '../event/event.service';
-import { ErrorService } from '../error/error.service';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { of, throwError } from 'rxjs';
-import { Constants } from '../../constants/constants';
+
+// Services
+import {
+  Asset,
+  AssetService,
+  AuthService,
+  EventService,
+  ErrorService
+} from '@services';
+
+// Utility
+import { Constants } from '@constants';
 
 describe('AssetService', () => {
   let assetService: AssetService;

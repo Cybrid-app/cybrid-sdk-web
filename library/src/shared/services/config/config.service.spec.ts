@@ -1,9 +1,16 @@
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { ComponentConfig, ConfigService } from './config.service';
-import { ErrorService } from '../error/error.service';
-import { EventService } from '../event/event.service';
+
+// Services
+import {
+  ComponentConfig,
+  ConfigService,
+  ErrorService,
+  EventService
+} from '@services';
+
+// Utility
 import { TranslateService } from '@ngx-translate/core';
-import { TestConstants } from '../../constants/test.constants';
+import { TestConstants } from '@constants';
 
 describe('ConfigService', () => {
   let service: ConfigService;

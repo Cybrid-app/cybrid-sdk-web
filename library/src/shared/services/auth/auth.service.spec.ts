@@ -5,12 +5,18 @@ import {
   tick
 } from '@angular/core/testing';
 
-import { AuthService } from './auth.service';
-import { CODE, EventService, LEVEL } from '../event/event.service';
-import { ErrorService } from '../error/error.service';
-import { TestConstants } from '../../constants/test.constants';
+import {
+  AuthService,
+  EventService,
+  CODE,
+  LEVEL,
+  ErrorService
+} from '@services';
+
+// Utility
 import * as jwtDecode from 'jwt-decode';
 import { JwtPayload } from 'jwt-decode';
+import { TestConstants } from '@constants';
 
 describe('AuthService', () => {
   let authService: AuthService;

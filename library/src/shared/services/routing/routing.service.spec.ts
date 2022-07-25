@@ -1,12 +1,20 @@
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
-
-import { RoutingService } from './routing.service';
 import { RouterTestingModule } from '@angular/router/testing';
-import { TranslateService } from '@ngx-translate/core';
-import { ConfigService } from '../config/config.service';
-import { of } from 'rxjs';
-import { CODE, EventService, LEVEL } from '../event/event.service';
 import { Router } from '@angular/router';
+
+import { of } from 'rxjs';
+
+// Services
+import {
+  ConfigService,
+  EventService,
+  CODE,
+  LEVEL,
+  RoutingService
+} from '@services';
+
+// Utility
+import { TranslateService } from '@ngx-translate/core';
 
 describe('RoutingService', () => {
   let service: RoutingService;

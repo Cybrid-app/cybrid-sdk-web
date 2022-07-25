@@ -8,9 +8,11 @@ import {
   HttpClient,
   HttpErrorResponse
 } from '@angular/common/http';
-import { RetryInterceptor } from './retry.interceptor';
-import { EventService } from '../../services/event/event.service';
+
 import { of } from 'rxjs';
+
+import { EventService } from '@services';
+import { RetryInterceptor } from '@interceptors';
 
 describe('AuthInterceptor', () => {
   let httpClient: HttpClient;

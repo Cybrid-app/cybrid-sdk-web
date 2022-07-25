@@ -5,7 +5,7 @@ import {
   tick
 } from '@angular/core/testing';
 
-import { CODE, EventLog, EventService, LEVEL } from './event.service';
+import { CODE, EventLog, EventService, LEVEL } from '@services';
 
 describe('EventService', () => {
   let service: EventService;

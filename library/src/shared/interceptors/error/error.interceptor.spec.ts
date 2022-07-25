@@ -4,8 +4,9 @@ import {
   HttpTestingController
 } from '@angular/common/http/testing';
 import { HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
-import { ErrorInterceptor } from './error.interceptor';
-import { ErrorService } from '../../services/error/error.service';
+
+import { ErrorService } from '@services';
+import { ErrorInterceptor } from '@interceptors';
 
 describe('ErrorInterceptor', () => {
   let httpClient: HttpClient;
