@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 
-// Custom Modules
+// Modules
 import { LibraryModule } from '../../../library/src/app/modules/library.module';
 import { SharedModule } from '../../../library/src/shared/modules/shared.module';
 

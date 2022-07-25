@@ -4,6 +4,8 @@ import {
   HttpErrorResponse,
   HttpHeaders
 } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+
 import {
   BehaviorSubject,
   catchError,
@@ -14,9 +16,10 @@ import {
   Subject,
   tap
 } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { ComponentConfig } from '../../../../library/src/shared/services/config/config.service';
-import { TestConstants } from '../../../../library/src/shared/constants/test.constants';
+
+// Library
+import { ComponentConfig } from '@services';
+import { TestConstants } from '@constants';
 
 @Injectable({
   providedIn: 'root'

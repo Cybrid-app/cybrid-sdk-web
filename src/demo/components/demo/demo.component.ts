@@ -6,14 +6,15 @@ import {
   ViewChild,
   ViewContainerRef
 } from '@angular/core';
-import { AppComponent } from '../../../../library/src/app/components/app/app.component';
-import { ConfigService } from '../../services/config/config.service';
-import { BehaviorSubject, filter, map, Subject, take, takeUntil } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
-import {
-  CODE,
-  EventLog
-} from '../../../../library/src/shared/services/event/event.service';
+
+import { BehaviorSubject, filter, map, Subject, take, takeUntil } from 'rxjs';
+
+import { ConfigService } from '../../services/config/config.service';
+
+// Library
+import { AppComponent } from '@components';
+import { CODE, EventLog } from '@services';
 
 @Component({
   selector: 'app-demo',
