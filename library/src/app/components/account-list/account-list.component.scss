@@ -1,0 +1,81 @@
+table {
+  width: 100%;
+  border: 1px solid #0000001f;
+  border-radius: 5px;
+
+  .mat-column-price {
+    width: 80px;
+  }
+  th:first-of-type {
+    border-top-left-radius: 5px;
+  }
+  th:last-of-type {
+    border-top-right-radius: 5px;
+    text-align: end;
+  }
+  tr:last-of-type {
+    td {
+      border-bottom: none;
+    }
+    td:first-of-type {
+      border-bottom-left-radius: 5px;
+    }
+    td:last-of-type {
+      border-bottom-right-radius: 5px;
+    }
+  }
+}
+
+.cybrid-currency-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+
+.cybrid-asset-cell {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cybrid-price-cell {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.25rem;
+  cybrid-hint {
+    line-height: 0.8rem;
+  }
+}
+
+.cybrid-symbol {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  span {
+    font-weight: 500;
+  }
+}
+
+.cybrid-icon {
+  height: 1.7rem;
+}
+
+.cybrid-no-data {
+  text-align: center;
+}
+
+@media screen and (max-width: 599px) {
+  .cybrid-currency-wrapper {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 0;
+  }
+}

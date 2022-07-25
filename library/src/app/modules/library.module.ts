@@ -34,7 +34,8 @@ import {
   ConfigService,
   QuoteService,
   AssetService,
-  RoutingService
+  RoutingService,
+  AccountService
 } from '@services';
 
 // Interceptors
@@ -47,7 +48,8 @@ import {
   PriceListComponent,
   TradeComponent,
   TradeConfirmComponent,
-  TradeSummaryComponent
+  TradeSummaryComponent,
+  AccountListComponent
 } from '@components';
 
 // Utility
@@ -66,6 +68,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     TradeComponent,
     TradeConfirmComponent,
     TradeSummaryComponent,
+    AccountListComponent,
     LoadingComponent,
     AssetPipe,
     TruncatePipe
@@ -106,6 +109,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     QuoteService,
     EventService,
     AssetService,
+    AccountService,
     AssetPipe,
     TruncatePipe,
     TranslatePipe,

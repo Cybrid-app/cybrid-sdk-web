@@ -5,7 +5,7 @@
     "schematicCollections": ["@angular-eslint/schematics"]
   },
   "version": 1,
-  "newProjectRoot": "library",
+  "newProjectRoot": "",
   "projects": {
     "demo": {
       "projectType": "application",
@@ -19,7 +19,7 @@
       },
       "root": "",
       "sourceRoot": "src",
-      "prefix": "app",
+      "prefix": "",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -148,7 +148,7 @@
       },
       "root": "library",
       "sourceRoot": "library/src",
-      "prefix": "app",
+      "prefix": "",
       "architect": {
         "build": {
           "builder": "@angular-builders/custom-webpack:browser",

@@ -26,7 +26,7 @@ export class DemoComponent implements OnInit, OnDestroy {
   public viewContainer!: ViewContainerRef;
   token = '';
 
-  webComponents = ['price-list', 'trade'];
+  webComponents = ['price-list', 'trade', 'account-list'];
 
   componentRef!: ComponentRef<AppComponent>;
   componentGroup: FormGroup = new FormGroup({
@@ -82,7 +82,12 @@ export class DemoComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((config) => {
         this.componentRef.instance.hostConfig = config;
+        this.componentRef.instance.component = 'account-list';
       });
+
+    this.componentRef.instance.errorLog.subscribe((error) =>
+      console.log(error)
+    );
 
     // Subscribe to routing events and set component selector value
     this.componentRef.instance.eventLog

@@ -1,12 +1,17 @@
 import { OnDestroy, Pipe, PipeTransform } from '@angular/core';
-import { AssetBankModel } from '@cybrid/cybrid-api-bank-angular';
-import { ConfigService } from '../../services/config/config.service';
-import { Constants } from '../../constants/constants';
-import { Asset } from '../../services/asset/asset.service';
-import { map, Subject, takeUntil } from 'rxjs';
 import { formatNumber } from '@angular/common';
-import { Big } from 'big.js';
 import '@angular/common/locales/global/fr';
+
+import { map, Subject, takeUntil } from 'rxjs';
+
+// Client
+import { AssetBankModel } from '@cybrid/cybrid-api-bank-angular';
+
+import { ConfigService, Asset } from '@services';
+import { Constants } from '@constants';
+
+// Utility
+import { Big } from 'big.js';
 
 interface NumberSeparator {
   locale: string;
@@ -95,7 +100,6 @@ export class AssetPipe implements PipeTransform, OnDestroy {
             );
           } else {
             return (
-              asset.symbol +
               formatNumber(new Big(integer).toNumber(), this.locale) +
               separator!.char +
               decimal

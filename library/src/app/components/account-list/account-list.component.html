@@ -1,0 +1,66 @@
+<ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
+  <ng-container *ngIf="(isLoading$ | async) !== true">
+    <ng-container *ngIf="balance$ | async as balance">
+      <h1>{{ balance | asset: counter_asset }}</h1>
+    </ng-container>
+    <table id="accountList" mat-table [dataSource]="dataSource">
+      <ng-container matColumnDef="account">
+        <th mat-header-cell *matHeaderCellDef>Account</th>
+        <td id="account" mat-cell *matCellDef="let account">
+          <div class="cybrid-asset-cell">
+            <img
+              class="cybrid-icon"
+              src="{{ account.asset.url }}"
+              alt="Crypto currency icon"
+            />
+            <div style="display: flex; flex-direction: column">
+              <div class="cybrid-currency-wrapper">
+                <div class="cybrid-symbol">
+                  <span class="name">{{ account.asset.name }}</span>
+                </div>
+                <span class="cybrid-hint cybrid-code">{{
+                  account.asset.code
+                }}</span>
+              </div>
+              <span style="margin-top: -5px" class="cybrid-hint cybrid-code">{{
+                account.price.sell_price | asset: account.counter_asset
+              }}</span>
+            </div>
+          </div>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="balance">
+        <th mat-header-cell *matHeaderCellDef>Balance</th>
+        <td id="balance" mat-cell *matCellDef="let account">
+          <div class="cybrid-price-cell">
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+              "
+            >
+              <span
+                >{{ account.account.platform_balance | asset: account.asset }}
+              </span>
+              <span class="cybrid-hint cybrid-code" style="margin-top: -5px">{{
+                account.value | asset: account.counter_asset
+              }}</span>
+            </div>
+          </div>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </ng-container>
+</ng-container>
+<ng-template #error>
+  <mat-card>
+    <mat-card-content>
+      <div class="cybrid-fatal">
+        <p>{{ 'fatal' | translate }}</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</ng-template>

@@ -2,7 +2,11 @@ import { NgModule } from '@angular/core';
 import { Routes } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 
-import { PriceListComponent, TradeComponent } from '@components';
+import {
+  PriceListComponent,
+  TradeComponent,
+  AccountListComponent
+} from '@components';
 
 export const routes: Routes = [
   {
@@ -24,6 +28,10 @@ export const routes: Routes = [
       {
         path: 'trade',
         component: TradeComponent
+      },
+      {
+        path: 'account-list',
+        component: AccountListComponent
       }
     ]
   },
