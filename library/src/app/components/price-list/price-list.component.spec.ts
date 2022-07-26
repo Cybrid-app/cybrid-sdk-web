@@ -1,36 +1,40 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import {
   discardPeriodicTasks,
   fakeAsync,
   TestBed,
   tick
 } from '@angular/core/testing';
+import { HttpClient } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ReactiveFormsModule } from '@angular/forms';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { of, throwError } from 'rxjs';
 
-// Components
-import { PriceListComponent } from './price-list.component';
+// Client
 import { PricesService } from '@cybrid/cybrid-api-bank-angular';
 
-// Services
-import { AuthService } from '../../../../../src/shared/services/auth/auth.service';
-import { EventService } from '../../../../../src/shared/services/event/event.service';
-import { ErrorService } from '../../../../../src/shared/services/error/error.service';
-import { ConfigService } from '../../../../../src/shared/services/config/config.service';
-
 // Modules
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { SharedModule } from '../../../../../src/shared/modules/shared.module';
-import { ReactiveFormsModule } from '@angular/forms';
-
-// Testing
-import { of, throwError } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { AssetService } from '../../../../../src/shared/services/asset/asset.service';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { HttpLoaderFactory } from '../../modules/library.module';
-import { TestConstants } from '../../../../../src/shared/constants/test.constants';
-import { RouterTestingModule } from '@angular/router/testing';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { RoutingService } from '../../../../../src/shared/services/routing/routing.service';
+import { SharedModule } from '../../../shared/modules/shared.module';
+
+// Services
+import {
+  AuthService,
+  EventService,
+  ErrorService,
+  ConfigService,
+  AssetService,
+  RoutingService
+} from '@services';
+
+// Components
+import { PriceListComponent } from '@components';
+
+// Utility
+import { TestConstants } from '@constants';
 
 describe('ListComponent', () => {
   let MockAuthService = jasmine.createSpyObj('AuthService', [

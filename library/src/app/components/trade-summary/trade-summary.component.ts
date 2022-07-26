@@ -1,18 +1,25 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { TradeBankModel, TradesService } from '@cybrid/cybrid-api-bank-angular';
-import { BehaviorSubject, catchError, map, of, Subject } from 'rxjs';
-import { ConfigService } from '../../../../../src/shared/services/config/config.service';
-import {
-  CODE,
-  EventService,
-  LEVEL
-} from '../../../../../src/shared/services/event/event.service';
-import { ErrorService } from '../../../../../src/shared/services/error/error.service';
-import { TranslatePipe } from '@ngx-translate/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Asset } from '../../../../../src/shared/services/asset/asset.service';
-import { RoutingService } from '../../../../../src/shared/services/routing/routing.service';
+
+import { BehaviorSubject, catchError, map, of, Subject } from 'rxjs';
+
+// Client
+import { TradeBankModel, TradesService } from '@cybrid/cybrid-api-bank-angular';
+
+// Services
+import {
+  ConfigService,
+  EventService,
+  CODE,
+  LEVEL,
+  ErrorService,
+  Asset,
+  RoutingService
+} from '@services';
+
+// Utility
+import { TranslatePipe } from '@ngx-translate/core';
 
 interface DialogData {
   model: TradeBankModel;
@@ -25,7 +32,7 @@ interface DialogData {
   templateUrl: './trade-summary.component.html',
   styleUrls: [
     './trade-summary.component.scss',
-    '../../../../../src/shared/styles/global.scss'
+    '../../../shared/styles/global.scss'
   ]
 })
 export class TradeSummaryComponent implements OnInit {

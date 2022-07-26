@@ -17,39 +17,43 @@ import {
 import { createCustomElement } from '@angular/elements';
 
 // Modules
+import { MaterialModule } from '@modules';
+import { ReactiveFormsModule } from '@angular/forms';
 import { ApiModule, Configuration } from '@cybrid/cybrid-api-bank-angular';
 import {
   TranslateModule,
   TranslateLoader,
   TranslatePipe
 } from '@ngx-translate/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../../src/shared/modules/material-module';
 
 // Services
-import { AuthService } from '../../../../src/shared/services/auth/auth.service';
-import { EventService } from '../../../../src/shared/services/event/event.service';
-import { ErrorService } from '../../../../src/shared/services/error/error.service';
-import { ConfigService } from '../../../../src/shared/services/config/config.service';
-import { QuoteService } from '../../../../src/shared/services/quote/quote.service';
-import { AssetService } from '../../../../src/shared/services/asset/asset.service';
-import { ErrorInterceptor } from '../../../../src/shared/interceptors/error/error.interceptor';
-import { RetryInterceptor } from '../../../../src/shared/interceptors/auth/retry.interceptor';
-import { RoutingService } from '../../../../src/shared/services/routing/routing.service';
+import {
+  AuthService,
+  EventService,
+  ErrorService,
+  ConfigService,
+  QuoteService,
+  AssetService,
+  RoutingService
+} from '@services';
+
+// Interceptors
+import { ErrorInterceptor, RetryInterceptor } from '@interceptors';
 
 // Components
-import { AppComponent } from '../components/app/app.component';
-import { PriceListComponent } from '../components/price-list/price-list.component';
-import { TradeComponent } from '../components/trade/trade.component';
-import { TradeConfirmComponent } from '../components/trade-confirm/trade-confirm.component';
-import { TradeSummaryComponent } from '../components/trade-summary/trade-summary.component';
-import { LoadingComponent } from '../components/loading/loading.component';
+import {
+  AppComponent,
+  LoadingComponent,
+  PriceListComponent,
+  TradeComponent,
+  TradeConfirmComponent,
+  TradeSummaryComponent
+} from '@components';
 
 // Utility
-import { environment } from '../../environments/environment';
+import { environment } from '@environment';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { AssetPipe } from '../../../../src/shared/pipes/asset/asset.pipe';
-import { TruncatePipe } from '../../../../src/shared/pipes/truncate/tuncate.pipe';
+import { AssetPipe, TruncatePipe } from '@pipes';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);

@@ -1,10 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  PostQuoteBankModel,
-  PricesService,
-  SymbolPriceBankModel,
-  TradeBankModel
-} from '@cybrid/cybrid-api-bank-angular';
+import { ActivatedRoute } from '@angular/router';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { FormControl, FormGroup } from '@angular/forms';
+
 import {
   BehaviorSubject,
   catchError,
@@ -16,33 +14,39 @@ import {
   takeUntil,
   timer
 } from 'rxjs';
+
+// Client
 import {
-  CODE,
-  EventService,
-  LEVEL
-} from '../../../../../src/shared/services/event/event.service';
-import { ErrorService } from '../../../../../src/shared/services/error/error.service';
-import {
-  ComponentConfig,
-  ConfigService
-} from '../../../../../src/shared/services/config/config.service';
-import {
-  Asset,
-  AssetService
-} from '../../../../../src/shared/services/asset/asset.service';
-import { FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { AssetPipe } from '../../../../../src/shared/pipes/asset/asset.pipe';
-import { compareObjects } from '../../../../../src/shared/utility/compare-object';
-import { symbolSplit } from '../../../../../src/shared/utility/symbol-split';
-import { symbolBuild } from '../../../../../src/shared/utility/symbol-build';
-import { QuoteService } from '../../../../../src/shared/services/quote/quote.service';
-import { TradeConfirmComponent } from '../trade-confirm/trade-confirm.component';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { TradeSummaryComponent } from '../trade-summary/trade-summary.component';
-import { Constants } from '../../../../../src/shared/constants/constants';
+  PostQuoteBankModel,
+  PricesService,
+  SymbolPriceBankModel,
+  TradeBankModel
+} from '@cybrid/cybrid-api-bank-angular';
 import SideEnum = PostQuoteBankModel.SideEnum;
-import { RoutingService } from '../../../../../src/shared/services/routing/routing.service';
+
+// Services
+import {
+  AssetService,
+  Asset,
+  EventService,
+  CODE,
+  LEVEL,
+  ErrorService,
+  ConfigService,
+  ComponentConfig,
+  QuoteService,
+  RoutingService
+} from '@services';
+
+// Pipes
+import { AssetPipe } from '@pipes';
+
+// Utility
+import { Constants } from '@constants';
+import { compareObjects, symbolSplit, symbolBuild } from '@utility';
+
+// Components
+import { TradeConfirmComponent, TradeSummaryComponent } from '@components';
 
 interface Display {
   asset: number | string;

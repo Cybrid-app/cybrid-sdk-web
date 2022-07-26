@@ -12,6 +12,33 @@ executors:
     docker:
       - image: cypress/base:16.14.2
 
+jobs:
+  publish:
+    docker:
+      - image: cimg/node:16.15.0
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run:
+          name: Install node modules
+          command: npm install
+      - run:
+          name: Package library
+          command: npm run package:library
+      - run:
+          name: Update version tag
+          command: |
+            cd dist/library
+            export TAG=$(git describe --tags --abbrev=0)
+            contents="$(jq -r --arg tag "$TAG" '.version = $tag' package.json)" && \
+            echo "${contents}" > package.json
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/.npmrc
+      - run:
+          name: Publish library
+          command: npm run publish:library
+
 workflows:
   web-build-and-test:
     jobs:
@@ -79,7 +106,7 @@ workflows:
           store_artifacts: true
 
       - cypress/run:
-          name: e2e chrome/edge@latest
+          name: e2e chrome@latest
           executor: cypress
           post-checkout:
             - run:
@@ -94,6 +121,21 @@ workflows:
                   apt update -y
                   dpkg --configure -a
                   dpkg -i google-chrome-stable_current_amd64.deb
+          start: npm start
+          command: npx cypress run --browser chrome
+          no-workspace: true
+          wait-on: http://localhost:4200
+          store_artifacts: true
+
+      - cypress/run:
+          name: e2e edge@latest
+          executor: cypress
+          post-checkout:
+            - run:
+                name: Install libraries
+                command: |
+                  apt update -y
+                  apt install -y software-properties-common apt-transport-https wget fonts-liberation xdg-utils gnupg
             - run:
                 name: Download/Install Edge stable
                 command: |
@@ -102,44 +144,18 @@ workflows:
                   apt update -y
                   apt-get -f install -y microsoft-edge-stable
           start: npm start
-          command: npx cypress run --browser chrome && npx cypress run --browser edge
+          command: npx cypress run --browser edge
           no-workspace: true
           wait-on: http://localhost:4200
           store_artifacts: true
 
-  publish:
-    when:
-      and:
-        - equal: [main, << pipeline.git.branch >>]
-    jobs:
-      - cypress/run:
-          name: e2e
-          executor: cypress
-          start: npm start
-          no-workspace: true
-          wait-on: http://localhost:4200
-          store_artifacts: true
-
-      - node/run:
+      - publish:
           requires:
-            - e2e
-          name: publish
-          version: 16.14.2
-          cache-version: v2
-          npm-run: package:library
-          post-steps:
-            - jq/install
-            - run:
-                name: Update version tag
-                command: |
-                  cd dist/library
-                  export TAG=$(git describe --tags --abbrev=0)
-                  contents="$(jq -r --arg tag "$TAG" '.version = $tag' package.json)" && \
-                  echo "${contents}" > package.json
-            - run:
-                name: Authenticate with registry
-                command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/.npmrc
-            - run:
-                name: Publish library
-                command: |
-                  npm run publish:library
+            - e2e chromium@101.0.4951.64
+            - e2e chromium@102.0.5005.61
+            - e2e chrome@latest
+            - e2e edge@latest
+          filters:
+            branches:
+              only:
+                - main

@@ -30,9 +30,8 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.json",
             "inlineStyleLanguage": "scss",
-            "assets": ["src/assets", "src/favicon.ico"],
-            "styles": ["src/styles.scss"],
-            "scripts": []
+            "assets": ["src/favicon.ico"],
+            "styles": ["src/styles.scss"]
           },
           "configurations": {
             "production": {
@@ -93,10 +92,9 @@
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "inlineStyleLanguage": "scss",
-            "assets": ["src/assets", "src/favicon.ico"],
+            "assets": ["src/favicon.ico"],
             "styles": ["src/styles.scss"],
-            "codeCoverage": true,
-            "codeCoverageExclude": ["src/shared/pipes/asset/mock-asset.pipe.ts"]
+            "codeCoverage": true
           }
         },
         "lint": {
@@ -161,7 +159,7 @@
             "polyfills": "library/src/polyfills.ts",
             "tsConfig": "library/tsconfig.json",
             "inlineStyleLanguage": "scss",
-            "styles": ["src/shared/styles/theme.scss"]
+            "styles": ["library/src/shared/styles/theme.scss"]
           },
           "configurations": {
             "production": {
@@ -221,9 +219,13 @@
             "polyfills": "library/src/polyfills.ts",
             "tsConfig": "library/tsconfig.spec.json",
             "karmaConfig": "library/karma.conf.js",
-            "codeCoverageExclude": ["library/src/app/modules/*"],
+            "codeCoverageExclude": [
+              "library/src/app/modules/*",
+              "library/src/shared/utility/*",
+              "library/src/shared/pipes/asset/mock-asset.pipe.ts"
+            ],
             "inlineStyleLanguage": "scss",
-            "styles": ["src/shared/styles/theme.scss"],
+            "styles": ["library/src/shared/styles/theme.scss"],
             "codeCoverage": true
           }
         },
