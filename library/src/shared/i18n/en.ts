@@ -38,6 +38,7 @@ export default {
         unit: 'seconds'
       },
       purchase: 'Purchase',
+      sell: 'Sell',
       loading: 'Quote Pending',
       error: {
         quote: 'Error fetching quote',

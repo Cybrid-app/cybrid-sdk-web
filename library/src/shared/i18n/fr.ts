@@ -39,6 +39,7 @@ export default {
         unit: 'seconds'
       },
       purchase: 'Acheter',
+      sell: 'Vendre',
       loading: 'Devis en attente',
       error: {
         quote: 'Erreur lors de la récupération du devis',
