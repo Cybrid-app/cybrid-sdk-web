@@ -28,7 +28,11 @@
           </span>
           <div>
             <span>
-              {{ (trade.deliver_amount! | asset: data.counter_asset) + ' ' }}
+              {{
+                data.counter_asset.symbol +
+                  (trade.deliver_amount! | asset: data.counter_asset) +
+                  ' '
+              }}
             </span>
             <span class="mat-hint">{{ data.counter_asset.code }}</span>
           </div>
@@ -54,7 +58,11 @@
           <span>{{ 'trade.transaction' | translate }}</span>
           <div>
             <span>
-              {{ (trade.fee! | asset: data.counter_asset:'trade') + ' ' }}
+              {{
+                data.counter_asset.symbol +
+                  (trade.fee! | asset: data.counter_asset:'trade') +
+                  ' '
+              }}
             </span>
             <span class="mat-hint">{{ data.counter_asset.code }}</span>
           </div>
@@ -87,7 +95,11 @@
           </span>
           <div>
             <span>
-              {{ (trade.receive_amount! | asset: data.counter_asset) + ' ' }}
+              {{
+                data.counter_asset.symbol +
+                  (trade.receive_amount! | asset: data.counter_asset) +
+                  ' '
+              }}
             </span>
             <span class="mat-hint">{{ data.counter_asset.code }}</span>
           </div>
@@ -113,7 +125,11 @@
           <span>{{ 'trade.transaction' | translate }}</span>
           <div>
             <span>
-              {{ (trade.fee! | asset: data.counter_asset:'trade') + ' ' }}
+              {{
+                data.counter_asset.symbol +
+                  (trade.fee! | asset: data.counter_asset:'trade') +
+                  ' '
+              }}
             </span>
             <span class="mat-hint">{{ data.counter_asset.code }}</span>
           </div>

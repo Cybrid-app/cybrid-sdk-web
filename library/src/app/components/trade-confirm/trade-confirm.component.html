@@ -16,7 +16,11 @@
           }}</span>
           <div>
             <span>
-              {{ (quote.deliver_amount! | asset: counter_asset) + ' ' }}
+              {{
+                counter_asset.symbol +
+                  (quote.deliver_amount! | asset: counter_asset) +
+                  ' '
+              }}
             </span>
             <span class="mat-hint">{{ counter_asset.code }}</span>
           </div>
@@ -40,7 +44,11 @@
           <span>{{ 'trade.transaction' | translate }}</span>
           <div>
             <span
-              >{{ (quote.fee! | asset: counter_asset:'trade') + ' ' }}
+              >{{
+                counter_asset.symbol +
+                  (quote.fee! | asset: counter_asset:'trade') +
+                  ' '
+              }}
             </span>
             <span class="mat-hint">{{ counter_asset.code }}</span>
           </div>
@@ -54,7 +62,9 @@
           }}</span>
           <div>
             <span>{{
-              (quote.receive_amount! | asset: counter_asset) + ' '
+              counter_asset.symbol +
+                (quote.receive_amount! | asset: counter_asset) +
+                ' '
             }}</span>
             <span class="mat-hint"> {{ counter_asset.code }}</span>
           </div>
@@ -75,7 +85,9 @@
         <div class="cybrid-list-item">
           <span>{{ 'trade.transaction' | translate }}</span>
           <div>
-            <span>{{ (quote.fee! | asset: counter_asset) + ' ' }}</span>
+            <span>{{
+              counter_asset.symbol + (quote.fee! | asset: counter_asset) + ' '
+            }}</span>
             <span class="mat-hint">{{ counter_asset.code }}</span>
           </div>
         </div>
