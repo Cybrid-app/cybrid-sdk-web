@@ -93,7 +93,6 @@ export class AssetPipe implements PipeTransform, OnDestroy {
           }
           if (asset.type == 'fiat') {
             return (
-              asset.symbol +
               formatNumber(new Big(integer).toNumber(), this.locale) +
               separator!.char +
               decimal.slice(0, 2)
@@ -112,10 +111,7 @@ export class AssetPipe implements PipeTransform, OnDestroy {
             Constants.MIN_FRACTION_DIGITS.toString() +
             '-' +
             asset.decimals.toString();
-          return (
-            asset.symbol +
-            formatNumber(tradeUnit.toNumber(), this.locale, digitsInfo)
-          );
+          return formatNumber(tradeUnit.toNumber(), this.locale, digitsInfo);
         }
       }
     }

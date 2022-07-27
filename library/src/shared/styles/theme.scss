@@ -1,4 +1,5 @@
 @use '@angular/material' as mat;
+@import '~@angular/material/theming';
 @include mat.core();
 
 $dark-primary-text: rgba(black, 0.87);
@@ -189,6 +190,43 @@ $light-theme: mat.define-light-theme(
     @extend .mat-hint;
     @extend .mat-h5;
     margin: 0;
+  }
+
+  .cybrid-h1 {
+    @extend .mat-h1;
+    margin: 0;
+  }
+
+  .cybrid-h2 {
+    @extend .mat-hint;
+    @extend .mat-h2;
+    font-weight: 400;
+    margin: 0;
+  }
+
+  .cybrid-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    .mat-h2 {
+      font-weight: 400;
+      margin: 0;
+    }
+  }
+
+  .cybrid-action-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 0.5rem;
+    div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+    }
   }
 
   .cybrid-navigation {

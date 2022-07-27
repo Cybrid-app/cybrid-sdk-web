@@ -26,6 +26,18 @@ table {
   }
 }
 
+.cybrid-portfolio-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+  div {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+}
+
 .cybrid-currency-wrapper {
   display: flex;
   flex-direction: row;

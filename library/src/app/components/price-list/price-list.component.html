@@ -42,7 +42,12 @@
         </th>
         <td id="price" mat-cell *matCellDef="let symbol">
           <div class="cybrid-price-cell">
-            <span>{{ symbol.buy_price | asset: symbol.counter_asset }} </span>
+            <span
+              >{{
+                symbol.counter_asset.symbol +
+                  (symbol.buy_price | asset: symbol.counter_asset)
+              }}
+            </span>
             <span class="cybrid-hint">({{ symbol.counter_asset.code }})</span>
           </div>
         </td>

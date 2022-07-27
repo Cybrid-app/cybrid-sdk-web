@@ -1,11 +1,18 @@
 import { OnDestroy, Pipe, PipeTransform } from '@angular/core';
-import { AssetBankModel } from '@cybrid/cybrid-api-bank-angular';
-import { Constants } from '../../constants/constants';
-import { Subject } from 'rxjs';
 import { formatNumber } from '@angular/common';
-import { Big } from 'big.js';
 import '@angular/common/locales/global/fr';
-import { Asset } from '../../services/asset/asset.service';
+
+import { Subject } from 'rxjs';
+import { Big } from 'big.js';
+
+// Client
+import { AssetBankModel } from '@cybrid/cybrid-api-bank-angular';
+
+// Services
+import { Asset } from '@services';
+
+// Utility
+import { Constants } from '@constants';
 
 interface NumberSeparator {
   locale: string;
@@ -48,13 +55,15 @@ export class MockAssetPipe implements PipeTransform, OnDestroy {
       // Base coin unit without formatting, ex. 2000000000 Wei
       // Type 'string' is returned here to disable scientific notation from JS 'number' Type
       case 'base': {
+        const defaultPE = Big.PE;
+
         // Set the positive exponent value at and above which toString returns exponential notation.
         Big.PE = 100;
 
         let base = baseUnit.toString();
 
-        // Reset
-        Big.PE = 21;
+        // Reset to default
+        Big.PE = defaultPE;
         return base;
       }
 
@@ -71,14 +80,12 @@ export class MockAssetPipe implements PipeTransform, OnDestroy {
           }
           if (asset.type == 'fiat') {
             return (
-              asset.symbol +
               formatNumber(new Big(integer).toNumber(), this.locale) +
               separator!.char +
               decimal.slice(0, 2)
             );
           } else {
             return (
-              asset.symbol +
               formatNumber(new Big(integer).toNumber(), this.locale) +
               separator!.char +
               decimal
@@ -91,10 +98,7 @@ export class MockAssetPipe implements PipeTransform, OnDestroy {
             Constants.MIN_FRACTION_DIGITS.toString() +
             '-' +
             asset.decimals.toString();
-          return (
-            asset.symbol +
-            formatNumber(tradeUnit.toNumber(), this.locale, digitsInfo)
-          );
+          return formatNumber(tradeUnit.toNumber(), this.locale, digitsInfo);
         }
       }
     }

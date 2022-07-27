@@ -1,8 +1,53 @@
 <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
   <ng-container *ngIf="(isLoading$ | async) !== true">
-    <ng-container *ngIf="balance$ | async as balance">
-      <h1>{{ balance | asset: counter_asset }}</h1>
+    <ng-container *ngIf="configService.getConfig$() | async as config">
+      <div class="cybrid-header">
+        <button
+          *ngIf="config.routing"
+          mat-icon-button
+          color="primary"
+          (click)="onNavigate()"
+        >
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <span class="mat-h2">Crypto Portfolio</span>
+        <button mat-icon-button color="primary">
+          <mat-icon>notifications_active</mat-icon>
+        </button>
+      </div>
     </ng-container>
+    <ng-container *ngIf="balance$ | async as balance">
+      <div class="cybrid-portfolio-header">
+        <span class="mat-hint">TOTAL VALUE</span>
+        <div>
+          <span class="cybrid-h2">{{ counter_asset.symbol }}</span>
+          <span class="cybrid-h1">
+            {{ balance | asset: counter_asset }}
+          </span>
+          <span class="cybrid-h2">{{ counter_asset.code }}</span>
+        </div>
+      </div>
+    </ng-container>
+    <div class="cybrid-action-row">
+      <div>
+        <button mat-mini-fab color="primary">
+          <mat-icon>add</mat-icon>
+        </button>
+        <span class="mat-hint">BUY</span>
+      </div>
+      <div>
+        <button mat-mini-fab color="primary">
+          <mat-icon>remove</mat-icon>
+        </button>
+        <span class="mat-hint">SELL</span>
+      </div>
+      <div>
+        <button mat-mini-fab color="primary">
+          <mat-icon>swap_horizontal</mat-icon>
+        </button>
+        <span class="mat-hint">SWAP</span>
+      </div>
+    </div>
     <table id="accountList" mat-table [dataSource]="dataSource">
       <ng-container matColumnDef="account">
         <th mat-header-cell *matHeaderCellDef>Account</th>
@@ -23,7 +68,8 @@
                 }}</span>
               </div>
               <span style="margin-top: -5px" class="cybrid-hint cybrid-code">{{
-                account.price.sell_price | asset: account.counter_asset
+                account.counter_asset.symbol +
+                  (account.price.sell_price | asset: account.counter_asset)
               }}</span>
             </div>
           </div>
@@ -43,9 +89,12 @@
               <span
                 >{{ account.account.platform_balance | asset: account.asset }}
               </span>
-              <span class="cybrid-hint cybrid-code" style="margin-top: -5px">{{
-                account.value | asset: account.counter_asset
-              }}</span>
+              <span class="cybrid-hint cybrid-code" style="margin-top: -5px">
+                {{
+                  account.counter_asset.symbol +
+                    (account.value | asset: account.counter_asset)
+                }}</span
+              >
             </div>
           </div>
         </td>
