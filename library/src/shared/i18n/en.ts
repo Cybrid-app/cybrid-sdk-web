@@ -56,5 +56,12 @@ export default {
       loading: 'Submitting Crypto Order',
       error: 'Error fetching trade'
     }
+  },
+
+  // Account list component
+  accountList: {
+    total: 'TOTAL VALUE',
+    account: 'Account',
+    balance: 'Balance'
   }
 };

@@ -14,7 +14,7 @@
     </ng-container>
     <ng-container *ngIf="balance$ | async as balance">
       <div class="cybrid-balance">
-        <span class="mat-hint">TOTAL VALUE</span>
+        <span class="mat-hint">{{ 'accountList.total' | translate }}</span>
         <div>
           <h1>
             {{ balance | currency }}
@@ -25,7 +25,9 @@
     </ng-container>
     <table id="accountList" mat-table matSort [dataSource]="dataSource">
       <ng-container matColumnDef="account">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Account</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'accountList.account' | translate }}
+        </th>
         <td id="account" mat-cell *matCellDef="let account">
           <div class="cybrid-account-cell">
             <img
@@ -57,7 +59,7 @@
           mat-sort-header
           arrowPosition="before"
         >
-          Balance
+          {{ 'accountList.balance' | translate }}
         </th>
         <td id="balance" mat-cell *matCellDef="let account">
           <div class="cybrid-asset-cell">

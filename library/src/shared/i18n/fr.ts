@@ -57,5 +57,12 @@ export default {
       loading: 'Soumettre une commande de crypto',
       error: 'Erreur lors de la récupération de léchange'
     }
+  },
+
+  // Account list component
+  accountList: {
+    total: 'VALEUR TOTALE',
+    account: 'Compte',
+    balance: 'Solde'
   }
 };
