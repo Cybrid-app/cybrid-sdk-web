@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
   BehaviorSubject,
   catchError,
@@ -26,6 +26,7 @@ import {
 
 // Utility
 import { Constants } from '@constants';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-account-list',
@@ -33,6 +34,11 @@ import { Constants } from '@constants';
   styleUrls: ['./account-list.component.scss']
 })
 export class AccountListComponent implements OnInit, OnDestroy {
+  @ViewChild(MatSort) set matSort(sort: MatSort) {
+    this.dataSource.sort = sort;
+    this.dataSource.sortingDataAccessor = this.sortingDataAccessor;
+  }
+
   balance$ = new BehaviorSubject<number>(0);
 
   isLoading$ = new BehaviorSubject(true);
@@ -118,6 +124,17 @@ export class AccountListComponent implements OnInit, OnDestroy {
           this.getAccounts();
         }
       });
+  }
+
+  sortingDataAccessor(account: Account, columnDef: string) {
+    switch (columnDef) {
+      case 'account':
+        return account.account.asset!;
+      case 'balance':
+        return account.value!;
+      default:
+        return '';
+    }
   }
 
   onNavigate(): void {

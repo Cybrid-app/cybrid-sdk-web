@@ -255,9 +255,6 @@ $light-theme: mat.define-light-theme(
     // Adds 1px border maintaining theme color
     @extend .mat-button-toggle-group-appearance-standard !optional;
 
-    tr {
-      height: 50px !important;
-    }
     th:first-of-type {
       border-top-left-radius: 5px;
     }

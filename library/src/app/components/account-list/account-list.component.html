@@ -23,9 +23,9 @@
         </div>
       </div>
     </ng-container>
-    <table id="accountList" mat-table [dataSource]="dataSource">
+    <table id="accountList" mat-table matSort [dataSource]="dataSource">
       <ng-container matColumnDef="account">
-        <th mat-header-cell *matHeaderCellDef>Account</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Account</th>
         <td id="account" mat-cell *matCellDef="let account">
           <div class="cybrid-account-cell">
             <img
@@ -51,7 +51,14 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="balance">
-        <th mat-header-cell *matHeaderCellDef>Balance</th>
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          arrowPosition="before"
+        >
+          Balance
+        </th>
         <td id="balance" mat-cell *matCellDef="let account">
           <div class="cybrid-asset-cell">
             <span

@@ -17,6 +17,7 @@ import { of, throwError } from 'rxjs';
 
 // Services
 import {
+  Account,
   AccountService,
   ConfigService,
   ErrorService,
@@ -162,5 +163,22 @@ describe('AccountListComponent', () => {
       'trade',
       'account-list'
     );
+  });
+
+  it('should sort custom data fields', () => {
+    // Get first account ('ETH-USD')
+    let account: Account = TestConstants.ACCOUNT_OVERVIEW.accounts[0];
+
+    // Sort by account
+    let sort = component.sortingDataAccessor(account, 'account');
+    expect(sort).toEqual(account.account.asset!);
+
+    // Sort by balance
+    sort = component.sortingDataAccessor(account, 'balance');
+    expect(sort).toEqual(account.value);
+
+    // Sort by !account || !balance
+    sort = component.sortingDataAccessor(account, 'test');
+    expect(sort).toEqual('');
   });
 });
