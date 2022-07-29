@@ -23,7 +23,13 @@
         </div>
       </div>
     </ng-container>
-    <table id="accountList" mat-table matSort [dataSource]="dataSource">
+    <table
+      id="accountList"
+      mat-table
+      matSort
+      [dataSource]="dataSource"
+      class="mat-button-toggle-group-appearance-standard"
+    >
       <ng-container matColumnDef="account">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{ 'accountList.account' | translate }}
@@ -40,11 +46,11 @@
                 <div class="cybrid-symbol">
                   <span>{{ account.asset.name }}</span>
                 </div>
-                <span class="cybrid-hint cybrid-h5 cybrid-code">{{
+                <span class="mat-hint cybrid-h5 cybrid-code">{{
                   account.asset.code
                 }}</span>
               </div>
-              <span class="cybrid-hint cybrid-h5 cybrid-code">{{
+              <span class="mat-hint cybrid-h5 cybrid-code">{{
                 account.counter_asset.symbol +
                   (account.price.sell_price | asset: account.counter_asset)
               }}</span>
@@ -66,7 +72,7 @@
             <span
               >{{ account.account.platform_balance | asset: account.asset }}
             </span>
-            <span class="cybrid-hint cybrid-h5 cybrid-code">
+            <span class="mat-hint cybrid-h5 cybrid-code">
               {{ account.value | currency }}</span
             >
           </div>
