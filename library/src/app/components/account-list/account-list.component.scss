@@ -1,41 +1,7 @@
-table {
-  width: 100%;
-  border: 1px solid #0000001f;
-  border-radius: 5px;
-
-  .mat-column-price {
-    width: 80px;
-  }
-  th:first-of-type {
-    border-top-left-radius: 5px;
-  }
-  th:last-of-type {
-    border-top-right-radius: 5px;
-    text-align: end;
-  }
-  tr:last-of-type {
-    td {
-      border-bottom: none;
-    }
-    td:first-of-type {
-      border-bottom-left-radius: 5px;
-    }
-    td:last-of-type {
-      border-bottom-right-radius: 5px;
-    }
-  }
-}
-
-.cybrid-portfolio-header {
+.cybrid-balance {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 1rem;
-  div {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-  }
 }
 
 .cybrid-currency-wrapper {
@@ -44,9 +10,12 @@ table {
   justify-content: flex-start;
   align-items: baseline;
   gap: 0.25rem;
+  span:first-of-type {
+    margin-bottom: -5px;
+  }
 }
 
-.cybrid-asset-cell {
+.cybrid-account-cell {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -54,14 +23,13 @@ table {
   gap: 0.5rem;
 }
 
-.cybrid-price-cell {
+.cybrid-asset-cell {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: flex-end;
-  align-items: center;
-  gap: 0.25rem;
-  cybrid-hint {
-    line-height: 0.8rem;
+  align-items: flex-end;
+  .cybrid-code {
+    margin-top: -5px;
   }
 }
 
@@ -81,13 +49,4 @@ table {
 
 .cybrid-no-data {
   text-align: center;
-}
-
-@media screen and (max-width: 599px) {
-  .cybrid-currency-wrapper {
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 0;
-  }
 }

@@ -1,31 +1,3 @@
-table {
-  width: 100%;
-  border: 1px solid #0000001f;
-  border-radius: 5px;
-
-  .mat-column-price {
-    width: 80px;
-  }
-  th:first-of-type {
-    border-top-left-radius: 5px;
-  }
-  th:last-of-type {
-    border-top-right-radius: 5px;
-    text-align: end;
-  }
-  tr:last-of-type {
-    td {
-      border-bottom: none;
-    }
-    td:first-of-type {
-      border-bottom-left-radius: 5px;
-    }
-    td:last-of-type {
-      border-bottom-right-radius: 5px;
-    }
-  }
-}
-
 .cybrid-currency-wrapper {
   display: flex;
   flex-direction: row;

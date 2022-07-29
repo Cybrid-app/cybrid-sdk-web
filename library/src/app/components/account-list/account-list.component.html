@@ -1,5 +1,5 @@
 <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
-  <ng-container *ngIf="(isLoading$ | async) !== true">
+  <ng-container *ngIf="(isLoading$ | async) !== true; else loading">
     <ng-container *ngIf="configService.getConfig$() | async as config">
       <div class="cybrid-header">
         <button
@@ -10,64 +10,39 @@
         >
           <mat-icon>arrow_back</mat-icon>
         </button>
-        <span class="mat-h2">Crypto Portfolio</span>
-        <button mat-icon-button color="primary">
-          <mat-icon>notifications_active</mat-icon>
-        </button>
       </div>
     </ng-container>
     <ng-container *ngIf="balance$ | async as balance">
-      <div class="cybrid-portfolio-header">
+      <div class="cybrid-balance">
         <span class="mat-hint">TOTAL VALUE</span>
         <div>
-          <span class="cybrid-h2">{{ counter_asset.symbol }}</span>
-          <span class="cybrid-h1">
-            {{ balance | asset: counter_asset }}
-          </span>
-          <span class="cybrid-h2">{{ counter_asset.code }}</span>
+          <h1>
+            {{ balance | currency }}
+            <span class="mat-hint">{{ counter_asset.code }}</span>
+          </h1>
         </div>
       </div>
     </ng-container>
-    <div class="cybrid-action-row">
-      <div>
-        <button mat-mini-fab color="primary">
-          <mat-icon>add</mat-icon>
-        </button>
-        <span class="mat-hint">BUY</span>
-      </div>
-      <div>
-        <button mat-mini-fab color="primary">
-          <mat-icon>remove</mat-icon>
-        </button>
-        <span class="mat-hint">SELL</span>
-      </div>
-      <div>
-        <button mat-mini-fab color="primary">
-          <mat-icon>swap_horizontal</mat-icon>
-        </button>
-        <span class="mat-hint">SWAP</span>
-      </div>
-    </div>
     <table id="accountList" mat-table [dataSource]="dataSource">
       <ng-container matColumnDef="account">
         <th mat-header-cell *matHeaderCellDef>Account</th>
         <td id="account" mat-cell *matCellDef="let account">
-          <div class="cybrid-asset-cell">
+          <div class="cybrid-account-cell">
             <img
               class="cybrid-icon"
               src="{{ account.asset.url }}"
               alt="Crypto currency icon"
             />
-            <div style="display: flex; flex-direction: column">
+            <div class="cybrid-column">
               <div class="cybrid-currency-wrapper">
                 <div class="cybrid-symbol">
-                  <span class="name">{{ account.asset.name }}</span>
+                  <span>{{ account.asset.name }}</span>
                 </div>
-                <span class="cybrid-hint cybrid-code">{{
+                <span class="cybrid-hint cybrid-h5 cybrid-code">{{
                   account.asset.code
                 }}</span>
               </div>
-              <span style="margin-top: -5px" class="cybrid-hint cybrid-code">{{
+              <span class="cybrid-hint cybrid-h5 cybrid-code">{{
                 account.counter_asset.symbol +
                   (account.price.sell_price | asset: account.counter_asset)
               }}</span>
@@ -78,24 +53,13 @@
       <ng-container matColumnDef="balance">
         <th mat-header-cell *matHeaderCellDef>Balance</th>
         <td id="balance" mat-cell *matCellDef="let account">
-          <div class="cybrid-price-cell">
-            <div
-              style="
-                display: flex;
-                flex-direction: column;
-                align-items: flex-end;
-              "
+          <div class="cybrid-asset-cell">
+            <span
+              >{{ account.account.platform_balance | asset: account.asset }}
+            </span>
+            <span class="cybrid-hint cybrid-h5 cybrid-code">
+              {{ account.value | currency }}</span
             >
-              <span
-                >{{ account.account.platform_balance | asset: account.asset }}
-              </span>
-              <span class="cybrid-hint cybrid-code" style="margin-top: -5px">
-                {{
-                  account.counter_asset.symbol +
-                    (account.value | asset: account.counter_asset)
-                }}</span
-              >
-            </div>
           </div>
         </td>
       </ng-container>
@@ -104,6 +68,9 @@
     </table>
   </ng-container>
 </ng-container>
+<ng-template #loading>
+  <app-loading></app-loading>
+</ng-template>
 <ng-template #error>
   <mat-card>
     <mat-card-content>
