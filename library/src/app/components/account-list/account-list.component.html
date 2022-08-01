@@ -16,11 +16,8 @@
           <span class="mat-hint">{{ 'accountList.total' | translate }}</span>
           <div>
             <h1>
-              {{
-                counter_asset.symbol +
-                  (balance | currency: '':'':'':config.locale)
-              }}
-              <span class="mat-hint">{{ counter_asset.code }}</span>
+              {{ currentFiat.symbol + (balance | currency: '':'':'':config.locale) }}
+              <span class="mat-hint">{{ currentFiat.code }}</span>
             </h1>
           </div>
         </div>
@@ -78,7 +75,7 @@
               </span>
               <span class="mat-hint cybrid-h5 cybrid-code">
                 {{
-                  counter_asset.symbol +
+                  account.counter_asset.symbol +
                     (account.value | currency: '':'':'':config.locale)
                 }}</span
               >

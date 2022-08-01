@@ -21,7 +21,9 @@ import {
   ConfigService,
   EventService,
   ErrorService,
-  RoutingService
+  RoutingService,
+  AssetService,
+  Asset
 } from '@services';
 
 // Utility
@@ -40,13 +42,11 @@ export class AccountListComponent implements OnInit, OnDestroy {
   }
 
   balance$ = new BehaviorSubject<number>(0);
+  currentFiat: Asset = Constants.USD_ASSET;
 
   isLoading$ = new BehaviorSubject(true);
   isRecoverable$ = new BehaviorSubject(true);
   private unsubscribe$ = new Subject();
-
-  // todo(Dustin) look into getting counter_asset as part of the config
-  counter_asset = Constants.USD_ASSET;
 
   dataSource = new MatTableDataSource<Account>();
   displayedColumns: string[] = ['account', 'balance'];
@@ -54,6 +54,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
 
   constructor(
     public configService: ConfigService,
+    private assetService: AssetService,
     private eventService: EventService,
     private errorService: ErrorService,
     private accountService: AccountService,
@@ -66,6 +67,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
       CODE.COMPONENT_INIT,
       'Initializing account-list component'
     );
+    this.getCurrentFiat();
     this.getAccounts();
     this.refreshData();
   }
@@ -73,6 +75,18 @@ export class AccountListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unsubscribe$.next('');
     this.unsubscribe$.complete();
+  }
+
+  getCurrentFiat(): void {
+    this.configService
+      .getConfig$()
+      .pipe(
+        takeUntil(this.unsubscribe$),
+        map((config) => {
+          this.currentFiat = this.assetService.getAsset(config.fiat);
+        })
+      )
+      .subscribe();
   }
 
   getAccounts(): void {

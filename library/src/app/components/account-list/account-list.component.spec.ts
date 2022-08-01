@@ -19,6 +19,7 @@ import { of, throwError } from 'rxjs';
 import {
   Account,
   AccountService,
+  AssetService,
   ConfigService,
   ErrorService,
   EventService,
@@ -49,6 +50,7 @@ describe('AccountListComponent', () => {
     'setConfig',
     'getConfig$'
   ]);
+  let MockAssetService = jasmine.createSpyObj('AssetService', ['getAsset']);
   let MockAccountService = jasmine.createSpyObj('AccountService', [
     'getPortfolio'
   ]);
@@ -77,6 +79,7 @@ describe('AccountListComponent', () => {
       ],
       providers: [
         { provide: AssetPipe, useClass: MockAssetPipe },
+        { provide: AssetService, useValue: MockAssetService },
         { provide: EventService, useValue: MockEventService },
         { provide: ErrorService, useValue: MockErrorService },
         { provide: ConfigService, useValue: MockConfigService },
@@ -89,6 +92,8 @@ describe('AccountListComponent', () => {
     MockErrorService = TestBed.inject(ErrorService);
     MockConfigService = TestBed.inject(ConfigService);
     MockConfigService.getConfig$.and.returnValue(of(TestConstants.CONFIG));
+    MockAssetService = TestBed.inject(AssetService);
+    MockAssetService.getAsset.and.returnValue(TestConstants.USD_ASSET);
     MockAccountService = TestBed.inject(AccountService);
     MockAccountService.getPortfolio.and.returnValue(
       of(TestConstants.ACCOUNT_OVERVIEW)

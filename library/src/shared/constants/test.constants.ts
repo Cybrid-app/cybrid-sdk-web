@@ -29,7 +29,8 @@ export class TestConstants {
     locale: 'en-US',
     theme: 'LIGHT',
     routing: true,
-    customer: TestConstants.CUSTOMER_GUID
+    customer: TestConstants.CUSTOMER_GUID,
+    fiat: 'USD'
   };
 
   // Extension of AssetBankModel to include urls
