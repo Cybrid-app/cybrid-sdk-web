@@ -13,7 +13,12 @@
         <mat-icon matPrefix class="mat-hint">search</mat-icon>
       </mat-form-field>
     </ng-container>
-    <table id="priceList" mat-table [dataSource]="dataSource">
+    <table
+      id="priceList"
+      mat-table
+      [dataSource]="dataSource"
+      class="mat-button-toggle-group-appearance-standard"
+    >
       <ng-container matColumnDef="symbol">
         <th mat-header-cell *matHeaderCellDef>
           {{ 'priceList.table.symbol' | translate }}
@@ -29,7 +34,7 @@
               <div class="cybrid-symbol">
                 <span class="name">{{ symbol.asset.name }}</span>
               </div>
-              <span class="cybrid-hint cybrid-code">{{
+              <span class="mat-hint cybrid-h5 cybrid-code">{{
                 symbol.asset.code
               }}</span>
             </div>
@@ -43,7 +48,9 @@
         <td id="price" mat-cell *matCellDef="let symbol">
           <div class="cybrid-price-cell">
             <span>{{ symbol.buy_price | asset: symbol.counter_asset }} </span>
-            <span class="cybrid-hint">({{ symbol.counter_asset.code }})</span>
+            <span class="mat-hint cybrid-h5">{{
+              symbol.counter_asset.code
+            }}</span>
           </div>
         </td>
       </ng-container>

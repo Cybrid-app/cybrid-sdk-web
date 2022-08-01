@@ -38,6 +38,7 @@ export default {
         unit: 'seconds'
       },
       purchase: 'Purchase',
+      sell: 'Sell',
       loading: 'Quote Pending',
       error: {
         quote: 'Error fetching quote',
@@ -54,6 +55,17 @@ export default {
       id: 'Transaction ID:',
       loading: 'Submitting Crypto Order',
       error: 'Error fetching trade'
+    }
+  },
+
+  // Account list component
+  accountList: {
+    total: 'TOTAL VALUE',
+    account: 'Account',
+    balance: 'Balance',
+    error: {
+      account: 'Error fetching accounts',
+      noData: 'No accounts found'
     }
   }
 };

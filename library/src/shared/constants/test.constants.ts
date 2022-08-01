@@ -1,13 +1,20 @@
+// Client
 import {
+  AccountBankModel,
+  AccountListBankModel,
   PostQuoteBankModel,
   QuoteBankModel,
   SymbolPriceBankModel,
   TradeBankModel
 } from '@cybrid/cybrid-api-bank-angular';
-import { SymbolPrice } from '../../app/components/price-list/price-list.component';
-import { ComponentConfig } from '../services/config/config.service';
-import { Asset } from '../services/asset/asset.service';
-import { Constants } from './constants';
+
+// Services
+import { ComponentConfig, Asset } from '@services';
+
+// Components
+import { SymbolPrice } from '@components';
+import { Constants } from '@constants';
+import { AccountOverview } from '../services/account/account.service';
 
 export class TestConstants {
   // For JWT validation testing
@@ -22,7 +29,8 @@ export class TestConstants {
     locale: 'en-US',
     theme: 'LIGHT',
     routing: true,
-    customer: TestConstants.CUSTOMER_GUID
+    customer: TestConstants.CUSTOMER_GUID,
+    fiat: 'USD'
   };
 
   // Extension of AssetBankModel to include urls
@@ -115,5 +123,180 @@ export class TestConstants {
     deliver_amount: '103331',
     fee: '0',
     created_at: '2022-06-30T17:04:39.049Z'
+  };
+
+  // Account component test models
+
+  static SYMBOL_PRICE_BANK_MODEL_ARRAY: SymbolPriceBankModel[] = [
+    {
+      symbol: 'BTC-USD',
+      buy_price: '2129800',
+      sell_price: '2129700',
+      buy_price_last_updated_at: '2022-07-27T13:28:13.322Z',
+      sell_price_last_updated_at: '2022-07-27T13:28:13.322Z'
+    },
+    {
+      symbol: 'ETH-USD',
+      buy_price: '147030',
+      sell_price: '147050',
+      buy_price_last_updated_at: '2022-07-27T13:28:13.322Z',
+      sell_price_last_updated_at: '2022-07-27T13:28:13.322Z'
+    }
+  ];
+
+  static ACCOUNT_LIST_BANK_MODEL: AccountListBankModel = {
+    total: '4',
+    page: '0',
+    per_page: '10',
+    objects: [
+      {
+        type: 'trading',
+        guid: '85f532eff8604acc6aae30da86894eef',
+        created_at: '2022-06-15T15:37:20.950Z',
+        asset: 'ETH',
+        name: 'Ethereum',
+        customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+        platform_balance: '4.9977367924308e21',
+        platform_available: '0',
+        state: 'created'
+      },
+      {
+        type: 'trading',
+        guid: 'd97bbff33783c4a56806bb94dde9eacb',
+        created_at: '2022-06-15T15:36:44.627Z',
+        asset: 'BTC',
+        name: 'Bitcoin',
+        customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+        platform_balance: '23218708499',
+        platform_available: '0',
+        state: 'created'
+      },
+      {
+        type: 'fee',
+        guid: 'b5736b0697e572de9b0dae0ea1f1b318',
+        created_at: '2022-05-16T01:53:11.842Z',
+        asset: 'USD',
+        name: 'Fee platform account for bank b36cf9028e2356de7732e4c505c84fbc (generated)',
+        bank_guid: 'b36cf9028e2356de7732e4c505c84fbc',
+        platform_balance: '0',
+        platform_available: '0',
+        state: 'created'
+      },
+      {
+        type: 'backstopped',
+        guid: 'c907b45a8eae49f135dc0d2eee734dce',
+        created_at: '2022-04-30T03:40:54.677Z',
+        asset: 'USD',
+        name: 'Sandbox backstopped platform account for bank b36cf9028e2356de7732e4c505c84fbc (generated)',
+        bank_guid: 'b36cf9028e2356de7732e4c505c84fbc',
+        platform_balance: '1920329026',
+        platform_available: '0',
+        state: 'created'
+      }
+    ]
+  };
+
+  static ACCOUNT_BANK_MODEL_BTC: AccountBankModel = {
+    type: 'trading',
+    guid: 'd97bbff33783c4a56806bb94dde9eacb',
+    created_at: '2022-06-15T15:36:44.627Z',
+    asset: 'BTC',
+    name: 'Bitcoin',
+    customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+    platform_balance: '23218708499',
+    platform_available: '0',
+    state: 'created'
+  };
+
+  static ACCOUNT_BANK_MODEL_ETH: AccountBankModel = {
+    type: 'trading',
+    guid: '85f532eff8604acc6aae30da86894eef',
+    created_at: '2022-06-15T15:37:20.950Z',
+    asset: 'ETH',
+    name: 'Ethereum',
+    customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+    platform_balance: '4.9977367924308e21',
+    platform_available: '0',
+    state: 'created'
+  };
+
+  static ACCOUNT_OVERVIEW: AccountOverview = {
+    accounts: [
+      {
+        asset: {
+          type: 'crypto',
+          code: 'ETH',
+          name: 'Ethereum',
+          symbol: 'Ξ',
+          decimals: '18',
+          url: 'https://images.cybrid.xyz/sdk/assets/svg/color/eth.svg'
+        },
+        counter_asset: {
+          type: 'fiat',
+          code: 'USD',
+          name: 'United States Dollar',
+          symbol: '$',
+          decimals: '2',
+          url: 'https://images.cybrid.xyz/sdk/assets/svg/color/usd.svg'
+        },
+        price: {
+          symbol: 'ETH-USD',
+          buy_price: '150040',
+          sell_price: '150030',
+          buy_price_last_updated_at: '2022-07-27T16:52:36.137Z',
+          sell_price_last_updated_at: '2022-07-27T16:52:36.137Z'
+        },
+        value: 7498108.523601552,
+        account: {
+          type: 'trading',
+          guid: '85f532eff8604acc6aae30da86894eef',
+          created_at: '2022-06-15T15:37:20.950Z',
+          asset: 'ETH',
+          name: 'Ethereum',
+          customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+          platform_balance: '4.9977394678408e21',
+          platform_available: '0',
+          state: 'created'
+        }
+      },
+      {
+        asset: {
+          type: 'crypto',
+          code: 'BTC',
+          name: 'Bitcoin',
+          symbol: '₿',
+          decimals: '8',
+          url: 'https://images.cybrid.xyz/sdk/assets/svg/color/btc.svg'
+        },
+        counter_asset: {
+          type: 'fiat',
+          code: 'USD',
+          name: 'United States Dollar',
+          symbol: '$',
+          decimals: '2',
+          url: 'https://images.cybrid.xyz/sdk/assets/svg/color/usd.svg'
+        },
+        price: {
+          symbol: 'BTC-USD',
+          buy_price: '2162300',
+          sell_price: '2162200',
+          buy_price_last_updated_at: '2022-07-27T16:52:36.137Z',
+          sell_price_last_updated_at: '2022-07-27T16:52:36.137Z'
+        },
+        value: 5020349.15165378,
+        account: {
+          type: 'trading',
+          guid: 'd97bbff33783c4a56806bb94dde9eacb',
+          created_at: '2022-06-15T15:36:44.627Z',
+          asset: 'BTC',
+          name: 'Bitcoin',
+          customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+          platform_balance: '23218708499',
+          platform_available: '0',
+          state: 'created'
+        }
+      }
+    ],
+    balance: 12518457.675255332
   };
 }

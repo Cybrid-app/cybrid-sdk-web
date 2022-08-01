@@ -1,13 +1,20 @@
 import { Injectable } from '@angular/core';
+
+import { map, take } from 'rxjs';
+
+// Client
 import {
   AssetBankModel,
   PostQuoteBankModel,
   QuotesService
 } from '@cybrid/cybrid-api-bank-angular';
-import { AssetPipe } from '../../pipes/asset/asset.pipe';
-import { symbolBuild } from '../../utility/symbol-build';
-import { map, take } from 'rxjs';
-import { ComponentConfig, ConfigService } from '../config/config.service';
+
+// Services
+import { ComponentConfig, ConfigService } from '@services';
+
+// Utility
+import { AssetPipe } from '@pipes';
+import { symbolBuild } from '@utility';
 
 @Injectable({
   providedIn: 'root'

@@ -1,10 +1,4 @@
-import {
-  AfterViewChecked,
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit
-} from '@angular/core';
+import { AfterViewChecked, Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationExtras } from '@angular/router';
 import { UntypedFormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
@@ -72,8 +66,7 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
     public configService: ConfigService,
     private routingService: RoutingService,
     private assetService: AssetService,
-    private pricesService: PricesService,
-    private chdRef: ChangeDetectorRef
+    private pricesService: PricesService
   ) {}
 
   ngOnInit() {
@@ -160,7 +153,6 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
           this.refreshSub.unsubscribe();
           this.dataSource.data = [];
           this.getPricesError = true;
-          this.chdRef.detectChanges();
           return of(err);
         })
       )

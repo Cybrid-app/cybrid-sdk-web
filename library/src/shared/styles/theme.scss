@@ -185,8 +185,24 @@ $light-theme: mat.define-light-theme(
 
 /* Global Styles */
 .cybrid-global {
-  .cybrid-hint {
+  .cybrid-column {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cybrid-h1 {
+    @extend .mat-h1;
+    margin: 0;
+  }
+
+  .cybrid-h2 {
     @extend .mat-hint;
+    @extend .mat-h2;
+    font-weight: 400;
+    margin: 0;
+  }
+
+  .cybrid-h5 {
     @extend .mat-h5;
     margin: 0;
   }
@@ -225,6 +241,30 @@ $light-theme: mat.define-light-theme(
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+  }
+
+  table {
+    width: 100%;
+    border-radius: 5px;
+
+    th:first-of-type {
+      border-top-left-radius: 5px;
+    }
+    th:last-of-type {
+      border-top-right-radius: 5px;
+      text-align: end;
+    }
+    tr:last-of-type {
+      td {
+        border-bottom: none;
+      }
+      td:first-of-type {
+        border-bottom-left-radius: 5px;
+      }
+      td:last-of-type {
+        border-bottom-right-radius: 5px;
+      }
+    }
   }
 
   /* Material Style Overrides */

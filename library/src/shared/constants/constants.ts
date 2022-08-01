@@ -1,5 +1,4 @@
-import { Asset } from '../services/asset/asset.service';
-import { ComponentConfig } from '../services/config/config.service';
+import { Asset, ComponentConfig } from '@services';
 
 export enum THEME {
   LIGHT = 'LIGHT',
@@ -44,7 +43,8 @@ export class Constants {
     locale: Constants.LOCALE,
     theme: Constants.THEME,
     routing: Constants.ROUTING,
-    customer: ''
+    customer: '',
+    fiat: 'USD'
   };
   static DEFAULT_COMPONENT = 'price-list';
 }

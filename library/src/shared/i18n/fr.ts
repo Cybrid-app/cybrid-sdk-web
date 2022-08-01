@@ -39,6 +39,7 @@ export default {
         unit: 'seconds'
       },
       purchase: 'Acheter',
+      sell: 'Vendre',
       loading: 'Devis en attente',
       error: {
         quote: 'Erreur lors de la récupération du devis',
@@ -55,6 +56,17 @@ export default {
       id: 'Transaction ID:',
       loading: 'Soumettre une commande de crypto',
       error: 'Erreur lors de la récupération de léchange'
+    }
+  },
+
+  // Account list component
+  accountList: {
+    total: 'VALEUR TOTALE',
+    account: 'Compte',
+    balance: 'Solde',
+    error: {
+      account: 'Erreur lors de la récupération des comptes',
+      noData: 'Aucun compte trouvé'
     }
   }
 };

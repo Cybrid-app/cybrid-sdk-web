@@ -103,6 +103,11 @@ interface ComponentConfig {
 
   // The current customer GUID
   customer: string;
+  
+  // The current fiat currency (counter asset for all value calculation)
+  // Supports: 'USD | CAD'
+  // Default: 'USD'
+  fiat: string;
 
   // Routing flag to enable or disable internal routing between components
   // Default: true
@@ -119,7 +124,8 @@ your_config = {
   refreshInterval: 10000,
   locale: 'fr-CA',
   theme: 'DARK',
-  customer: '969c744a02b11ed', //example GUID
+  customer: '969c744a02b11ed', //example GUID,
+  fiat: 'USD',
   routing: true
 };
 ```

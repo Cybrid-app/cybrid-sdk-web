@@ -1,11 +1,18 @@
 import { OnDestroy, Pipe, PipeTransform } from '@angular/core';
-import { AssetBankModel } from '@cybrid/cybrid-api-bank-angular';
-import { Constants } from '../../constants/constants';
-import { Subject } from 'rxjs';
 import { formatNumber } from '@angular/common';
-import { Big } from 'big.js';
 import '@angular/common/locales/global/fr';
-import { Asset } from '../../services/asset/asset.service';
+
+import { Subject } from 'rxjs';
+import { Big } from 'big.js';
+
+// Client
+import { AssetBankModel } from '@cybrid/cybrid-api-bank-angular';
+
+// Services
+import { Asset } from '@services';
+
+// Utility
+import { Constants } from '@constants';
 
 interface NumberSeparator {
   locale: string;
@@ -40,7 +47,7 @@ export class MockAssetPipe implements PipeTransform, OnDestroy {
     const baseUnit = new Big(value).mul(divisor);
 
     switch (unit) {
-      // Whole coin unit without formatting, ex. 0.0023 BTC
+      // Takes base units and returns trade units without formatting, ex. 0.0023 BTC
       case 'trade': {
         return tradeUnit.toNumber();
       }
@@ -48,17 +55,19 @@ export class MockAssetPipe implements PipeTransform, OnDestroy {
       // Base coin unit without formatting, ex. 2000000000 Wei
       // Type 'string' is returned here to disable scientific notation from JS 'number' Type
       case 'base': {
+        const defaultPE = Big.PE;
+
         // Set the positive exponent value at and above which toString returns exponential notation.
         Big.PE = 100;
 
         let base = baseUnit.toString();
 
-        // Reset
-        Big.PE = 21;
+        // Reset to default
+        Big.PE = defaultPE;
         return base;
       }
 
-      // Returns a formatted (localized) whole coin unit, ex. 1,230.22 ETH
+      // Takes base units and returns trade units with formatting, ex. 1,230.22 ETH
       case 'formatted': {
         if (tradeUnit.toString().includes('.')) {
           let separator = this.separator.find((value) => {

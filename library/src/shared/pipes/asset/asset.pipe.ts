@@ -1,12 +1,17 @@
 import { OnDestroy, Pipe, PipeTransform } from '@angular/core';
-import { AssetBankModel } from '@cybrid/cybrid-api-bank-angular';
-import { ConfigService } from '../../services/config/config.service';
-import { Constants } from '../../constants/constants';
-import { Asset } from '../../services/asset/asset.service';
-import { map, Subject, takeUntil } from 'rxjs';
 import { formatNumber } from '@angular/common';
-import { Big } from 'big.js';
 import '@angular/common/locales/global/fr';
+
+import { map, Subject, takeUntil } from 'rxjs';
+
+// Client
+import { AssetBankModel } from '@cybrid/cybrid-api-bank-angular';
+
+import { ConfigService, Asset } from '@services';
+import { Constants } from '@constants';
+
+// Utility
+import { Big } from 'big.js';
 
 interface NumberSeparator {
   locale: string;
@@ -55,7 +60,7 @@ export class AssetPipe implements PipeTransform, OnDestroy {
     const baseUnit = new Big(value).mul(divisor);
 
     switch (unit) {
-      // Whole coin unit without formatting, ex. 0.0023 BTC
+      // Takes base units and returns trade units without formatting, ex. 0.0023 BTC
       case 'trade': {
         return tradeUnit.toNumber();
       }
@@ -75,7 +80,7 @@ export class AssetPipe implements PipeTransform, OnDestroy {
         return base;
       }
 
-      // Returns a formatted (localized) whole coin unit, ex. 1,230.22 ETH
+      // Takes base units and returns trade units with formatting, ex. 1,230.22 ETH
       case 'formatted': {
         if (tradeUnit.toString().includes('.')) {
           let separator = this.separator.find((value) => {
