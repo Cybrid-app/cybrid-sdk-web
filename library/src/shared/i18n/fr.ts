@@ -63,6 +63,10 @@ export default {
   accountList: {
     total: 'VALEUR TOTALE',
     account: 'Compte',
-    balance: 'Solde'
+    balance: 'Solde',
+    error: {
+      account: 'Erreur lors de la récupération des comptes',
+      noData: 'Aucun compte trouvé'
+    }
   }
 };

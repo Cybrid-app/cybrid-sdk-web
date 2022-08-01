@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 // Client
 import {
@@ -25,6 +25,10 @@ describe('AccountService', () => {
   ]);
 
   let MockPricesService = jasmine.createSpyObj(PricesService, ['listPrices']);
+
+  const error$ = throwError(() => {
+    new Error('Error');
+  });
 
   class MockAssetService {
     constructor() {}
@@ -158,6 +162,27 @@ describe('AccountService', () => {
       });
       expect(portfolio.accounts.length).toBe(2); // ETH and BTC
       expect(portfolio.balance).toEqual(portfolioBalance);
+    });
+  });
+
+  it('should pass through errors on getPortfolio()', () => {
+    // Set error on listPrices
+    MockPricesService.listPrices.and.returnValue(error$);
+
+    service.getPortfolio().subscribe((error) => {
+      expect(error).toBeInstanceOf(Error);
+    });
+
+    // Reset
+    MockPricesService.listPrices.and.returnValue(
+      of(TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY)
+    );
+
+    // Set error on listAccounts
+    MockAccountsService.listAccounts.and.returnValue(error$);
+
+    service.getPortfolio().subscribe((error) => {
+      expect(error).toBeInstanceOf(Error);
     });
   });
 });

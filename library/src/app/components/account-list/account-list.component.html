@@ -31,7 +31,7 @@
       class="mat-button-toggle-group-appearance-standard"
     >
       <ng-container matColumnDef="account">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="">
           {{ 'accountList.account' | translate }}
         </th>
         <td id="account" mat-cell *matCellDef="let account">
@@ -62,7 +62,7 @@
         <th
           mat-header-cell
           *matHeaderCellDef
-          mat-sort-header
+          mat-sort-header=""
           arrowPosition="before"
         >
           {{ 'accountList.balance' | translate }}
@@ -80,6 +80,15 @@
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td id="warning" class="mat-cell cybrid-no-data" colspan="2">
+          {{
+            !getAccountsError
+              ? ('accountList.error.account' | translate)
+              : ('accountList.error.noData' | translate)
+          }}
+        </td>
+      </tr>
     </table>
   </ng-container>
 </ng-container>

@@ -50,6 +50,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
 
   dataSource = new MatTableDataSource<Account>();
   displayedColumns: string[] = ['account', 'balance'];
+  getAccountsError = false;
 
   constructor(
     public configService: ConfigService,
@@ -79,8 +80,11 @@ export class AccountListComponent implements OnInit, OnDestroy {
       .getPortfolio()
       .pipe(
         map((accountOverview) => {
+          this.isLoading$.next(false);
+
           this.balance$.next(accountOverview.balance);
           this.dataSource.data = accountOverview.accounts;
+          this.getAccountsError = false;
 
           this.eventService.handleEvent(
             LEVEL.INFO,
@@ -94,15 +98,17 @@ export class AccountListComponent implements OnInit, OnDestroy {
             CODE.DATA_ERROR,
             'There was an error fetching accounts'
           );
+
           this.errorService.handleError(
             new Error('There was an error fetching accounts')
           );
+
+          this.dataSource.data = [];
+          this.getAccountsError = true;
           return of(err);
         })
       )
-      .subscribe(() => {
-        this.isLoading$.next(false);
-      });
+      .subscribe();
   }
 
   refreshData(): void {

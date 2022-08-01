@@ -62,6 +62,10 @@ export default {
   accountList: {
     total: 'TOTAL VALUE',
     account: 'Account',
-    balance: 'Balance'
+    balance: 'Balance',
+    error: {
+      account: 'Error fetching accounts',
+      noData: 'No accounts found'
+    }
   }
 };

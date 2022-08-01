@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
-import { forkJoin, Observable, Subject, map } from 'rxjs';
+import { forkJoin, Observable, Subject, map, catchError, of } from 'rxjs';
 
 // Client
 import {
@@ -96,8 +96,16 @@ export class AccountService implements OnDestroy {
 
   getPortfolio(): Observable<AccountOverview> {
     return forkJoin([
-      this.filterAccounts(),
-      this.pricesService.listPrices()
+      this.filterAccounts().pipe(
+        catchError((err) => {
+          return of(err);
+        })
+      ),
+      this.pricesService.listPrices().pipe(
+        catchError((err) => {
+          return of(err);
+        })
+      )
     ]).pipe(
       map((combined) => {
         const [accounts, prices] = combined;
@@ -144,6 +152,9 @@ export class AccountService implements OnDestroy {
         });
 
         return { accounts: tradingAccounts, balance: portfolioBalance };
+      }),
+      catchError((err) => {
+        return of(err);
       })
     );
   }
