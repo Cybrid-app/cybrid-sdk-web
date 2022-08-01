@@ -77,7 +77,10 @@
                 }}
               </span>
               <span class="mat-hint cybrid-h5 cybrid-code">
-                {{ account.value | currency }}</span
+                {{
+                  counter_asset.symbol +
+                    (account.value | currency: '':'':'':config.locale)
+                }}</span
               >
             </div>
           </td>
