@@ -73,7 +73,7 @@
               >{{ account.account.platform_balance | asset: account.asset }}
             </span>
             <span class="mat-hint cybrid-h5 cybrid-code">
-              {{ account.value | currency }}</span
+              {{ account.value | currency: account.counter_asset.symbol }}</span
             >
           </div>
         </td>
