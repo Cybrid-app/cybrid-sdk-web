@@ -12,128 +12,129 @@
           <div>{{ 'back' | translate }}</div>
         </div>
       </button>
-    </ng-container>
-    <mat-tab-group
-      animationDuration="0ms"
-      (selectedTabChange)="onSwitchSide($event.tab.origin)"
-    >
-      <mat-tab label="{{ 'trade.buy' | translate }}"></mat-tab>
-      <mat-tab label="{{ 'trade.sell' | translate }}"></mat-tab>
-    </mat-tab-group>
-    <ng-container [formGroup]="quoteGroup">
-      <div class="cybrid-tabs">
-        <div class="cybrid-input-wrapper">
-          <div class="cybrid-input-flex">
-            <label class="mat-hint cybrid-h5">{{ 'trade.currency' | translate }}</label>
-            <mat-form-field id="asset" appearance="outline">
-              <mat-select
-                #matSelect
-                [compareWith]="compareObjects"
-                formControlName="asset"
-              >
-                <mat-select-trigger>
-                  <div class="cybrid-option">
-                    <img
-                      class="cybrid-trigger-icon"
-                      src="{{ matSelect.value.url }}"
-                      alt="Crypto currency icon"
-                    />
-                    <span class="cybrid-trigger-name">{{
-                      matSelect.value.name
-                    }}</span>
-                  </div>
-                </mat-select-trigger>
-                <mat-option *ngFor="let asset of cryptoAssets" [value]="asset">
-                  <div class="cybrid-option">
-                    <img
-                      class="cybrid-option-icon"
-                      src="{{ asset.url }}"
-                      alt="Crypto currency icon"
-                    />
-                    <span>{{ asset.name }}</span>
-                  </div>
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+      <mat-tab-group
+        animationDuration="0ms"
+        (selectedTabChange)="onSwitchSide($event.tab.origin)"
+      >
+        <mat-tab label="{{ 'trade.buy' | translate }}"></mat-tab>
+        <mat-tab label="{{ 'trade.sell' | translate }}"></mat-tab>
+      </mat-tab-group>
+      <ng-container [formGroup]="quoteGroup">
+        <div class="cybrid-tabs">
+          <div class="cybrid-input-wrapper">
+            <div class="cybrid-input-flex">
+              <label class="mat-hint cybrid-h5">{{
+                'trade.currency' | translate
+              }}</label>
+              <mat-form-field id="asset" appearance="outline">
+                <mat-select
+                  #matSelect
+                  [compareWith]="compareObjects"
+                  formControlName="asset"
+                >
+                  <mat-select-trigger>
+                    <div class="cybrid-option">
+                      <img
+                        class="cybrid-trigger-icon"
+                        src="{{ matSelect.value.url }}"
+                        alt="Crypto currency icon"
+                      />
+                      <span class="cybrid-trigger-name">{{
+                        matSelect.value.name
+                      }}</span>
+                    </div>
+                  </mat-select-trigger>
+                  <mat-option
+                    *ngFor="let asset of cryptoAssets"
+                    [value]="asset"
+                  >
+                    <div class="cybrid-option">
+                      <img
+                        class="cybrid-option-icon"
+                        src="{{ asset.url }}"
+                        alt="Crypto currency icon"
+                      />
+                      <span>{{ asset.name }}</span>
+                    </div>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="cybrid-input-flex">
+              <label class="mat-hint cybrid-h5">{{
+                'trade.amount' | translate | titlecase
+              }}</label>
+              <mat-form-field appearance="outline">
+                <input
+                  matInput
+                  id="amount"
+                  #amount="matInput"
+                  formControlName="amount"
+                  type="number"
+                  min="0"
+                  placeholder="0"
+                  [ngClass]="{ 'cybrid-amount-input': amount.value }"
+                />
+                <div *ngIf="amount.value" class="cybrid-prefix" matPrefix>
+                  {{ input === 'asset' ? asset.code : counterAsset.code }}
+                  <div class="cybrid-amount-divider"></div>
+                </div>
+                <button
+                  id="swap"
+                  mat-icon-button
+                  color="primary"
+                  matSuffix
+                  (click)="onSwitchInput()"
+                >
+                  <mat-icon>swap_vert</mat-icon>
+                </button>
+                <mat-error>{{ 'trade.error' | translate }}</mat-error>
+              </mat-form-field>
+            </div>
           </div>
-          <div class="cybrid-input-flex">
-            <label class="mat-hint cybrid-h5">{{
-              'trade.amount' | translate | titlecase
-            }}</label>
-            <mat-form-field appearance="outline">
-              <input
-                matInput
-                id="amount"
-                #amount="matInput"
-                formControlName="amount"
-                type="number"
-                min="0"
-                placeholder="0"
-                [ngClass]="{ 'cybrid-amount-input': amount.value }"
-              />
-              <div *ngIf="amount.value" class="cybrid-prefix" matPrefix>
-                {{ input === 'asset' ? asset.code : counterAsset.code }}
-                <div class="cybrid-amount-divider"></div>
-              </div>
-              <button
-                id="swap"
-                mat-icon-button
-                color="primary"
-                matSuffix
-                (click)="onSwitchInput()"
-              >
-                <mat-icon>swap_vert</mat-icon>
-              </button>
-              <mat-error>{{ 'trade.error' | translate }}</mat-error>
-            </mat-form-field>
+          <div class="cybrid-approx-wrapper">
+            <div class="cybrid-approx">
+              <ng-container *ngIf="!amount.value">
+                <span> 1 = </span>
+                <span>
+                  {{ price.buy_price! | asset: counterAsset }}
+                </span>
+                <span>{{ ' ' + counterAsset.code }}</span>
+              </ng-container>
+              <ng-container *ngIf="amount.value">
+                <img
+                  *ngIf="input === 'asset'"
+                  class="cybrid-option-icon"
+                  alt="Fiat asset national flag"
+                  src="{{ counterAsset.url }}"
+                />
+                <span>
+                  {{
+                    input === 'asset'
+                      ? (display.counter_asset | asset: counterAsset)
+                      : display.asset
+                  }}
+                </span>
+                <span>
+                  {{ input === 'asset' ? counterAsset.code : asset.code }}
+                </span>
+              </ng-container>
+            </div>
           </div>
+          <button
+            id="action"
+            class="cybrid-action"
+            mat-flat-button
+            color="primary"
+            (click)="onTrade()"
+            [disabled]="
+              !quoteGroup.valid || !(amount.value.toString().length > 0)
+            "
+          >
+            {{ 'trade.' + side.toString() | translate | uppercase }}
+          </button>
         </div>
-        <div class="cybrid-approx-wrapper">
-          <div class="cybrid-approx">
-            <ng-container *ngIf="!amount.value">
-              <span> 1 </span>
-              <span>
-                {{ asset.code }}
-              </span>
-              <span> = </span>
-              <span>
-                {{ price.buy_price! | asset: counterAsset:'trade' | currency }}
-              </span>
-              <span>{{ ' ' + counterAsset.code }}</span>
-            </ng-container>
-            <ng-container *ngIf="amount.value">
-              <img
-                *ngIf="input === 'asset'"
-                class="cybrid-option-icon"
-                alt="Fiat asset national flag"
-                src="{{ counterAsset.url }}"
-              />
-              <span>
-                {{
-                  input === 'asset'
-                    ? (display.counter_asset | asset: counterAsset)
-                    : display.asset
-                }}
-              </span>
-              <span>
-                {{ input === 'asset' ? counterAsset.code : asset.code }}
-              </span>
-            </ng-container>
-          </div>
-        </div>
-        <button
-          id="action"
-          class="cybrid-action"
-          mat-flat-button
-          color="primary"
-          (click)="onTrade()"
-          [disabled]="
-            !quoteGroup.valid || !(amount.value.toString().length > 0)
-          "
-        >
-          {{ 'trade.' + side.toString() | translate | uppercase }}
-        </button>
-      </div>
+      </ng-container>
     </ng-container>
   </ng-container>
 </ng-container>

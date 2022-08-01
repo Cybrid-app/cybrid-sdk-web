@@ -60,7 +60,7 @@ export class AssetPipe implements PipeTransform, OnDestroy {
     const baseUnit = new Big(value).mul(divisor);
 
     switch (unit) {
-      // Whole coin unit without formatting, ex. 0.0023 BTC
+      // Takes base units and returns trade units without formatting, ex. 0.0023 BTC
       case 'trade': {
         return tradeUnit.toNumber();
       }
@@ -80,7 +80,7 @@ export class AssetPipe implements PipeTransform, OnDestroy {
         return base;
       }
 
-      // Returns a formatted (localized) whole coin unit, ex. 1,230.22 ETH
+      // Takes base units and returns trade units with formatting, ex. 1,230.22 ETH
       case 'formatted': {
         if (tradeUnit.toString().includes('.')) {
           let separator = this.separator.find((value) => {
@@ -93,12 +93,14 @@ export class AssetPipe implements PipeTransform, OnDestroy {
           }
           if (asset.type == 'fiat') {
             return (
+              asset.symbol +
               formatNumber(new Big(integer).toNumber(), this.locale) +
               separator!.char +
               decimal.slice(0, 2)
             );
           } else {
             return (
+              asset.symbol +
               formatNumber(new Big(integer).toNumber(), this.locale) +
               separator!.char +
               decimal
@@ -111,7 +113,10 @@ export class AssetPipe implements PipeTransform, OnDestroy {
             Constants.MIN_FRACTION_DIGITS.toString() +
             '-' +
             asset.decimals.toString();
-          return formatNumber(tradeUnit.toNumber(), this.locale, digitsInfo);
+          return (
+            asset.symbol +
+            formatNumber(tradeUnit.toNumber(), this.locale, digitsInfo)
+          );
         }
       }
     }

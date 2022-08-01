@@ -11,85 +11,90 @@
           <mat-icon>arrow_back</mat-icon>
         </button>
       </div>
-    </ng-container>
-    <ng-container *ngIf="balance$ | async as balance">
-      <div class="cybrid-balance">
-        <span class="mat-hint">{{ 'accountList.total' | translate }}</span>
-        <div>
-          <h1>
-            {{ balance | currency }}
-            <span class="mat-hint">{{ counter_asset.code }}</span>
-          </h1>
+      <ng-container *ngIf="balance$ | async as balance">
+        <div class="cybrid-balance">
+          <span class="mat-hint">{{ 'accountList.total' | translate }}</span>
+          <div>
+            <h1>
+              {{
+                counter_asset.symbol +
+                  (balance | currency: '':'':'':config.locale)
+              }}
+              <span class="mat-hint">{{ counter_asset.code }}</span>
+            </h1>
+          </div>
         </div>
-      </div>
-    </ng-container>
-    <table
-      id="accountList"
-      mat-table
-      matSort
-      [dataSource]="dataSource"
-      class="mat-button-toggle-group-appearance-standard"
-    >
-      <ng-container matColumnDef="account">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="">
-          {{ 'accountList.account' | translate }}
-        </th>
-        <td id="account" mat-cell *matCellDef="let account">
-          <div class="cybrid-account-cell">
-            <img
-              class="cybrid-icon"
-              src="{{ account.asset.url }}"
-              alt="Crypto currency icon"
-            />
-            <div class="cybrid-column">
-              <div class="cybrid-currency-wrapper">
-                <div class="cybrid-symbol">
-                  <span>{{ account.asset.name }}</span>
+      </ng-container>
+      <table
+        id="accountList"
+        mat-table
+        matSort
+        [dataSource]="dataSource"
+        class="mat-button-toggle-group-appearance-standard"
+      >
+        <ng-container matColumnDef="account">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">
+            {{ 'accountList.account' | translate }}
+          </th>
+          <td id="account" mat-cell *matCellDef="let account">
+            <div class="cybrid-account-cell">
+              <img
+                class="cybrid-icon"
+                src="{{ account.asset.url }}"
+                alt="Crypto currency icon"
+              />
+              <div class="cybrid-column">
+                <div class="cybrid-currency-wrapper">
+                  <div class="cybrid-symbol">
+                    <span>{{ account.asset.name }}</span>
+                  </div>
+                  <span class="mat-hint cybrid-h5 cybrid-code">{{
+                    account.asset.code
+                  }}</span>
                 </div>
                 <span class="mat-hint cybrid-h5 cybrid-code">{{
-                  account.asset.code
+                  account.price.sell_price | asset: account.counter_asset
                 }}</span>
               </div>
-              <span class="mat-hint cybrid-h5 cybrid-code">{{
-                account.counter_asset.symbol +
-                  (account.price.sell_price | asset: account.counter_asset)
-              }}</span>
             </div>
-          </div>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="balance">
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header=""
-          arrowPosition="before"
-        >
-          {{ 'accountList.balance' | translate }}
-        </th>
-        <td id="balance" mat-cell *matCellDef="let account">
-          <div class="cybrid-asset-cell">
-            <span
-              >{{ account.account.platform_balance | asset: account.asset }}
-            </span>
-            <span class="mat-hint cybrid-h5 cybrid-code">
-              {{ account.value | currency: account.counter_asset.symbol }}</span
-            >
-          </div>
-        </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      <tr class="mat-row" *matNoDataRow>
-        <td id="warning" class="mat-cell cybrid-no-data" colspan="2">
-          {{
-            !getAccountsError
-              ? ('accountList.error.account' | translate)
-              : ('accountList.error.noData' | translate)
-          }}
-        </td>
-      </tr>
-    </table>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="balance">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header=""
+            arrowPosition="before"
+          >
+            {{ 'accountList.balance' | translate }}
+          </th>
+          <td id="balance" mat-cell *matCellDef="let account">
+            <div class="cybrid-asset-cell">
+              <span
+                >{{
+                  account.account.platform_balance
+                    | asset: account.asset:'trade'
+                }}
+              </span>
+              <span class="mat-hint cybrid-h5 cybrid-code">
+                {{ account.value | currency }}</span
+              >
+            </div>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td id="warning" class="mat-cell cybrid-no-data" colspan="2">
+            {{
+              !getAccountsError
+                ? ('accountList.error.account' | translate)
+                : ('accountList.error.noData' | translate)
+            }}
+          </td>
+        </tr>
+      </table>
+    </ng-container>
   </ng-container>
 </ng-container>
 <ng-template #loading>
