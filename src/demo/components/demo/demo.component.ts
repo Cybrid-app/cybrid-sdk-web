@@ -75,7 +75,6 @@ export class DemoComponent implements OnInit, OnDestroy {
   initDemo() {
     this.componentRef = this.viewContainer.createComponent(AppComponent);
     this.componentRef.instance.auth = this.token;
-    this.componentRef.instance.component = 'account-list';
     this.loading$.next(false);
 
     // Subscribe to component configuration changes
