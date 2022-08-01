@@ -95,7 +95,11 @@
           <div class="cybrid-approx-wrapper">
             <div class="cybrid-approx">
               <ng-container *ngIf="!amount.value">
-                <span> 1 = </span>
+                <span> 1 </span>
+                <span>
+                {{ asset.code }}
+              </span>
+                <span> = </span>
                 <span>
                   {{ price.buy_price! | asset: counterAsset }}
                 </span>
