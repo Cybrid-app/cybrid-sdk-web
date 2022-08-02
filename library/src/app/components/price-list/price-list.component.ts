@@ -44,7 +44,7 @@ export interface SymbolPrice extends SymbolPriceBankModel {
 }
 
 @Component({
-  selector: 'app-list',
+  selector: 'app-price-list',
   templateUrl: 'price-list.component.html',
   styleUrls: ['price-list.component.scss']
 })

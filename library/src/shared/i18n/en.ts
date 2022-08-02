@@ -61,11 +61,25 @@ export default {
   // Account list component
   accountList: {
     total: 'TOTAL VALUE',
-    account: 'Account',
+    account: {
+      header: 'Asset',
+      subheader: 'Market Price'
+    },
     balance: 'Balance',
     error: {
       account: 'Error fetching accounts',
       noData: 'No accounts found'
     }
+  },
+
+  // Paginator
+  paginator: {
+    firstPageLabel: 'First page',
+    itemsPerPageLabel: 'Items per page',
+    lastPageLabel: 'Last page',
+    nextPageLabel: 'Next page',
+    previousPageLabel: 'Previous page',
+    page: 'Page',
+    of: 'of'
   }
 };

@@ -56,6 +56,8 @@ import {
 import { environment } from '@environment';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AssetPipe, TruncatePipe } from '@pipes';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { CustomPaginatorIntl } from '@utility';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -116,7 +118,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     { provide: APP_BASE_HREF, useValue: '' },
     { provide: HTTP_INTERCEPTORS, useClass: RetryInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-    { provide: ErrorHandler, useClass: ErrorService }
+    { provide: ErrorHandler, useClass: ErrorService },
+    [{ provide: MatPaginatorIntl, useClass: CustomPaginatorIntl }]
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

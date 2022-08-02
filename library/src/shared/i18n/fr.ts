@@ -62,11 +62,25 @@ export default {
   // Account list component
   accountList: {
     total: 'VALEUR TOTALE',
-    account: 'Compte',
+    account: {
+      header: 'Actif',
+      subheader: 'Prix du Marché'
+    },
     balance: 'Solde',
     error: {
       account: 'Erreur lors de la récupération des comptes',
       noData: 'Aucun compte trouvé'
     }
+  },
+
+  // Paginator
+  paginator: {
+    firstPageLabel: 'Première page',
+    itemsPerPageLabel: 'Objets par page',
+    lastPageLabel: 'Dernière page',
+    nextPageLabel: 'Page suivante',
+    previousPageLabel: 'Page précédente',
+    page: 'Page',
+    of: 'de'
   }
 };

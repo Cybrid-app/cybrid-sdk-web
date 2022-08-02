@@ -175,7 +175,7 @@ describe('AccountListComponent', () => {
     let account: Account = TestConstants.ACCOUNT_OVERVIEW.accounts[0];
 
     // Sort by account
-    let sort = component.sortingDataAccessor(account, 'account');
+    let sort = component.sortingDataAccessor(account, 'asset');
     expect(sort).toEqual(account.account.asset!);
 
     // Sort by balance

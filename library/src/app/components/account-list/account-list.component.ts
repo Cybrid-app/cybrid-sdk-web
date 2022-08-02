@@ -1,4 +1,8 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
+import { MatPaginator } from '@angular/material/paginator';
+
 import {
   BehaviorSubject,
   catchError,
@@ -9,7 +13,6 @@ import {
   takeUntil,
   timer
 } from 'rxjs';
-import { MatTableDataSource } from '@angular/material/table';
 
 // Services
 import {
@@ -28,7 +31,6 @@ import {
 
 // Utility
 import { Constants } from '@constants';
-import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-account-list',
@@ -41,6 +43,10 @@ export class AccountListComponent implements OnInit, OnDestroy {
     this.dataSource.sortingDataAccessor = this.sortingDataAccessor;
   }
 
+  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
+
   balance$ = new BehaviorSubject<number>(0);
   currentFiat: Asset = Constants.USD_ASSET;
 
@@ -49,7 +55,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject();
 
   dataSource = new MatTableDataSource<Account>();
-  displayedColumns: string[] = ['account', 'balance'];
+  displayedColumns: string[] = ['asset', 'balance'];
   getAccountsError = false;
 
   constructor(
@@ -148,7 +154,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
 
   sortingDataAccessor(account: Account, columnDef: string) {
     switch (columnDef) {
-      case 'account':
+      case 'asset':
         return account.account.asset!;
       case 'balance':
         return account.value!;

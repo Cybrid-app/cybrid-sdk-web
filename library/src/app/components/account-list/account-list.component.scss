@@ -1,3 +1,31 @@
+.cybrid-sort-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.mat-column-asset {
+  .cybrid-sort-header {
+    text-align: start;
+  }
+}
+
+.mat-column-balance {
+  .cybrid-sort-header {
+    text-align: end;
+  }
+}
+
+.cybrid-paginator {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: none;
+}
+
+mat-paginator {
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
 .cybrid-balance {
   display: flex;
   flex-direction: column;
@@ -15,7 +43,7 @@
   }
 }
 
-.cybrid-account-cell {
+.cybrid-asset-cell {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -23,7 +51,7 @@
   gap: 0.5rem;
 }
 
-.cybrid-asset-cell {
+.cybrid-balance-cell {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;

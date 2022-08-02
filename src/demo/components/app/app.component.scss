@@ -11,6 +11,10 @@ mat-drawer-container {
   flex-grow: 1;
 }
 
+mat-drawer-container {
+  overflow-y: auto !important;
+}
+
 mat-drawer-content {
   max-width: 700px;
   margin: auto;
