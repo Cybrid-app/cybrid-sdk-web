@@ -7,15 +7,12 @@ import { HttpClient } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { RoutingData, RoutingService } from '@services';
 
 describe('NavigationComponent', () => {
   let component: NavigationComponent;
   let fixture: ComponentFixture<NavigationComponent>;
 
-  let MockConfigService = jasmine.createSpyObj('ConfigService', [
-    'setConfig',
-    'getConfig$'
-  ]);
   let MockRoutingService = jasmine.createSpyObj('RoutingService', [
     'handleRoute'
   ]);
@@ -34,8 +31,11 @@ describe('NavigationComponent', () => {
           }
         })
       ],
+      providers: [{ provide: RoutingService, useValue: MockRoutingService }],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
+
+    MockRoutingService = TestBed.inject(RoutingService);
 
     fixture = TestBed.createComponent(NavigationComponent);
     component = fixture.componentInstance;
@@ -44,5 +44,18 @@ describe('NavigationComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should navigate', () => {
+    const testRoutingData: RoutingData = {
+      route: 'test',
+      origin: 'karma'
+    };
+    component.routingData = testRoutingData;
+
+    component.onNavigate();
+    expect(MockRoutingService.handleRoute).toHaveBeenCalledWith(
+      testRoutingData
+    );
   });
 });

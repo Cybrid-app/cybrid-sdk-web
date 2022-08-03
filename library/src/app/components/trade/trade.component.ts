@@ -117,7 +117,6 @@ export class TradeComponent implements OnInit, OnDestroy {
     this.initQuoteGroup();
     this.getPrice();
     this.refreshData();
-    console.log(this.assetPipe.transform(1, this.counterAsset, 'base'));
   }
 
   ngOnDestroy() {
@@ -125,34 +124,33 @@ export class TradeComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  /*
-  Set the current asset and counter-asset from routing data.
-  Set the list of available crypto and fiat assets.
-  * */
   getAssets(): void {
+    // Set counter-asset from component config; asset remains default (BTC)
     this.configService
       .getConfig$()
       .pipe(
         map((config) => {
-          this.route.queryParams.pipe(
-            take(1),
-            map((params) => {
-              this.asset = this.assetService.getAsset(
-                symbolSplit(params['symbol_pair'])[0]
-              );
-              if (params !== {}) {
-                this.counterAsset = this.assetService.getAsset(
-                  symbolSplit(params['symbol_pair'])[1]
-                );
-              } else {
-                this.counterAsset = this.assetService.getAsset(config.fiat);
-              }
-            })
+          this.counterAsset = this.assetService.getAsset(config.fiat);
+        })
+      )
+      .subscribe();
+
+    // Set currently selected assets based on routing data, for instance from a price list row click
+    this.route.queryParams
+      .pipe(
+        take(1),
+        map((params) => {
+          this.asset = this.assetService.getAsset(
+            symbolSplit(params['symbol_pair'])[0]
+          );
+          this.counterAsset = this.assetService.getAsset(
+            symbolSplit(params['symbol_pair'])[1]
           );
         })
       )
       .subscribe();
 
+    // Set list of available trading assets
     this.assetService
       .getAssets$()
       .pipe(
