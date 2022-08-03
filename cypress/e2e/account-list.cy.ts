@@ -65,7 +65,7 @@ describe('account-list test', () => {
   });
 
   it('should navigate back', () => {
-    app().find('#back').click();
+    app().find('app-navigation').find('button').click();
     app().should('not.exist');
 
     // Reset to account-list component
