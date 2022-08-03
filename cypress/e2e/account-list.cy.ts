@@ -6,15 +6,6 @@ function app() {
 }
 
 function accountListSetup() {
-  // Mock prices
-  cy.intercept('GET', '/api/prices', (req) => {
-    req.reply(TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY);
-  }).as('listPrices');
-  // Mock accounts
-  cy.intercept('GET', 'api/accounts', (req) => {
-    req.reply(TestConstants.ACCOUNT_LIST_BANK_MODEL);
-  }).as('listAccounts');
-
   cy.intercept('POST', '/oauth/token', (req) => {
     req.body.client_id = Cypress.env('CLIENT_ID');
     req.body.client_secret = Cypress.env('CLIENT_SECRET');
@@ -37,6 +28,17 @@ describe('account-list test', () => {
   });
 
   it('should display account data', () => {
+    // Mock prices
+    cy.intercept('GET', '/api/prices', (req) => {
+      req.reply(TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY);
+    }).as('listPrices');
+    // Mock accounts
+    cy.intercept('GET', 'api/accounts', (req) => {
+      req.reply(TestConstants.ACCOUNT_LIST_BANK_MODEL);
+    }).as('listAccounts');
+
+    cy.wait(['@listPrices', '@listAccounts']);
+
     // Check for mocked data and labels
     app()
       .find('.cybrid-balance')
@@ -65,7 +67,7 @@ describe('account-list test', () => {
   });
 
   it('should navigate back', () => {
-    app().find('#back').click();
+    app().find('app-navigation').find('button').click();
     app().should('not.exist');
 
     // Reset to account-list component

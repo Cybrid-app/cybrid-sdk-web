@@ -1,0 +1,7 @@
+<ng-container *ngIf="(configService.getConfig$() | async)?.routing === true">
+  <div class="cybrid-header">
+    <button mat-icon-button color="primary" (click)="onNavigate()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </div>
+</ng-container>

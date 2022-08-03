@@ -35,7 +35,8 @@ import {
   ConfigService,
   ComponentConfig,
   QuoteService,
-  RoutingService
+  RoutingService,
+  RoutingData
 } from '@services';
 
 // Pipes
@@ -88,6 +89,10 @@ export class TradeComponent implements OnInit, OnDestroy {
   isLoading$ = new BehaviorSubject(true);
   isRecoverable$ = new BehaviorSubject(true);
   unsubscribe$ = new Subject();
+  routingData: RoutingData = {
+    route: 'price-list',
+    origin: 'trade'
+  };
 
   constructor(
     private errorService: ErrorService,
@@ -119,11 +124,18 @@ export class TradeComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  /*
-  Set the current asset and counter-asset from routing data.
-  Set the list of available crypto and fiat assets.
-  * */
   getAssets(): void {
+    // Set counter-asset from component config; asset remains default (BTC)
+    this.configService
+      .getConfig$()
+      .pipe(
+        map((config) => {
+          this.counterAsset = this.assetService.getAsset(config.fiat);
+        })
+      )
+      .subscribe();
+
+    // Set currently selected assets based on routing data, for instance from a price list row click
     this.route.queryParams
       .pipe(
         take(1),
@@ -138,6 +150,7 @@ export class TradeComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
+    // Set list of available trading assets
     this.assetService
       .getAssets$()
       .pipe(
@@ -318,9 +331,5 @@ export class TradeComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-  }
-
-  onBack(): void {
-    this.routingService.handleRoute('price-list', 'trade');
   }
 }

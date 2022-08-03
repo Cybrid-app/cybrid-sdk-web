@@ -160,16 +160,6 @@ describe('AccountListComponent', () => {
     discardPeriodicTasks();
   }));
 
-  it('should call the routing service onNavigate', () => {
-    component.ngOnInit();
-    component.onNavigate();
-
-    expect(MockRoutingService.handleRoute).toHaveBeenCalledWith(
-      'trade',
-      'account-list'
-    );
-  });
-
   it('should sort custom data fields', () => {
     // Get first account ('ETH-USD')
     let account: Account = TestConstants.ACCOUNT_OVERVIEW.accounts[0];

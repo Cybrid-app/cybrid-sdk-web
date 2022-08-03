@@ -23,7 +23,7 @@ describe('trade test', () => {
   });
 
   it('should navigate back to the price list', () => {
-    app().find('.cybrid-navigation').click();
+    app().find('app-navigation').find('button').click();
     app().should('not.exist');
     cy.get('app-price-list').should('exist');
 

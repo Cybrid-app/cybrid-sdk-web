@@ -159,7 +159,10 @@ export class AppComponent implements OnInit {
           this.router.navigate(['app/' + component]);
 
           // Handles host navigation request for events
-          this.routingService.handleRoute(component, 'cybrid-app');
+          this.routingService.handleRoute({
+            route: component,
+            origin: 'cybrid-app'
+          });
         })
       )
       .subscribe();

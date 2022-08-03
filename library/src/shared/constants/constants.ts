@@ -22,6 +22,7 @@ export class Constants {
   static ROUTING = true;
   static ICON_HOST = 'https://images.cybrid.xyz/sdk/assets/svg/color/';
   static BTC_ICON = 'https://images.cybrid.xyz/sdk/assets/svg/color/btc.svg';
+  static USD_ICON = 'https://images.cybrid.xyz/sdk/assets/svg/color/usd.svg';
   static BTC_ASSET: Asset = {
     code: 'BTC',
     decimals: '8',
@@ -36,7 +37,7 @@ export class Constants {
     name: 'Dollar',
     symbol: '$',
     type: 'fiat',
-    url: Constants.BTC_ICON
+    url: Constants.USD_ICON
   };
   static DEFAULT_CONFIG: ComponentConfig = {
     refreshInterval: Constants.REFRESH_INTERVAL,

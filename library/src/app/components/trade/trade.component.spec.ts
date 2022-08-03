@@ -34,8 +34,7 @@ import {
   EventService,
   ErrorService,
   ConfigService,
-  QuoteService,
-  RoutingService
+  QuoteService
 } from '@services';
 
 // Utility
@@ -70,9 +69,6 @@ describe('TradeComponent', () => {
     new Error('Error');
   });
   let MockQuoteService = jasmine.createSpyObj('QuoteService', ['getQuote']);
-  let MockRoutingService = jasmine.createSpyObj('RoutingService', [
-    'handleRoute'
-  ]);
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -107,7 +103,6 @@ describe('TradeComponent', () => {
             queryParams: MockQueryParams
           }
         },
-        { provide: RoutingService, useValue: MockRoutingService },
         AssetPipe
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -131,7 +126,6 @@ describe('TradeComponent', () => {
     });
     MockQuoteService = TestBed.inject(QuoteService);
     MockQuoteService.getQuote.and.returnValue(TestConstants.POST_QUOTE);
-    MockRoutingService = TestBed.inject(RoutingService);
   });
 
   beforeEach(() => {
@@ -164,7 +158,7 @@ describe('TradeComponent', () => {
   it('should get router parameters', () => {
     MockAssetService.getAsset.and.returnValue(TestConstants.BTC_ASSET);
     component.getAssets();
-    expect(component.counterAsset.code).toEqual('BTC');
+    expect(component.asset.code).toEqual('BTC');
     MockAssetService.getAsset.and.returnValue(TestConstants.USD_ASSET);
     component.getAssets();
     expect(component.counterAsset.code).toEqual('USD');
@@ -262,15 +256,6 @@ describe('TradeComponent', () => {
     component.onSwitchSide(-1);
     expect(component.side).toEqual('buy');
     expect(getPriceSpy).toHaveBeenCalled();
-  });
-
-  it('should navigate', () => {
-    component.ngOnInit();
-    component.onBack();
-    expect(MockRoutingService.handleRoute).toHaveBeenCalledWith(
-      'price-list',
-      'trade'
-    );
   });
 
   it('should call the quote service and build quote onTrade()', () => {

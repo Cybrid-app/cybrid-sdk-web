@@ -57,7 +57,7 @@ describe('RoutingService', () => {
     // Set config.routing
     MockConfigService.getConfig$.and.returnValue(of({ routing: true }));
 
-    service.handleRoute('trade', 'price-list');
+    service.handleRoute({ route: 'trade', origin: 'price-list' });
     tick();
 
     expect(MockConfigService.getConfig$).toHaveBeenCalled();
@@ -69,7 +69,7 @@ describe('RoutingService', () => {
     // Set config.routing
     MockConfigService.getConfig$.and.returnValue(of({ routing: false }));
 
-    service.handleRoute('trade', 'price-list');
+    service.handleRoute({ route: 'trade', origin: 'price-list' });
     tick();
 
     expect(MockConfigService.getConfig$).toHaveBeenCalled();
