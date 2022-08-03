@@ -4,6 +4,7 @@
       <div class="cybrid-header">
         <button
           *ngIf="config.routing"
+          id="back"
           mat-icon-button
           color="primary"
           (click)="onNavigate()"
@@ -16,41 +17,50 @@
           <span class="mat-hint">{{ 'accountList.total' | translate }}</span>
           <div>
             <h1>
-              {{ currentFiat.symbol + (balance | currency: '':'':'':config.locale) }}
+              {{
+                currentFiat.symbol +
+                  (balance | currency: '':'':'':config.locale)
+              }}
               <span class="mat-hint">{{ currentFiat.code }}</span>
             </h1>
           </div>
         </div>
       </ng-container>
       <table
-        id="accountList"
+        id="assetList"
         mat-table
         matSort
         [dataSource]="dataSource"
         class="mat-button-toggle-group-appearance-standard"
+        [ngClass]="{ 'cybrid-paginator': dataSource.data.length > 5 }"
       >
-        <ng-container matColumnDef="account">
+        <ng-container matColumnDef="asset">
           <th mat-header-cell *matHeaderCellDef mat-sort-header="">
-            {{ 'accountList.account' | translate }}
+            <div class="cybrid-sort-header">
+              <span>{{ 'accountList.account.header' | translate }}</span>
+              <span class="mat-hint cybrid-h5 cybrid-code">{{
+                'accountList.account.subheader' | translate
+              }}</span>
+            </div>
           </th>
-          <td id="account" mat-cell *matCellDef="let account">
-            <div class="cybrid-account-cell">
+          <td id="asset" mat-cell *matCellDef="let asset">
+            <div class="cybrid-asset-cell">
               <img
                 class="cybrid-icon"
-                src="{{ account.asset.url }}"
+                src="{{ asset.asset.url }}"
                 alt="Crypto currency icon"
               />
               <div class="cybrid-column">
                 <div class="cybrid-currency-wrapper">
                   <div class="cybrid-symbol">
-                    <span>{{ account.asset.name }}</span>
+                    <span>{{ asset.asset.name }}</span>
                   </div>
                   <span class="mat-hint cybrid-h5 cybrid-code">{{
-                    account.asset.code
+                    asset.asset.code
                   }}</span>
                 </div>
                 <span class="mat-hint cybrid-h5 cybrid-code">{{
-                  account.price.sell_price | asset: account.counter_asset
+                  asset.price.sell_price | asset: asset.counter_asset
                 }}</span>
               </div>
             </div>
@@ -63,10 +73,15 @@
             mat-sort-header=""
             arrowPosition="before"
           >
-            {{ 'accountList.balance' | translate }}
+            <div class="cybrid-sort-header">
+              <span>{{ 'accountList.balance' | translate }}</span>
+              <span class="mat-hint cybrid-h5 cybrid-code">{{
+                currentFiat.code
+              }}</span>
+            </div>
           </th>
           <td id="balance" mat-cell *matCellDef="let account">
-            <div class="cybrid-asset-cell">
+            <div class="cybrid-balance-cell">
               <span
                 >{{
                   account.account.platform_balance
@@ -94,6 +109,14 @@
           </td>
         </tr>
       </table>
+      <mat-paginator
+        *ngIf="dataSource.data.length > 10"
+        pageSize="10"
+        [hidePageSize]="true"
+        class="mat-button-toggle-group-appearance-standard"
+        aria-label="cryptocurrency accounts and balances"
+      >
+      </mat-paginator>
     </ng-container>
   </ng-container>
 </ng-container>

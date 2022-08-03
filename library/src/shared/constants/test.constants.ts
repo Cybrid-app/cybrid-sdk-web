@@ -126,7 +126,6 @@ export class TestConstants {
   };
 
   // Account component test models
-
   static SYMBOL_PRICE_BANK_MODEL_ARRAY: SymbolPriceBankModel[] = [
     {
       symbol: 'BTC-USD',

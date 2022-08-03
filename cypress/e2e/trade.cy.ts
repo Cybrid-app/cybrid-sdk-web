@@ -25,7 +25,7 @@ describe('trade test', () => {
   it('should navigate back to the price list', () => {
     app().find('.cybrid-navigation').click();
     app().should('not.exist');
-    cy.get('app-list').should('exist');
+    cy.get('app-price-list').should('exist');
 
     // Reset to trade component
     tradeSetup();
@@ -191,6 +191,6 @@ describe('trade test', () => {
 
   it('should exit the dialog and navigate to the price-list on done', () => {
     cy.get('#done').click();
-    cy.get('app-list').should('exist');
+    cy.get('app-price-list').should('exist');
   });
 });

@@ -1,5 +1,6 @@
+// @ts-ignore
 function app() {
-  return cy.get('app-list');
+  return cy.get('app-price-list');
 }
 
 describe('price-list test', () => {
