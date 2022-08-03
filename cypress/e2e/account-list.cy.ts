@@ -37,6 +37,7 @@ describe('account-list test', () => {
   });
 
   it('should display account data', () => {
+    // Check for mocked data and labels
     app()
       .find('.cybrid-balance')
       .should('contain.text', 'TOTAL VALUE')
@@ -85,13 +86,28 @@ describe('account-list test', () => {
     app().find('#warning').should('not.exist');
   });
 
-  it('should handle any error returned by listAccounts()', () => {
-    // Force listAccounts() network error
+  it('should handle errors returned by accounts api', () => {
+    // Force accounts error
     cy.intercept('GET', '/api/accounts', { forceNetworkError: true }).as(
       'listAccounts'
     );
     cy.wait('@listAccounts');
-    // check for error row
+
+    // Check for error row
+    app().find('#warning').should('exist');
+
+    // Reset
+    accountListSetup();
+  });
+
+  it('should handle errors returned by prices api', () => {
+    // Force prices error
+    cy.intercept('GET', '/api/prices', { forceNetworkError: true }).as(
+      'listPrices'
+    );
+    cy.wait('@listPrices');
+
+    // Check for error row
     app().find('#warning').should('exist');
   });
 });
