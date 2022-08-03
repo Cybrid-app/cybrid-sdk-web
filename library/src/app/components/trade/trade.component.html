@@ -1,17 +1,7 @@
 <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
   <ng-container *ngIf="(isLoading$ | async) !== true">
     <ng-container *ngIf="configService.getConfig$() | async as config">
-      <button
-        *ngIf="config.routing"
-        mat-button
-        color="primary"
-        (click)="onBack()"
-      >
-        <div class="cybrid-navigation">
-          <mat-icon>arrow_back</mat-icon>
-          <div>{{ 'back' | translate }}</div>
-        </div>
-      </button>
+      <app-navigation [routingData]="routingData"></app-navigation>
       <mat-tab-group
         animationDuration="0ms"
         (selectedTabChange)="onSwitchSide($event.tab.origin)"
@@ -97,8 +87,8 @@
               <ng-container *ngIf="!amount.value">
                 <span> 1 </span>
                 <span>
-                {{ asset.code }}
-              </span>
+                  {{ asset.code }}
+                </span>
                 <span> = </span>
                 <span>
                   {{ price.buy_price! | asset: counterAsset }}

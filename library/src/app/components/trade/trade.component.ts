@@ -35,7 +35,8 @@ import {
   ConfigService,
   ComponentConfig,
   QuoteService,
-  RoutingService
+  RoutingService,
+  RoutingData
 } from '@services';
 
 // Pipes
@@ -88,6 +89,10 @@ export class TradeComponent implements OnInit, OnDestroy {
   isLoading$ = new BehaviorSubject(true);
   isRecoverable$ = new BehaviorSubject(true);
   unsubscribe$ = new Subject();
+  routingData: RoutingData = {
+    route: 'price-list',
+    origin: 'trade'
+  };
 
   constructor(
     private errorService: ErrorService,
@@ -112,6 +117,7 @@ export class TradeComponent implements OnInit, OnDestroy {
     this.initQuoteGroup();
     this.getPrice();
     this.refreshData();
+    console.log(this.assetPipe.transform(1, this.counterAsset, 'base'));
   }
 
   ngOnDestroy() {
@@ -124,15 +130,24 @@ export class TradeComponent implements OnInit, OnDestroy {
   Set the list of available crypto and fiat assets.
   * */
   getAssets(): void {
-    this.route.queryParams
+    this.configService
+      .getConfig$()
       .pipe(
-        take(1),
-        map((params) => {
-          this.asset = this.assetService.getAsset(
-            symbolSplit(params['symbol_pair'])[0]
-          );
-          this.counterAsset = this.assetService.getAsset(
-            symbolSplit(params['symbol_pair'])[1]
+        map((config) => {
+          this.route.queryParams.pipe(
+            take(1),
+            map((params) => {
+              this.asset = this.assetService.getAsset(
+                symbolSplit(params['symbol_pair'])[0]
+              );
+              if (params !== {}) {
+                this.counterAsset = this.assetService.getAsset(
+                  symbolSplit(params['symbol_pair'])[1]
+                );
+              } else {
+                this.counterAsset = this.assetService.getAsset(config.fiat);
+              }
+            })
           );
         })
       )
@@ -318,9 +333,5 @@ export class TradeComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-  }
-
-  onBack(): void {
-    this.routingService.handleRoute('price-list', 'trade');
   }
 }

@@ -63,15 +63,10 @@
 }
 
 @media screen and (min-width: 1535px) {
-  .approx-wrapper {
-    margin-left: 0;
+  .cybrid-approx-wrapper {
+    margin-left: calc(50% + 0.5rem);
     display: flex;
     margin-bottom: 1rem;
-    gap: 1rem;
-    div {
-      flex-basis: 50%;
-      margin-left: 0.7rem;
-    }
   }
 
   .cybrid-input-wrapper {

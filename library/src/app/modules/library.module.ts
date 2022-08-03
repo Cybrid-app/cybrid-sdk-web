@@ -15,6 +15,7 @@ import {
   HttpClient
 } from '@angular/common/http';
 import { createCustomElement } from '@angular/elements';
+import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 
 // Modules
 import { MaterialModule } from '@modules';
@@ -49,7 +50,8 @@ import {
   TradeComponent,
   TradeConfirmComponent,
   TradeSummaryComponent,
-  AccountListComponent
+  AccountListComponent,
+  NavigationComponent
 } from '@components';
 
 // Utility
@@ -72,6 +74,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     TradeSummaryComponent,
     AccountListComponent,
     LoadingComponent,
+    NavigationComponent,
     AssetPipe,
     TruncatePipe
   ],
@@ -119,7 +122,12 @@ export function HttpLoaderFactory(http: HttpClient) {
     { provide: HTTP_INTERCEPTORS, useClass: RetryInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: ErrorHandler, useClass: ErrorService },
-    [{ provide: MatPaginatorIntl, useClass: CustomPaginatorIntl }]
+    { provide: MatPaginatorIntl, useClass: CustomPaginatorIntl },
+    { provide: ErrorHandler, useClass: ErrorService },
+    {
+      provide: MAT_DIALOG_DEFAULT_OPTIONS,
+      useValue: { hasBackdrop: true, disableClose: true, minWidth: '320px' }
+    }
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

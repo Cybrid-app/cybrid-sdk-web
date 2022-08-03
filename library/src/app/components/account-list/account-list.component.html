@@ -1,17 +1,7 @@
 <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
   <ng-container *ngIf="(isLoading$ | async) !== true; else loading">
     <ng-container *ngIf="configService.getConfig$() | async as config">
-      <div class="cybrid-header">
-        <button
-          *ngIf="config.routing"
-          id="back"
-          mat-icon-button
-          color="primary"
-          (click)="onNavigate()"
-        >
-          <mat-icon>arrow_back</mat-icon>
-        </button>
-      </div>
+      <app-navigation [routingData]="routingData"></app-navigation>
       <ng-container *ngIf="balance$ | async as balance">
         <div class="cybrid-balance">
           <span class="mat-hint">{{ 'accountList.total' | translate }}</span>

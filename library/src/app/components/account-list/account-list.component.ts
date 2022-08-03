@@ -24,9 +24,9 @@ import {
   ConfigService,
   EventService,
   ErrorService,
-  RoutingService,
   AssetService,
-  Asset
+  Asset,
+  RoutingData
 } from '@services';
 
 // Utility
@@ -53,6 +53,10 @@ export class AccountListComponent implements OnInit, OnDestroy {
   isLoading$ = new BehaviorSubject(true);
   isRecoverable$ = new BehaviorSubject(true);
   private unsubscribe$ = new Subject();
+  routingData: RoutingData = {
+    route: 'price-list',
+    origin: 'account-list'
+  };
 
   dataSource = new MatTableDataSource<Account>();
   displayedColumns: string[] = ['asset', 'balance'];
@@ -63,8 +67,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
     private assetService: AssetService,
     private eventService: EventService,
     private errorService: ErrorService,
-    private accountService: AccountService,
-    private routingService: RoutingService
+    private accountService: AccountService
   ) {}
 
   ngOnInit(): void {
@@ -161,9 +164,5 @@ export class AccountListComponent implements OnInit, OnDestroy {
       default:
         return '';
     }
-  }
-
-  onNavigate(): void {
-    this.routingService.handleRoute('trade', 'account-list');
   }
 }

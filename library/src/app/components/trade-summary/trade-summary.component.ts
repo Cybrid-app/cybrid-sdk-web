@@ -86,6 +86,6 @@ export class TradeSummaryComponent implements OnInit {
   }
 
   onDialogClose(): void {
-    this.routingService.handleRoute('price-list', 'trade');
+    this.routingService.handleRoute({ route: 'price-list', origin: 'trade' });
   }
 }
