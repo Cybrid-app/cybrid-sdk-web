@@ -5,7 +5,7 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, NavigationExtras } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -15,7 +15,6 @@ import {
   catchError,
   map,
   of,
-  ReplaySubject,
   Subject,
   switchMap,
   take,
@@ -30,14 +29,20 @@ import { TradeBankModel, TradesService } from '@cybrid/cybrid-api-bank-angular';
 import {
   Account,
   AccountService,
+  Asset,
   AssetService,
   CODE,
   ComponentConfig,
   ConfigService,
   EventService,
   LEVEL,
-  RoutingData
+  RoutingData,
+  RoutingService
 } from '@services';
+
+// Utility
+import { Constants } from '@constants';
+import { symbolBuild } from '@utility';
 
 @Component({
   selector: 'app-account-detail',
@@ -47,13 +52,15 @@ import {
 export class AccountDetailComponent
   implements OnInit, AfterViewInit, OnDestroy
 {
-  dataSource: MatTableDataSource<TradeBankModel> = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  dataSource: MatTableDataSource<TradeBankModel> = new MatTableDataSource();
 
-  account$ = new BehaviorSubject<Account | null>(null);
   accountGuid: string = '';
-  counterAsset = '';
+  account$ = new BehaviorSubject<Account | null>(null);
+
+  asset: Asset = Constants.BTC_ASSET;
+  counterAssetCode = Constants.USD_ASSET.code;
 
   displayedColumns: string[] = ['transaction', 'balance'];
   isLoadingResults = true;
@@ -78,7 +85,8 @@ export class AccountDetailComponent
     private accountService: AccountService,
     private tradeService: TradesService,
     private assetService: AssetService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private routingService: RoutingService
   ) {}
 
   ngOnInit() {
@@ -121,12 +129,16 @@ export class AccountDetailComponent
     this.configService
       .getConfig$()
       .pipe(
-        map((config) => config.fiat),
+        map((config) => {
+          this.counterAssetCode = config.fiat;
+          return config.fiat;
+        }),
         switchMap((counterAsset) => {
           return this.accountService
             .getAccountDetail(this.accountGuid, counterAsset)
             .pipe(
               map((account) => {
+                this.asset = account.asset;
                 this.account$.next(account);
                 this.isLoading$.next(false);
               })
@@ -208,5 +220,19 @@ export class AccountDetailComponent
       default:
         return '';
     }
+  }
+
+  onTrade(): void {
+    const extras: NavigationExtras = {
+      queryParams: {
+        asset: JSON.stringify(this.asset),
+        symbol_pair: symbolBuild(this.asset.code, this.counterAssetCode)
+      }
+    };
+    this.routingService.handleRoute({
+      origin: 'account-detail',
+      route: 'trade',
+      extras: extras
+    });
   }
 }

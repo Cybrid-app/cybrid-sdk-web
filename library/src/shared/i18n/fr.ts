@@ -73,6 +73,15 @@ export default {
     }
   },
 
+  // Account detail component
+  accountDetail: {
+    holdings: 'Avoirs',
+    buy: 'Acheter',
+    sell: 'Vendre',
+    transactions: 'Transactions Récentes',
+    balance: 'Solde'
+  },
+
   // Paginator
   paginator: {
     firstPageLabel: 'Première page',

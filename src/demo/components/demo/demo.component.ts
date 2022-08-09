@@ -15,6 +15,7 @@ import { ConfigService } from '../../services/config/config.service';
 // Library
 import { AppComponent } from '@components';
 import { CODE, EventLog } from '@services';
+import { TestConstants } from '@constants';
 
 @Component({
   selector: 'app-demo',
@@ -26,11 +27,16 @@ export class DemoComponent implements OnInit, OnDestroy {
   public viewContainer!: ViewContainerRef;
   token = '';
 
-  webComponents = ['price-list', 'trade', 'account-list', 'account-detail'];
+  webComponents = ['price-list', 'trade', 'account-list'];
+  languages = ['en-US', 'fr-CA'];
 
   componentRef!: ComponentRef<AppComponent>;
   componentGroup: FormGroup = new FormGroup({
     component: new FormControl()
+  });
+
+  languageGroup: FormGroup = new FormGroup({
+    language: new FormControl(TestConstants.CONFIG.locale)
   });
 
   loading$ = new BehaviorSubject(true);
@@ -50,6 +56,7 @@ export class DemoComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => {
         this.initComponentGroup();
+        this.initLanguageGroup();
         this.initDemo();
       });
   }
@@ -72,6 +79,20 @@ export class DemoComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
+  initLanguageGroup() {
+    this.languageGroup
+      .get('language')
+      ?.valueChanges.pipe(
+        takeUntil(this.unsubscribe$),
+        map((language) => {
+          let newConfig = TestConstants.CONFIG;
+          newConfig.locale = language;
+          this.componentRef.instance.hostConfig = newConfig;
+        })
+      )
+      .subscribe();
+  }
+
   initDemo() {
     this.componentRef = this.viewContainer.createComponent(AppComponent);
     this.componentRef.instance.auth = this.token;
@@ -83,8 +104,6 @@ export class DemoComponent implements OnInit, OnDestroy {
       .subscribe((config) => {
         this.componentRef.instance.hostConfig = config;
       });
-
-    this.componentRef.instance.component = 'account-list';
 
     this.componentRef.instance.errorLog.subscribe((error) =>
       console.log(error)

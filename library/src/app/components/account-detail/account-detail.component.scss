@@ -32,6 +32,15 @@
   gap: 1rem;
 }
 
+.cybrid-table {
+  position: relative;
+}
+
+mat-progress-bar {
+  position: absolute;
+  top: 3.5rem;
+}
+
 .cybrid-sort-header {
   display: flex;
   flex-direction: column;
@@ -74,27 +83,4 @@
 
 .cybrid-buy-icon {
   transform: rotate(90deg);
-}
-
-.cybrid-sell-icon {
-}
-
-.cybrid-table {
-  position: relative;
-}
-
-mat-progress-bar {
-  position: absolute;
-  top: 3.5rem;
-}
-
-.cybrid-paginator {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  border-bottom: none;
-}
-
-mat-paginator {
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
 }

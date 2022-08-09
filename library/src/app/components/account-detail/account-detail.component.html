@@ -24,7 +24,7 @@
         </div>
         <div class="cybrid-subheader">
           <div class="cybrid-holdings">
-            <span>Holdings</span>
+            <span>{{ 'accountDetail.holdings' | translate }}</span>
             <div>
               <span class="mat-body-strong"
                 >{{
@@ -34,16 +34,21 @@
               </span>
               <span class="mat-hint">{{ ' ' + account.asset.code }}</span>
             </div>
-            <span>{{
-              account.value | currency: '':'symbol':'':config.locale
-            }}</span>
+            <div>
+              <span>{{
+                (account.value | currency: '':'symbol':'':config.locale) + ' '
+              }}</span>
+              <span class="mat-hint">{{ account.counter_asset.code }}</span>
+            </div>
           </div>
           <div class="cybrid-actions">
-            <button mat-flat-button color="primary">
-              Sell {{ account.asset.code }}
+            <button mat-flat-button color="primary" (click)="onTrade()">
+              {{ 'accountDetail.sell' | translate }}
+              {{ ' ' + account.asset.code }}
             </button>
-            <button mat-flat-button color="primary">
-              Buy {{ account.asset.code }}
+            <button mat-flat-button color="primary" (click)="onTrade()">
+              {{ 'accountDetail.buy' | translate }}
+              {{ ' ' + account.asset.code }}
             </button>
           </div>
         </div>
@@ -63,7 +68,9 @@
           >
             <ng-container matColumnDef="transaction">
               <th mat-header-cell *matHeaderCellDef mat-sort-header="">
-                <div class="cybrid-sort-header">Recent Transactions</div>
+                <div class="cybrid-sort-header">
+                  {{ 'accountDetail.transactions' | translate }}
+                </div>
               </th>
               <td id="transaction" mat-cell *matCellDef="let transaction">
                 <div class="cybrid-transaction-cell">
@@ -94,7 +101,7 @@
                 arrowPosition="before"
               >
                 <div class="cybrid-sort-header">
-                  <span>{{ 'accountList.balance' | translate }}</span>
+                  <span>{{ 'accountDetail.balance' | translate }}</span>
                   <span class="mat-hint cybrid-h5 cybrid-code">{{
                     config.fiat
                   }}</span>

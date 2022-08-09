@@ -10,7 +10,7 @@
 >
 <ng-container *ngIf="(loading$ | async) === false" [formGroup]="componentGroup">
   <mat-form-field id="component" appearance="outline">
-    <mat-label>Component Selector</mat-label>
+    <mat-label>Component</mat-label>
     <mat-select formControlName="component">
       <mat-option
         id="option"
@@ -22,4 +22,14 @@
     </mat-select>
   </mat-form-field>
 </ng-container>
+<ng-containter *ngIf="(loading$ | async) === false" [formGroup]="languageGroup">
+  <mat-form-field appearance="outline">
+    <mat-label>Language</mat-label>
+    <mat-select formControlName="language">
+      <mat-option *ngFor="let language of languages" [value]="language">
+        {{ language }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</ng-containter>
 <ng-template #viewContainer></ng-template>
