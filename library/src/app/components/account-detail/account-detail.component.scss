@@ -1,0 +1,100 @@
+.cybrid-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+}
+
+.cybrid-account {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.cybrid-subheader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  margin-bottom: 1rem;
+}
+
+.cybrid-holdings {
+  display: flex;
+  flex-direction: column;
+}
+
+.cybrid-actions {
+  display: flex;
+  align-self: flex-start;
+  gap: 1rem;
+}
+
+.cybrid-sort-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.mat-column-transaction {
+  .cybrid-sort-header {
+    text-align: start;
+  }
+}
+
+.mat-column-balance {
+  .cybrid-sort-header {
+    text-align: end;
+  }
+}
+
+.cybrid-transaction-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  div {
+    display: flex;
+    flex-direction: column;
+  }
+  span:last-of-type {
+    margin-top: -5px;
+  }
+}
+
+.cybrid-balance-cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  span:last-of-type {
+    margin-top: -5px;
+  }
+}
+
+.cybrid-buy-icon {
+  transform: rotate(90deg);
+}
+
+.cybrid-sell-icon {
+}
+
+.cybrid-table {
+  position: relative;
+}
+
+mat-progress-bar {
+  position: absolute;
+  top: 3.5rem;
+}
+
+.cybrid-paginator {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: none;
+}
+
+mat-paginator {
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}

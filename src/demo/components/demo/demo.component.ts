@@ -26,7 +26,7 @@ export class DemoComponent implements OnInit, OnDestroy {
   public viewContainer!: ViewContainerRef;
   token = '';
 
-  webComponents = ['price-list', 'trade', 'account-list'];
+  webComponents = ['price-list', 'trade', 'account-list', 'account-detail'];
 
   componentRef!: ComponentRef<AppComponent>;
   componentGroup: FormGroup = new FormGroup({
@@ -83,6 +83,8 @@ export class DemoComponent implements OnInit, OnDestroy {
       .subscribe((config) => {
         this.componentRef.instance.hostConfig = config;
       });
+
+    this.componentRef.instance.component = 'account-list';
 
     this.componentRef.instance.errorLog.subscribe((error) =>
       console.log(error)

@@ -1,6 +1,14 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
-import { forkJoin, Observable, Subject, map, catchError, of } from 'rxjs';
+import {
+  forkJoin,
+  Observable,
+  Subject,
+  map,
+  catchError,
+  of,
+  switchMap
+} from 'rxjs';
 
 // Client
 import {
@@ -15,7 +23,7 @@ import {
 import { AssetService, Asset } from '@services';
 
 // Utility
-import { symbolSplit } from '@utility';
+import { symbolBuild, symbolSplit } from '@utility';
 import { AssetPipe } from '@pipes';
 
 export interface Account {
@@ -92,6 +100,62 @@ export class AccountService implements OnDestroy {
       this.assetPipe.transform(balance.amount, balance.asset, 'trade')
     );
     return sellPrice * platformBalance;
+  }
+
+  getAccountDetail(
+    accountGuid: string,
+    counterAsset: string
+  ): Observable<Account> {
+    return forkJoin([
+      this.filterAccounts().pipe(
+        map((accounts) => {
+          return accounts.find((account) => {
+            return accountGuid == account.guid;
+          });
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      ),
+      this.pricesService.listPrices().pipe(
+        catchError((err) => {
+          return of(err);
+        })
+      )
+    ]).pipe(
+      map((combined) => {
+        const [accountModel, pricesModel]: [
+          accountModel: AccountBankModel,
+          pricesModel: SymbolPriceBankModel[]
+        ] = combined;
+
+        const priceModel = pricesModel.find((price) => {
+          return (price.symbol = accountModel.asset);
+        });
+        const assetModel = this.assetService.getAsset(accountModel.asset!);
+        const counterAssetModel = this.assetService.getAsset(counterAsset);
+
+        const accountValue = this.getAccountValue(
+          {
+            amount: priceModel!.sell_price!,
+            asset: counterAssetModel
+          },
+          {
+            amount: accountModel.platform_balance!,
+            asset: assetModel
+          }
+        );
+
+        // Build extended account model
+        return {
+          asset: assetModel,
+          counter_asset: counterAssetModel,
+          price: priceModel!,
+          value: accountValue,
+          account: accountModel
+        };
+      })
+    );
   }
 
   getPortfolio(): Observable<AccountOverview> {

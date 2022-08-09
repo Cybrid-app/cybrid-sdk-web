@@ -206,7 +206,6 @@ $light-theme: mat.define-light-theme(
   }
 
   .cybrid-h2 {
-    @extend .mat-hint;
     @extend .mat-h2;
     font-weight: 400;
     margin: 0;

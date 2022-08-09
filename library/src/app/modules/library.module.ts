@@ -51,6 +51,7 @@ import {
   TradeConfirmComponent,
   TradeSummaryComponent,
   AccountListComponent,
+  AccountDetailComponent,
   NavigationComponent
 } from '@components';
 
@@ -73,6 +74,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     TradeConfirmComponent,
     TradeSummaryComponent,
     AccountListComponent,
+    AccountDetailComponent,
     LoadingComponent,
     NavigationComponent,
     AssetPipe,
