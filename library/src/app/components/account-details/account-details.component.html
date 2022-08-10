@@ -24,7 +24,7 @@
         </div>
         <div class="cybrid-subheader">
           <div class="cybrid-holdings">
-            <span>{{ 'accountDetail.holdings' | translate }}</span>
+            <span>{{ 'accountDetails.holdings' | translate }}</span>
             <div>
               <span class="mat-body-strong"
                 >{{
@@ -43,11 +43,11 @@
           </div>
           <div class="cybrid-actions">
             <button mat-flat-button color="primary" (click)="onTrade()">
-              {{ 'accountDetail.sell' | translate }}
+              {{ 'accountDetails.sell' | translate }}
               {{ ' ' + account.asset.code }}
             </button>
             <button mat-flat-button color="primary" (click)="onTrade()">
-              {{ 'accountDetail.buy' | translate }}
+              {{ 'accountDetails.buy' | translate }}
               {{ ' ' + account.asset.code }}
             </button>
           </div>
@@ -69,7 +69,7 @@
             <ng-container matColumnDef="transaction">
               <th mat-header-cell *matHeaderCellDef mat-sort-header="">
                 <div class="cybrid-sort-header">
-                  {{ 'accountDetail.transactions' | translate }}
+                  {{ 'accountDetails.transactions' | translate }}
                 </div>
               </th>
               <td id="transaction" mat-cell *matCellDef="let transaction">
@@ -101,7 +101,7 @@
                 arrowPosition="before"
               >
                 <div class="cybrid-sort-header">
-                  <span>{{ 'accountDetail.balance' | translate }}</span>
+                  <span>{{ 'accountDetails.balance' | translate }}</span>
                   <span class="mat-hint cybrid-h5 cybrid-code">{{
                     config.fiat
                   }}</span>
@@ -146,7 +146,11 @@
             <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
             <tr class="mat-row" *matNoDataRow>
               <td id="warning" class="mat-cell cybrid-no-data" colspan="2">
-                {{ 'No data' }}
+                {{
+                  !getTradesError
+                    ? ('accountDetails.error.noData' | translate)
+                    : ('accountDetails.error.trade' | translate)
+                }}
               </td>
             </tr>
           </table>

@@ -172,7 +172,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
               }
             };
             this.routingService.handleRoute({
-              route: 'account-detail',
+              route: 'account-details',
               origin: 'account-list',
               extras
             });

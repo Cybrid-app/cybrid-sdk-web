@@ -5,11 +5,12 @@ import {
   PostQuoteBankModel,
   QuoteBankModel,
   SymbolPriceBankModel,
-  TradeBankModel
+  TradeBankModel,
+  TradeListBankModel
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
-import { ComponentConfig, Asset } from '@services';
+import { ComponentConfig, Asset, Account } from '@services';
 
 // Components
 import { SymbolPrice } from '@components';
@@ -125,7 +126,9 @@ export class TestConstants {
     created_at: '2022-06-30T17:04:39.049Z'
   };
 
-  // Account component test models
+  // Account-list component test models
+  static ACCOUNT_GUID = 'd97bbff33783c4a56806bb94dde9eacb';
+
   static SYMBOL_PRICE_BANK_MODEL_ARRAY: SymbolPriceBankModel[] = [
     {
       symbol: 'BTC-USD',
@@ -219,6 +222,44 @@ export class TestConstants {
     state: 'created'
   };
 
+  static ACCOUNT_MODEL: Account = {
+    asset: {
+      code: 'BTC',
+      decimals: '8',
+      name: 'Bitcoin',
+      symbol: '₿',
+      type: 'crypto',
+      url: 'https://images.cybrid.xyz/sdk/assets/svg/color/btc.svg'
+    },
+    counter_asset: {
+      code: 'USD',
+      decimals: '2',
+      name: 'United States Dollar',
+      symbol: '$',
+      type: 'fiat',
+      url: 'https://images.cybrid.xyz/sdk/assets/svg/color/usd.svg'
+    },
+    price: {
+      symbol: 'BTC',
+      buy_price: '2129800',
+      sell_price: '2129700',
+      buy_price_last_updated_at: '2022-07-27T13:28:13.322Z',
+      sell_price_last_updated_at: '2022-07-27T13:28:13.322Z'
+    },
+    value: 4944888.3490320295,
+    account: {
+      type: 'trading',
+      guid: 'd97bbff33783c4a56806bb94dde9eacb',
+      created_at: '2022-06-15T15:36:44.627Z',
+      asset: 'BTC',
+      name: 'Bitcoin',
+      customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+      platform_balance: '23218708499',
+      platform_available: '0',
+      state: 'created'
+    }
+  };
+
   static ACCOUNT_OVERVIEW: AccountOverview = {
     accounts: [
       {
@@ -297,5 +338,39 @@ export class TestConstants {
       }
     ],
     balance: 12518457.675255332
+  };
+
+  // Account-details component test models
+
+  static TRADE_LIST_BANK_MODEL: TradeListBankModel = {
+    total: '148',
+    page: '0',
+    per_page: '5',
+    objects: [
+      {
+        guid: '718902509b27c72748790655c7edc335',
+        customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+        quote_guid: 'a0a37cd751d3a1e9f3c04110795029b7',
+        symbol: 'BTC-USD',
+        side: 'buy',
+        state: 'settling',
+        receive_amount: '12300000000',
+        deliver_amount: '284527782',
+        fee: '0',
+        created_at: '2022-08-09T18:51:02.029Z'
+      },
+      {
+        guid: '70da92652701b36021acfefb74085750',
+        customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+        quote_guid: '53abba1599ade22c0797038cc1bcddac',
+        symbol: 'BTC-USD',
+        side: 'buy',
+        state: 'settling',
+        receive_amount: '100000000',
+        deliver_amount: '2309268',
+        fee: '0',
+        created_at: '2022-08-09T18:02:24.675Z'
+      }
+    ]
   };
 }

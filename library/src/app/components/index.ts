@@ -8,5 +8,5 @@ export { TradeComponent } from './trade/trade.component';
 export { TradeConfirmComponent } from './trade-confirm/trade-confirm.component';
 export { TradeSummaryComponent } from './trade-summary/trade-summary.component';
 export { AccountListComponent } from './account-list/account-list.component';
-export { AccountDetailComponent } from './account-detail/account-detail.component';
+export { AccountDetailsComponent } from './account-details/account-details.component';
 export { NavigationComponent } from './navigation/navigation.component';

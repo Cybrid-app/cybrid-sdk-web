@@ -1,5 +1,5 @@
 import {
-  AfterViewInit,
+  AfterContentInit,
   Component,
   OnDestroy,
   OnInit,
@@ -34,6 +34,7 @@ import {
   CODE,
   ComponentConfig,
   ConfigService,
+  ErrorService,
   EventService,
   LEVEL,
   RoutingData,
@@ -45,12 +46,12 @@ import { Constants } from '@constants';
 import { symbolBuild } from '@utility';
 
 @Component({
-  selector: 'app-account-detail',
-  templateUrl: './account-detail.component.html',
-  styleUrls: ['./account-detail.component.scss']
+  selector: 'app-account-details',
+  templateUrl: './account-details.component.html',
+  styleUrls: ['./account-details.component.scss']
 })
-export class AccountDetailComponent
-  implements OnInit, AfterViewInit, OnDestroy
+export class AccountDetailsComponent
+  implements OnInit, AfterContentInit, OnDestroy
 {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -63,6 +64,7 @@ export class AccountDetailComponent
   counterAssetCode = Constants.USD_ASSET.code;
 
   displayedColumns: string[] = ['transaction', 'balance'];
+  getTradesError = false;
   isLoadingResults = true;
 
   totalRows = 0;
@@ -81,6 +83,7 @@ export class AccountDetailComponent
 
   constructor(
     public configService: ConfigService,
+    private errorService: ErrorService,
     private eventService: EventService,
     private accountService: AccountService,
     private tradeService: TradesService,
@@ -99,7 +102,7 @@ export class AccountDetailComponent
     this.refreshData();
   }
 
-  ngAfterViewInit() {
+  ngAfterContentInit() {
     this.dataSource.paginator = this.paginator;
 
     this.dataSource.sortingDataAccessor = this.sortingDataAccessor;
@@ -135,12 +138,33 @@ export class AccountDetailComponent
         }),
         switchMap((counterAsset) => {
           return this.accountService
-            .getAccountDetail(this.accountGuid, counterAsset)
+            .getAccountDetails(this.accountGuid, counterAsset)
             .pipe(
               map((account) => {
                 this.asset = account.asset;
                 this.account$.next(account);
                 this.isLoading$.next(false);
+
+                this.eventService.handleEvent(
+                  LEVEL.INFO,
+                  CODE.DATA_REFRESHED,
+                  'Account details successfully updated'
+                );
+              }),
+              catchError((err) => {
+                this.eventService.handleEvent(
+                  LEVEL.ERROR,
+                  CODE.DATA_ERROR,
+                  'There was an error fetching account details'
+                );
+
+                this.errorService.handleError(
+                  new Error('There was an error fetching account details')
+                );
+
+                this.dataSource.data = [];
+                this.getTradesError = true;
+                return of(err);
               })
             );
         })
@@ -170,6 +194,15 @@ export class AccountDetailComponent
           this.isLoadingResults = false;
         }),
         catchError((err) => {
+          this.eventService.handleEvent(
+            LEVEL.ERROR,
+            CODE.DATA_ERROR,
+            'There was an error fetching trades'
+          );
+
+          this.errorService.handleError(
+            new Error('There was an error fetching trades')
+          );
           return of(err);
         })
       )

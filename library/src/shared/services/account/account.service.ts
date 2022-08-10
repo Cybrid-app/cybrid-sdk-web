@@ -1,14 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
-import {
-  forkJoin,
-  Observable,
-  Subject,
-  map,
-  catchError,
-  of,
-  switchMap
-} from 'rxjs';
+import { forkJoin, Observable, Subject, map, catchError, of } from 'rxjs';
 
 // Client
 import {
@@ -23,7 +15,7 @@ import {
 import { AssetService, Asset } from '@services';
 
 // Utility
-import { symbolBuild, symbolSplit } from '@utility';
+import { symbolSplit } from '@utility';
 import { AssetPipe } from '@pipes';
 
 export interface Account {
@@ -102,7 +94,7 @@ export class AccountService implements OnDestroy {
     return sellPrice * platformBalance;
   }
 
-  getAccountDetail(
+  getAccountDetails(
     accountGuid: string,
     counterAsset: string
   ): Observable<Account> {
@@ -154,6 +146,9 @@ export class AccountService implements OnDestroy {
           value: accountValue,
           account: accountModel
         };
+      }),
+      catchError((err) => {
+        return of(err);
       })
     );
   }

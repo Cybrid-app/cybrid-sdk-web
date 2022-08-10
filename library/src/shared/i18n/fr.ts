@@ -79,7 +79,11 @@ export default {
     buy: 'Acheter',
     sell: 'Vendre',
     transactions: 'Transactions Récentes',
-    balance: 'Solde'
+    balance: 'Solde',
+    error: {
+      account: 'Erreur lors de la récupération des transactions',
+      noData: 'Aucun commerce trouvé'
+    }
   },
 
   // Paginator

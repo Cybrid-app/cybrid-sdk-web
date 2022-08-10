@@ -6,7 +6,7 @@ import {
   PriceListComponent,
   TradeComponent,
   AccountListComponent,
-  AccountDetailComponent
+  AccountDetailsComponent
 } from '@components';
 
 export const routes: Routes = [
@@ -35,8 +35,8 @@ export const routes: Routes = [
         component: AccountListComponent
       },
       {
-        path: 'account-detail',
-        component: AccountDetailComponent
+        path: 'account-details',
+        component: AccountDetailsComponent
       }
     ]
   },
