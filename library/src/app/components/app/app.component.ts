@@ -12,6 +12,7 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  forkJoin,
   map,
   of,
   Subject,
@@ -37,6 +38,7 @@ import {
 
 // Constants
 import { Constants } from '@constants';
+import { fork } from 'child_process';
 
 @Component({
   selector: 'app-app',
@@ -77,34 +79,37 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.initEventService();
     this.initErrorService();
-    combineLatest([
-      this.configService.getConfig$(),
-      this.assetService.getAssets$()
-    ])
-      .pipe(
-        take(1),
-        tap(() => {
-          this.eventLog.emit({
-            level: LEVEL.INFO,
-            code: CODE.APPLICATION_INIT,
-            message: 'Initializing application'
-          });
-        }),
-        catchError((err) => {
-          this.eventService.handleEvent(
-            LEVEL.FATAL,
-            CODE.APPLICATION_ERROR,
-            'Fatal error initializing application'
-          );
-          this.errorService.handleError(
-            new Error('Fatal error initializing application')
-          );
-          return of(err);
-        })
-      )
-      .subscribe(() => {
-        this.initNavigation();
-      });
+    this.assetService.getAssets$().subscribe(() => {
+      this.initNavigation();
+    });
+    // this.initNavigation();
+    // forkJoin([this.configService.getConfig$(), this.assetService.getAssets$()])
+    //   .pipe(
+    //     take(1),
+    //     tap(() => {
+    //       this.eventLog.emit({
+    //         level: LEVEL.INFO,
+    //         code: CODE.APPLICATION_INIT,
+    //         message: 'Initializing application'
+    //       });
+    //     }),
+    //     catchError((err) => {
+    //       this.eventService.handleEvent(
+    //         LEVEL.FATAL,
+    //         CODE.APPLICATION_ERROR,
+    //         'Fatal error initializing application'
+    //       );
+    //       this.errorService.handleError(
+    //         new Error('Fatal error initializing application')
+    //       );
+    //       return of(err);
+    //     })
+    //   )
+    //   .subscribe(() => {
+    //     this.initNavigation();
+    //   });
+
+    this.configService.config$.subscribe((config) => console.log(config));
   }
 
   initEventService(): void {

@@ -1,0 +1,41 @@
+<ng-container [formGroup]="loginForm">
+  <mat-form-field appearance="outline">
+    <mat-label>Client Id</mat-label>
+    <input
+      id="clientId"
+      formControlName="clientId"
+      matInput
+      required
+      type="text"
+    />
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Client Secret</mat-label>
+    <input
+      id="clientSecret"
+      formControlName="clientSecret"
+      matInput
+      required
+      type="text"
+    />
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Customer GUID</mat-label>
+    <input
+      id="customerGuid"
+      formControlName="customerGuid"
+      matInput
+      required
+      type="text"
+    />
+  </mat-form-field>
+</ng-container>
+
+<button
+  [disabled]="loginForm.invalid"
+  mat-flat-button
+  color="primary"
+  (click)="login()"
+>
+  Login
+</button>

@@ -8,11 +8,12 @@ import { LibraryModule } from '../../../library/src/app/modules/library.module';
 import { SharedModule } from '../../../library/src/shared/modules/shared.module';
 
 // Services
-import { ConfigService } from '../services/config/config.service';
+import { DemoConfigService } from '../services/demo-config/demo-config.service';
 
 // Components
-import { DemoComponent } from '../components/demo/demo.component';
 import { AppComponent } from '../components/app/app.component';
+import { DemoComponent } from '../components/demo/demo.component';
+import { LoginComponent } from '../components/login/login.component';
 
 @NgModule({
   imports: [
@@ -22,9 +23,9 @@ import { AppComponent } from '../components/app/app.component';
     LibraryModule,
     SharedModule
   ],
-  declarations: [AppComponent, DemoComponent],
-  providers: [ConfigService],
+  declarations: [AppComponent, DemoComponent, LoginComponent],
+  providers: [DemoConfigService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class DemoModule {}

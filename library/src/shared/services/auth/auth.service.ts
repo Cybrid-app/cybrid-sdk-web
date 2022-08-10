@@ -3,7 +3,7 @@ import { Observable, ReplaySubject, timer } from 'rxjs';
 import { CODE, EventService, LEVEL } from '../event/event.service';
 import { ErrorService } from '../error/error.service';
 import jwt_decode, { JwtPayload } from 'jwt-decode';
-import { Constants } from '../../constants/constants';
+import { Constants } from '@constants';
 
 @Injectable({
   providedIn: 'root'

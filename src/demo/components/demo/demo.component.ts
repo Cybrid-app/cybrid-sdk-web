@@ -10,12 +10,13 @@ import { FormControl, FormGroup } from '@angular/forms';
 
 import { BehaviorSubject, filter, map, Subject, take, takeUntil } from 'rxjs';
 
-import { ConfigService } from '../../services/config/config.service';
+import { DemoConfigService } from '../../services/demo-config/demo-config.service';
 
 // Library
 import { AppComponent } from '@components';
-import { CODE, EventLog } from '@services';
-import { TestConstants } from '@constants';
+import { CODE, ConfigService, EventLog } from '@services';
+import { Constants, TestConstants } from '@constants';
+import { DemoCredentials } from '../login/login.component';
 
 @Component({
   selector: 'app-demo',
@@ -36,7 +37,7 @@ export class DemoComponent implements OnInit, OnDestroy {
   });
 
   languageGroup: FormGroup = new FormGroup({
-    language: new FormControl(TestConstants.CONFIG.locale)
+    language: new FormControl(Constants.DEFAULT_CONFIG.locale)
   });
 
   loading$ = new BehaviorSubject(true);
@@ -44,21 +45,21 @@ export class DemoComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject();
 
   constructor(
-    public tokenService: ConfigService,
-    public configService: ConfigService
+    public tokenService: DemoConfigService,
+    public configService: DemoConfigService
   ) {}
 
   ngOnInit(): void {
-    this.tokenService.token$
-      .pipe(
-        take(1),
-        map((token) => (this.token = token))
-      )
-      .subscribe(() => {
-        this.initComponentGroup();
-        this.initLanguageGroup();
-        this.initDemo();
-      });
+    // this.tokenService.token$
+    //   .pipe(
+    //     take(1),
+    //     map((token) => (this.token = token))
+    //   )
+    //   .subscribe(() => {
+    //     this.initComponentGroup();
+    //     this.initLanguageGroup();
+    //     this.initDemo();
+    //   });
   }
 
   ngOnDestroy() {
@@ -93,10 +94,19 @@ export class DemoComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  initDemo() {
+  initDemo(creds: DemoCredentials) {
     this.componentRef = this.viewContainer.createComponent(AppComponent);
-    this.componentRef.instance.auth = this.token;
-    this.loading$.next(false);
+
+    this.componentRef.instance.auth = creds.token;
+
+    let newConfig = Constants.DEFAULT_CONFIG;
+    newConfig.customer = creds.customerGuid;
+
+    this.componentRef.instance.hostConfig = newConfig;
+
+    // setTimeout(() => {
+    //   this.componentRef.instance.hostConfig = newConfig;
+    // }, 100);
 
     // Subscribe to component configuration changes
     this.configService.config$
@@ -112,21 +122,21 @@ export class DemoComponent implements OnInit, OnDestroy {
     // Subscribe to routing events and set component selector value
     this.componentRef.instance.eventLog
       .pipe(
-        takeUntil(this.unsubscribe$),
-        filter((event: EventLog) => {
-          return (
-            event.code == CODE.ROUTING_END ||
-            event.code == CODE.ROUTING_START ||
-            event.code == CODE.ROUTING_REQUEST
-          );
-        }),
-        map((event) => {
-          this.componentGroup.get('component')?.patchValue(event.data.default, {
-            emitEvent: false,
-            onlySelf: true
-          });
-        })
+        takeUntil(this.unsubscribe$)
+        // filter((event: EventLog) => {
+        //   return (
+        //     event.code == CODE.ROUTING_END ||
+        //     event.code == CODE.ROUTING_START ||
+        //     event.code == CODE.ROUTING_REQUEST
+        //   );
+        // }),
+        // map((event) => {
+        //   this.componentGroup.get('component')?.patchValue(event.data.default, {
+        //     emitEvent: false,
+        //     onlySelf: true
+        //   });
+        // })
       )
-      .subscribe();
+      .subscribe((event) => console.log(event));
   }
 }

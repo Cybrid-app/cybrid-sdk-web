@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Constants } from '../../constants/constants';
+import { Constants } from '@constants';
 import { BehaviorSubject, map, Observable, Subject, takeUntil } from 'rxjs';
 import { CODE, EventService, LEVEL } from '../event/event.service';
 import { ErrorService } from '../error/error.service';
