@@ -1,0 +1,183 @@
+<ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
+  <ng-container *ngIf="(isLoading$ | async) !== true; else loading">
+    <ng-container *ngIf="configService.getConfig$() | async as config">
+      <app-navigation [routingData]="routingData"></app-navigation>
+      <ng-container *ngIf="account$ | async as account">
+        <div class="cybrid-header">
+          <div class="cybrid-account">
+            <img
+              class="cybrid-icon"
+              src="{{ account.asset.url }}"
+              alt="Crypto currency icon"
+            />
+            <span class="cybrid-h2"
+              >{{ account.asset.name }}
+              <span class="mat-hint">{{ account.asset.code }}</span>
+            </span>
+          </div>
+          <div>
+            <span class="cybrid-h2">
+              {{ account.price.buy_price! | asset: account.counter_asset }}
+              <span class="mat-hint">{{ account.counter_asset.code }}</span>
+            </span>
+          </div>
+        </div>
+        <div class="cybrid-subheader">
+          <div class="cybrid-holdings">
+            <span>{{ 'accountDetails.holdings' | translate }}</span>
+            <div>
+              <span class="mat-body-strong"
+                >{{
+                  account.account.platform_balance!
+                    | asset: account.asset:'trade'
+                }}
+              </span>
+              <span class="mat-hint">{{ ' ' + account.asset.code }}</span>
+            </div>
+            <div>
+              <span>{{
+                (account.value | currency: '':'symbol':'':config.locale) + ' '
+              }}</span>
+              <span class="mat-hint">{{ account.counter_asset.code }}</span>
+            </div>
+          </div>
+          <div class="cybrid-actions">
+            <button mat-flat-button color="primary" (click)="onTrade()">
+              {{ 'accountDetails.sell' | translate }}
+              {{ ' ' + account.asset.code }}
+            </button>
+            <button mat-flat-button color="primary" (click)="onTrade()">
+              {{ 'accountDetails.buy' | translate }}
+              {{ ' ' + account.asset.code }}
+            </button>
+          </div>
+        </div>
+        <div class="cybrid-table">
+          <mat-progress-bar
+            *ngIf="isLoadingResults"
+            mode="indeterminate"
+          ></mat-progress-bar>
+          <table
+            id="tradeList"
+            mat-table
+            [dataSource]="dataSource"
+            matSort
+            (matSortChange)="sortChange()"
+            matSortDisableClear
+            class="cybrid-paginator mat-button-toggle-group-appearance-standard"
+          >
+            <ng-container matColumnDef="transaction">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="">
+                <div class="cybrid-sort-header">
+                  {{ 'accountDetails.transactions' | translate }}
+                </div>
+              </th>
+              <td id="transaction" mat-cell *matCellDef="let transaction">
+                <div class="cybrid-transaction-cell">
+                  <mat-icon
+                    fontSet="material-icons-outlined"
+                    class="cybrid-success"
+                    [ngClass]="
+                      transaction.side === 'sell'
+                        ? 'cybrid-buy-icon'
+                        : 'cybrid-sell-icon'
+                    "
+                    >outbound
+                  </mat-icon>
+                  <div>
+                    <span>{{ transaction.side | titlecase }}</span>
+                    <span class="cybrid-h5 mat-hint">{{
+                      transaction.created_at | date
+                    }}</span>
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="balance">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header=""
+                arrowPosition="before"
+              >
+                <div class="cybrid-sort-header">
+                  <span>{{ 'accountDetails.balance' | translate }}</span>
+                  <span class="mat-hint cybrid-h5 cybrid-code">{{
+                    config.fiat
+                  }}</span>
+                </div>
+              </th>
+              <td id="balance" mat-cell *matCellDef="let balance">
+                <div *ngIf="balance.side === 'buy'" class="cybrid-balance-cell">
+                  <div>
+                    <span class="mat-body-strong"
+                      >{{
+                        (balance.receive_amount
+                          | asset: account.asset:'trade') + ' '
+                      }}
+                    </span>
+                    <span class="mat-hint"> {{ account.asset.code }}</span>
+                  </div>
+                  <span class="cybrid-h5">{{
+                    balance.deliver_amount | asset: account.counter_asset
+                  }}</span>
+                </div>
+                <div
+                  *ngIf="balance.side === 'sell'"
+                  class="cybrid-balance-cell"
+                >
+                  <div>
+                    <span class="mat-body-strong"
+                      >{{
+                        '-' +
+                          (balance.deliver_amount
+                            | asset: account.asset:'trade')
+                      }}
+                    </span>
+                    <span class="mat-hint"> {{ account.asset.code }}</span>
+                  </div>
+                  <span class="cybrid-h5">{{
+                    balance.receive_amount | asset: account.counter_asset
+                  }}</span>
+                </div>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            <tr class="mat-row" *matNoDataRow>
+              <td id="warning" class="mat-cell cybrid-no-data" colspan="2">
+                {{
+                  !getTradesError
+                    ? ('accountDetails.error.noData' | translate)
+                    : ('accountDetails.error.trade' | translate)
+                }}
+              </td>
+            </tr>
+          </table>
+          <mat-paginator
+            [pageSize]="pageSize"
+            [pageIndex]="currentPage"
+            [length]="totalRows"
+            [pageSizeOptions]="pageSizeOptions"
+            (page)="pageChange($event)"
+            class="mat-button-toggle-group-appearance-standard"
+            aria-label="cryptocurrency accounts and balances"
+          >
+          </mat-paginator>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</ng-container>
+<ng-template #loading>
+  <app-loading></app-loading>
+</ng-template>
+<ng-template #error>
+  <mat-card>
+    <mat-card-content>
+      <div class="cybrid-fatal">
+        <p>{{ 'fatal' | translate }}</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</ng-template>

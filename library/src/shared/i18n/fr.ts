@@ -73,6 +73,19 @@ export default {
     }
   },
 
+  // Account detail component
+  accountDetail: {
+    holdings: 'Avoirs',
+    buy: 'Acheter',
+    sell: 'Vendre',
+    transactions: 'Transactions Récentes',
+    balance: 'Solde',
+    error: {
+      account: 'Erreur lors de la récupération des transactions',
+      noData: 'Aucun commerce trouvé'
+    }
+  },
+
   // Paginator
   paginator: {
     firstPageLabel: 'Première page',

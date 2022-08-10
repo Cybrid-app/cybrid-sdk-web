@@ -94,6 +94,65 @@ export class AccountService implements OnDestroy {
     return sellPrice * platformBalance;
   }
 
+  getAccountDetails(
+    accountGuid: string,
+    counterAsset: string
+  ): Observable<Account> {
+    return forkJoin([
+      this.filterAccounts().pipe(
+        map((accounts) => {
+          return accounts.find((account) => {
+            return accountGuid == account.guid;
+          });
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      ),
+      this.pricesService.listPrices().pipe(
+        catchError((err) => {
+          return of(err);
+        })
+      )
+    ]).pipe(
+      map((combined) => {
+        const [accountModel, pricesModel]: [
+          accountModel: AccountBankModel,
+          pricesModel: SymbolPriceBankModel[]
+        ] = combined;
+
+        const priceModel = pricesModel.find((price) => {
+          return (price.symbol = accountModel.asset);
+        });
+        const assetModel = this.assetService.getAsset(accountModel.asset!);
+        const counterAssetModel = this.assetService.getAsset(counterAsset);
+
+        const accountValue = this.getAccountValue(
+          {
+            amount: priceModel!.sell_price!,
+            asset: counterAssetModel
+          },
+          {
+            amount: accountModel.platform_balance!,
+            asset: assetModel
+          }
+        );
+
+        // Build extended account model
+        return {
+          asset: assetModel,
+          counter_asset: counterAssetModel,
+          price: priceModel!,
+          value: accountValue,
+          account: accountModel
+        };
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
+
   getPortfolio(): Observable<AccountOverview> {
     return forkJoin([
       this.filterAccounts().pipe(

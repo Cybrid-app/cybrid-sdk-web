@@ -15,17 +15,6 @@
   }
 }
 
-.cybrid-paginator {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  border-bottom: none;
-}
-
-mat-paginator {
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
-}
-
 .cybrid-balance {
   display: flex;
   flex-direction: column;
@@ -73,8 +62,4 @@ mat-paginator {
 
 .cybrid-icon {
   height: 1.7rem;
-}
-
-.cybrid-no-data {
-  text-align: center;
 }

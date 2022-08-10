@@ -10,6 +10,7 @@ import {
   of,
   Subject,
   switchMap,
+  take,
   takeUntil,
   timer
 } from 'rxjs';
@@ -26,11 +27,13 @@ import {
   ErrorService,
   AssetService,
   Asset,
-  RoutingData
+  RoutingData,
+  RoutingService
 } from '@services';
 
 // Utility
 import { Constants } from '@constants';
+import { NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'app-account-list',
@@ -67,7 +70,8 @@ export class AccountListComponent implements OnInit, OnDestroy {
     private assetService: AssetService,
     private eventService: EventService,
     private errorService: ErrorService,
-    private accountService: AccountService
+    private accountService: AccountService,
+    private routingService: RoutingService
   ) {}
 
   ngOnInit(): void {
@@ -153,6 +157,29 @@ export class AccountListComponent implements OnInit, OnDestroy {
           this.getAccounts();
         }
       });
+  }
+
+  onRowClick(accountGuid: string): void {
+    this.configService
+      .getConfig$()
+      .pipe(
+        take(1),
+        map((config: ComponentConfig) => {
+          if (config.routing) {
+            const extras: NavigationExtras = {
+              queryParams: {
+                accountGuid: accountGuid
+              }
+            };
+            this.routingService.handleRoute({
+              route: 'account-details',
+              origin: 'account-list',
+              extras
+            });
+          }
+        })
+      )
+      .subscribe();
   }
 
   sortingDataAccessor(account: Account, columnDef: string) {

@@ -176,4 +176,19 @@ describe('AccountListComponent', () => {
     sort = component.sortingDataAccessor(account, 'test');
     expect(sort).toEqual('');
   });
+
+  it('should navigate on row click', () => {
+    component.onRowClick(TestConstants.ACCOUNT_GUID);
+
+    // Test default config.routing=true
+    expect(MockRoutingService.handleRoute).toHaveBeenCalledWith({
+      route: 'account-details',
+      origin: 'account-list',
+      extras: {
+        queryParams: {
+          accountGuid: TestConstants.ACCOUNT_GUID
+        }
+      }
+    });
+  });
 });

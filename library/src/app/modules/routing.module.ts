@@ -5,7 +5,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import {
   PriceListComponent,
   TradeComponent,
-  AccountListComponent
+  AccountListComponent,
+  AccountDetailsComponent
 } from '@components';
 
 export const routes: Routes = [
@@ -32,6 +33,10 @@ export const routes: Routes = [
       {
         path: 'account-list',
         component: AccountListComponent
+      },
+      {
+        path: 'account-details',
+        component: AccountDetailsComponent
       }
     ]
   },

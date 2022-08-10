@@ -79,11 +79,7 @@ describe('AccountService', () => {
 
   it('should filter prices', () => {
     // Test for asset = BTC
-    let filteredPrice = TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY.filter(
-      (price) => {
-        return price.symbol == 'BTC-USD';
-      }
-    )[0];
+    let filteredPrice = TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY[0];
 
     // Call filter prices with BTC AccountBankModel
     let price = service.filterPrices(
@@ -94,18 +90,13 @@ describe('AccountService', () => {
     expect(price).toEqual(filteredPrice);
 
     // Test for asset = ETH
-    filteredPrice = TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY.filter(
-      (price) => {
-        return price.symbol == 'ETH-USD';
-      }
-    )[0];
+    filteredPrice = TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY[1];
 
     // Call filter prices with ETH AccountBankModel
     price = service.filterPrices(
       TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY,
       TestConstants.ACCOUNT_BANK_MODEL_ETH
     );
-
     expect(price).toEqual(filteredPrice);
   });
 
@@ -184,5 +175,47 @@ describe('AccountService', () => {
     service.getPortfolio().subscribe((error) => {
       expect(error).toBeInstanceOf(Error);
     });
+  });
+
+  it('should get account details', () => {
+    service
+      .getAccountDetails(
+        TestConstants.ACCOUNT_GUID,
+        TestConstants.USD_ASSET.code
+      )
+      .subscribe((account) => {
+        expect(account).toEqual(TestConstants.ACCOUNT_MODEL);
+      });
+  });
+
+  it('should pass through errors on getAccountDetails()', () => {
+    // Set error on listPrices
+    MockPricesService.listPrices.and.returnValue(error$);
+
+    service
+      .getAccountDetails(
+        TestConstants.ACCOUNT_GUID,
+        TestConstants.USD_ASSET.code
+      )
+      .subscribe((error) => {
+        expect(error).toBeInstanceOf(Error);
+      });
+
+    // Reset
+    MockPricesService.listPrices.and.returnValue(
+      of(TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY)
+    );
+
+    // Set error on listAccounts
+    MockAccountsService.listAccounts.and.returnValue(error$);
+
+    service
+      .getAccountDetails(
+        TestConstants.ACCOUNT_GUID,
+        TestConstants.USD_ASSET.code
+      )
+      .subscribe((error) => {
+        expect(error).toBeInstanceOf(Error);
+      });
   });
 });

@@ -72,6 +72,19 @@ export default {
     }
   },
 
+  // Account details component
+  accountDetails: {
+    holdings: 'Holdings',
+    buy: 'Buy',
+    sell: 'Sell',
+    transactions: 'Recent Transctions',
+    balance: 'Balance',
+    error: {
+      trade: 'Error fetching trades',
+      noData: 'No trades found'
+    }
+  },
+
   // Paginator
   paginator: {
     firstPageLabel: 'First page',

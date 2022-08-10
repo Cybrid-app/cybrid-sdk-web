@@ -206,7 +206,6 @@ $light-theme: mat.define-light-theme(
   }
 
   .cybrid-h2 {
-    @extend .mat-hint;
     @extend .mat-h2;
     font-weight: 400;
     margin: 0;
@@ -263,6 +262,16 @@ $light-theme: mat.define-light-theme(
     }
   }
 
+  .cybrid-no-data {
+    text-align: center;
+  }
+
+  .cybrid-paginator {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom: none;
+  }
+
   /* Material Style Overrides */
   .mat-tab-label {
     flex-grow: 1;
@@ -274,5 +283,10 @@ $light-theme: mat.define-light-theme(
   }
   .mat-form-field-flex {
     align-items: center;
+  }
+
+  mat-paginator {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
   }
 }
