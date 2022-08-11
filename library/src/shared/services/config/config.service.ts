@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Constants } from '@constants';
-import { BehaviorSubject, map, Observable, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, map, Observable, ReplaySubject, Subject, takeUntil } from 'rxjs';
 import { CODE, EventService, LEVEL } from '../event/event.service';
 import { ErrorService } from '../error/error.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -21,9 +21,8 @@ export interface ComponentConfig {
   providedIn: 'root'
 })
 export class ConfigService implements OnDestroy {
-  defaultConfig = Constants.DEFAULT_CONFIG;
-  config$: BehaviorSubject<ComponentConfig> =
-    new BehaviorSubject<ComponentConfig>(this.defaultConfig);
+  config: ComponentConfig = Constants.DEFAULT_CONFIG;
+  config$ = new ReplaySubject<ComponentConfig>(1);
 
   private unsubscribe$ = new Subject();
 
@@ -51,7 +50,7 @@ export class ConfigService implements OnDestroy {
       );
       this.config$.next(hostConfig);
     } else {
-      this.config$.next(this.defaultConfig);
+      this.config$.next(this.config);
       const err = new Error('Invalid host configuration: reset to default');
       this.eventService.handleEvent(
         LEVEL.ERROR,
@@ -70,14 +69,23 @@ export class ConfigService implements OnDestroy {
     const refreshInterval = (hostConfig as ComponentConfig).refreshInterval;
     const locale = (hostConfig as ComponentConfig).locale;
     const theme = (hostConfig as ComponentConfig).theme;
+    const routing = (hostConfig as ComponentConfig).routing;
+    const customer = (hostConfig as ComponentConfig).customer;
+    const fiat = (hostConfig as ComponentConfig).fiat;
     return (
       refreshInterval !== undefined &&
       refreshInterval !== null &&
       locale !== undefined &&
       locale !== null &&
       Constants.SUPPORTED_LOCALES.includes(locale) &&
+      routing !== undefined &&
+      routing !== null &&
       theme !== undefined &&
-      theme !== null
+      theme !== null &&
+      customer !== null &&
+      customer !== undefined &&
+      fiat !== null &&
+      fiat !== undefined
     );
   }
 
@@ -88,8 +96,8 @@ export class ConfigService implements OnDestroy {
     this.config$
       .pipe(
         takeUntil(this.unsubscribe$),
-        map((cfg) => {
-          this.translateService.use(cfg.locale);
+        map((config) => {
+          this.translateService.use(config!.locale);
         })
       )
       .subscribe();
@@ -112,7 +120,7 @@ export class ConfigService implements OnDestroy {
           container.classList.add('mat-typography');
 
           // Selected theme styles
-          if (config.theme === 'DARK') {
+          if (config!.theme === 'DARK') {
             container.classList.remove('cybrid-light-theme');
             container.classList.add('cybrid-dark-theme');
           } else {

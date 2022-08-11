@@ -263,7 +263,7 @@ export class AccountDetailsComponent
       }
     };
     this.routingService.handleRoute({
-      origin: 'account-detail',
+      origin: 'account-details',
       route: 'trade',
       extras: extras
     });

@@ -25,8 +25,8 @@ import { Constants, TestConstants } from '@constants';
   providedIn: 'root'
 })
 export class DemoConfigService {
-  config = Constants.DEFAULT_CONFIG;
-  config$ = new BehaviorSubject<ComponentConfig>(this.config);
+  // config = Constants.DEFAULT_CONFIG;
+  config$ = new BehaviorSubject<ComponentConfig>(Constants.DEFAULT_CONFIG);
 
   constructor(private http: HttpClient) {}
 

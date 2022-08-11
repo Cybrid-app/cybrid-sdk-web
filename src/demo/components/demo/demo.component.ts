@@ -1,6 +1,7 @@
 import {
   Component,
   ComponentRef,
+  Input,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -8,7 +9,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 
-import { BehaviorSubject, filter, map, Subject, take, takeUntil } from 'rxjs';
+import { BehaviorSubject, filter, map, Observable, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 
 import { DemoConfigService } from '../../services/demo-config/demo-config.service';
 
@@ -16,7 +17,9 @@ import { DemoConfigService } from '../../services/demo-config/demo-config.servic
 import { AppComponent } from '@components';
 import { CODE, ConfigService, EventLog } from '@services';
 import { Constants, TestConstants } from '@constants';
-import { DemoCredentials } from '../login/login.component';
+import { DemoCredentials, LoginComponent } from '../login/login.component';
+import { MatSnackBar, MatSnackBarConfig, MatSnackBarRef } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-demo',
@@ -26,48 +29,38 @@ import { DemoCredentials } from '../login/login.component';
 export class DemoComponent implements OnInit, OnDestroy {
   @ViewChild('viewContainer', { static: true, read: ViewContainerRef })
   public viewContainer!: ViewContainerRef;
+
   token = '';
 
-  webComponents = ['price-list', 'trade', 'account-list'];
+  webComponents = ['price-list', 'trade', 'account-list', 'account-details'];
   languages = ['en-US', 'fr-CA'];
 
   componentRef!: ComponentRef<AppComponent>;
   componentGroup: FormGroup = new FormGroup({
-    component: new FormControl()
+    component: new FormControl(Constants.DEFAULT_COMPONENT)
   });
 
   languageGroup: FormGroup = new FormGroup({
     language: new FormControl(Constants.DEFAULT_CONFIG.locale)
   });
 
+  login$ = new BehaviorSubject(false);
   loading$ = new BehaviorSubject(true);
 
   private unsubscribe$ = new Subject();
 
   constructor(
-    public tokenService: DemoConfigService,
-    public configService: DemoConfigService
+    public demoConfigService: DemoConfigService,
   ) {}
 
-  ngOnInit(): void {
-    // this.tokenService.token$
-    //   .pipe(
-    //     take(1),
-    //     map((token) => (this.token = token))
-    //   )
-    //   .subscribe(() => {
-    //     this.initComponentGroup();
-    //     this.initLanguageGroup();
-    //     this.initDemo();
-    //   });
-  }
+  ngOnInit(): void {}
 
   ngOnDestroy() {
     this.unsubscribe$.next('');
     this.unsubscribe$.complete();
   }
 
-  // Subscribe to selected component and set component instance
+  // Set component on changes
   initComponentGroup() {
     this.componentGroup
       .get('component')
@@ -80,63 +73,70 @@ export class DemoComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
+  // Set language on changes
   initLanguageGroup() {
     this.languageGroup
       .get('language')
       ?.valueChanges.pipe(
         takeUntil(this.unsubscribe$),
         map((language) => {
-          let newConfig = TestConstants.CONFIG;
-          newConfig.locale = language;
-          this.componentRef.instance.hostConfig = newConfig;
+          let config = this.demoConfigService.config$.value;
+          config.locale = language;
+          this.demoConfigService.config$.next(config)
         })
       )
       .subscribe();
   }
 
-  initDemo(creds: DemoCredentials) {
+  initDemo(credentials: DemoCredentials) {
+    this.login$.next(true);
+
+    let config = Constants.DEFAULT_CONFIG;
+    config.customer = credentials.customer;
+    // config.theme = 'DARK';
+    this.demoConfigService.config$.next(config);
+
+    // Create main app
     this.componentRef = this.viewContainer.createComponent(AppComponent);
 
-    this.componentRef.instance.auth = creds.token;
-
-    let newConfig = Constants.DEFAULT_CONFIG;
-    newConfig.customer = creds.customerGuid;
-
-    this.componentRef.instance.hostConfig = newConfig;
-
-    // setTimeout(() => {
-    //   this.componentRef.instance.hostConfig = newConfig;
-    // }, 100);
+    this.componentRef.instance.hostConfig = config;
+    this.componentRef.instance.auth = credentials.token;
+    this.componentRef.instance.component = Constants.DEFAULT_COMPONENT;
 
     // Subscribe to component configuration changes
-    this.configService.config$
+    this.demoConfigService.config$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((config) => {
         this.componentRef.instance.hostConfig = config;
       });
 
+    // Subscribe to routing events and set component selector value
+    this.componentRef.instance.eventLog
+      .pipe(
+        takeUntil(this.unsubscribe$),
+        filter((event: EventLog) => {
+          return (
+            event.code == CODE.ROUTING_END ||
+            event.code == CODE.ROUTING_START ||
+            event.code == CODE.ROUTING_REQUEST
+          );
+        }),
+        map((event) => {
+          this.componentGroup.get('component')?.patchValue(event.data.default, {
+            emitEvent: false,
+            onlySelf: true
+          });
+        })
+      )
+      .subscribe();
+
+    // Subscribe to errors
     this.componentRef.instance.errorLog.subscribe((error) =>
       console.log(error)
     );
 
-    // Subscribe to routing events and set component selector value
-    this.componentRef.instance.eventLog
-      .pipe(
-        takeUntil(this.unsubscribe$)
-        // filter((event: EventLog) => {
-        //   return (
-        //     event.code == CODE.ROUTING_END ||
-        //     event.code == CODE.ROUTING_START ||
-        //     event.code == CODE.ROUTING_REQUEST
-        //   );
-        // }),
-        // map((event) => {
-        //   this.componentGroup.get('component')?.patchValue(event.data.default, {
-        //     emitEvent: false,
-        //     onlySelf: true
-        //   });
-        // })
-      )
-      .subscribe((event) => console.log(event));
+    this.initComponentGroup();
+    this.initLanguageGroup();
+    this.loading$.next(false);
   }
 }

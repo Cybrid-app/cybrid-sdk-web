@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable, map, pluck } from 'rxjs';
+import { Observable, map, pluck, take } from 'rxjs';
 
 import { DemoConfigService } from '../../services/demo-config/demo-config.service';
 
@@ -15,11 +15,10 @@ import { Constants } from '@constants';
 })
 export class AppComponent {
   version: Observable<string> = new Observable<string>();
-  mode: 'light_mode' | 'dark_mode' = 'light_mode';
 
   constructor(
     private http: HttpClient,
-    public configService: DemoConfigService
+    public demoConfigService: DemoConfigService
   ) {
     this.version = this.http.get(Constants.REPO_URL).pipe(
       pluck('tag_name'),
@@ -28,20 +27,13 @@ export class AppComponent {
   }
 
   toggleTheme(): void {
-    const config = this.configService.config;
-    switch (this.mode) {
-      case 'light_mode': {
-        this.mode = 'dark_mode';
-        config.theme = 'DARK';
-        this.configService.config$.next(config);
-        break;
-      }
-      case 'dark_mode': {
-        this.mode = 'light_mode';
-        config.theme = 'LIGHT';
-        this.configService.config$.next(config);
-        break;
-      }
-    }
+    this.demoConfigService.config$.pipe(
+      take(1),
+      map((config) => {
+        let newConfig = config;
+        config.theme === 'LIGHT' ? newConfig.theme = 'DARK' : newConfig.theme = 'LIGHT'
+            this.demoConfigService.config$.next(newConfig);
+      })
+    ).subscribe();
   }
 }

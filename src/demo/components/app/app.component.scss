@@ -5,6 +5,8 @@ mat-toolbar {
   align-items: center;
   gap: 0.5rem;
   @include mat.elevation(2);
+  z-index: 2;
+  min-height: 56px !important;
 }
 
 mat-drawer-container {
@@ -22,16 +24,12 @@ mat-drawer-content {
   height: auto;
 }
 
-mat-toolbar {
-  height: 56px !important;
-}
-
 .wrapper {
   display: flex;
   flex-direction: column;
+  height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  height: 100vh;
 }
 
 .spacer {

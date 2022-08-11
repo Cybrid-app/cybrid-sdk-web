@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -9,16 +9,10 @@ import {
 import { Router } from '@angular/router';
 
 import {
-  BehaviorSubject,
-  catchError,
-  combineLatest,
-  forkJoin,
   map,
-  of,
+  ReplaySubject,
   Subject,
-  take,
   takeUntil,
-  tap
 } from 'rxjs';
 
 // Services
@@ -38,7 +32,6 @@ import {
 
 // Constants
 import { Constants } from '@constants';
-import { fork } from 'child_process';
 
 @Component({
   selector: 'app-app',
@@ -56,13 +49,14 @@ export class AppComponent implements OnInit {
   @Input()
   set hostConfig(config: ComponentConfig) {
     this.configService.setConfig(config);
+    this.changeDetector.detectChanges();
   }
   @Input()
   set component(selector: string) {
     this.currentComponent$.next(selector);
   }
 
-  currentComponent$ = new BehaviorSubject(Constants.DEFAULT_COMPONENT);
+  currentComponent$ = new ReplaySubject<string>(1);
 
   private unsubscribe$ = new Subject();
 
@@ -73,43 +67,18 @@ export class AppComponent implements OnInit {
     private eventService: EventService,
     private errorService: ErrorService,
     public configService: ConfigService,
-    private routingService: RoutingService
+    private routingService: RoutingService,
+    private changeDetector: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.initEventService();
     this.initErrorService();
+
+    // List assets before navigating to initial component
     this.assetService.getAssets$().subscribe(() => {
       this.initNavigation();
     });
-    // this.initNavigation();
-    // forkJoin([this.configService.getConfig$(), this.assetService.getAssets$()])
-    //   .pipe(
-    //     take(1),
-    //     tap(() => {
-    //       this.eventLog.emit({
-    //         level: LEVEL.INFO,
-    //         code: CODE.APPLICATION_INIT,
-    //         message: 'Initializing application'
-    //       });
-    //     }),
-    //     catchError((err) => {
-    //       this.eventService.handleEvent(
-    //         LEVEL.FATAL,
-    //         CODE.APPLICATION_ERROR,
-    //         'Fatal error initializing application'
-    //       );
-    //       this.errorService.handleError(
-    //         new Error('Fatal error initializing application')
-    //       );
-    //       return of(err);
-    //     })
-    //   )
-    //   .subscribe(() => {
-    //     this.initNavigation();
-    //   });
-
-    this.configService.config$.subscribe((config) => console.log(config));
   }
 
   initEventService(): void {

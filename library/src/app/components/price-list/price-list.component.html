@@ -1,5 +1,5 @@
 <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
-  <ng-container *ngIf="(isLoading$ | async) !== true">
+  <ng-container *ngIf="(isLoading$ | async) !== true; else loading">
     <ng-container>
       <mat-form-field appearance="outline">
         <mat-label>{{ 'priceList.table.filter' | translate }}</mat-label>
@@ -76,6 +76,9 @@
     </table>
   </ng-container>
 </ng-container>
+<ng-template #loading>
+  <app-loading></app-loading>
+</ng-template>
 <ng-template #error>
   <mat-card>
     <mat-card-content>
