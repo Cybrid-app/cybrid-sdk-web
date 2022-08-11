@@ -1,27 +1,28 @@
-<ng-container *ngIf='demoConfigService.config$ | async as config' >
+<ng-container *ngIf="demoConfigService.config$ | async as config">
   <div
-    class='wrapper mat-body'
+    class="wrapper mat-body"
     [ngClass]="
-    config.theme === 'LIGHT' ? 'cybrid-light-theme'
-      : 'cybrid-dark-theme'
-  "
+      config.theme === 'LIGHT' ? 'cybrid-light-theme' : 'cybrid-dark-theme'
+    "
   >
-    <mat-toolbar color='primary'>
+    <mat-toolbar color="primary">
       <img
-        src='https://assets-global.website-files.com/6226732e4130814a4adb86c2/62430bcedab2d5494d20b601_logo-white.svg'
-        alt='Cybrid logo'
+        src="https://assets-global.website-files.com/6226732e4130814a4adb86c2/62430bcedab2d5494d20b601_logo-white.svg"
+        alt="Cybrid logo"
       />
-      <div class='spacer'></div>
+      <div class="spacer"></div>
       <a
-        class='mat-body package'
-        href='https://www.npmjs.com/package/@cybrid/cybrid-sdk-ui-js'
-      >{{ 'cybrid-sdk-ui-js@ ' + (version | async) }}</a
+        class="mat-body package"
+        href="https://www.npmjs.com/package/@cybrid/cybrid-sdk-ui-js"
+        >{{ 'cybrid-sdk-ui-js@ ' + (version | async) }}</a
       >
       <button mat-icon-button>
-        <mat-icon (click)='toggleTheme()'>{{ config.theme === 'LIGHT' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        <mat-icon (click)="toggleTheme()">{{
+          config.theme === 'LIGHT' ? 'light_mode' : 'dark_mode'
+        }}</mat-icon>
       </button>
     </mat-toolbar>
-    <mat-drawer-container class='mat-app-background'>
+    <mat-drawer-container class="mat-app-background">
       <mat-drawer-content>
         <app-demo></app-demo>
       </mat-drawer-content>

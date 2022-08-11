@@ -1,19 +1,18 @@
 // @ts-ignore
+import { beforeEach } from 'mocha';
+
 function app() {
   return cy.get('app-price-list');
 }
 
 describe('price-list test', () => {
-  it('should render the price list', () => {
-    // Intercept and add auth keys
-    cy.intercept('POST', '/oauth/token', (req) => {
-      req.body.client_id = Cypress.env('CLIENT_ID');
-      req.body.client_secret = Cypress.env('CLIENT_SECRET');
-      req.continue();
-    });
-
-    // Navigate to price-list
+  before(() => {
     cy.visit('/');
+    // @ts-ignore
+    cy.login();
+  });
+
+  it('should render the price list', () => {
     cy.intercept('/api/prices').as('getPrices');
     cy.wait('@getPrices');
     app()

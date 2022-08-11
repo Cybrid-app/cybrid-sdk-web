@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef,
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
@@ -8,12 +8,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 
-import {
-  map,
-  ReplaySubject,
-  Subject,
-  takeUntil,
-} from 'rxjs';
+import { map, ReplaySubject, Subject, takeUntil } from 'rxjs';
 
 // Services
 import {
@@ -29,9 +24,6 @@ import {
   CODE,
   LEVEL
 } from '@services';
-
-// Constants
-import { Constants } from '@constants';
 
 @Component({
   selector: 'app-app',
@@ -49,7 +41,6 @@ export class AppComponent implements OnInit {
   @Input()
   set hostConfig(config: ComponentConfig) {
     this.configService.setConfig(config);
-    this.changeDetector.detectChanges();
   }
   @Input()
   set component(selector: string) {
@@ -67,8 +58,7 @@ export class AppComponent implements OnInit {
     private eventService: EventService,
     private errorService: ErrorService,
     public configService: ConfigService,
-    private routingService: RoutingService,
-    private changeDetector: ChangeDetectorRef
+    private routingService: RoutingService
   ) {}
 
   ngOnInit(): void {

@@ -44,7 +44,7 @@ describe('ConfigService', () => {
   });
 
   it('should initialize the defaultConfig', () => {
-    expect(service.defaultConfig).toEqual(TestConstants.CONFIG);
+    expect(service.config).toEqual(TestConstants.CONFIG);
   });
 
   it('should set the initial value of config$ BehaviorSubject() to the default config', () => {

@@ -55,6 +55,7 @@ export class AccountDetailsComponent
 {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild('#tradeList') tradeList!: HTMLTableElement;
   dataSource: MatTableDataSource<TradeBankModel> = new MatTableDataSource();
 
   accountGuid: string = '';
@@ -109,6 +110,10 @@ export class AccountDetailsComponent
     this.dataSource.sort = this.sort;
 
     this.getTrades();
+
+    setInterval(() => {
+      this.tradeList.translate;
+    });
   }
 
   ngOnDestroy(): void {

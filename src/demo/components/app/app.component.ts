@@ -27,13 +27,17 @@ export class AppComponent {
   }
 
   toggleTheme(): void {
-    this.demoConfigService.config$.pipe(
-      take(1),
-      map((config) => {
-        let newConfig = config;
-        config.theme === 'LIGHT' ? newConfig.theme = 'DARK' : newConfig.theme = 'LIGHT'
-            this.demoConfigService.config$.next(newConfig);
-      })
-    ).subscribe();
+    this.demoConfigService.config$
+      .pipe(
+        take(1),
+        map((config) => {
+          let newConfig = config;
+          config.theme === 'LIGHT'
+            ? (newConfig.theme = 'DARK')
+            : (newConfig.theme = 'LIGHT');
+          this.demoConfigService.config$.next(newConfig);
+        })
+      )
+      .subscribe();
   }
 }

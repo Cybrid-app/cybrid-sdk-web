@@ -1,32 +1,30 @@
 import {
   Component,
   ComponentRef,
-  Input,
   OnDestroy,
-  OnInit,
   ViewChild,
   ViewContainerRef
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 
-import { BehaviorSubject, filter, map, Observable, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, filter, map, Subject, takeUntil } from 'rxjs';
 
 import { DemoConfigService } from '../../services/demo-config/demo-config.service';
 
 // Library
 import { AppComponent } from '@components';
-import { CODE, ConfigService, EventLog } from '@services';
-import { Constants, TestConstants } from '@constants';
-import { DemoCredentials, LoginComponent } from '../login/login.component';
-import { MatSnackBar, MatSnackBarConfig, MatSnackBarRef } from '@angular/material/snack-bar';
-import { MatDialog } from '@angular/material/dialog';
+import { CODE, EventLog } from '@services';
+import { Constants } from '@constants';
+
+// Components
+import { DemoCredentials } from '../login/login.component';
 
 @Component({
   selector: 'app-demo',
   templateUrl: './demo.component.html',
   styleUrls: ['./demo.component.scss']
 })
-export class DemoComponent implements OnInit, OnDestroy {
+export class DemoComponent implements OnDestroy {
   @ViewChild('viewContainer', { static: true, read: ViewContainerRef })
   public viewContainer!: ViewContainerRef;
 
@@ -49,11 +47,7 @@ export class DemoComponent implements OnInit, OnDestroy {
 
   private unsubscribe$ = new Subject();
 
-  constructor(
-    public demoConfigService: DemoConfigService,
-  ) {}
-
-  ngOnInit(): void {}
+  constructor(public demoConfigService: DemoConfigService) {}
 
   ngOnDestroy() {
     this.unsubscribe$.next('');
@@ -82,7 +76,7 @@ export class DemoComponent implements OnInit, OnDestroy {
         map((language) => {
           let config = this.demoConfigService.config$.value;
           config.locale = language;
-          this.demoConfigService.config$.next(config)
+          this.demoConfigService.config$.next(config);
         })
       )
       .subscribe();
@@ -94,6 +88,9 @@ export class DemoComponent implements OnInit, OnDestroy {
     let config = Constants.DEFAULT_CONFIG;
     config.customer = credentials.customer;
     // config.theme = 'DARK';
+    // config.locale = 'fr-CA';
+
+    this.languageGroup.patchValue({ language: config.locale });
     this.demoConfigService.config$.next(config);
 
     // Create main app

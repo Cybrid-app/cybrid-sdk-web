@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Constants } from '@constants';
-import { BehaviorSubject, map, Observable, ReplaySubject, Subject, takeUntil } from 'rxjs';
+import { map, Observable, ReplaySubject, Subject, takeUntil } from 'rxjs';
 import { CODE, EventService, LEVEL } from '../event/event.service';
 import { ErrorService } from '../error/error.service';
 import { TranslateService } from '@ngx-translate/core';

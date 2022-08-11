@@ -1,35 +1,45 @@
 <ng-template #login>
-  <div class='cybrid-login-wrapper'>
-    <app-login (credentials)='initDemo($event)'></app-login>
+  <div class="cybrid-login-wrapper">
+    <app-login (credentials)="initDemo($event)"></app-login>
   </div>
 </ng-template>
 
-<ng-container *ngIf='login$ | async; else login'>
+<ng-container *ngIf="login$ | async; else login">
   <ng-template #loading>
     <app-loading></app-loading>
   </ng-template>
 
-  <ng-container *ngIf='(loading$ | async) === false; else loading' [formGroup]='componentGroup'>
-    <mat-form-field id='component' appearance='outline'>
+  <ng-container
+    *ngIf="(loading$ | async) === false; else loading"
+    [formGroup]="componentGroup"
+  >
+    <mat-form-field id="component" appearance="outline">
       <mat-label>Component</mat-label>
-      <mat-select formControlName='component'>
+      <mat-select formControlName="component">
         <mat-option
-          id='option'
-          *ngFor='let component of webComponents'
-          [value]='component'
+          id="option"
+          *ngFor="let component of webComponents"
+          [value]="component"
           [disabled]="component === 'account-details'"
-          [matTooltip]="component === 'account-details' ? 'Disabled: Navigate via account-list' : ''"
+          [matTooltip]="
+            component === 'account-details'
+              ? 'Disabled: Navigate via account-list'
+              : ''
+          "
         >
           {{ component }}
         </mat-option>
       </mat-select>
     </mat-form-field>
   </ng-container>
-  <ng-container *ngIf='(loading$ | async) === false' [formGroup]='languageGroup'>
-    <mat-form-field appearance='outline'>
+  <ng-container
+    *ngIf="(loading$ | async) === false"
+    [formGroup]="languageGroup"
+  >
+    <mat-form-field appearance="outline">
       <mat-label>Language</mat-label>
-      <mat-select formControlName='language'>
-        <mat-option *ngFor='let language of languages' [value]='language'>
+      <mat-select formControlName="language">
+        <mat-option *ngFor="let language of languages" [value]="language">
           {{ language }}
         </mat-option>
       </mat-select>
