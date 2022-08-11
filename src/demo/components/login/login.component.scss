@@ -1,8 +1,40 @@
 .cybrid-login {
   height: 100%;
-  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  gap: 1rem;
+  padding: 0 1rem;
+  img {
+    height: 50px;
+  }
+  mat-card {
+    align-self: center;
+    width: 100%;
+    max-width: 400px;
+    padding: 2rem;
+  }
+  div {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  mat-card-content {
+    display: flex;
+    flex-direction: column;
+  }
+  mat-card-actions {
+    display: flex;
+    justify-content: center;
+    button {
+      min-width: 200px;
+    }
+  }
+  mat-card-footer {
+    display: flex;
+    justify-content: center;
+    a {
+      text-decoration: none;
+    }
+  }
 }

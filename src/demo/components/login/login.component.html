@@ -1,45 +1,84 @@
-<div class='cybrid-login'>
-  <ng-container [formGroup]='loginForm'>
-    <mat-form-field appearance='outline'>
-      <mat-label>Client Id</mat-label>
-      <input
-        id='clientId'
-        formControlName='clientId'
-        matInput
-        required
-        type='text'
+<div class="cybrid-login">
+  <mat-card>
+    <div>
+      <img
+        src="https://assets-global.website-files.com/6226732e4130814a4adb86c2/62e0371242103afcb884725d_cybrid-sdk-web.svg"
       />
-      <mat-error>{{ 'test' }}</mat-error>
-    </mat-form-field>
-    <mat-form-field appearance='outline'>
-      <mat-label>Client Secret</mat-label>
-      <input
-        id='clientSecret'
-        formControlName='clientSecret'
-        matInput
-        required
-        type='text'
-      />
-    </mat-form-field>
-    <mat-form-field appearance='outline'>
-      <mat-label>Customer GUID</mat-label>
-      <input
-        id='customerGuid'
-        formControlName='customerGuid'
-        matInput
-        required
-        type='text'
-      />
-    </mat-form-field>
-  </ng-container>
-
-  <button
-    [disabled]='loginForm.invalid'
-    mat-flat-button
-    color='primary'
-    (click)='login()'
-  >
-    Login
-  </button>
-  <span>{{ loginForm.errors | json }}</span>
+      <h1>Demo</h1>
+    </div>
+    <mat-card-subtitle
+      >Test drive our web sdk components in a demo application, live against the
+      cybrid demo environment</mat-card-subtitle
+    >
+    <mat-card-content>
+      <ng-container [formGroup]="loginForm">
+        <mat-form-field appearance="outline">
+          <mat-label>Client Id</mat-label>
+          <input
+            id="clientId"
+            formControlName="clientId"
+            matInput
+            required
+            type="text"
+          />
+          <mat-error *ngIf="loginForm.get('clientId')?.hasError('minlength')">
+            Invalid api key
+          </mat-error>
+          <mat-error *ngIf="loginForm.get('clientId')?.hasError('unauthorized')"
+            >Unauthorized api key
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Client Secret</mat-label>
+          <input
+            id="clientSecret"
+            formControlName="clientSecret"
+            matInput
+            required
+            type="text"
+          />
+          <mat-error
+            *ngIf="loginForm.get('clientSecret')?.hasError('minlength')"
+          >
+            Invalid api key
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Customer GUID</mat-label>
+          <input
+            id="customerGuid"
+            formControlName="customerGuid"
+            matInput
+            required
+            type="text"
+          />
+          <mat-error
+            *ngIf="loginForm.get('customerGuid')?.hasError('minlength')"
+          >
+            Invalid customer
+          </mat-error>
+          <mat-error
+            *ngIf="loginForm.get('customerGuid')?.hasError('not_found')"
+          >
+            Customer not found
+          </mat-error>
+        </mat-form-field>
+      </ng-container>
+    </mat-card-content>
+    <mat-card-actions>
+      <button
+        [disabled]="loginForm.invalid"
+        mat-flat-button
+        color="primary"
+        (click)="login()"
+      >
+        Login
+      </button>
+    </mat-card-actions>
+    <mat-card-footer>
+      <a class="mat-hint" href="https://id.demo.cybrid.app/" target="_blank"
+        >forgot credentials?</a
+      >
+    </mat-card-footer>
+  </mat-card>
 </div>

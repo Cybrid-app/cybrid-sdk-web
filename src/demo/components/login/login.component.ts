@@ -2,17 +2,12 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
-import {
-  catchError,
-  map,
-  of,
-  switchMap,
-} from 'rxjs';
+import { catchError, map, of, switchMap } from 'rxjs';
 
 // Client
 import {
   CustomerBankModel,
-  CustomersService,
+  CustomersService
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
@@ -46,13 +41,25 @@ export class LoginComponent {
 
   constructor(
     private http: HttpClient,
-    private configService: DemoConfigService,
-    private customerService: CustomersService
+    private configService: DemoConfigService
   ) {
+    this.initLoginForm();
+  }
+
+  initLoginForm(): void {
     this.loginForm = new FormGroup<LoginForm>({
-      clientId: new FormControl('', { validators: Validators.required, nonNullable: true }),
-      clientSecret: new FormControl('', { validators: Validators.required, nonNullable: true }),
-      customerGuid: new FormControl('', { validators: Validators.required, nonNullable: true })
+      clientId: new FormControl('', {
+        validators: [Validators.required, Validators.minLength(42)],
+        nonNullable: true
+      }),
+      clientSecret: new FormControl('', {
+        validators: [Validators.required, Validators.minLength(43)],
+        nonNullable: true
+      }),
+      customerGuid: new FormControl('', {
+        validators: [Validators.required, Validators.minLength(32)],
+        nonNullable: true
+      })
     });
   }
 
@@ -80,10 +87,23 @@ export class LoginComponent {
           return this.http.get(url, httpOptions);
         }),
         catchError((err) => {
-          err.statusText === 'Unauthorized' ?
-          this.loginForm.setErrors({unauthorized: true}) :
-          this.loginForm.setErrors({not_found: true})
+          console.log(err);
+          console.log(err.statusText);
 
+          switch (err.status) {
+            case 401: {
+              this.loginForm.get('clientId')?.setErrors({ unauthorized: true });
+              break;
+            }
+            case 404: {
+              this.loginForm
+                .get('customerGuid')
+                ?.setErrors({ not_found: true });
+              break;
+            }
+            default:
+              this.loginForm.setErrors({});
+          }
           return of(err);
         })
       )
@@ -91,13 +111,7 @@ export class LoginComponent {
         if (customer.guid) {
           this.demoCredentials.customer = customer.guid;
           this.credentials.next(this.demoCredentials);
-        } else console.log('invalid customer');
+        }
       });
-  }
-
-  getErrorMessage() {
-    if (this.loginForm.hasError('unauthorized')) {
-      return 'Incorrect api keys';
-    } else return 'Not a valid customer guid'
   }
 }
