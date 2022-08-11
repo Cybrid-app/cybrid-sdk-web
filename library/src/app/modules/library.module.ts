@@ -131,9 +131,7 @@ export function HttpLoaderFactory(http: HttpClient) {
       useValue: { hasBackdrop: true, disableClose: true, minWidth: '320px' }
     }
   ],
-  exports: [
-    LoadingComponent
-  ],
+  exports: [LoadingComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class LibraryModule implements DoBootstrap {

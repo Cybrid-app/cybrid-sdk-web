@@ -30,9 +30,9 @@ describe('trade test', () => {
 
   it('should swap between buy/sell', () => {
     app().find('#action').should('contain', 'BUY');
-    app().find('#mat-tab-label-0-1').click();
+    app().find('.mat-tab-labels').contains('SELL').click();
     app().find('#action').should('contain', 'SELL');
-    app().find('#mat-tab-label-0-0').click();
+    app().find('.mat-tab-labels').contains('BUY').click();
   });
 
   it('should swap between assets', () => {
