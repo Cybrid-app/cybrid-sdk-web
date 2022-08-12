@@ -160,6 +160,12 @@ export class LoginComponent implements OnInit {
               });
               break;
             }
+            case 500: {
+              this.loginForm.controls.bearerToken.setErrors({
+                unauthorized: true
+              });
+              break;
+            }
             default:
               this.loginForm.setErrors({});
           }
