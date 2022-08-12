@@ -145,6 +145,29 @@ describe('AppComponent', () => {
     expect(errorService).toHaveBeenCalled();
   });
 
+  it('should log an event and error if it fails to initialize', fakeAsync(() => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const component = fixture.componentInstance;
+    const error$ = throwError(() => {
+      return new Error('Error');
+    });
+    component.initEventService = () => null;
+    component.initErrorService = () => null;
+    MockConfigService.getConfig$.and.returnValue(error$);
+    MockAssetService.getAssets$.and.returnValue(error$);
+    component.ngOnInit();
+    tick(100);
+    expect(MockEventService.handleEvent).toHaveBeenCalledWith(
+      LEVEL.FATAL,
+      CODE.APPLICATION_ERROR,
+      'Fatal error initializing application'
+    );
+    expect(MockErrorService.handleError).toHaveBeenCalledWith({
+      code: CODE.APPLICATION_ERROR,
+      message: 'Fatal error initializing application'
+    });
+  }));
+
   it('should log an event when the event service is initialized', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const component = fixture.componentInstance;

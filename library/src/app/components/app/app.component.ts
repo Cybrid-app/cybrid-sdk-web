@@ -9,12 +9,15 @@ import {
 import { Router } from '@angular/router';
 
 import {
+  catchError,
   combineLatest,
   map,
+  of,
   ReplaySubject,
   Subject,
   take,
-  takeUntil
+  takeUntil,
+  tap
 } from 'rxjs';
 
 // Services
@@ -77,7 +80,28 @@ export class AppComponent implements OnInit {
       this.configService.getConfig$(),
       this.assetService.getAssets$()
     ])
-      .pipe(take(1))
+      .pipe(
+        take(1),
+        tap(() => {
+          this.eventLog.emit({
+            level: LEVEL.INFO,
+            code: CODE.APPLICATION_INIT,
+            message: 'Initializing application'
+          });
+        }),
+        catchError((err) => {
+          this.eventService.handleEvent(
+            LEVEL.FATAL,
+            CODE.APPLICATION_ERROR,
+            'Fatal error initializing application'
+          );
+          this.errorService.handleError({
+            code: CODE.APPLICATION_ERROR,
+            message: 'Fatal error initializing application'
+          });
+          return of(err);
+        })
+      )
       .subscribe(() => {
         this.initNavigation();
       });
