@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
@@ -9,6 +9,9 @@ import { CustomerBankModel } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
 import { DemoConfigService } from '../../services/demo-config/demo-config.service';
+
+// Utility
+import { environment } from '../../../environments/environment';
 
 interface LoginForm {
   clientId: FormControl<string>;
@@ -27,43 +30,48 @@ export interface DemoCredentials {
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   @Output() credentials = new EventEmitter<DemoCredentials>();
 
-  loginForm!: FormGroup<LoginForm>;
-
+  customerApi = 'https://bank.demo.cybrid.app/api/customers/';
+  bearer = false;
   demoCredentials: DemoCredentials = {
     token: '',
     customer: ''
   };
 
-  bearer = false;
+  loginForm!: FormGroup<LoginForm>;
 
   constructor(
     private http: HttpClient,
     private configService: DemoConfigService
-  ) {
+  ) {}
+
+  ngOnInit() {
     this.initLoginForm();
   }
 
   initLoginForm(): void {
+    // Preset with environment variables for simplified local testing
     this.loginForm = new FormGroup<LoginForm>({
-      clientId: new FormControl('', {
+      clientId: new FormControl(environment.credentials.clientId, {
         validators: [Validators.required, Validators.minLength(43)],
         nonNullable: true
       }),
-      clientSecret: new FormControl('', {
+      clientSecret: new FormControl(environment.credentials.clientSecret, {
         validators: [Validators.required, Validators.minLength(43)],
         nonNullable: true
       }),
       bearerToken: new FormControl('', {
         nonNullable: true
       }),
-      customerGuid: new FormControl('', {
+      customerGuid: new FormControl(environment.credentials.customerGuid, {
         validators: [Validators.required, Validators.minLength(32)],
         nonNullable: true
       })
     });
+
+    if (this.loginForm.valid) this.login();
   }
 
   // Handle input validation between api keys and bearer token
@@ -116,17 +124,15 @@ export class LoginComponent {
             );
     };
 
+    // Validates customer and sets credentials
     token()
       .pipe(
         map((token) => {
           this.demoCredentials.token = token;
           return token;
         }),
-        // Validate the customer guid
         switchMap((token) => {
-          const url =
-            'https://bank.demo.cybrid.app/api/customers/' +
-            this.loginForm.value.customerGuid;
+          const url = this.customerApi + this.loginForm.value.customerGuid;
           const httpOptions = {
             headers: new HttpHeaders({
               'Content-Type': 'application/json',

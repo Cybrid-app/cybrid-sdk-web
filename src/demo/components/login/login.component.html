@@ -1,6 +1,6 @@
-<div class="cybrid-login">
+<div class="cybrid-login cybrid-global">
   <mat-card>
-    <div>
+    <div class="cybrid-header">
       <img
         alt="cybrid skd web logo"
         src="https://assets-global.website-files.com/6226732e4130814a4adb86c2/62e0371242103afcb884725d_cybrid-sdk-web.svg"
@@ -14,11 +14,12 @@
     <mat-card-content>
       <ng-container [formGroup]="loginForm">
         <mat-tab-group dynamicHeight (selectedTabChange)="switchInput()">
-          <mat-tab label="Api keys">
+          <mat-tab label="Api Keys">
             <div class="cybrid-column">
               <mat-form-field appearance="outline">
                 <mat-label>Client Id</mat-label>
                 <input
+                  #clientId
                   id="clientId"
                   formControlName="clientId"
                   matInput

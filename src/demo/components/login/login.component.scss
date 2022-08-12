@@ -3,20 +3,23 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 1rem;
   padding: 0 1rem;
   img {
     height: 50px;
   }
   .cybrid-column {
+    display: flex;
+    flex-direction: column;
     margin: 1rem 0 0;
+  }
+  .cybrid-header {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
   }
   .mat-tab-body-content {
     display: flex;
     flex-direction: column;
-  }
-  .mat-tab-label {
-    width: 100%;
   }
   mat-form-field {
     width: 100%;
@@ -26,11 +29,6 @@
     width: 100%;
     max-width: 400px;
     padding: 2rem;
-  }
-  div {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
   }
   mat-card-content {
     display: flex;
