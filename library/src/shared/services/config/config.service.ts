@@ -50,14 +50,15 @@ export class ConfigService implements OnDestroy {
       );
       this.config$.next(hostConfig);
     } else {
-      this.config$.next(this.config);
-      const err = new Error('Invalid host configuration: reset to default');
       this.eventService.handleEvent(
         LEVEL.ERROR,
         CODE.CONFIG_ERROR,
-        'Invalid host configuration: reset to default'
+        'Invalid host configuration'
       );
-      this.errorService.handleError(err);
+      this.errorService.handleError({
+        code: CODE.CONFIG_ERROR,
+        message: 'Invalid host configuration'
+      });
     }
   }
 

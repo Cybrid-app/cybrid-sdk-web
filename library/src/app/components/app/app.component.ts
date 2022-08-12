@@ -8,7 +8,14 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { map, ReplaySubject, Subject, takeUntil } from 'rxjs';
+import {
+  combineLatest,
+  map,
+  ReplaySubject,
+  Subject,
+  take,
+  takeUntil
+} from 'rxjs';
 
 // Services
 import {
@@ -65,10 +72,15 @@ export class AppComponent implements OnInit {
     this.initEventService();
     this.initErrorService();
 
-    // List assets before navigating to initial component
-    this.assetService.getAssets$().subscribe(() => {
-      this.initNavigation();
-    });
+    // Get assets and valid config before navigating to initial component
+    combineLatest([
+      this.configService.getConfig$(),
+      this.assetService.getAssets$()
+    ])
+      .pipe(take(1))
+      .subscribe(() => {
+        this.initNavigation();
+      });
   }
 
   initEventService(): void {

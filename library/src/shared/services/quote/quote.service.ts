@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 
-import { map, take } from 'rxjs';
+import { map, Subject, takeUntil } from 'rxjs';
 
 // Client
 import {
@@ -19,8 +19,10 @@ import { symbolBuild } from '@utility';
 @Injectable({
   providedIn: 'root'
 })
-export class QuoteService {
+export class QuoteService implements OnDestroy {
   customer_guid: string = '';
+
+  unsubscribe$ = new Subject();
 
   constructor(
     private configService: ConfigService,
@@ -30,11 +32,16 @@ export class QuoteService {
     this.getCustomer();
   }
 
+  ngOnDestroy() {
+    this.unsubscribe$.next('');
+    this.unsubscribe$.complete();
+  }
+
   getCustomer(): void {
     this.configService
       .getConfig$()
       .pipe(
-        take(1),
+        takeUntil(this.unsubscribe$),
         map((config: ComponentConfig) => {
           this.customer_guid = config.customer;
         })

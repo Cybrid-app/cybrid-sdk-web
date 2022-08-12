@@ -89,6 +89,8 @@
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr
+          [ngClass]="{ 'cybrid-pointer': config.routing }"
+          class="cybrid-pointer"
           mat-row
           *matRowDef="let row; columns: displayedColumns"
           (click)="onRowClick(row.account.guid)"
