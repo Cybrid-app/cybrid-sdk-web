@@ -8,6 +8,19 @@
   img {
     height: 50px;
   }
+  .cybrid-column {
+    margin: 1rem 0 0;
+  }
+  .mat-tab-body-content {
+    display: flex;
+    flex-direction: column;
+  }
+  .mat-tab-label {
+    width: 100%;
+  }
+  mat-form-field {
+    width: 100%;
+  }
   mat-card {
     align-self: center;
     width: 100%;

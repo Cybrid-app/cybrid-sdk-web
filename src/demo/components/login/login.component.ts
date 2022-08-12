@@ -2,13 +2,10 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { catchError, map, of, switchMap } from 'rxjs';
+import { catchError, map, Observable, of, switchMap } from 'rxjs';
 
 // Client
-import {
-  CustomerBankModel,
-  CustomersService
-} from '@cybrid/cybrid-api-bank-angular';
+import { CustomerBankModel } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
 import { DemoConfigService } from '../../services/demo-config/demo-config.service';
@@ -16,6 +13,7 @@ import { DemoConfigService } from '../../services/demo-config/demo-config.servic
 interface LoginForm {
   clientId: FormControl<string>;
   clientSecret: FormControl<string>;
+  bearerToken: FormControl<string>;
   customerGuid: FormControl<string>;
 }
 
@@ -39,6 +37,8 @@ export class LoginComponent {
     customer: ''
   };
 
+  bearer = false;
+
   constructor(
     private http: HttpClient,
     private configService: DemoConfigService
@@ -49,11 +49,14 @@ export class LoginComponent {
   initLoginForm(): void {
     this.loginForm = new FormGroup<LoginForm>({
       clientId: new FormControl('', {
-        validators: [Validators.required, Validators.minLength(42)],
+        validators: [Validators.required, Validators.minLength(43)],
         nonNullable: true
       }),
       clientSecret: new FormControl('', {
         validators: [Validators.required, Validators.minLength(43)],
+        nonNullable: true
+      }),
+      bearerToken: new FormControl('', {
         nonNullable: true
       }),
       customerGuid: new FormControl('', {
@@ -63,17 +66,63 @@ export class LoginComponent {
     });
   }
 
+  // Handle input validation between api keys and bearer token
+  switchInput() {
+    const apiKeyControls = [
+      this.loginForm.controls.clientId,
+      this.loginForm.controls.clientSecret
+    ];
+    const apiKeyValidators = [Validators.required, Validators.minLength(43)];
+    const bearerToken = this.loginForm.controls.bearerToken;
+
+    // Flip bearer state
+    this.bearer = !this.bearer;
+    bearerToken.clearValidators();
+    bearerToken.updateValueAndValidity();
+
+    apiKeyControls.forEach((control) => {
+      control.clearValidators();
+      control.updateValueAndValidity();
+    });
+
+    if (this.bearer) {
+      bearerToken?.setValidators([Validators.required]);
+      bearerToken?.updateValueAndValidity();
+    } else {
+      apiKeyControls.forEach((control) => {
+        control.setValidators(apiKeyValidators);
+        control.updateValueAndValidity();
+      });
+    }
+  }
+
   login(): void {
-    this.configService
-      .createToken(
-        this.loginForm.value.clientId,
-        this.loginForm.value.clientSecret
-      )
+    // Returns bearer token if input, or calls api with keys
+    const token = (): Observable<string> => {
+      return this.bearer
+        ? of(this.loginForm.controls.bearerToken.value)
+        : this.configService
+            .createToken(
+              this.loginForm.value.clientId,
+              this.loginForm.value.clientSecret
+            )
+            .pipe(
+              catchError((err) => {
+                this.loginForm.controls.clientId.setErrors({
+                  unauthorized: true
+                });
+                return of(err);
+              })
+            );
+    };
+
+    token()
       .pipe(
         map((token) => {
           this.demoCredentials.token = token;
           return token;
         }),
+        // Validate the customer guid
         switchMap((token) => {
           const url =
             'https://bank.demo.cybrid.app/api/customers/' +
@@ -87,18 +136,22 @@ export class LoginComponent {
           return this.http.get(url, httpOptions);
         }),
         catchError((err) => {
-          console.log(err);
-          console.log(err.statusText);
-
           switch (err.status) {
             case 401: {
-              this.loginForm.get('clientId')?.setErrors({ unauthorized: true });
+              if (this.bearer) {
+                this.loginForm.controls.bearerToken.setErrors({
+                  unauthorized: true
+                });
+              } else
+                this.loginForm.controls.clientId.setErrors({
+                  unauthorized: true
+                });
               break;
             }
             case 404: {
-              this.loginForm
-                .get('customerGuid')
-                ?.setErrors({ not_found: true });
+              this.loginForm.controls.customerGuid.setErrors({
+                not_found: true
+              });
               break;
             }
             default:

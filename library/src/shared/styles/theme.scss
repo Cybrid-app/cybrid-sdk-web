@@ -196,8 +196,10 @@ $light-theme: mat.define-light-theme(
 
 /* Global Styles */
 .cybrid-global {
-  max-width: 905px;
-  margin: auto;
+  .cybrid-window {
+    max-width: 905px;
+    margin: auto;
+  }
 
   .cybrid-column {
     display: flex;

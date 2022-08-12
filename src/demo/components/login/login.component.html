@@ -13,44 +13,69 @@
     >
     <mat-card-content>
       <ng-container [formGroup]="loginForm">
-        <mat-form-field appearance="outline">
-          <mat-label>Client Id</mat-label>
-          <input
-            id="clientId"
-            formControlName="clientId"
-            matInput
-            required
-            type="text"
-          />
-          <mat-error *ngIf="loginForm.get('clientId')?.hasError('minlength')">
-            Invalid api key
-          </mat-error>
-          <mat-error *ngIf="loginForm.get('clientId')?.hasError('unauthorized')"
-            >Unauthorized api key
-          </mat-error>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Client Secret</mat-label>
-          <input
-            id="clientSecret"
-            formControlName="clientSecret"
-            matInput
-            required
-            type="text"
-          />
-          <mat-error
-            *ngIf="loginForm.get('clientSecret')?.hasError('minlength')"
-          >
-            Invalid api key
-          </mat-error>
-        </mat-form-field>
+        <mat-tab-group dynamicHeight (selectedTabChange)="switchInput()">
+          <mat-tab label="Api keys">
+            <div class="cybrid-column">
+              <mat-form-field appearance="outline">
+                <mat-label>Client Id</mat-label>
+                <input
+                  id="clientId"
+                  formControlName="clientId"
+                  matInput
+                  type="text"
+                />
+                <mat-error
+                  *ngIf="loginForm.get('clientId')?.hasError('minlength')"
+                >
+                  Invalid api key
+                </mat-error>
+                <mat-error
+                  *ngIf="loginForm.get('clientId')?.hasError('unauthorized')"
+                  >Unauthorized api key
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Client Secret</mat-label>
+                <input
+                  id="clientSecret"
+                  formControlName="clientSecret"
+                  matInput
+                  type="text"
+                />
+                <mat-error
+                  *ngIf="loginForm.get('clientSecret')?.hasError('minlength')"
+                >
+                  Invalid api key
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </mat-tab>
+          <mat-tab class="cybrid-tab" label="Bearer Token">
+            <div class="cybrid-column">
+              <mat-form-field appearance="outline">
+                <mat-label>Bearer Token</mat-label>
+                <input
+                  id="bearerToken"
+                  formControlName="bearerToken"
+                  matInput
+                  type="text"
+                />
+                <mat-error
+                  *ngIf="loginForm.get('bearerToken')?.hasError('unauthorized')"
+                >
+                  Invalid bearer token
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+
         <mat-form-field appearance="outline">
           <mat-label>Customer GUID</mat-label>
           <input
             id="customerGuid"
             formControlName="customerGuid"
             matInput
-            required
             type="text"
           />
           <mat-error
