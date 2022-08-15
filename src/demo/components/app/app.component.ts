@@ -14,6 +14,9 @@ import { Constants } from '@constants';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  CybridLogo =
+    'https://assets-global.website-files.com/6226732e4130814a4adb86c2/62430bcedab2d5494d20b601_logo-white.svg';
+
   version: Observable<string> = new Observable<string>();
 
   constructor(
