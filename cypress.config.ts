@@ -5,7 +5,8 @@ export default defineConfig({
   screenshotsFolder: 'cypress/screenshots',
   fixturesFolder: 'cypress/fixtures',
   chromeWebSecurity: false,
-  requestTimeout: 10000,
+  defaultCommandTimeout: 10000,
+  requestTimeout: 15000,
   env: {
     CLIENT_ID: '',
     CLIENT_SECRET: '',

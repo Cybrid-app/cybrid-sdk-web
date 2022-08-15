@@ -60,6 +60,8 @@ describe('trade test', () => {
   });
 
   it('should handle an invalid amount', () => {
+    cy.intercept('/api/quotes').as('getQuote');
+
     // No amount
     app().find('#action').should('be.disabled');
 
@@ -84,13 +86,20 @@ describe('trade test', () => {
     // Amount = 0
     app().find('#amount').type('0', { force: true });
     app().get('#action').click();
-    cy.get('snack-bar-container').should('exist').find('button').click();
+
+    cy.wait('@getQuote').then(() => {
+      cy.get('snack-bar-container').should('exist').find('button').click();
+    });
 
     // Small amounts
     app().find('#amount').clear();
     app().find('#amount').type('0.001', { force: true });
     app().get('#action').click();
-    cy.get('snack-bar-container').should('exist').find('button').click();
+
+    cy.wait('@getQuote').then(() => {
+      cy.get('snack-bar-container').should('exist').find('button').click();
+    });
+
     app().find('#amount').clear();
   });
 
