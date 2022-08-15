@@ -11,7 +11,8 @@ export const environment = {
   authUrl: 'https://id.demo.cybrid.app/oauth/token',
   credentials: {
     clientId: '',
-    clientSecret: ''
+    clientSecret: '',
+    customerGuid: ''
   },
   grant_type: 'client_credentials',
   scope:

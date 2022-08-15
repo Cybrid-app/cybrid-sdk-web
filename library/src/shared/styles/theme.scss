@@ -175,6 +175,10 @@ $light-theme: mat.define-light-theme(
 /* Theme Class Declaration */
 .cybrid-light-theme {
   @include mat.all-component-themes($light-theme);
+
+  .mat-toolbar-single-row {
+    height: 56px;
+  }
 }
 .cybrid-dark-theme {
   @include mat.all-component-colors($dark-theme);
@@ -192,8 +196,10 @@ $light-theme: mat.define-light-theme(
 
 /* Global Styles */
 .cybrid-global {
-  max-width: 905px;
-  margin: auto;
+  .cybrid-window {
+    max-width: 905px;
+    margin: auto;
+  }
 
   .cybrid-column {
     display: flex;

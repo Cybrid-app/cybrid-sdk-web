@@ -6,14 +6,6 @@ function app() {
 }
 
 function accountListSetup() {
-  cy.intercept('POST', '/oauth/token', (req) => {
-    req.body.client_id = Cypress.env('CLIENT_ID');
-    req.body.client_secret = Cypress.env('CLIENT_SECRET');
-    req.continue();
-  });
-  cy.visit('/');
-  cy.intercept('/api/prices').as('getPrices');
-  cy.wait('@getPrices');
   cy.get('#component')
     .click()
     .get('mat-option')
@@ -22,6 +14,11 @@ function accountListSetup() {
 }
 
 describe('account-list test', () => {
+  before(() => {
+    cy.visit('/');
+    // @ts-ignore
+    cy.login();
+  });
   it('should render the account list', () => {
     accountListSetup();
     app().should('exist');

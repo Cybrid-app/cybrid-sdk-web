@@ -104,7 +104,6 @@ export class AccountDetailsComponent
 
   ngAfterContentInit() {
     this.dataSource.paginator = this.paginator;
-
     this.dataSource.sortingDataAccessor = this.sortingDataAccessor;
     this.dataSource.sort = this.sort;
 
@@ -263,7 +262,7 @@ export class AccountDetailsComponent
       }
     };
     this.routingService.handleRoute({
-      origin: 'account-detail',
+      origin: 'account-details',
       route: 'trade',
       extras: extras
     });

@@ -26,7 +26,7 @@ import {
 } from '@services';
 
 import { AppComponent } from '@components';
-import { TestConstants } from '@constants';
+import { Constants, TestConstants } from '@constants';
 
 describe('AppComponent', () => {
   let MockAuthService = jasmine.createSpyObj('AuthService', [
@@ -78,6 +78,7 @@ describe('AppComponent', () => {
     }).compileComponents();
     MockAuthService = TestBed.inject(AuthService);
     MockAssetService = TestBed.inject(AssetService);
+    MockAssetService.getAssets$.and.returnValue(of({}));
     MockEventService = TestBed.inject(EventService);
     MockErrorService = TestBed.inject(ErrorService);
     MockConfigService = TestBed.inject(ConfigService);
@@ -111,22 +112,23 @@ describe('AppComponent', () => {
     expect(MockConfigService.setConfig).toHaveBeenCalledWith(testConfig);
   }));
 
-  it('should set the current component', fakeAsync(() => {
+  it('should set the current component', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const component = fixture.componentInstance;
-    const currentComponent$Spy = spyOn(component.currentComponent$, 'next');
 
     // Test default currentComponent
     component.initNavigation();
-    tick();
+    component.component = Constants.DEFAULT_COMPONENT;
+
     expect(MockRouter.navigate).toHaveBeenCalled();
     expect(MockRoutingService.handleRoute).toHaveBeenCalled();
 
     // Set currentComponent
     component.component = 'test';
-    tick();
-    expect(currentComponent$Spy).toHaveBeenCalledWith('test');
-  }));
+
+    expect(MockRouter.navigate).toHaveBeenCalled();
+    expect(MockRoutingService.handleRoute).toHaveBeenCalled();
+  });
 
   it('should call init functions in ngOnInit()', () => {
     const fixture = TestBed.createComponent(AppComponent);
@@ -160,9 +162,10 @@ describe('AppComponent', () => {
       CODE.APPLICATION_ERROR,
       'Fatal error initializing application'
     );
-    expect(MockErrorService.handleError).toHaveBeenCalledWith(
-      new Error('Fatal error initializing application')
-    );
+    expect(MockErrorService.handleError).toHaveBeenCalledWith({
+      code: CODE.APPLICATION_ERROR,
+      message: 'Fatal error initializing application'
+    });
   }));
 
   it('should log an event when the event service is initialized', () => {

@@ -1,0 +1,51 @@
+.cybrid-login {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 1rem;
+  img {
+    height: 50px;
+  }
+  .cybrid-column {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem 0 0;
+  }
+  .cybrid-header {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .mat-tab-body-content {
+    display: flex;
+    flex-direction: column;
+  }
+  mat-form-field {
+    width: 100%;
+  }
+  mat-card {
+    align-self: center;
+    width: 100%;
+    max-width: 400px;
+    padding: 2rem;
+  }
+  mat-card-content {
+    display: flex;
+    flex-direction: column;
+  }
+  mat-card-actions {
+    display: flex;
+    justify-content: center;
+    button {
+      min-width: 200px;
+    }
+  }
+  mat-card-footer {
+    display: flex;
+    justify-content: center;
+    a {
+      text-decoration: none;
+    }
+  }
+}

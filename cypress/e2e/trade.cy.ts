@@ -5,18 +5,15 @@ function app() {
 }
 
 function tradeSetup() {
-  cy.intercept('POST', '/oauth/token', (req) => {
-    req.body.client_id = Cypress.env('CLIENT_ID');
-    req.body.client_secret = Cypress.env('CLIENT_SECRET');
-    req.continue();
-  });
-  cy.visit('/');
-  cy.intercept('/api/prices').as('getPrices');
-  cy.wait('@getPrices');
   cy.get('#component').click().get('mat-option').contains('trade').click();
 }
 
 describe('trade test', () => {
+  before(() => {
+    cy.visit('/');
+    // @ts-ignore
+    cy.login();
+  });
   it('should render the trade component', () => {
     tradeSetup();
     app().should('exist');
@@ -33,9 +30,9 @@ describe('trade test', () => {
 
   it('should swap between buy/sell', () => {
     app().find('#action').should('contain', 'BUY');
-    app().find('#mat-tab-label-0-1').click();
+    app().find('.mat-tab-labels').contains('SELL').click();
     app().find('#action').should('contain', 'SELL');
-    app().find('#mat-tab-label-0-0').click();
+    app().find('.mat-tab-labels').contains('BUY').click();
   });
 
   it('should swap between assets', () => {
@@ -63,6 +60,8 @@ describe('trade test', () => {
   });
 
   it('should handle an invalid amount', () => {
+    cy.intercept('/api/quotes').as('getQuote');
+
     // No amount
     app().find('#action').should('be.disabled');
 
@@ -87,13 +86,20 @@ describe('trade test', () => {
     // Amount = 0
     app().find('#amount').type('0', { force: true });
     app().get('#action').click();
-    cy.get('snack-bar-container').should('exist').find('button').click();
+
+    cy.wait('@getQuote').then(() => {
+      cy.get('snack-bar-container').should('exist').find('button').click();
+    });
 
     // Small amounts
     app().find('#amount').clear();
     app().find('#amount').type('0.001', { force: true });
     app().get('#action').click();
-    cy.get('snack-bar-container').should('exist').find('button').click();
+
+    cy.wait('@getQuote').then(() => {
+      cy.get('snack-bar-container').should('exist').find('button').click();
+    });
+
     app().find('#amount').clear();
   });
 

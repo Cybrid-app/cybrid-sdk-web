@@ -9,11 +9,11 @@ import {
 import { Router } from '@angular/router';
 
 import {
-  BehaviorSubject,
   catchError,
   combineLatest,
   map,
   of,
+  ReplaySubject,
   Subject,
   take,
   takeUntil,
@@ -34,9 +34,6 @@ import {
   CODE,
   LEVEL
 } from '@services';
-
-// Constants
-import { Constants } from '@constants';
 
 @Component({
   selector: 'app-app',
@@ -60,7 +57,7 @@ export class AppComponent implements OnInit {
     this.currentComponent$.next(selector);
   }
 
-  currentComponent$ = new BehaviorSubject(Constants.DEFAULT_COMPONENT);
+  currentComponent$ = new ReplaySubject<string>(1);
 
   private unsubscribe$ = new Subject();
 
@@ -77,6 +74,8 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.initEventService();
     this.initErrorService();
+
+    // Get assets and valid config before navigating to initial component
     combineLatest([
       this.configService.getConfig$(),
       this.assetService.getAssets$()
@@ -96,9 +95,10 @@ export class AppComponent implements OnInit {
             CODE.APPLICATION_ERROR,
             'Fatal error initializing application'
           );
-          this.errorService.handleError(
-            new Error('Fatal error initializing application')
-          );
+          this.errorService.handleError({
+            code: CODE.APPLICATION_ERROR,
+            message: 'Fatal error initializing application'
+          });
           return of(err);
         })
       )

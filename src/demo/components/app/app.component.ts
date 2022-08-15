@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable, map, pluck } from 'rxjs';
+import { Observable, map, pluck, take } from 'rxjs';
 
-import { ConfigService } from '../../services/config/config.service';
+import { DemoConfigService } from '../../services/demo-config/demo-config.service';
 
 // Library
 import { Constants } from '@constants';
@@ -14,10 +14,15 @@ import { Constants } from '@constants';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  version: Observable<string> = new Observable<string>();
-  mode: 'light_mode' | 'dark_mode' = 'light_mode';
+  CybridLogo =
+    'https://assets-global.website-files.com/6226732e4130814a4adb86c2/62430bcedab2d5494d20b601_logo-white.svg';
 
-  constructor(private http: HttpClient, public configService: ConfigService) {
+  version: Observable<string> = new Observable<string>();
+
+  constructor(
+    private http: HttpClient,
+    public demoConfigService: DemoConfigService
+  ) {
     this.version = this.http.get(Constants.REPO_URL).pipe(
       pluck('tag_name'),
       map((tag) => tag as string)
@@ -25,20 +30,17 @@ export class AppComponent {
   }
 
   toggleTheme(): void {
-    const config = this.configService.defaultConfig;
-    switch (this.mode) {
-      case 'light_mode': {
-        this.mode = 'dark_mode';
-        config.theme = 'DARK';
-        this.configService.config$.next(config);
-        break;
-      }
-      case 'dark_mode': {
-        this.mode = 'light_mode';
-        config.theme = 'LIGHT';
-        this.configService.config$.next(config);
-        break;
-      }
-    }
+    this.demoConfigService.config$
+      .pipe(
+        take(1),
+        map((config) => {
+          let newConfig = config;
+          config.theme === 'LIGHT'
+            ? (newConfig.theme = 'DARK')
+            : (newConfig.theme = 'LIGHT');
+          this.demoConfigService.config$.next(newConfig);
+        })
+      )
+      .subscribe();
   }
 }

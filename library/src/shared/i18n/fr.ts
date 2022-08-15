@@ -74,7 +74,7 @@ export default {
   },
 
   // Account detail component
-  accountDetail: {
+  accountDetails: {
     holdings: 'Avoirs',
     buy: 'Acheter',
     sell: 'Vendre',

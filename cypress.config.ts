@@ -5,10 +5,12 @@ export default defineConfig({
   screenshotsFolder: 'cypress/screenshots',
   fixturesFolder: 'cypress/fixtures',
   chromeWebSecurity: false,
-  requestTimeout: 10000,
+  defaultCommandTimeout: 10000,
+  requestTimeout: 15000,
   env: {
     CLIENT_ID: '',
-    CLIENT_SECRET: ''
+    CLIENT_SECRET: '',
+    CUSTOMER_GUID: ''
   },
   e2e: {
     baseUrl: 'http://localhost:4200'

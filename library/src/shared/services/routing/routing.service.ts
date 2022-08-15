@@ -42,7 +42,7 @@ export class RoutingService {
               this.eventService.handleEvent(
                 LEVEL.INFO,
                 CODE.ROUTING_END,
-                'Successfully routed to: ' + routingData,
+                'Successfully routed to: ' + routingData.route,
                 {
                   origin: routingData.origin,
                   default: routingData.route
