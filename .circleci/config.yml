@@ -50,7 +50,7 @@ jobs:
               -H "Authorization: token $github_Token" \
               --request POST \
               --data '{"event_type": "deploy"}' \
-              https://api.github.com/repos/dcocking/cybrid-sdk-web-test/dispatches
+              https://api.github.com/repos/Cybrid-app/cybrid-sdk-web/dispatches
 
 workflows:
   web-build-and-test:
