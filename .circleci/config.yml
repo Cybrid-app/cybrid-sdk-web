@@ -39,6 +39,19 @@ jobs:
           name: Publish library
           command: npm run publish:library
 
+  deploy-demo:
+    docker:
+      - image: cimg/node:16.15.0
+    steps:
+      - run:
+          name: Trigger Github workflow
+          command: |
+            curl -H "Accept: application/vnd.github+json" \
+              -H "Authorization: token $github_Token" \
+              --request POST \
+              --data '{"event_type": "deploy"}' \
+              https://api.github.com/repos/Cybrid-app/cybrid-sdk-web/dispatches
+
 workflows:
   web-build-and-test:
     jobs:
@@ -155,6 +168,14 @@ workflows:
             - e2e chromium@102.0.5005.61
             - e2e chrome@latest
             - e2e edge@latest
+          filters:
+            branches:
+              only:
+                - main
+
+      - deploy-demo:
+          requires:
+            - publish
           filters:
             branches:
               only:
