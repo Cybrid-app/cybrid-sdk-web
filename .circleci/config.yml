@@ -47,7 +47,7 @@ jobs:
           name: Trigger Github workflow
           command: |
             curl -H "Accept: application/vnd.github+json" \
-              -H "Authorization: token $github_Token" \
+              -H "Authorization: token $github_TOKEN" \
               --request POST \
               --data '{"event_type": "deploy"}' \
               https://api.github.com/repos/Cybrid-app/cybrid-sdk-web/dispatches
