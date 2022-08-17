@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --output-hashing=none --base-href=/cybrid-sdk-web-test/",
+    "build": "ng build --output-hashing=none --base-href=/cybrid-sdk-web/",
     "package:styles": "echo 'Bundling styles into Javascript \n' && npx webpack --mode=production --config webpack.styles.config.js",
     "package:polyfills": "echo 'Copying polyfills \n' && cp dist/library/polyfills.js dist/library/cybrid-sdk-ui.polyfills.js",
     "package:main": "echo 'Bundling main.js and runtime.js \n' && cat dist/library/runtime.js dist/library/main.js dist/library/cybrid-sdk-ui.styles.js > dist/library/cybrid-sdk-ui.min.js",
