@@ -38,6 +38,8 @@ export class RoutingService {
               }
             );
 
+            this.configService.setComponent(routingData.route);
+
             this.router.navigate([path], routingData.extras).then(() => {
               this.eventService.handleEvent(
                 LEVEL.INFO,

@@ -47,7 +47,8 @@ describe('AppComponent', () => {
   ]);
   let MockConfigService = jasmine.createSpyObj('ConfigService', [
     'setConfig',
-    'getConfig$'
+    'getConfig$',
+    'setComponent'
   ]);
   let MockRoutingService = jasmine.createSpyObj('RoutingService', [
     'handleRoute'
@@ -115,6 +116,8 @@ describe('AppComponent', () => {
   it('should set the current component', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const component = fixture.componentInstance;
+
+    MockConfigService.component$ = () => {};
 
     // Test default currentComponent
     component.initNavigation();

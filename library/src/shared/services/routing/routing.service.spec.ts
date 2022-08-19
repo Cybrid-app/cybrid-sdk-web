@@ -21,7 +21,10 @@ describe('RoutingService', () => {
 
   let MockEventService = jasmine.createSpyObj('EventService', ['handleEvent']);
 
-  let MockConfigService = jasmine.createSpyObj('ConfigService', ['getConfig$']);
+  let MockConfigService = jasmine.createSpyObj('ConfigService', [
+    'getConfig$',
+    'setComponent'
+  ]);
 
   let MockTranslateService = jasmine.createSpyObj('TranslateService', [
     'setTranslation',

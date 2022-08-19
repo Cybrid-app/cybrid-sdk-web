@@ -48,12 +48,17 @@ export default {
 
     // Summary dialog
     summary: {
-      header: 'Order Submitted',
+      submission: 'Order Submitted',
+      details: 'in',
       message: 'Your order has been placed, thank you.',
+      status: 'Status',
       purchased: 'Purchased',
       sold: 'Sold',
+      buy: 'Buy',
+      sell: 'Sell',
       id: 'Transaction ID:',
-      loading: 'Submitting Crypto Order',
+      submitting: 'Submitting crypto order',
+      loading: 'Loading crypto order',
       error: 'Error fetching trade'
     }
   },
@@ -75,14 +80,34 @@ export default {
   // Account details component
   accountDetails: {
     holdings: 'Holdings',
-    buy: 'Buy',
-    sell: 'Sell',
+    trade: 'Trade',
     transactions: 'Recent Transctions',
     balance: 'Balance',
     error: {
       trade: 'Error fetching trades',
       noData: 'No trades found'
     }
+  },
+
+  // Account trade component
+  accountTrade: {
+    side: {
+      buy: 'Bought',
+      sell: 'Sold'
+    },
+    subheader: 'in',
+    status: 'Status',
+    placed: 'Placed',
+    finalized: 'Finalized',
+    date: 'Date',
+    fee: 'Fee',
+    order: 'Trade ID',
+
+    message: 'Your order has been placed, thank you.',
+    purchased: 'Purchased',
+    sold: 'Sold',
+    loading: 'Submitting Crypto Order',
+    error: 'Error fetching trade'
   },
 
   // Paginator

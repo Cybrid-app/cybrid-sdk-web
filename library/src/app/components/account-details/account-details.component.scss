@@ -4,13 +4,17 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
-  padding: 0 1rem;
 }
 
 .cybrid-account {
   display: flex;
   justify-content: space-between;
-  gap: 0.5rem;
+  gap: 15px;
+}
+
+.cybrid-icon {
+  height: 48px;
+  width: 48px;
 }
 
 .cybrid-subheader {
@@ -21,15 +25,28 @@
   margin-bottom: 1rem;
 }
 
+.cybrid-asset {
+  display: flex;
+  flex-direction: column;
+  div + div {
+    margin-top: -5px;
+  }
+}
+
 .cybrid-holdings {
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
+  div + div {
+    margin-top: -5px;
+  }
 }
 
 .cybrid-actions {
   display: flex;
-  align-self: flex-start;
   gap: 1rem;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
 }
 
 .cybrid-table {
@@ -81,6 +98,41 @@ mat-progress-bar {
   }
 }
 
-.cybrid-buy-icon {
+.cybrid-sell-icon {
   transform: rotate(90deg);
+}
+
+@media screen and (max-width: 599px) {
+  .cybrid-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .cybrid-account {
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .cybrid-asset-value {
+    display: none;
+  }
+
+  .cybrid-asset-name {
+    span {
+      font-size: 1rem;
+    }
+  }
+
+  .cybrid-actions {
+    display: none;
+  }
+
+  .cybrid-icon {
+    height: inherit;
+    width: 32px;
+  }
+
+  .cybrid-holdings {
+    align-items: center;
+  }
 }

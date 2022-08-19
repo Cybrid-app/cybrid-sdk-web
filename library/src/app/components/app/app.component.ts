@@ -54,6 +54,7 @@ export class AppComponent implements OnInit {
   }
   @Input()
   set component(selector: string) {
+    this.configService.setComponent(selector);
     this.currentComponent$.next(selector);
   }
 

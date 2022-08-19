@@ -222,6 +222,14 @@ $light-theme: mat.define-light-theme(
     margin: 0;
   }
 
+  .cybrid-strong {
+    font-weight: 500;
+  }
+
+  .cybrid-no-margin {
+    margin: 0;
+  }
+
   .cybrid-pointer {
     cursor: pointer;
   }

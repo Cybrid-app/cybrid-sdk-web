@@ -50,7 +50,8 @@ describe('TradeSummaryComponent', () => {
   ]);
   let MockConfigService = jasmine.createSpyObj('ConfigService', [
     'setConfig',
-    'getConfig$'
+    'getConfig$',
+    'getComponent$'
   ]);
   let MockTradesService = jasmine.createSpyObj('TradesService', ['getTrade']);
   let MockRoutingService = jasmine.createSpyObj('RoutingService', [
@@ -115,6 +116,7 @@ describe('TradeSummaryComponent', () => {
     MockErrorService = TestBed.inject(ErrorService);
     MockConfigService = TestBed.inject(ConfigService);
     MockConfigService.getConfig$.and.returnValue(of(TestConstants.CONFIG));
+    MockConfigService.getComponent$.and.returnValue(of('Trade'));
   });
 
   beforeEach(() => {
@@ -146,7 +148,10 @@ describe('TradeSummaryComponent', () => {
     expect(MockDialogRef.close).toHaveBeenCalled();
   });
 
-  it('should route to the price-list onDialogClose()', () => {
+  it('should route to the price-list onDialogClose() if the parent is trade', () => {
+    // Set parent component to trade
+    MockConfigService.getComponent$.and.returnValue(of('trade'));
+
     component.onDialogClose();
     expect(MockRoutingService.handleRoute).toHaveBeenCalled();
   });
