@@ -59,7 +59,7 @@ export default {
       id: 'Transaction ID:',
       submitting: 'Submitting crypto order',
       loading: 'Loading crypto order',
-      error: 'Error fetching trade',
+      error: 'Error fetching trade'
     }
   },
 
