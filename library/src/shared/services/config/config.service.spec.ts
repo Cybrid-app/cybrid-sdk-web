@@ -63,6 +63,22 @@ describe('ConfigService', () => {
     TestConstants.CONFIG.refreshInterval = 5000;
   }));
 
+  it('should set component$ with a component selector when setConfig() is called', () => {
+    service.setComponent('test');
+
+    service.component$.subscribe((component) => {
+      expect(component).toEqual('test');
+    });
+  });
+
+  it('should return the component as an observable ig getComponent$ is called', () => {
+    service.setComponent('test');
+
+    service.getComponent$().subscribe((component) => {
+      expect(component).toEqual('test');
+    });
+  });
+
   it('should output an error and event if setConfig() is given an invalid config', () => {
     const invalidConfig = {
       error: 'error'

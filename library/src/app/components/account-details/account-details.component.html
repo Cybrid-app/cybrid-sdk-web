@@ -1,6 +1,11 @@
 <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
   <ng-container *ngIf="(isLoading$ | async) !== true; else loading">
-    <ng-container *ngIf="configService.getConfig$() | async as config">
+    <ng-container
+      *ngIf="{
+        config: configService.getConfig$() | async,
+        component: configService.getComponent$()
+      } as data"
+    >
       <app-navigation [routingData]="routingData"></app-navigation>
       <ng-container *ngIf="account$ | async as account">
         <div class="cybrid-header">
@@ -10,47 +15,51 @@
               src="{{ account.asset.url }}"
               alt="Crypto currency icon"
             />
-            <span class="cybrid-h2"
-              >{{ account.asset.name }}
-              <span class="mat-hint">{{ account.asset.code }}</span>
-            </span>
+            <div class="cybrid-asset">
+              <div class="cybrid-asset-name">
+                <span class="cybrid-h2 cybrid-strong"
+                  >{{ account.asset.name }}
+                </span>
+                <span class="cybrid-h2 mat-hint">{{ account.asset.code }}</span>
+              </div>
+              <div class="cybrid-asset-value">
+                <span>
+                  {{ account.price.buy_price! | asset: account.counter_asset }}
+                </span>
+                <span class="mat-hint">{{ account.counter_asset.code }}</span>
+              </div>
+            </div>
           </div>
-          <div>
-            <span class="cybrid-h2">
-              {{ account.price.buy_price! | asset: account.counter_asset }}
-              <span class="mat-hint">{{ account.counter_asset.code }}</span>
-            </span>
-          </div>
-        </div>
-        <div class="cybrid-subheader">
           <div class="cybrid-holdings">
-            <span>{{ 'accountDetails.holdings' | translate }}</span>
             <div>
-              <span class="mat-body-strong"
+              <span class="cybrid-h2 cybrid-strong"
                 >{{
                   account.account.platform_balance!
                     | asset: account.asset:'trade'
                 }}
               </span>
-              <span class="mat-hint">{{ ' ' + account.asset.code }}</span>
+              <span class="cybrid-h2 mat-hint">{{
+                ' ' + account.asset.code
+              }}</span>
             </div>
             <div>
+              <span>{{ account.counter_asset.symbol }}</span>
               <span>{{
-                (account.value | currency: '':'':'':config.locale) + ' '
+                (account.value | currency: '':'':'':data.config!.locale) + ' '
               }}</span>
               <span class="mat-hint">{{ account.counter_asset.code }}</span>
             </div>
           </div>
-          <div class="cybrid-actions">
-            <button mat-flat-button color="primary" (click)="onTrade()">
-              {{ 'accountDetails.sell' | translate }}
-              {{ ' ' + account.asset.code }}
-            </button>
-            <button mat-flat-button color="primary" (click)="onTrade()">
-              {{ 'accountDetails.buy' | translate }}
-              {{ ' ' + account.asset.code }}
-            </button>
-          </div>
+        </div>
+        <div class="cybrid-actions">
+          <button
+            id="trade"
+            mat-flat-button
+            color="primary"
+            (click)="onTrade()"
+          >
+            {{ 'accountDetails.trade' | translate }}
+          </button>
         </div>
         <div class="cybrid-table">
           <mat-progress-bar
@@ -103,7 +112,7 @@
                 <div class="cybrid-sort-header">
                   <span>{{ 'accountDetails.balance' | translate }}</span>
                   <span class="mat-hint cybrid-h5 cybrid-code">{{
-                    config.fiat
+                    data.config!.fiat
                   }}</span>
                 </div>
               </th>
@@ -143,7 +152,12 @@
               </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            <tr
+              class="cybrid-pointer"
+              mat-row
+              *matRowDef="let row; columns: displayedColumns"
+              (click)="onRowClick(row)"
+            ></tr>
             <tr class="mat-row" *matNoDataRow>
               <td id="warning" class="mat-cell cybrid-no-data" colspan="2">
                 {{

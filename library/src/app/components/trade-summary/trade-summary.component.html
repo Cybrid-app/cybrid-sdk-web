@@ -1,147 +1,207 @@
 <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
-  <ng-container *ngIf="trade$ | async as trade; else loading">
-    <h2 mat-dialog-title>{{ 'trade.summary.header' | translate }}</h2>
-    <mat-dialog-content>
-      <p class="mat-hint">
-        {{ 'trade.summary.message' | translate }}
-      </p>
-      <ng-container *ngIf="trade.side === 'buy'">
-        <div class="cybrid-subheader-item">
-          <div class="inner">
-            <span class="mat-body-strong">Transaction ID:</span>
-            <span matTooltip="{{ trade.guid }}" matTooltipPosition="above">{{
-              trade.guid! | truncate: 9
-            }}</span>
+  <ng-container
+    *ngIf="{
+      config: configService.getConfig$() | async,
+      component: configService.getComponent$() | async
+    } as config"
+  >
+    <ng-container *ngIf="trade$ | async as trade; else loading">
+      <h2 mat-dialog-title *ngIf="config.component === 'trade'">
+        {{ 'trade.summary.submission' | translate }}
+      </h2>
+      <h2 mat-dialog-title *ngIf="config.component === 'account-details'">
+        <img
+          class="cybrid-icon"
+          src="{{ data.asset.url }}"
+          alt="Crypto currency icon"
+        />
+        <span>{{
+          trade.side === 'buy'
+            ? ('trade.summary.buy' | translate)
+            : ('trade.summary.sell' | translate)
+        }}</span>
+      </h2>
+      <mat-dialog-content>
+        <p *ngIf="config.component === 'trade'" class="mat-hint">
+          {{ 'trade.summary.message' | translate }}
+        </p>
+
+        <p
+          *ngIf="config.component === 'account-details'"
+          class="cybrid-subtitle"
+        >
+          <span class="mat-body-strong">{{
+            (trade.side === 'buy'
+              ? trade.deliver_amount!
+              : trade.receive_amount!
+            ) | asset: data.counter_asset
+          }}</span>
+          <span> {{ data.counter_asset.code + ' ' }}</span>
+          <span>{{ ('accountTrade.subheader' | translate) + ' ' }}</span>
+          <span>{{ data.asset.code }}</span>
+        </p>
+
+        <ng-container *ngIf="trade.side === 'buy'">
+          <div class="cybrid-subheader-item">
+            <div class="inner">
+              <span class="mat-body-strong">Transaction ID:</span>
+              <span matTooltip="{{ trade.guid }}" matTooltipPosition="above">{{
+                trade.guid! | truncate: 9
+              }}</span>
+            </div>
+            <div class="inner">
+              <span class="mat-body-strong">Date:</span>
+              <span>{{ trade.created_at | date }}</span>
+            </div>
           </div>
-          <div class="inner">
-            <span class="mat-body-strong">Date:</span>
-            <span>{{ trade.created_at | date }}</span>
+          <div
+            class="cybrid-list-item"
+            *ngIf="config.component === 'account-details'"
+          >
+            <span>{{ 'trade.summary.status' | translate }}</span>
+            <span>{{ trade.state | titlecase }}</span>
           </div>
-        </div>
-        <div class="cybrid-list-item">
-          <span>
-            {{
-              ('trade.summary.purchased' | translate) +
-                ' ' +
-                ('trade.amount' | translate)
-            }}
-          </span>
-          <div>
-            <span>
-              {{ (trade.deliver_amount! | asset: data.counter_asset) + ' ' }}
-            </span>
-            <span class="mat-hint">{{ data.counter_asset.code }}</span>
-          </div>
-        </div>
-        <mat-divider></mat-divider>
-        <div class="cybrid-list-item">
-          <span
-            >{{
-              ('trade.summary.purchased' | translate) +
-                ' ' +
-                ('trade.quantity' | translate)
-            }}
-          </span>
-          <div>
-            <span>{{
-              (trade.receive_amount! | asset: data.asset:'trade') + ' '
-            }}</span>
-            <span class="mat-hint">{{ data.asset.code }}</span>
-          </div>
-        </div>
-        <mat-divider></mat-divider>
-        <div class="cybrid-list-item">
-          <span>{{ 'trade.transaction' | translate }}</span>
-          <div>
-            <span>
-              {{ (trade.fee! | asset: data.counter_asset) + ' ' }}
-            </span>
-            <span class="mat-hint">{{ data.counter_asset.code }}</span>
-          </div>
-        </div>
-        <mat-divider></mat-divider>
-      </ng-container>
-      <ng-container *ngIf="trade.side === 'sell'">
-        <div class="subheader-item cybrid-list-item">
-          <div class="inner">
-            <span class="mat-body-strong">Transaction ID:</span>
-            <span
-              class="transaction-id"
-              matTooltip="{{ trade.guid }}"
-              matTooltipPosition="above"
-              >{{ trade.guid! | truncate: 9 }}</span
-            >
-          </div>
-          <div class="inner">
-            <span class="mat-body-strong">Date:</span>
-            <span>{{ trade.created_at | date }}</span>
-          </div>
-        </div>
-        <div class="cybrid-list-item">
-          <span>
-            {{
-              ('trade.summary.sold' | translate) +
-                ' ' +
-                ('trade.amount' | translate)
-            }}
-          </span>
-          <div>
-            <span>
-              {{ (trade.receive_amount! | asset: data.counter_asset) + ' ' }}
-            </span>
-            <span class="mat-hint">{{ data.counter_asset.code }}</span>
-          </div>
-        </div>
-        <mat-divider></mat-divider>
-        <div class="cybrid-list-item">
-          <span
-            >{{
-              ('trade.summary.sold' | translate) +
-                ' ' +
-                ('trade.quantity' | translate)
-            }}
-          </span>
-          <div>
-            <span>{{
-              (trade.deliver_amount! | asset: data.asset:'trade') + ' '
-            }}</span>
-            <span class="mat-hint">{{ data.asset.code }}</span>
-          </div>
-        </div>
-        <mat-divider></mat-divider>
-        <div class="cybrid-list-item">
-          <span>{{ 'trade.transaction' | translate }}</span>
-          <div>
+          <mat-divider
+            *ngIf="config.component === 'account-details'"
+          ></mat-divider>
+          <div class="cybrid-list-item">
             <span>
               {{
-                data.counter_asset.symbol +
-                  (trade.fee! | asset: data.counter_asset:'trade') +
-                  ' '
+                ('trade.summary.purchased' | translate) +
+                  ' ' +
+                  ('trade.amount' | translate)
               }}
             </span>
-            <span class="mat-hint">{{ data.counter_asset.code }}</span>
+            <div>
+              <span>
+                {{ (trade.deliver_amount! | asset: data.counter_asset) + ' ' }}
+              </span>
+              <span class="mat-hint">{{ data.counter_asset.code }}</span>
+            </div>
           </div>
-        </div>
-        <mat-divider></mat-divider>
-      </ng-container>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button
-        id="done"
-        mat-stroked-button
-        [mat-dialog-close]
-        (click)="onDialogClose()"
-      >
-        {{ 'done' | translate }}
-      </button>
-    </mat-dialog-actions>
+          <mat-divider></mat-divider>
+          <div class="cybrid-list-item">
+            <span
+              >{{
+                ('trade.summary.purchased' | translate) +
+                  ' ' +
+                  ('trade.quantity' | translate)
+              }}
+            </span>
+            <div>
+              <span>{{
+                (trade.receive_amount! | asset: data.asset:'trade') + ' '
+              }}</span>
+              <span class="mat-hint">{{ data.asset.code }}</span>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="cybrid-list-item">
+            <span>{{ 'trade.transaction' | translate }}</span>
+            <div>
+              <span>
+                {{ (trade.fee! | asset: data.counter_asset) + ' ' }}
+              </span>
+              <span class="mat-hint">{{ data.counter_asset.code }}</span>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+        </ng-container>
+        <ng-container *ngIf="trade.side === 'sell'">
+          <div class="cybrid-subheader-item">
+            <div class="inner">
+              <span class="mat-body-strong">Transaction ID:</span>
+              <span matTooltip="{{ trade.guid }}" matTooltipPosition="above">{{
+                trade.guid! | truncate: 9
+              }}</span>
+            </div>
+            <div class="inner">
+              <span class="mat-body-strong">Date:</span>
+              <span>{{ trade.created_at | date }}</span>
+            </div>
+          </div>
+          <div
+            class="cybrid-list-item"
+            *ngIf="config.component === 'account-details'"
+          >
+            <span>{{ 'trade.summary.status' | translate }}</span>
+            <span>{{ trade.state | titlecase }}</span>
+          </div>
+          <mat-divider
+            *ngIf="config.component === 'account-details'"
+          ></mat-divider>
+          <div class="cybrid-list-item">
+            <span>
+              {{
+                ('trade.summary.sold' | translate) +
+                  ' ' +
+                  ('trade.amount' | translate)
+              }}
+            </span>
+            <div>
+              <span>
+                {{ (trade.receive_amount! | asset: data.counter_asset) + ' ' }}
+              </span>
+              <span class="mat-hint">{{ data.counter_asset.code }}</span>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="cybrid-list-item">
+            <span
+              >{{
+                ('trade.summary.sold' | translate) +
+                  ' ' +
+                  ('trade.quantity' | translate)
+              }}
+            </span>
+            <div>
+              <span>{{
+                (trade.deliver_amount! | asset: data.asset:'trade') + ' '
+              }}</span>
+              <span class="mat-hint">{{ data.asset.code }}</span>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="cybrid-list-item">
+            <span>{{ 'trade.transaction' | translate }}</span>
+            <div>
+              <span>
+                {{
+                  data.counter_asset.symbol +
+                    (trade.fee! | asset: data.counter_asset:'trade') +
+                    ' '
+                }}
+              </span>
+              <span class="mat-hint">{{ data.counter_asset.code }}</span>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+        </ng-container>
+      </mat-dialog-content>
+      <mat-dialog-actions align="end">
+        <button
+          id="done"
+          mat-stroked-button
+          [mat-dialog-close]
+          (click)="onDialogClose()"
+        >
+          {{ 'done' | translate }}
+        </button>
+      </mat-dialog-actions>
+    </ng-container>
+    <ng-template #loading>
+      <app-loading>
+        <h2>
+          {{
+            config.component === 'trade'
+              ? ('trade.summary.submitting' | translate)
+              : ('trade.summary.loading' | translate)
+          }}
+        </h2>
+      </app-loading>
+    </ng-template>
   </ng-container>
 </ng-container>
-<ng-template #loading>
-  <app-loading>
-    <h2>{{ 'trade.summary.loading' | translate }}</h2>
-  </app-loading>
-</ng-template>
 <ng-template #error>
   <mat-card>
     <mat-card-content>

@@ -49,12 +49,17 @@ export default {
 
     // Summary dialog
     summary: {
-      header: 'Commande Soumise',
+      submission: 'Commande Soumise',
+      details: 'en',
       message: 'Votre commande a été passée, merci.',
+      status: 'Statut',
       purchased: 'Acheté',
-      sold: 'Vendu',
+      buy: 'Acheter',
       id: 'Transaction ID:',
-      loading: 'Soumettre une commande de crypto',
+      sell: 'Vendre',
+      sold: 'Vendu',
+      submitting: 'Soumettre une commande de crypto',
+      loading: 'Chargement de la commande crypto',
       error: 'Erreur lors de la récupération de léchange'
     }
   },
@@ -73,17 +78,37 @@ export default {
     }
   },
 
-  // Account detail component
+  // Account details component
   accountDetails: {
     holdings: 'Avoirs',
-    buy: 'Acheter',
-    sell: 'Vendre',
+    trade: 'Échanger',
     transactions: 'Transactions Récentes',
     balance: 'Solde',
     error: {
       account: 'Erreur lors de la récupération des transactions',
       noData: 'Aucun commerce trouvé'
     }
+  },
+
+  // Account trade component
+  accountTrade: {
+    side: {
+      buy: 'Acheté',
+      sell: 'Vendu'
+    },
+    subheader: 'en',
+    status: 'Statut',
+    placed: 'Mis',
+    finalized: 'Finalisé',
+    date: 'Date',
+    fee: 'Frais',
+    order: 'Identifiant commercial',
+
+    message: 'Your order has been placed, thank you.',
+    purchased: 'Purchased',
+    sold: 'Sold',
+    loading: 'Submitting Crypto Order',
+    error: 'Error fetching trade'
   },
 
   // Paginator

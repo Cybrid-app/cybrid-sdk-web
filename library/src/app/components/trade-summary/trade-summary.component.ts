@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { BehaviorSubject, catchError, map, of, Subject } from 'rxjs';
+import { BehaviorSubject, catchError, map, of, Subject, take } from 'rxjs';
 
 // Client
 import { TradeBankModel, TradesService } from '@cybrid/cybrid-api-bank-angular';
@@ -20,6 +20,7 @@ import {
 
 // Utility
 import { TranslatePipe } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 
 interface DialogData {
   model: TradeBankModel;
@@ -86,6 +87,19 @@ export class TradeSummaryComponent implements OnInit {
   }
 
   onDialogClose(): void {
-    this.routingService.handleRoute({ route: 'price-list', origin: 'trade' });
+    this.configService
+      .getComponent$()
+      .pipe(
+        take(1),
+        map((component) => {
+          if (component === 'trade') {
+            this.routingService.handleRoute({
+              route: 'price-list',
+              origin: 'trade'
+            });
+          }
+        })
+      )
+      .subscribe();
   }
 }

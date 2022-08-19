@@ -44,6 +44,8 @@ import {
 // Utility
 import { Constants } from '@constants';
 import { symbolBuild } from '@utility';
+import { TradeSummaryComponent } from '../trade-summary/trade-summary.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-account-details',
@@ -89,7 +91,8 @@ export class AccountDetailsComponent
     private tradeService: TradesService,
     private assetService: AssetService,
     private route: ActivatedRoute,
-    private routingService: RoutingService
+    private routingService: RoutingService,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -202,6 +205,10 @@ export class AccountDetailsComponent
           this.errorService.handleError(
             new Error('There was an error fetching trades')
           );
+
+          this.dataSource.data = [];
+          this.getTradesError = true;
+
           return of(err);
         })
       )
@@ -265,6 +272,16 @@ export class AccountDetailsComponent
       origin: 'account-details',
       route: 'trade',
       extras: extras
+    });
+  }
+
+  onRowClick(tradeBankModel: TradeBankModel): void {
+    this.dialog.open(TradeSummaryComponent, {
+      data: {
+        model: tradeBankModel,
+        asset: this.asset,
+        counter_asset: this.assetService.getAsset(this.counterAssetCode)
+      }
     });
   }
 }

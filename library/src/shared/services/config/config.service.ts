@@ -24,6 +24,8 @@ export class ConfigService implements OnDestroy {
   config: ComponentConfig = Constants.DEFAULT_CONFIG;
   config$ = new ReplaySubject<ComponentConfig>(1);
 
+  component$ = new ReplaySubject<string>(1);
+
   private unsubscribe$ = new Subject();
 
   constructor(
@@ -64,6 +66,14 @@ export class ConfigService implements OnDestroy {
 
   getConfig$(): Observable<ComponentConfig> {
     return this.config$.asObservable();
+  }
+
+  setComponent(selector: string) {
+    this.component$.next(selector);
+  }
+
+  getComponent$(): Observable<string> {
+    return this.component$.asObservable();
   }
 
   validateConfig(hostConfig: object): hostConfig is ComponentConfig {

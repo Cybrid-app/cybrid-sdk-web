@@ -1,4 +1,3 @@
-// @ts-ignore
 import { TestConstants } from '@constants';
 
 function app() {
@@ -26,7 +25,7 @@ describe('account-list test', () => {
 
   it('should display account data', () => {
     // Mock prices
-    cy.intercept('GET', '/api/prices', (req) => {
+    cy.intercept('GET', 'api/prices', (req) => {
       req.reply(TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY);
     }).as('listPrices');
     // Mock accounts
@@ -74,7 +73,7 @@ describe('account-list test', () => {
   it('should refresh the account list', () => {
     // Intercept listAccounts response
     let accounts;
-    cy.intercept('/api/accounts').as('listAccounts');
+    cy.intercept('api/accounts').as('listAccounts');
     cy.wait('@listAccounts').then((interception) => {
       // @ts-ignore
       accounts = interception.response.body;

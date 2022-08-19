@@ -44,7 +44,8 @@ describe('AccountDetailComponent', () => {
   ]);
   let MockConfigService = jasmine.createSpyObj('ConfigService', [
     'setConfig',
-    'getConfig$'
+    'getConfig$',
+    'getComponent$'
   ]);
   let MockQueryParams = of({
     accountID: TestConstants.ACCOUNT_GUID
@@ -209,6 +210,13 @@ describe('AccountDetailComponent', () => {
     expect(getTradesSpy).toHaveBeenCalled();
     discardPeriodicTasks();
   }));
+
+  it('should display the trade summary onRowClick()', () => {
+    const dialogSpy = spyOn(component.dialog, 'open');
+
+    component.onRowClick(TestConstants.TRADE_BANK_MODEL);
+    expect(dialogSpy).toHaveBeenCalled();
+  });
 
   it('should navigate onTrade()', () => {
     component.onTrade();
