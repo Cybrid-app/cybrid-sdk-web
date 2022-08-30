@@ -55,8 +55,8 @@ import { MatDialog } from '@angular/material/dialog';
 export class AccountDetailsComponent
   implements OnInit, AfterContentInit, OnDestroy
 {
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort!: MatSort;
   dataSource: MatTableDataSource<TradeBankModel> = new MatTableDataSource();
 
   accountGuid: string = '';
@@ -109,8 +109,6 @@ export class AccountDetailsComponent
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor = this.sortingDataAccessor;
     this.dataSource.sort = this.sort;
-
-    this.getTrades();
   }
 
   ngOnDestroy(): void {
@@ -152,6 +150,9 @@ export class AccountDetailsComponent
                   CODE.DATA_REFRESHED,
                   'Account details successfully updated'
                 );
+
+                // Call get trades here to stagger loading in the template (ensures paginator is not undefined)
+                this.getTrades();
               }),
               catchError((err) => {
                 this.eventService.handleEvent(
@@ -243,7 +244,6 @@ export class AccountDetailsComponent
             'Refreshing account details...'
           );
           this.getAccount();
-          this.getTrades();
         }
       });
   }

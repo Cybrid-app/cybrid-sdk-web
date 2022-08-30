@@ -11,19 +11,21 @@ import {
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
-import { AccountService, AssetService } from '@services';
+import { AccountService, AssetService, ConfigService } from '@services';
 
 // Utility
 import { AssetPipe, MockAssetPipe } from '@pipes';
 import { TestConstants } from '@constants';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { HttpLoaderFactory } from '../../../app/modules/library.module';
+import { HttpClient } from '@angular/common/http';
 
 describe('AccountService', () => {
   let service: AccountService;
-
   let MockAccountsService = jasmine.createSpyObj(AccountsService, [
     'listAccounts'
   ]);
-
+  let MockConfigService = jasmine.createSpyObj('ConfigService', ['getConfig$']);
   let MockPricesService = jasmine.createSpyObj(PricesService, ['listPrices']);
 
   const error$ = throwError(() => {
@@ -41,12 +43,22 @@ describe('AccountService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      imports: [
+        HttpClientTestingModule,
+        TranslateModule.forRoot({
+          loader: {
+            provide: TranslateLoader,
+            useFactory: HttpLoaderFactory,
+            deps: [HttpClient]
+          }
+        })
+      ],
       providers: [
         { provide: AssetPipe, useClass: MockAssetPipe },
         { provide: AccountsService, useValue: MockAccountsService },
         { provide: PricesService, useValue: MockPricesService },
-        { provide: AssetService, useClass: MockAssetService }
+        { provide: AssetService, useClass: MockAssetService },
+        { provide: ConfigService, useValue: MockConfigService }
       ]
     });
     service = TestBed.inject(AccountService);
@@ -56,6 +68,8 @@ describe('AccountService', () => {
     MockAccountsService.listAccounts.and.returnValue(
       of(TestConstants.ACCOUNT_LIST_BANK_MODEL)
     );
+    MockConfigService = TestBed.inject(ConfigService);
+    MockConfigService.getConfig$.and.returnValue(of(TestConstants.CONFIG));
     MockPricesService = TestBed.inject(PricesService);
     MockPricesService.listPrices.and.returnValue(
       of(TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY)

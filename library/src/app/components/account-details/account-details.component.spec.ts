@@ -201,13 +201,11 @@ describe('AccountDetailComponent', () => {
 
   it('should refresh data', fakeAsync(() => {
     const getAccountSpy = spyOn(component, 'getAccount');
-    const getTradesSpy = spyOn(component, 'getTrades');
 
     component.refreshData();
     tick(TestConstants.CONFIG.refreshInterval);
 
     expect(getAccountSpy).toHaveBeenCalled();
-    expect(getTradesSpy).toHaveBeenCalled();
     discardPeriodicTasks();
   }));
 

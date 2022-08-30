@@ -29,7 +29,7 @@ describe('account-list test', () => {
       req.reply(TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY);
     }).as('listPrices');
     // Mock accounts
-    cy.intercept('GET', 'api/accounts', (req) => {
+    cy.intercept('GET', 'api/accounts*', (req) => {
       req.reply(TestConstants.ACCOUNT_LIST_BANK_MODEL);
     }).as('listAccounts');
 
@@ -73,7 +73,7 @@ describe('account-list test', () => {
   it('should refresh the account list', () => {
     // Intercept listAccounts response
     let accounts;
-    cy.intercept('api/accounts').as('listAccounts');
+    cy.intercept('api/accounts*').as('listAccounts');
     cy.wait('@listAccounts').then((interception) => {
       // @ts-ignore
       accounts = interception.response.body;
@@ -86,7 +86,7 @@ describe('account-list test', () => {
 
   it('should handle errors returned by accounts api', () => {
     // Force accounts error
-    cy.intercept('GET', '/api/accounts', { forceNetworkError: true }).as(
+    cy.intercept('GET', '/api/accounts*', { forceNetworkError: true }).as(
       'listAccounts'
     );
     cy.wait('@listAccounts');
