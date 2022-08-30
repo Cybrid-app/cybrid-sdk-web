@@ -142,6 +142,10 @@ Components:
 
 - `price-list`
 - `trade`
+- `account`
+
+> The account-list must be given an account to render.
+- `account-list`
 
 Example:
 
