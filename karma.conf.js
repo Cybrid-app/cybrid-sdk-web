@@ -26,12 +26,12 @@ module.exports = function (config) {
       subdir: '.',
       reporters: [{ type: 'lcov' }],
       check: {
-        emitWarning: false,
+        emitWarning: true,
         global: {
-          statements: 0,
-          branches: 0,
-          functions: 0,
-          lines: 0,
+          statements: 100,
+          branches: 100,
+          functions: 100,
+          lines: 100,
           excludes: [
             '/components/**/*.ts',
             '/modules/*.ts',

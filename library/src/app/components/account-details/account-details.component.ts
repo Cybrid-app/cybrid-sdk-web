@@ -151,6 +151,7 @@ export class AccountDetailsComponent
                   'Account details successfully updated'
                 );
 
+                // Call get trades here to stagger loading in the template (ensures paginator is not undefined)
                 this.getTrades();
               }),
               catchError((err) => {
@@ -196,8 +197,6 @@ export class AccountDetailsComponent
           this.isLoadingResults = false;
         }),
         catchError((err) => {
-          console.log(err);
-
           this.eventService.handleEvent(
             LEVEL.ERROR,
             CODE.DATA_ERROR,
@@ -245,7 +244,6 @@ export class AccountDetailsComponent
             'Refreshing account details...'
           );
           this.getAccount();
-          this.getTrades();
         }
       });
   }

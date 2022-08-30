@@ -1,15 +1,12 @@
-import { Injectable, OnDestroy, OnInit } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 
 import {
-  forkJoin,
   Observable,
   Subject,
   map,
   catchError,
   of,
-  takeUntil,
   switchMap,
-  tap,
   combineLatest
 } from 'rxjs';
 
@@ -47,7 +44,6 @@ export interface AccountOverview {
 })
 export class AccountService implements OnDestroy {
   private unsubscribe$ = new Subject();
-  private customer: string = '';
 
   constructor(
     private accountsService: AccountsService,
@@ -80,18 +76,6 @@ export class AccountService implements OnDestroy {
         });
       })
     );
-
-    //   .subscribe((res) => console.log(res));
-    // return this.accountsService
-    //   .listAccounts('', '', '', '', this.customer)
-    //   .pipe(
-    //     map((accounts) => {
-    //       console.log(accounts);
-    //       return accounts.objects.filter((account) => {
-    //         return account.type == 'trading';
-    //       });
-    //     })
-    //   );
   }
 
   // Filter for specific asset price

@@ -46,10 +46,7 @@ describe('AccountListComponent', () => {
     'getError',
     'handleError'
   ]);
-  let MockConfigService = jasmine.createSpyObj('ConfigService', [
-    'setConfig',
-    'getConfig$'
-  ]);
+  let MockConfigService = jasmine.createSpyObj('ConfigService', ['getConfig$']);
   let MockAssetService = jasmine.createSpyObj('AssetService', ['getAsset']);
   let MockAccountService = jasmine.createSpyObj('AccountService', [
     'getPortfolio'
