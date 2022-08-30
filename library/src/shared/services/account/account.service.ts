@@ -1,6 +1,17 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, OnInit } from '@angular/core';
 
-import { forkJoin, Observable, Subject, map, catchError, of } from 'rxjs';
+import {
+  forkJoin,
+  Observable,
+  Subject,
+  map,
+  catchError,
+  of,
+  takeUntil,
+  switchMap,
+  tap,
+  combineLatest
+} from 'rxjs';
 
 // Client
 import {
@@ -12,7 +23,7 @@ import {
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
-import { AssetService, Asset } from '@services';
+import { AssetService, Asset, ConfigService } from '@services';
 
 // Utility
 import { symbolSplit } from '@utility';
@@ -36,12 +47,14 @@ export interface AccountOverview {
 })
 export class AccountService implements OnDestroy {
   private unsubscribe$ = new Subject();
+  private customer: string = '';
 
   constructor(
     private accountsService: AccountsService,
     private pricesService: PricesService,
     private assetService: AssetService,
-    private assetPipe: AssetPipe
+    private assetPipe: AssetPipe,
+    private configService: ConfigService
   ) {}
 
   ngOnDestroy() {
@@ -51,13 +64,34 @@ export class AccountService implements OnDestroy {
 
   // Filter for 'trading' accounts
   filterAccounts(): Observable<AccountBankModel[]> {
-    return this.accountsService.listAccounts().pipe(
+    return this.configService.getConfig$().pipe(
+      switchMap((config) => {
+        return this.accountsService.listAccounts(
+          '',
+          '',
+          '',
+          '',
+          config.customer
+        );
+      }),
       map((accounts) => {
         return accounts.objects.filter((account) => {
           return account.type == 'trading';
         });
       })
     );
+
+    //   .subscribe((res) => console.log(res));
+    // return this.accountsService
+    //   .listAccounts('', '', '', '', this.customer)
+    //   .pipe(
+    //     map((accounts) => {
+    //       console.log(accounts);
+    //       return accounts.objects.filter((account) => {
+    //         return account.type == 'trading';
+    //       });
+    //     })
+    //   );
   }
 
   // Filter for specific asset price
@@ -98,7 +132,7 @@ export class AccountService implements OnDestroy {
     accountGuid: string,
     counterAsset: string
   ): Observable<Account> {
-    return forkJoin([
+    return combineLatest([
       this.filterAccounts().pipe(
         map((accounts) => {
           return accounts.find((account) => {
@@ -154,7 +188,7 @@ export class AccountService implements OnDestroy {
   }
 
   getPortfolio(): Observable<AccountOverview> {
-    return forkJoin([
+    return combineLatest([
       this.filterAccounts().pipe(
         catchError((err) => {
           return of(err);

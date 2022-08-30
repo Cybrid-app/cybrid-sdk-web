@@ -16,6 +16,9 @@ import { AccountService, AssetService } from '@services';
 // Utility
 import { AssetPipe, MockAssetPipe } from '@pipes';
 import { TestConstants } from '@constants';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { HttpLoaderFactory } from '../../../app/modules/library.module';
+import { HttpClient } from '@angular/common/http';
 
 describe('AccountService', () => {
   let service: AccountService;
@@ -41,7 +44,16 @@ describe('AccountService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      imports: [
+        HttpClientTestingModule,
+        TranslateModule.forRoot({
+          loader: {
+            provide: TranslateLoader,
+            useFactory: HttpLoaderFactory,
+            deps: [HttpClient]
+          }
+        })
+      ],
       providers: [
         { provide: AssetPipe, useClass: MockAssetPipe },
         { provide: AccountsService, useValue: MockAccountsService },
