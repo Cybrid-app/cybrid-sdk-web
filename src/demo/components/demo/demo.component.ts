@@ -30,7 +30,13 @@ export class DemoComponent implements OnDestroy {
 
   token = '';
 
-  webComponents = ['price-list', 'trade', 'account-list', 'account-details'];
+  webComponents = [
+    'price-list',
+    'trade',
+    'account-list',
+    'account-details',
+    'identity-verification'
+  ];
   languages = ['en-US', 'fr-CA'];
 
   componentRef!: ComponentRef<AppComponent>;
@@ -96,7 +102,7 @@ export class DemoComponent implements OnDestroy {
 
     this.componentRef.instance.hostConfig = config;
     this.componentRef.instance.auth = credentials.token;
-    this.componentRef.instance.component = Constants.DEFAULT_COMPONENT;
+    this.componentRef.instance.component = 'identity-verification';
 
     // Subscribe to component configuration changes
     this.demoConfigService.config$

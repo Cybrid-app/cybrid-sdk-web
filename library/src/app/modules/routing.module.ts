@@ -6,7 +6,8 @@ import {
   PriceListComponent,
   TradeComponent,
   AccountListComponent,
-  AccountDetailsComponent
+  AccountDetailsComponent,
+  IdentityVerificationComponent
 } from '@components';
 
 export const routes: Routes = [
@@ -37,6 +38,10 @@ export const routes: Routes = [
       {
         path: 'account-details',
         component: AccountDetailsComponent
+      },
+      {
+        path: 'identity-verification',
+        component: IdentityVerificationComponent
       }
     ]
   },

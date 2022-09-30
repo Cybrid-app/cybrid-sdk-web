@@ -10,3 +10,4 @@ export { TradeSummaryComponent } from './trade-summary/trade-summary.component';
 export { AccountListComponent } from './account-list/account-list.component';
 export { AccountDetailsComponent } from './account-details/account-details.component';
 export { NavigationComponent } from './navigation/navigation.component';
+export { IdentityVerificationComponent } from './identity-verification/identity-verification.component';
