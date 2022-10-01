@@ -1,7 +1,8 @@
 import { Component, Inject, OnInit, Renderer2 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+
+// Services
 import { IdentityVerificationService } from '@services';
-import { map } from 'rxjs';
 
 @Component({
   selector: 'app-identity-verification',
@@ -16,14 +17,11 @@ export class IdentityVerificationComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.identityVerificationService
-      .bootstrapIdentityClient()
-      .pipe(
-        map((templateId) => {
-          this.bootstrapPersona(templateId);
-        })
-      )
-      .subscribe();
+    this.identityVerificationService.checkForKyc().subscribe((templateID) => {
+      if (templateID) {
+        this.bootstrapPersona(templateID);
+      }
+    });
   }
 
   bootstrapPersona(templateId: string): void {

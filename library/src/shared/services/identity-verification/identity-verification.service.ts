@@ -1,34 +1,33 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { catchError, map, Observable, of, switchMap } from 'rxjs';
+import { map, Observable, switchMap } from 'rxjs';
 
-interface Customer {
-  message: string;
-  status: string;
-}
+import './identity.data.js';
+import { Customer } from './customer.model';
+import { Identity } from './identity.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class IdentityVerificationService {
-  templateId = 'itmpl_ArgEXWw8ZYtYLvfC26tr9zmY';
+  API_BASE_URL = 'http://localhost:8888/api/';
 
   constructor(private http: HttpClient) {}
 
-  checkBackendForCustomerKycStatus(): Observable<any> {
-    return this.http.get('https://dog.ceo/api/breeds/image/random');
+  checkForKyc(): Observable<string | undefined> {
+    return this.getCustomer().pipe(
+      map((customer: Customer) => customer.kyc_state == 'required'),
+      switchMap(() => this.createIdentityVerificationWorkflow()),
+      map((identity: Identity) => identity.persona_inquiry_id)
+    );
   }
 
-  bootstrapIdentityClient(): Observable<any> {
-    return this.checkBackendForCustomerKycStatus().pipe(
-      map((customer: Customer) => customer.status),
-      switchMap((status) => {
-        return status === 'success' ? of(this.templateId) : of(this.templateId);
-      }),
-      catchError((err) => {
-        return of(err);
-      })
-    );
+  getCustomer(): Observable<any> {
+    return this.http.get(this.API_BASE_URL + 'customers');
+  }
+
+  createIdentityVerificationWorkflow(): Observable<any> {
+    return this.http.get(this.API_BASE_URL + 'identity_verifications');
   }
 }
