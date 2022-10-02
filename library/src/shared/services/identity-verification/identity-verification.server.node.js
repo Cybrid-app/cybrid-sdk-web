@@ -2,29 +2,32 @@ require('dotenv').config();
 const express = require('express'); // eslint-disable-line
 const bodyParser = require('body-parser');
 
-const CUSTOMER = require('./customer.data');
-const IDENTITY_DATA = require('./identity.data');
+const IDENTITY = require('./identity.data.json');
+const CUSTOMER = require('./customer.data.json');
 
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+// Takes request header and returns expected data response
+function requestHandler(req, dataSet) {
+  return dataSet[req.headers.data];
+}
+
 // Returns existing customer data
 app.get('/api/customers', async (req, res) => {
-  res.json(CUSTOMER.KYC_STATE_REQUIRED());
+  res.json(CUSTOMER[req.headers.data]);
 });
 
 // Creates an identity verification
 app.post('/api/identity_verifications', async (req, res) => {
-  res.json(IDENTITY_DATA.NEW());
+  res.json(IDENTITY[req.headers.data]);
 });
 
 // Returns current identity verification
 app.get('/api/identity_verifications', async (req, res) => {
-  setTimeout(() => {
-    res.json(IDENTITY_DATA.STATE_STORING());
-  }, 5000);
+  res.json(IDENTITY[req.headers.data]);
 });
 
 app.listen(process.env.PORT || 8888);

@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { map, Observable, switchMap } from 'rxjs';
-
-import './identity.data.js';
+import { catchError, Observable, of, switchMap } from 'rxjs';
 import { Customer } from './customer.model';
 import { Identity } from './identity.model';
 
@@ -15,19 +13,39 @@ export class IdentityVerificationService {
 
   constructor(private http: HttpClient) {}
 
-  checkForKyc(): Observable<string | undefined> {
+  /*
+   * Initiates a new identity verification workflow if the kyc state is required,
+   * otherwise returns the customer.
+   *
+   * This can create a new flow even if there is one currently in progress!!
+   * */
+  getIdentityVerification(): Observable<Customer | Identity> {
     return this.getCustomer().pipe(
-      map((customer: Customer) => customer.kyc_state == 'required'),
-      switchMap(() => this.createIdentityVerificationWorkflow()),
-      map((identity: Identity) => identity.persona_inquiry_id)
+      switchMap((customer: Customer) => {
+        return customer.kyc_state === 'required'
+          ? this.createIdentityVerification()
+          : of(customer);
+      }),
+      catchError((err) => {
+        //  handleError()
+        return of(err);
+      })
     );
   }
 
   getCustomer(): Observable<any> {
-    return this.http.get(this.API_BASE_URL + 'customers');
+    return this.http.get(this.API_BASE_URL + 'customers', {
+      headers: {
+        data: 'kyc_state_required'
+      }
+    });
   }
 
-  createIdentityVerificationWorkflow(): Observable<any> {
-    return this.http.get(this.API_BASE_URL + 'identity_verifications');
+  createIdentityVerification(): Observable<any> {
+    return this.http.get(this.API_BASE_URL + 'identity_verifications', {
+      headers: {
+        data: 'new'
+      }
+    });
   }
 }

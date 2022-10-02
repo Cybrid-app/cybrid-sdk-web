@@ -14,23 +14,23 @@ export interface Customer extends CustomerBankModel {
 export declare namespace Customer {
   type StateEnum = 'storing' | 'created';
   const StateEnum: {
-    Storing: StateEnum;
-    Created: StateEnum;
+    storing: StateEnum;
+    created: StateEnum;
   };
   type KycStateEnum = 'approved' | 'denied' | 'required';
   const KycStateEnum: {
-    Approved: KycStateEnum;
-    Denied: KycStateEnum;
-    Required: KycStateEnum;
+    approved: KycStateEnum;
+    denied: KycStateEnum;
+    required: KycStateEnum;
   };
   type KycChecksTypeEnum =
     | 'identity_authentication'
     | 'identity_confirmation'
     | 'watchlist_consultation';
   const KycChecksTypeEnum: {
-    Identity_Authentication: KycChecksTypeEnum;
-    Identity_Confirmation: KycChecksTypeEnum;
-    Watchlist_Consultation: KycChecksTypeEnum;
+    identity_Authentication: KycChecksTypeEnum;
+    identity_Confirmation: KycChecksTypeEnum;
+    watchlist_Consultation: KycChecksTypeEnum;
   };
   type KycChecksOutcomeEnum =
     | 'missing'
@@ -39,18 +39,18 @@ export declare namespace Customer {
     | 'expired'
     | 'invalidated';
   const KycChecksOutcomeEnum: {
-    Missing: KycChecksOutcomeEnum;
-    Approved: KycChecksOutcomeEnum;
-    Denied: KycChecksOutcomeEnum;
-    Expired: KycChecksOutcomeEnum;
-    Invalidated: KycChecksOutcomeEnum;
+    missing: KycChecksOutcomeEnum;
+    approved: KycChecksOutcomeEnum;
+    denied: KycChecksOutcomeEnum;
+    expired: KycChecksOutcomeEnum;
+    invalidated: KycChecksOutcomeEnum;
   };
   type KycChecksOutcomeReasons = 'outcome_reason_error';
   const KycChecksOutcomeReasons: {
-    Reason_Error: KycChecksOutcomeReasons;
+    reason_error: KycChecksOutcomeReasons;
   };
   type KycChecksDeniedReason = 'denied_reason_error';
   const KycChecksDeniedReason: {
-    Denied_Reason_Error: KycChecksDeniedReason;
+    denied_reason_error: KycChecksDeniedReason;
   };
 }

@@ -3,7 +3,7 @@ import OutcomeReasonsEnum = Identity.OutcomeReasonsEnum;
 
 export interface Identity {
   type: Identity.TypeEnum;
-  provider: 'persona';
+  provider: Identity.ProviderEnum;
   state?: Identity.StateEnum;
   persona_inquiry_id?: string;
   outcome?: OutcomeEnum;

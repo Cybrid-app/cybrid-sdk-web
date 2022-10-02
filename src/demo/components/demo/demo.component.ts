@@ -93,6 +93,7 @@ export class DemoComponent implements OnDestroy {
 
     let config = Constants.DEFAULT_CONFIG;
     config.customer = credentials.customer;
+    config.theme = 'DARK';
 
     this.languageGroup.patchValue({ language: config.locale });
     this.demoConfigService.config$.next(config);

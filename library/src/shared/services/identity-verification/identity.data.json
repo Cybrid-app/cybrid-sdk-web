@@ -1,0 +1,14 @@
+{
+  "new": {
+    "type": "kyc",
+    "provider": "persona",
+    "state": "storing",
+    "persona_inquiry_id": "itmpl_ArgEXWw8ZYtYLvfC26tr9zmY"
+  },
+  "state_storing": {
+    "type": "kyc",
+    "provider": "persona",
+    "state": "storing",
+    "persona_inquiry_id": "itmpl_ArgEXWw8ZYtYLvfC26tr9zmY"
+  }
+}

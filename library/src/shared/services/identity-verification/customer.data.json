@@ -1,0 +1,20 @@
+{
+  "kyc_state_approved": {
+    "guid": "1234",
+    "state": "created",
+    "kyc_state": "approved",
+    "kyc_checks": ["identity_authentication"]
+  },
+  "kyc_state_denied": {
+    "guid": "1234",
+    "state": "created",
+    "kyc_state": "denied",
+    "kyc_checks": ["identity_authentication", "denied"]
+  },
+  "kyc_state_required": {
+    "guid": "1234",
+    "state": "created",
+    "kyc_state": "required",
+    "kyc_checks": ["identity_authentication"]
+  }
+}

@@ -1,8 +1,11 @@
 import { Component, Inject, OnInit, Renderer2 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 
+import { map } from 'rxjs';
+
 // Services
 import { IdentityVerificationService } from '@services';
+import { Customer } from '../../../shared/services/identity-verification/customer.model';
 
 @Component({
   selector: 'app-identity-verification',
@@ -17,11 +20,20 @@ export class IdentityVerificationComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.identityVerificationService.checkForKyc().subscribe((templateID) => {
-      if (templateID) {
-        this.bootstrapPersona(templateID);
-      }
-    });
+    this.identityVerificationService
+      .getIdentityVerification()
+      .pipe(
+        map((res) => {
+          'persona_inquiry_id' in res
+            ? this.bootstrapPersona(res.persona_inquiry_id!)
+            : this.handleReason(res as Customer);
+        })
+      )
+      .subscribe();
+  }
+
+  handleReason(customer: Customer): void {
+    alert(JSON.stringify(customer.kyc_checks));
   }
 
   bootstrapPersona(templateId: string): void {
