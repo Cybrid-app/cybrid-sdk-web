@@ -1,1 +1,35 @@
-<p>identity-verification works!</p>
+<ng-container [formGroup]="identityDataResponceForm">
+  <mat-form-field appearance="outline">
+    <mat-label>GET /api/customer</mat-label>
+    <mat-select formControlName="customerData">
+      <mat-option
+        *ngFor="let responce of customerDataResponseList"
+        [value]="responce"
+      >
+        {{ responce }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>GET /api/identity_verifications</mat-label>
+    <mat-select formControlName="identityData">
+      <mat-option
+        *ngFor="let responce of identityDataResponseList"
+        [value]="responce"
+      >
+        {{ responce }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</ng-container>
+<div class="cybrid-row" style="justify-content: flex-end">
+  <button mat-flat-button color="primary" (click)="startFlow()">
+    Make request
+  </button>
+</div>
+
+<mat-divider style="margin: 1rem 0"></mat-divider>
+
+<h1>Identity Verification</h1>
+<pre>{{ message$ | async | json }}</pre>
+<app-loading *ngIf="polling$ | async"></app-loading>

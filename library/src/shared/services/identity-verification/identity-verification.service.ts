@@ -1,9 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { catchError, Observable, of, switchMap } from 'rxjs';
+import { catchError, map, Observable, of, switchMap } from 'rxjs';
 import { Customer } from './customer.model';
 import { Identity } from './identity.model';
+
+interface Data {
+  customerData: string;
+  identityData: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -15,15 +20,16 @@ export class IdentityVerificationService {
 
   /*
    * Initiates a new identity verification workflow if the kyc state is required,
-   * otherwise returns the customer.
+   * otherwise returns the customer. Temporarily takes a Data object with the key
+   * of the mock api response to receive.
    *
    * This can create a new flow even if there is one currently in progress!!
    * */
-  getIdentityVerification(): Observable<Customer | Identity> {
-    return this.getCustomer().pipe(
+  getIdentityVerification(data: Data): Observable<Customer | Identity> {
+    return this.getCustomer(data.customerData).pipe(
       switchMap((customer: Customer) => {
         return customer.kyc_state === 'required'
-          ? this.createIdentityVerification()
+          ? this.createIdentityVerification(data.identityData)
           : of(customer);
       }),
       catchError((err) => {
@@ -33,18 +39,18 @@ export class IdentityVerificationService {
     );
   }
 
-  getCustomer(): Observable<any> {
+  getCustomer(data: string): Observable<any> {
     return this.http.get(this.API_BASE_URL + 'customers', {
       headers: {
-        data: 'kyc_state_required'
+        data: data
       }
     });
   }
 
-  createIdentityVerification(): Observable<any> {
+  createIdentityVerification(data: string): Observable<any> {
     return this.http.get(this.API_BASE_URL + 'identity_verifications', {
       headers: {
-        data: 'new'
+        data: data
       }
     });
   }

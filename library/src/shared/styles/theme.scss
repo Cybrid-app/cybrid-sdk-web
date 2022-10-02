@@ -206,6 +206,10 @@ $light-theme: mat.define-light-theme(
     flex-direction: column;
   }
 
+  .cybrid-row {
+    display: flex;
+  }
+
   .cybrid-h1 {
     @extend .mat-h1;
     margin: 0;
