@@ -9,7 +9,11 @@
     "guid": "1234",
     "state": "created",
     "kyc_state": "denied",
-    "kyc_checks": ["identity_authentication", "denied"]
+    "kyc_checks": [
+      "identity_authentication",
+      "denied",
+      ["Information did not match"]
+    ]
   },
   "kyc_state_required": {
     "guid": "1234",

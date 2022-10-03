@@ -12,7 +12,13 @@
   </mat-form-field>
   <mat-form-field appearance="outline">
     <mat-label>GET /api/identity_verifications</mat-label>
-    <mat-select formControlName="identityData">
+    <mat-select
+      formControlName="identityData"
+      [disabled]="
+        identityDataResponceForm.get('customerData')?.value !==
+        'kyc_state_required'
+      "
+    >
       <mat-option
         *ngFor="let responce of identityDataResponseList"
         [value]="responce"
@@ -23,7 +29,7 @@
   </mat-form-field>
 </ng-container>
 <div class="cybrid-row" style="justify-content: flex-end">
-  <button mat-flat-button color="primary" (click)="startFlow()">
+  <button mat-flat-button color="primary" (click)="checkIdentityVerification()">
     Make request
   </button>
 </div>
@@ -31,5 +37,15 @@
 <mat-divider style="margin: 1rem 0"></mat-divider>
 
 <h1>Identity Verification</h1>
-<pre>{{ message$ | async | json }}</pre>
-<app-loading *ngIf="polling$ | async"></app-loading>
+<pre
+  style="
+    overflow-x: auto;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+  "
+  >{{ message$ | async | json }}</pre
+>
+<app-loading *ngIf="isPolling$ | async"></app-loading>

@@ -49,7 +49,7 @@ export declare namespace Customer {
   const KycChecksOutcomeReasons: {
     reason_error: KycChecksOutcomeReasons;
   };
-  type KycChecksDeniedReason = 'denied_reason_error';
+  type KycChecksDeniedReason = 'detailed_error_codes';
   const KycChecksDeniedReason: {
     denied_reason_error: KycChecksDeniedReason;
   };

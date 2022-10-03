@@ -13,11 +13,11 @@ export interface Identity {
 export declare namespace Identity {
   type TypeEnum = 'kyc';
   const TypeEnum: {
-    Kyc: TypeEnum;
+    kyc: TypeEnum;
   };
   type ProviderEnum = 'persona';
   const ProviderEnum: {
-    Persona: ProviderEnum;
+    persona: ProviderEnum;
   };
   type StateEnum =
     | 'storing'
@@ -27,22 +27,22 @@ export declare namespace Identity {
     | 'processing'
     | 'completed';
   const StateEnum: {
-    Storing: StateEnum;
-    Waiting: StateEnum;
-    Executing: StateEnum;
-    Reviewing: StateEnum;
-    Processing: StateEnum;
-    Completed: StateEnum;
+    storing: StateEnum;
+    waiting: StateEnum;
+    executing: StateEnum;
+    reviewing: StateEnum;
+    processing: StateEnum;
+    completed: StateEnum;
   };
   type OutcomeEnum = 'expired' | 'cancelled' | 'passed' | 'failed';
   const OutcomeEnum: {
-    Expired: OutcomeEnum;
-    Cancelled: OutcomeEnum;
-    Passed: OutcomeEnum;
-    Failed: OutcomeEnum;
+    expired: OutcomeEnum;
+    cancelled: OutcomeEnum;
+    passed: OutcomeEnum;
+    failed: OutcomeEnum;
   };
   type OutcomeReasonsEnum = 'failed_requested';
   const OutcomeReasonsEnum: {
-    Failed_Requested: OutcomeReasonsEnum;
+    failed_requested: OutcomeReasonsEnum;
   };
 }

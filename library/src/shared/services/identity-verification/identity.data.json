@@ -1,14 +1,38 @@
 {
-  "new": {
+  "state_storing": {
     "type": "kyc",
     "provider": "persona",
     "state": "storing",
     "persona_inquiry_id": "itmpl_ArgEXWw8ZYtYLvfC26tr9zmY"
   },
-  "state_storing": {
+  "state_waiting": {
     "type": "kyc",
     "provider": "persona",
-    "state": "storing",
+    "state": "waiting",
+    "persona_inquiry_id": "itmpl_ArgEXWw8ZYtYLvfC26tr9zmY"
+  },
+  "state_executing": {
+    "type": "kyc",
+    "provider": "persona",
+    "state": "executing",
+    "persona_inquiry_id": "itmpl_ArgEXWw8ZYtYLvfC26tr9zmY"
+  },
+  "state_reviewing": {
+    "type": "kyc",
+    "provider": "persona",
+    "state": "reviewing",
+    "persona_inquiry_id": "itmpl_ArgEXWw8ZYtYLvfC26tr9zmY"
+  },
+  "state_processing": {
+    "type": "kyc",
+    "provider": "persona",
+    "state": "processing",
+    "persona_inquiry_id": "itmpl_ArgEXWw8ZYtYLvfC26tr9zmY"
+  },
+  "state_completed": {
+    "type": "kyc",
+    "provider": "persona",
+    "state": "completed",
     "persona_inquiry_id": "itmpl_ArgEXWw8ZYtYLvfC26tr9zmY"
   }
 }
