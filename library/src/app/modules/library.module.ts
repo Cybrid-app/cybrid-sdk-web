@@ -54,7 +54,8 @@ import {
   AccountListComponent,
   AccountDetailsComponent,
   NavigationComponent,
-  IdentityVerificationComponent
+  IdentityVerificationComponent,
+  CybridSpinnerComponent
 } from '@components';
 
 // Utility
@@ -80,6 +81,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     LoadingComponent,
     NavigationComponent,
     IdentityVerificationComponent,
+    CybridSpinnerComponent,
     AssetPipe,
     TruncatePipe
   ],
@@ -135,7 +137,7 @@ export function HttpLoaderFactory(http: HttpClient) {
       useValue: { hasBackdrop: true, disableClose: true, minWidth: '320px' }
     }
   ],
-  exports: [LoadingComponent],
+  exports: [LoadingComponent, CybridSpinnerComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class LibraryModule implements DoBootstrap {
