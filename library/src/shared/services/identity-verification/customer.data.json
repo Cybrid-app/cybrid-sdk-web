@@ -1,24 +1,45 @@
 {
   "kyc_state_approved": {
-    "guid": "1234",
-    "state": "created",
-    "kyc_state": "approved",
-    "kyc_checks": ["identity_authentication"]
+    "total": 1,
+    "page": 0,
+    "per_page": 10,
+    "objects": [
+      {
+        "guid": "1234",
+        "state": "created",
+        "kyc_state": "approved",
+        "kyc_checks": ["identity_authentication"]
+      }
+    ]
   },
   "kyc_state_denied": {
-    "guid": "1234",
-    "state": "created",
-    "kyc_state": "denied",
-    "kyc_checks": [
-      "identity_authentication",
-      "denied",
-      ["Information did not match"]
+    "total": 1,
+    "page": 0,
+    "per_page": 10,
+    "objects": [
+      {
+        "guid": "1234",
+        "state": "created",
+        "kyc_state": "denied",
+        "kyc_checks": [
+          "identity_authentication",
+          "denied",
+          ["Information did not match"]
+        ]
+      }
     ]
   },
   "kyc_state_required": {
-    "guid": "1234",
-    "state": "created",
-    "kyc_state": "required",
-    "kyc_checks": ["identity_authentication"]
+    "total": 1,
+    "page": 0,
+    "per_page": 10,
+    "objects": [
+      {
+        "guid": "1234",
+        "state": "created",
+        "kyc_state": "required",
+        "kyc_checks": ["identity_authentication"]
+      }
+    ]
   }
 }

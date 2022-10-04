@@ -1,5 +1,6 @@
 import OutcomeEnum = Identity.OutcomeEnum;
 import OutcomeReasonsEnum = Identity.OutcomeReasonsEnum;
+import { List } from './list.model';
 
 export interface Identity {
   type: Identity.TypeEnum;
@@ -8,6 +9,10 @@ export interface Identity {
   persona_inquiry_id?: string;
   outcome?: OutcomeEnum;
   outcome_reasons?: OutcomeReasonsEnum;
+}
+
+export interface IdentityList extends List {
+  objects: [Identity];
 }
 
 export declare namespace Identity {

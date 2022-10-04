@@ -1,12 +1,12 @@
-<ng-container [formGroup]="identityDataResponceForm">
+<ng-container [formGroup]="identityDataResponseForm">
   <mat-form-field appearance="outline">
     <mat-label>GET /api/customer</mat-label>
     <mat-select formControlName="customerData">
       <mat-option
-        *ngFor="let responce of customerDataResponseList"
-        [value]="responce"
+        *ngFor="let response of customerDataResponseList"
+        [value]="response"
       >
-        {{ responce }}
+        {{ response }}
       </mat-option>
     </mat-select>
   </mat-form-field>
@@ -15,7 +15,7 @@
     <mat-select
       formControlName="identityData"
       [disabled]="
-        identityDataResponceForm.get('customerData')?.value !==
+        identityDataResponseForm.get('customerData')?.value !==
         'kyc_state_required'
       "
     >
@@ -37,15 +37,20 @@
 <mat-divider style="margin: 1rem 0"></mat-divider>
 
 <h1>Identity Verification</h1>
+<ng-container *ngIf="isPolling$ | async">
+  <mat-progress-bar
+    mode="determinate"
+    value="{{ (pollingTime$ | async)! * 25 }}"
+  ></mat-progress-bar>
+  <!--  <app-loading></app-loading>-->
+</ng-container>
 <pre
   style="
     overflow-x: auto;
     white-space: pre-wrap;
     white-space: -moz-pre-wrap;
-    white-space: -pre-wrap;
     white-space: -o-pre-wrap;
     word-wrap: break-word;
   "
   >{{ message$ | async | json }}</pre
 >
-<app-loading *ngIf="isPolling$ | async"></app-loading>

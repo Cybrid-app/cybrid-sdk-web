@@ -1,4 +1,5 @@
 import { CustomerBankModel } from '@cybrid/cybrid-api-bank-angular';
+import { List } from './list.model';
 
 export interface Customer extends CustomerBankModel {
   state: Customer.StateEnum;
@@ -9,6 +10,10 @@ export interface Customer extends CustomerBankModel {
     outcome_reasons?: Customer.KycChecksOutcomeReasons,
     denied_reason?: Customer.KycChecksDeniedReason
   ];
+}
+
+export interface CustomerList extends List {
+  objects: [Customer];
 }
 
 export declare namespace Customer {
