@@ -1,56 +1,198 @@
-<ng-container [formGroup]="identityDataResponseForm">
-  <mat-form-field appearance="outline">
-    <mat-label>GET /api/customer</mat-label>
-    <mat-select formControlName="customerData">
-      <mat-option
-        *ngFor="let response of customerDataResponseList"
-        [value]="response"
+<!-- Demo Controls -->
+<ng-container *ngIf="(isRecoverable$ | async) !== false">
+  <ng-container *ngIf="configService.getConfig$() | async as config">
+    <ng-container [formGroup]="identityDataResponseForm">
+      <mat-form-field appearance="outline">
+        <mat-label>GET /api/customer</mat-label>
+        <mat-select formControlName="customerData">
+          <mat-option
+            *ngFor="let response of customerDataResponseList"
+            [value]="response"
+          >
+            {{ response }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>GET /api/identity_verifications</mat-label>
+        <mat-select
+          formControlName="identityData"
+          [disabled]="
+            identityDataResponseForm.get('customerData')?.value !==
+            'kyc_state_required'
+          "
+        >
+          <mat-option
+            *ngFor="let response of identityDataResponseList"
+            [value]="response"
+          >
+            {{ response }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-flat-button color="primary" (click)="getCustomerStatus()">
+        Change customer status
+      </button>
+      <button
+        style="margin-left: 0.5rem"
+        mat-flat-button
+        color="primary"
+        (click)="verifyIdentity()"
       >
-        {{ response }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-form-field appearance="outline">
-    <mat-label>GET /api/identity_verifications</mat-label>
-    <mat-select
-      formControlName="identityData"
-      [disabled]="
-        identityDataResponseForm.get('customerData')?.value !==
-        'kyc_state_required'
-      "
-    >
-      <mat-option
-        *ngFor="let responce of identityDataResponseList"
-        [value]="responce"
-      >
-        {{ responce }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-</ng-container>
-<div class="cybrid-row" style="justify-content: flex-end">
-  <button mat-flat-button color="primary" (click)="checkIdentityVerification()">
-    Make request
-  </button>
-</div>
+        Re-verify
+      </button>
+    </ng-container>
 
-<mat-divider style="margin: 1rem 0"></mat-divider>
+    <mat-divider style="margin: 1rem 0"></mat-divider>
 
-<h1>Identity Verification</h1>
-<ng-container *ngIf="isPolling$ | async">
-  <mat-progress-bar
-    mode="determinate"
-    value="{{ (pollingTime$ | async)! * 25 }}"
-  ></mat-progress-bar>
-  <!--  <app-loading></app-loading>-->
+    <!-- Component -->
+    <div class="cybrid-column verification-wrapper">
+      <app-cybrid-logo
+        fill="{{ config.theme === 'LIGHT' ? '#3f51b5' : 'white' }}"
+      ></app-cybrid-logo>
+      <ng-container *ngIf="error$ | async; else content">
+        <div class="verification-content">
+          <div class="verification-message">
+            <mat-icon color="warn">cancel</mat-icon>
+            <strong>{{
+              'identityVerification.unexpectedError' | translate
+            }}</strong>
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #content>
+        <ng-container *ngIf="isLoading$ | async">
+          <div class="verification-content">
+            <div class="verification-message">
+              <app-loading [diameter]="16"></app-loading>
+              <strong>{{
+                stepper.selectedIndex === 0
+                  ? ('identityVerification.checkStatus' | translate)
+                  : ('identityVerification.verifying' | translate)
+              }}</strong>
+            </div>
+          </div>
+        </ng-container>
+        <mat-stepper #stepper linear="true" animationDuration="0">
+          <mat-step>
+            <ng-container *ngIf="(customer$ | async)?.kyc_state as state">
+              <ng-container [ngSwitch]="state">
+                <ng-container *ngSwitchCase="'approved'">
+                  <div class="verification-content">
+                    <div class="verification-message">
+                      <mat-icon color="primary">check_circle</mat-icon>
+                      <strong>{{
+                        'identityVerification.approved' | translate
+                      }}</strong>
+                    </div>
+                  </div>
+                </ng-container>
+                <ng-container *ngSwitchCase="'denied'">
+                  <div class="verification-content">
+                    <div class="verification-message">
+                      <mat-icon color="warn">cancel</mat-icon>
+                      <strong>{{
+                        'identityVerification.denied' | translate
+                      }}</strong>
+                    </div>
+                    <p>{{ 'identityVerification.support' | translate }}</p>
+                  </div>
+                </ng-container>
+                <ng-container *ngSwitchCase="'required'">
+                  <div class="verification-content">
+                    <div class="verification-message">
+                      <mat-icon color="primary">arrow_circle_right</mat-icon>
+                      <strong>{{
+                        'identityVerification.required' | translate
+                      }}</strong>
+                    </div>
+                  </div>
+                </ng-container>
+              </ng-container>
+              <div class="verification-actions">
+                <button
+                  mat-stroked-button
+                  [disabled]="state === 'approved' || state === 'denied'"
+                >
+                  {{ 'cancel' | translate }}
+                </button>
+                <button
+                  *ngIf="state === 'required'; else done"
+                  mat-flat-button
+                  color="primary"
+                  matStepperNext
+                  (click)="verifyIdentity()"
+                >
+                  {{ 'begin' | translate }}
+                </button>
+                <ng-template #done>
+                  <button mat-flat-button color="primary">
+                    {{ 'done' | translate }}
+                  </button>
+                </ng-template>
+              </div>
+            </ng-container>
+          </mat-step>
+          <mat-step>
+            <ng-container *ngIf="(identity$ | async)?.state as state">
+              <ng-container [ngSwitch]="state">
+                <ng-container *ngSwitchCase="'completed'">
+                  <div class="verification-content">
+                    <div class="verification-message">
+                      <mat-icon color="primary">check_circle</mat-icon>
+                      <strong>{{
+                        'identityVerification.approved' | translate
+                      }}</strong>
+                    </div>
+                  </div>
+                </ng-container>
+                <ng-container *ngSwitchCase="'reviewing'">
+                  <div class="verification-content">
+                    <div class="verification-message">
+                      <mat-icon color="primary">help</mat-icon>
+                      <strong>{{
+                        'identityVerification.reviewing' | translate
+                      }}</strong>
+                    </div>
+                    <p>{{ 'identityVerification.support' | translate }}</p>
+                  </div>
+                </ng-container>
+              </ng-container>
+              <div class="verification-actions">
+                <button mat-stroked-button>{{ 'cancel' | translate }}</button>
+                <button
+                  mat-flat-button
+                  color="primary"
+                  matStepperNext
+                  (click)="verifyIdentity()"
+                  disabled="{{ isLoading$ | async }}"
+                >
+                  {{ 'done' | translate }}
+                </button>
+              </div>
+            </ng-container>
+          </mat-step>
+          <mat-step>
+            <div class="verification-content">
+              <div class="verification-message">
+                <mat-icon color="primary">play_circle</mat-icon>
+                <strong>Resume identity verification.</strong>
+              </div>
+            </div>
+            <div class="verification-actions">
+              <button mat-stroked-button>{{ 'cancel' | translate }}</button>
+              <button
+                mat-flat-button
+                color="primary"
+                matStepperNext
+                (click)="verifyIdentity(); stepper.previous()"
+              >
+                Resume
+              </button>
+            </div>
+          </mat-step>
+        </mat-stepper>
+      </ng-template>
+    </div>
+  </ng-container>
 </ng-container>
-<pre
-  style="
-    overflow-x: auto;
-    white-space: pre-wrap;
-    white-space: -moz-pre-wrap;
-    white-space: -o-pre-wrap;
-    word-wrap: break-word;
-  "
-  >{{ message$ | async | json }}</pre
->

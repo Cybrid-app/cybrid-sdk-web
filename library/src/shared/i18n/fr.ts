@@ -3,6 +3,7 @@ export default {
   cancel: 'ANNULER',
   confirm: 'CONFIRMER',
   done: 'FAIT',
+  begin: 'COMMENCER',
   back: 'Retourner',
   date: 'Date',
   fatal: "Une erreur irrécupérable s'est produite",
@@ -120,5 +121,18 @@ export default {
     previousPageLabel: 'Page précédente',
     page: 'Page',
     of: 'de'
+  },
+
+  // Identity verification component
+  identityVerification: {
+    unexpectedError: 'Erreur inattendue.',
+    checkStatus: "Vérification de l'état...",
+    verifying: 'Vérification...',
+    approved: 'Vous avez été vérifié.',
+    denied: "Impossible de vérifier l'identité.",
+    support: 'Veuillez contacter le service client.',
+    required: "Commencer la vérification d'identité.",
+    completed: 'Vous avez été vérifié.',
+    reviewing: 'Identité en cours de révision.'
   }
 };

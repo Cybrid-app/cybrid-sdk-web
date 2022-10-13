@@ -21,7 +21,7 @@ function requestHandler(req, dataSet) {
  * Returns existing customer data
  * */
 app.get('/api/customers', async (req, res) => {
-  res.json(CUSTOMER[req.headers.data]);
+    res.json(CUSTOMER[req.headers.data]);
 });
 
 /*
@@ -29,16 +29,14 @@ app.get('/api/customers', async (req, res) => {
  * Timeout to mock server response
  * */
 app.post('/api/identity_verifications', async (req, res) => {
-  setTimeout(() => {
     res.json(IDENTITY[req.headers.data]);
-  }, 500);
 });
 
 /*
  * Returns current identity verification
  * */
 app.get('/api/identity_verifications', async (req, res) => {
-  res.json(IDENTITY[req.headers.data]);
+    res.json(IDENTITY[req.headers.data]);
 });
 
 app.listen(process.env.PORT || 8888);

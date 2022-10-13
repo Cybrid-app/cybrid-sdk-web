@@ -173,6 +173,11 @@ $light-theme: mat.define-light-theme(
 );
 
 /* Theme Class Declaration */
+
+:root {
+  --cybrid-blue: #0270e0;
+}
+
 .cybrid-light-theme {
   @include mat.all-component-themes($light-theme);
 
@@ -306,5 +311,15 @@ $light-theme: mat.define-light-theme(
   mat-paginator {
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
+  }
+
+  .mat-horizontal-stepper-header-container,
+  .mat-step-header {
+    display: none;
+  }
+
+  .mat-stepper-horizontal,
+  .mat-stepper-vertical {
+    background: inherit !important;
   }
 }

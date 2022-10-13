@@ -12,3 +12,4 @@ export { AccountDetailsComponent } from './account-details/account-details.compo
 export { NavigationComponent } from './navigation/navigation.component';
 export { IdentityVerificationComponent } from './identity-verification/identity-verification.component';
 export { CybridSpinnerComponent } from './cybrid-spinner/cybrid-spinner.component';
+export { CybridLogoComponent } from './cybrid-logo/cybrid-logo.component';

@@ -21,6 +21,7 @@
           *ngFor="let component of webComponents"
           [value]="component"
           [disabled]="component === 'account-details'"
+          matTooltipPosition="before"
           [matTooltip]="
             component === 'account-details'
               ? 'Disabled: Navigate via account-list'

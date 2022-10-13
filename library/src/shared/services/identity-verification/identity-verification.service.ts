@@ -1,88 +1,101 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import {
-  catchError,
-  map,
-  merge,
-  Observable,
-  of,
-  repeat,
-  Subject,
-  switchMap,
-  takeUntil,
-  takeWhile,
-  timer
-} from 'rxjs';
-
-import { Customer } from './customer.model';
-import { Identity } from './identity.model';
-
-interface Data {
-  customerData: string;
-  identityData: string;
-}
+import { map, Observable, of, ReplaySubject, switchMap } from 'rxjs';
+import { Identity, IdentityList } from './identity.model';
+import { Customer, CustomerList } from './customer.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class IdentityVerificationService {
-  API_BASE_URL = 'http://localhost:8888/api/';
+  personaClient = new ReplaySubject(1);
 
-  newRequest$ = new Subject();
+  API_BASE_URL = 'http://localhost:8888/api/';
 
   constructor(private http: HttpClient) {}
 
-  /*
-   * Initiates a new identity verification workflow if the kyc state is required,
-   * otherwise returns the customer. Temporarily takes a Data object with the key
-   * of the mock api response to receive.
+  /**
+   * Fetches the customer.
    *
-   * This can create a new flow even if there is one currently in progress!!
+   * @param data ``JSON`` key of the mock data that you want to receive
+   * @return An ``Observable`` of the response, flattened to ``Customer``.
    * */
-  checkIdentityVerification(data: Data): Observable<any> {
-    this.newRequest$.next(true); // Cancel any open polling on /api/identity
+  public getCustomer(data: string): Observable<Customer> {
+    return this.http
+      .get(this.API_BASE_URL + 'customers', {
+        headers: {
+          data: data
+        }
+      })
+      .pipe(
+        map((res) => res as CustomerList),
+        map((list) => list.objects[0])
+      );
+  }
 
-    return this.getCustomer(data.customerData).pipe(
-      switchMap((customer: Customer) => {
-        return customer.kyc_state === 'required'
-          ? this.startVerificationProcess(data.identityData)
-          : of(customer);
-      }),
-      catchError((err) => {
-        //  handleError()
-        return of(err);
+  /**
+   * Fetches the most recent identity verification.
+   *
+   * @param data ``JSON`` key of the mock data that you want to receive
+   * @return An ``Observable`` of the response, type: ``IdentityList``.
+   * */
+  private listIdentityVerifications(data: string): Observable<IdentityList> {
+    return this.http
+      .get(this.API_BASE_URL + 'identity_verifications', {
+        headers: {
+          data: data
+        }
+      })
+      .pipe(
+        map((res) => {
+          return res as IdentityList;
+        })
+      );
+  }
+
+  /**
+   * Initializes a new identity verification workflow.
+   *
+   * @param data ``JSON`` key of the mock data that you want to receive
+   * @return An ``Observable`` of the response, flattened to ``Identity``.
+   * */
+  createIdentityVerification(data: string): Observable<Identity> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        data: data
+      })
+    };
+    return this.http
+      .post(this.API_BASE_URL + 'identity_verifications', {}, httpOptions)
+      .pipe(
+        map((res) => res as IdentityList),
+        map((list) => list.objects[0])
+      );
+  }
+
+  /**
+   * Checks for existing identity verifications. If none exists, creates a new one.
+   *
+   * @param data ``JSON`` key of the mock data that you want to receive
+   * @return An ``Observable`` of type: ``Identity``
+   * */
+  public getIdentityVerification(data: string): Observable<Identity> {
+    return this.listIdentityVerifications(data).pipe(
+      switchMap((list) => {
+        return list.total != 0
+          ? of(list.objects[0])
+          : this.createIdentityVerification('state_storing');
       })
     );
   }
 
-  getCustomer(data: string): Observable<any> {
-    return this.http.get(this.API_BASE_URL + 'customers', {
-      headers: {
-        data: data
-      }
-    });
+  setPersonaClient(client: any): void {
+    this.personaClient.next(client);
   }
 
-  getIdentityVerification(data: string): Observable<any> {
-    return this.http.get(this.API_BASE_URL + 'identity_verifications', {
-      headers: {
-        data: data
-      }
-    });
-  }
-
-  startVerificationProcess(data: string): Observable<any> {
-    return this.getIdentityVerification(data).pipe(
-      repeat({ delay: 1000 }),
-      map((res) => res as Identity),
-      takeWhile(
-        (identity) => identity.state == ('storing' || 'processing'),
-        true
-      ),
-      // Cancel subscription on: new request or reaching the polling interval
-      takeUntil(merge(this.newRequest$, timer(5000)))
-      // tap((res) => console.log(res))
-    );
+  getPersonaClient(): Observable<any> {
+    return this.personaClient.asObservable();
   }
 }

@@ -1,4 +1,12 @@
-import { Component, Inject, OnInit, Renderer2 } from '@angular/core';
+import {
+  Component,
+  Inject,
+  OnDestroy,
+  OnInit,
+  Renderer2,
+  ViewChild,
+  ViewContainerRef
+} from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -6,6 +14,8 @@ import { FormControl, FormGroup } from '@angular/forms';
 import {
   BehaviorSubject,
   catchError,
+  identity,
+  iif,
   map,
   merge,
   Observable,
@@ -20,39 +30,36 @@ import {
 } from 'rxjs';
 
 // Services
-import { IdentityVerificationService } from '@services';
+import { ConfigService, IdentityVerificationService } from '@services';
 
 //Models
-import {
-  Customer,
-  CustomerList
-} from '../../../shared/services/identity-verification/customer.model';
-import {
-  Identity,
-  IdentityList
-} from '../../../shared/services/identity-verification/identity.model';
+import { Customer } from '../../../shared/services/identity-verification/customer.model';
+import { Identity } from '../../../shared/services/identity-verification/identity.model';
 
 // Data
 import CUSTOMER from '../../../shared/services/identity-verification/customer.data.json';
 import IDENTITY from '../../../shared/services/identity-verification/identity.data.json';
+import { MatStepper } from '@angular/material/stepper';
 
 @Component({
   selector: 'app-identity-verification',
   templateUrl: './identity-verification.component.html',
   styleUrls: ['./identity-verification.component.scss']
 })
-export class IdentityVerificationComponent implements OnInit {
-  API_BASE_URL = 'http://localhost:8888/api/';
+export class IdentityVerificationComponent implements OnInit, OnDestroy {
+  @ViewChild('stepper') stepper!: MatStepper;
 
   customerDataResponseList = Object.keys(CUSTOMER);
   identityDataResponseList = Object.keys(IDENTITY);
 
+  identity$ = new Subject<Identity>();
+  customer$ = new Subject<Customer | null>();
+
   identityDataResponseForm!: FormGroup;
 
-  message$ = new Subject();
-  isLoading$ = new BehaviorSubject(false);
-  isPolling$ = new BehaviorSubject(false);
-  newRequest$ = new Subject();
+  isRecoverable$ = new BehaviorSubject(true);
+  isLoading$ = new BehaviorSubject(true);
+  error$ = new BehaviorSubject(false);
 
   // Todo: Add a constant for general polling interval
   pollingDuration$ = timer(5000);
@@ -61,146 +68,137 @@ export class IdentityVerificationComponent implements OnInit {
   pollingTime$ = new Subject<number>();
 
   personaClient: any = null;
-  sessionToken: string | null = null;
+
+  locale!: string;
+
+  unsubscribe$ = new Subject();
 
   constructor(
-    private _renderer2: Renderer2,
     @Inject(DOCUMENT) private _document: Document,
+    private _renderer2: Renderer2,
     private identityVerificationService: IdentityVerificationService,
-    private http: HttpClient
+    public configService: ConfigService
   ) {}
 
   ngOnInit(): void {
     this.initializeDataForms();
+    this.getCustomerStatus();
+
+    this.identityVerificationService
+      .getPersonaClient()
+      .pipe(
+        takeUntil(this.unsubscribe$),
+        map((client) => {
+          this.personaClient = client;
+          return client;
+        })
+      )
+      .subscribe((res) => console.log('Persona client: ', res));
+
+    this.configService
+      .getConfig$()
+      .pipe(
+        takeUntil(this.unsubscribe$),
+        map((config) => {
+          config.locale === 'fr-CA'
+            ? (this.locale = 'fr') // Alias for Persona language parameter
+            : (this.locale = config.locale);
+        })
+      )
+      .subscribe();
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next('');
+    this.unsubscribe$.complete();
   }
 
   initializeDataForms(): void {
     this.identityDataResponseForm = new FormGroup({
-      customerData: new FormControl(this.customerDataResponseList[0], {
+      customerData: new FormControl(this.customerDataResponseList[2], {
         nonNullable: true
       }),
-      identityData: new FormControl(this.identityDataResponseList[0], {
+      identityData: new FormControl(this.identityDataResponseList[1], {
         nonNullable: true
       })
     });
   }
 
-  /*
-   * Initiates handling of identity verification if the kyc state is required,
-   * otherwise returns the customer.
-   *
-   * Temporarily takes a Data object with the key
-   * of the mock api response to receive.
-   * */
-  checkIdentityVerification(): void {
+  getCustomerStatus(): void {
     const data = this.identityDataResponseForm.value;
-    this.newRequest$.next(true); // Cancel previous request
-    this.stopPolling();
+    this.customer$.next(null);
+    this.isLoading$.next(true);
 
-    this.getCustomerList(data.customerData)
+    this.identityVerificationService
+      .getCustomer(data.customerData)
       .pipe(
-        switchMap((list: CustomerList) => {
-          return list.objects[0].kyc_state === 'required'
-            ? this.handleIdentityVerification(data.identityData)
-            : this.handleCustomer(list.objects[0]);
-        }),
+        takeUntil(this.unsubscribe$),
         catchError((err) => {
           //  handleError()
           return of(err);
         })
       )
-      .subscribe((res) => {
-        console.log(res);
+      .subscribe((customer) => {
+        setTimeout(() => {
+          console.log('Customer: ', customer);
+          this.customer$.next(customer);
+          this.isLoading$.next(false);
+        }, 1000);
       });
   }
 
-  /*
-   * Queries GET /api/identity_verifications for existing records
-   *
-   * If no records are found, a POST is made.
-   * If state is 'storing' or 'processing' continue polling at the
-   * interval until timeout.
-   * */
-  handleIdentityVerification(data: string): Observable<any> {
-    this.startPolling();
-
-    return timer(0, 1000).pipe(
-      tap((value) => this.pollingTime$.next(value)),
-      switchMap(() => this.getIdentityVerificationList(data)),
-      switchMap((list: IdentityList) => {
-        return list.total != 0
-          ? of(list.objects[0])
-          : this.postIdentityVerification('state_storing').pipe(
-              map((list) => list.objects[0])
-            );
-      }),
-      takeWhile((identity: Identity) => {
-        return identity.state == 'storing' || identity.state == 'processing';
-      }, true),
-      takeUntil(
-        merge(this.newRequest$, this.pollingSession$).pipe(
-          tap(() => this.message$.next('Timeout'))
-        )
-      ),
-      map((identity) => {
-        switch (identity.state) {
-          case 'storing':
-            this.message$.next('Storing identity...');
-            break;
-          case 'waiting':
-            this.stopPolling();
-            this.message$.next('Launching identity verification...');
-            this.bootstrapPersona(identity.persona_inquiry_id!);
-            break;
-
-          // SetTimeout for demonstration purposes only
-          case 'executing':
-            this.message$.next('Checking for session token...');
-            setTimeout(() => {
-              if (this.sessionToken) {
-                this.message$.next('Session found, launching Persona');
-                setTimeout(() => {
-                  this.bootstrapPersona(identity.persona_inquiry_id!);
-                }, 1000);
-              } else {
-                this.message$.next('No session found, launching Persona');
-                this.stopPolling();
-                this.bootstrapPersona(identity.persona_inquiry_id!);
-              }
-            }, 1000);
-            break;
-          case 'processing':
-            this.message$.next('Processing verification...');
-            break;
-          case 'reviewing':
-            this.stopPolling();
-            this.message$.next('Inquiry undergoing manual review');
-            break;
-          case 'completed':
-            this.stopPolling();
-            this.message$.next('Identity verification completed');
-            break;
-          default:
-            break;
-        }
-        return identity;
-      })
-    );
+  verifyIdentity(): void {
+    this.startPolling()
+      .pipe(
+        switchMap(() =>
+          this.identityVerificationService.getIdentityVerification(
+            this.identityDataResponseForm.value.identityData
+          )
+        ),
+        takeWhile(
+          (identity) =>
+            identity.state == 'storing' || identity.state == 'processing',
+          true
+        ),
+        takeUntil(merge(this.pollingSession$, this.unsubscribe$))
+      )
+      .subscribe((identity) => {
+        console.log('Identity: ', identity);
+        this.handleIdentityVerificationState(identity);
+        this.identity$.next(identity);
+      });
   }
 
-  handleCustomer(customer: Customer): Observable<Customer> {
-    this.message$.next(customer);
-    return of(customer);
+  handleIdentityVerificationState(identity: Identity): void {
+    switch (identity.state) {
+      case 'waiting':
+        this.stopPolling();
+        this.bootstrapPersona(identity.persona_inquiry_id!);
+        break;
+      case 'executing':
+        this.stopPolling();
+        this.bootstrapPersona(identity.persona_inquiry_id!);
+        break;
+      case 'reviewing':
+        this.stopPolling();
+        this.isLoading$.next(false);
+        break;
+      case 'completed':
+        this.stopPolling();
+        this.isLoading$.next(false);
+        break;
+    }
   }
 
-  /*
+  /**
    * Checks for an existing Persona client.
    *
    * If not found, it instantiates a new client.
-   * if found, it checks for an existing session token and recovers the session.
+   * if found, it checks for an existing client and recovers the session.
    * */
   bootstrapPersona(templateId: string): void {
     if (!this.personaClient) {
+      let client: any;
       let script = this._renderer2.createElement('script');
       script.type = `text/javascript`;
       script.text = 'text';
@@ -209,85 +207,61 @@ export class IdentityVerificationComponent implements OnInit {
       this._renderer2.appendChild(this._document.body, script);
       script.addEventListener('load', () => {
         // @ts-ignore
-        this.personaClient = new Persona.Client({
+        client = new Persona.Client({
           templateId: templateId,
           environment: 'sandbox',
-          onReady: () => this.personaClient.open(),
-          // @ts-ignore
-          onComplete: ({ inquiryId, status, fields }) => {
-            console.log(
-              'onComplete',
-              'inquiryId: ' + inquiryId,
-              'status: ' + status,
-              fields
-            );
+          language: this.locale,
+          onReady: () => {
+            this.identityVerificationService.setPersonaClient(client);
+            client.open();
           },
           // @ts-ignore
-          onCancel: ({ inquiryId, sessionToken }) => {
-            this.sessionToken = sessionToken;
-            this.message$.next({
-              inquiryId: inquiryId,
-              sessionToken: sessionToken
-            });
+          onComplete: () => {
+            this.isLoading$.next(false);
+          },
+          // TODO Map to actual component cancel instead of error state
+          // @ts-ignore
+          onCancel: () => {
+            // Store current instance including session token
+            this.identityVerificationService.setPersonaClient(client);
+            this.isLoading$.next(false);
+            this.stepper.next();
           },
           // TODO Add error handling. What happens if the session token is invalid?
           onError: (error: any) => console.log(error)
         });
       });
-    } else if (this.sessionToken) {
-      this.personaClient.sessionToken = this.sessionToken;
-      this.personaClient.open();
     } else {
+      // Re-initialize local references
+      this.personaClient.options.onComplete = () => {
+        this.isLoading$.next(false);
+      };
+      this.personaClient.options.onCancel = () => {
+        this.identityVerificationService.setPersonaClient(this.personaClient);
+        this.isLoading$.next(false);
+        this.stepper.next();
+      };
+      this.personaClient.options.language = this.locale;
       this.personaClient.open();
     }
   }
+  // @ts-ignore-end
 
-  startPolling(): void {
-    this.isPolling$.next(true);
+  startPolling(): Observable<number> {
+    this.isLoading$.next(true);
     this.pollingSubscription = this.pollingDuration$.subscribe({
       complete: () => {
-        this.isPolling$.next(false);
+        this.isLoading$.next(false);
+        this.error$.next(true);
         this.pollingSession$.next('');
       }
     });
+
+    return timer(0, 1000);
   }
 
-  stopPolling(): void {
-    this.isPolling$.next(false);
+  stopPolling() {
     this.pollingSubscription.unsubscribe();
     this.pollingSession$.next('');
-  }
-
-  /*
-   * These methods will be pulled from the client SDK
-   * */
-  getCustomerList(data: string): Observable<any> {
-    return this.http.get(this.API_BASE_URL + 'customers', {
-      headers: {
-        data: data
-      }
-    });
-  }
-
-  getIdentityVerificationList(data: string): Observable<any> {
-    return this.http.get(this.API_BASE_URL + 'identity_verifications', {
-      headers: {
-        data: data
-      }
-    });
-  }
-
-  postIdentityVerification(data: string): Observable<any> {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        data: data
-      })
-    };
-    return this.http.post(
-      this.API_BASE_URL + 'identity_verifications',
-      {},
-      httpOptions
-    );
   }
 }

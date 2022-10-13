@@ -3,6 +3,7 @@ export default {
   cancel: 'CANCEL',
   confirm: 'CONFIRM',
   done: 'DONE',
+  begin: 'BEGIN',
   back: 'Back',
   date: 'Date',
   fatal: 'An unrecoverable error occurred',
@@ -119,5 +120,18 @@ export default {
     previousPageLabel: 'Previous page',
     page: 'Page',
     of: 'of'
+  },
+
+  // Identity verification component
+  identityVerification: {
+    unexpectedError: 'Unexpected error.',
+    checkStatus: 'Checking status...',
+    verifying: 'Verifying...',
+    approved: 'You have been verified.',
+    denied: 'Unable to verify identity.',
+    support: 'Please contact customer support.',
+    required: 'Begin identity verification.',
+    completed: 'You have been verified.',
+    reviewing: 'Identity being reviewed.'
   }
 };
