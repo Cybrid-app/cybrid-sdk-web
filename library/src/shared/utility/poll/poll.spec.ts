@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { PollingService } from './polling.service';
+import { PollingService } from './poll.service';
 
 describe('PollingService', () => {
   let service: PollingService;

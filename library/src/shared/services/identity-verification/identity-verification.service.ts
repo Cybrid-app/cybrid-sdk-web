@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { map, Observable, of, ReplaySubject, switchMap } from 'rxjs';
+import { BehaviorSubject, map, Observable, of, switchMap } from 'rxjs';
+
+// Models
 import { Identity, IdentityList } from './identity.model';
 import { Customer, CustomerList } from './customer.model';
 
@@ -9,7 +11,7 @@ import { Customer, CustomerList } from './customer.model';
   providedIn: 'root'
 })
 export class IdentityVerificationService {
-  personaClient = new ReplaySubject(1);
+  personaClient: BehaviorSubject<any | null> = new BehaviorSubject(null);
 
   API_BASE_URL = 'http://localhost:8888/api/';
 

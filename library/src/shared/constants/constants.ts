@@ -48,4 +48,6 @@ export class Constants {
     fiat: 'USD'
   };
   static DEFAULT_COMPONENT = 'price-list';
+  static POLL_DURATION = 5000;
+  static POLL_INTERVAL = 1000;
 }

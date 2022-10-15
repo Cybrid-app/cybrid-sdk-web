@@ -46,13 +46,15 @@
     <mat-divider style="margin: 1rem 0"></mat-divider>
 
     <!-- Component -->
-    <div class="cybrid-column verification-wrapper">
+    <mat-card-title>
       <app-cybrid-logo
         fill="{{ config.theme === 'LIGHT' ? '#3f51b5' : 'white' }}"
       ></app-cybrid-logo>
-      <ng-container *ngIf="error$ | async; else content">
+    </mat-card-title>
+    <mat-card-content>
+      <ng-container *ngIf="timeout$ | async; else content">
         <div class="verification-content">
-          <div class="verification-message">
+          <div>
             <mat-icon color="warn">cancel</mat-icon>
             <strong>{{
               'identityVerification.unexpectedError' | translate
@@ -63,7 +65,7 @@
       <ng-template #content>
         <ng-container *ngIf="isLoading$ | async">
           <div class="verification-content">
-            <div class="verification-message">
+            <div>
               <app-loading [diameter]="16"></app-loading>
               <strong>{{
                 stepper.selectedIndex === 0
@@ -79,7 +81,7 @@
               <ng-container [ngSwitch]="state">
                 <ng-container *ngSwitchCase="'approved'">
                   <div class="verification-content">
-                    <div class="verification-message">
+                    <div>
                       <mat-icon color="primary">check_circle</mat-icon>
                       <strong>{{
                         'identityVerification.approved' | translate
@@ -89,7 +91,7 @@
                 </ng-container>
                 <ng-container *ngSwitchCase="'denied'">
                   <div class="verification-content">
-                    <div class="verification-message">
+                    <div>
                       <mat-icon color="warn">cancel</mat-icon>
                       <strong>{{
                         'identityVerification.denied' | translate
@@ -100,7 +102,7 @@
                 </ng-container>
                 <ng-container *ngSwitchCase="'required'">
                   <div class="verification-content">
-                    <div class="verification-message">
+                    <div>
                       <mat-icon color="primary">arrow_circle_right</mat-icon>
                       <strong>{{
                         'identityVerification.required' | translate
@@ -138,7 +140,7 @@
               <ng-container [ngSwitch]="state">
                 <ng-container *ngSwitchCase="'completed'">
                   <div class="verification-content">
-                    <div class="verification-message">
+                    <div>
                       <mat-icon color="primary">check_circle</mat-icon>
                       <strong>{{
                         'identityVerification.approved' | translate
@@ -148,7 +150,7 @@
                 </ng-container>
                 <ng-container *ngSwitchCase="'reviewing'">
                   <div class="verification-content">
-                    <div class="verification-message">
+                    <div>
                       <mat-icon color="primary">help</mat-icon>
                       <strong>{{
                         'identityVerification.reviewing' | translate
@@ -163,8 +165,6 @@
                 <button
                   mat-flat-button
                   color="primary"
-                  matStepperNext
-                  (click)="verifyIdentity()"
                   disabled="{{ isLoading$ | async }}"
                 >
                   {{ 'done' | translate }}
@@ -174,7 +174,7 @@
           </mat-step>
           <mat-step>
             <div class="verification-content">
-              <div class="verification-message">
+              <div>
                 <mat-icon color="primary">play_circle</mat-icon>
                 <strong>Resume identity verification.</strong>
               </div>
@@ -187,12 +187,12 @@
                 matStepperNext
                 (click)="verifyIdentity(); stepper.previous()"
               >
-                Resume
+                RESUME
               </button>
             </div>
           </mat-step>
         </mat-stepper>
       </ng-template>
-    </div>
+    </mat-card-content>
   </ng-container>
 </ng-container>
