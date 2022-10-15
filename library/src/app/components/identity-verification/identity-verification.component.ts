@@ -176,10 +176,10 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
     this.identityVerificationService
       .getPersonaClient()
       .pipe(
-        take(1),
         switchMap((personaClient) =>
           combineLatest([of(personaClient), this.configService.getConfig$()])
         ),
+        take(1),
         map((obj) => {
           const [personaClient, config] = obj;
 
