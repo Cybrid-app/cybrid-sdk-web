@@ -3,12 +3,15 @@ import OutcomeReasonsEnum = Identity.OutcomeReasonsEnum;
 import { List } from './list.model';
 
 export interface Identity {
+  guid: string;
+  customer_guid: string;
   type: Identity.TypeEnum;
-  provider: Identity.ProviderEnum;
+  method: Identity.MethodEnum;
   state?: Identity.StateEnum;
-  persona_inquiry_id?: string;
   outcome?: OutcomeEnum;
   outcome_reasons?: OutcomeReasonsEnum;
+  persona_inquiry_id?: string;
+  persona_state: Identity.PersonaEnum;
 }
 
 export interface IdentityList extends List {
@@ -20,34 +23,43 @@ export declare namespace Identity {
   const TypeEnum: {
     kyc: TypeEnum;
   };
+  type MethodEnum = 'id_and_selfie';
+  const MethodEnum: {
+    id_and_selfie: MethodEnum;
+  };
   type ProviderEnum = 'persona';
   const ProviderEnum: {
     persona: ProviderEnum;
   };
-  type StateEnum =
-    | 'storing'
-    | 'waiting'
-    | 'executing'
-    | 'reviewing'
-    | 'processing'
-    | 'completed';
+  type StateEnum = 'storing' | 'waiting' | 'expired' | 'completed';
   const StateEnum: {
     storing: StateEnum;
     waiting: StateEnum;
-    executing: StateEnum;
-    reviewing: StateEnum;
-    processing: StateEnum;
+    expired: StateEnum;
     completed: StateEnum;
   };
-  type OutcomeEnum = 'expired' | 'cancelled' | 'passed' | 'failed';
+  type OutcomeEnum = 'passed' | 'failed';
   const OutcomeEnum: {
-    expired: OutcomeEnum;
-    cancelled: OutcomeEnum;
     passed: OutcomeEnum;
     failed: OutcomeEnum;
   };
-  type OutcomeReasonsEnum = 'failed_requested';
+  type OutcomeReasonsEnum = 'requested_failure';
   const OutcomeReasonsEnum: {
-    failed_requested: OutcomeReasonsEnum;
+    requested_failure: OutcomeReasonsEnum;
+  };
+  type PersonaEnum =
+    | 'waiting'
+    | 'pending'
+    | 'reviewing'
+    | 'expired'
+    | 'completed'
+    | 'unknown';
+  const PersonaEnum: {
+    waiting: PersonaEnum;
+    pending: PersonaEnum;
+    reviewing: PersonaEnum;
+    expired: PersonaEnum;
+    completed: PersonaEnum;
+    unknown: PersonaEnum;
   };
 }

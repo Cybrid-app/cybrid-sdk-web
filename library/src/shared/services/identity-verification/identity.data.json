@@ -5,8 +5,10 @@
     "per_page": 10,
     "objects": [
       {
+        "guid": "1234",
+        "customer_guid": "5678",
         "type": "kyc",
-        "provider": "persona",
+        "method": "id_and_selfie",
         "state": "storing",
         "persona_inquiry_id": "itmpl_ArgEXWw8ZYtYLvfC26tr9zmY"
       }
@@ -18,62 +20,157 @@
     "per_page": 10,
     "objects": [
       {
+        "guid": "1234",
+        "customer_guid": "5678",
         "type": "kyc",
-        "provider": "persona",
+        "method": "id_and_selfie",
         "state": "waiting",
+        "persona_state": "waiting",
         "persona_inquiry_id": "itmpl_ArgEXWw8ZYtYLvfC26tr9zmY"
       }
     ]
   },
-  "state_executing": {
+  "state_expired": {
     "total": 1,
     "page": 0,
     "per_page": 10,
     "objects": [
       {
+        "guid": "1234",
+        "customer_guid": "5678",
         "type": "kyc",
-        "provider": "persona",
-        "state": "executing",
+        "method": "id_and_selfie",
+        "state": "expired",
         "persona_inquiry_id": "itmpl_ArgEXWw8ZYtYLvfC26tr9zmY"
       }
     ]
   },
-  "state_reviewing": {
+  "state_completed_passed": {
     "total": 1,
     "page": 0,
     "per_page": 10,
     "objects": [
       {
+        "guid": "1234",
+        "customer_guid": "5678",
         "type": "kyc",
-        "provider": "persona",
-        "state": "reviewing",
-        "persona_inquiry_id": "itmpl_ArgEXWw8ZYtYLvfC26tr9zmY"
-      }
-    ]
-  },
-  "state_processing": {
-    "total": 1,
-    "page": 0,
-    "per_page": 10,
-    "objects": [
-      {
-        "type": "kyc",
-        "provider": "persona",
-        "state": "processing",
-        "persona_inquiry_id": "itmpl_ArgEXWw8ZYtYLvfC26tr9zmY"
-      }
-    ]
-  },
-  "state_completed": {
-    "total": 1,
-    "page": 0,
-    "per_page": 10,
-    "objects": [
-      {
-        "type": "kyc",
-        "provider": "persona",
+        "method": "id_and_selfie",
         "state": "completed",
+        "outcome": "passed",
         "persona_inquiry_id": "itmpl_ArgEXWw8ZYtYLvfC26tr9zmY"
+      }
+    ]
+  },
+  "state_completed_failed": {
+    "total": 1,
+    "page": 0,
+    "per_page": 10,
+    "objects": [
+      {
+        "guid": "1234",
+        "customer_guid": "5678",
+        "type": "kyc",
+        "method": "id_and_selfie",
+        "state": "completed",
+        "outcome": "failed",
+        "outcome_reasons": ["requested_failure"],
+        "persona_inquiry_id": "itmpl_ArgEXWw8ZYtYLvfC26tr9zmY"
+      }
+    ]
+  },
+  "persona_state_waiting": {
+    "total": 1,
+    "page": 0,
+    "per_page": 10,
+    "objects": [
+      {
+        "guid": "1234",
+        "customer_guid": "5678",
+        "type": "kyc",
+        "method": "id_and_selfie",
+        "state": "waiting",
+        "persona_inquiry_id": "itmpl_ArgEXWw8ZYtYLvfC26tr9zmY",
+        "persona_state": "waiting"
+      }
+    ]
+  },
+  "persona_state_pending": {
+    "total": 1,
+    "page": 0,
+    "per_page": 10,
+    "objects": [
+      {
+        "guid": "1234",
+        "customer_guid": "5678",
+        "type": "kyc",
+        "method": "id_and_selfie",
+        "state": "waiting",
+        "persona_inquiry_id": "itmpl_ArgEXWw8ZYtYLvfC26tr9zmY",
+        "persona_state": "pending"
+      }
+    ]
+  },
+  "persona_state_reviewing": {
+    "total": 1,
+    "page": 0,
+    "per_page": 10,
+    "objects": [
+      {
+        "guid": "1234",
+        "customer_guid": "5678",
+        "type": "kyc",
+        "method": "id_and_selfie",
+        "state": "waiting",
+        "persona_inquiry_id": "itmpl_ArgEXWw8ZYtYLvfC26tr9zmY",
+        "persona_state": "reviewing"
+      }
+    ]
+  },
+  "persona_state_expired": {
+    "total": 1,
+    "page": 0,
+    "per_page": 10,
+    "objects": [
+      {
+        "guid": "1234",
+        "customer_guid": "5678",
+        "type": "kyc",
+        "method": "id_and_selfie",
+        "state": "waiting",
+        "persona_inquiry_id": "itmpl_ArgEXWw8ZYtYLvfC26tr9zmY",
+        "persona_state": "expired"
+      }
+    ]
+  },
+  "persona_state_completed": {
+    "total": 1,
+    "page": 0,
+    "per_page": 10,
+    "objects": [
+      {
+        "guid": "1234",
+        "customer_guid": "5678",
+        "type": "kyc",
+        "method": "id_and_selfie",
+        "state": "waiting",
+        "persona_inquiry_id": "itmpl_ArgEXWw8ZYtYLvfC26tr9zmY",
+        "persona_state": "completed"
+      }
+    ]
+  },
+  "persona_state_unknown": {
+    "total": 1,
+    "page": 0,
+    "per_page": 10,
+    "objects": [
+      {
+        "guid": "1234",
+        "customer_guid": "5678",
+        "type": "kyc",
+        "method": "id_and_selfie",
+        "state": "waiting",
+        "persona_inquiry_id": "itmpl_ArgEXWw8ZYtYLvfC26tr9zmY",
+        "persona_state": "unknown"
       }
     ]
   },

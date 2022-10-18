@@ -30,17 +30,6 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <button mat-flat-button color="primary" (click)="getCustomerStatus()">
-        Change customer status
-      </button>
-      <button
-        style="margin-left: 0.5rem"
-        mat-flat-button
-        color="primary"
-        (click)="verifyIdentity()"
-      >
-        Re-verify
-      </button>
     </ng-container>
 
     <mat-divider style="margin: 1rem 0"></mat-divider>
@@ -136,9 +125,9 @@
             </ng-container>
           </mat-step>
           <mat-step>
-            <ng-container *ngIf="(identity$ | async)?.state as state">
-              <ng-container [ngSwitch]="state">
-                <ng-container *ngSwitchCase="'completed'">
+            <ng-container *ngIf="identity$ | async as identity">
+              <ng-container [ngSwitch]="identity.outcome">
+                <ng-container *ngSwitchCase="'passed'">
                   <div class="verification-content">
                     <div>
                       <mat-icon color="primary">check_circle</mat-icon>
@@ -148,16 +137,31 @@
                     </div>
                   </div>
                 </ng-container>
-                <ng-container *ngSwitchCase="'reviewing'">
+                <ng-container *ngSwitchCase="'failed'">
                   <div class="verification-content">
                     <div>
-                      <mat-icon color="primary">help</mat-icon>
+                      <mat-icon color="warn">cancel</mat-icon>
                       <strong>{{
-                        'identityVerification.reviewing' | translate
+                        'identityVerification.denied' | translate
                       }}</strong>
                     </div>
-                    <p>{{ 'identityVerification.support' | translate }}</p>
+                    <p *ngFor="let reason of identity.outcome_reasons">
+                      {{ reason }}
+                    </p>
                   </div>
+                </ng-container>
+                <ng-container *ngSwitchDefault>
+                  <ng-container *ngIf="identity.persona_state === 'reviewing'">
+                    <div class="verification-content">
+                      <div>
+                        <mat-icon color="primary">help</mat-icon>
+                        <strong>{{
+                          'identityVerification.reviewing' | translate
+                        }}</strong>
+                      </div>
+                      <p>{{ 'identityVerification.support' | translate }}</p>
+                    </div>
+                  </ng-container>
                 </ng-container>
               </ng-container>
               <div class="verification-actions">

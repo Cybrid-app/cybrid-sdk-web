@@ -24,6 +24,7 @@ export class IdentityVerificationService {
    * @return An ``Observable`` of the response, flattened to ``Customer``.
    * */
   public getCustomer(data: string): Observable<Customer> {
+    console.log('GET /api/customers');
     return this.http
       .get(this.API_BASE_URL + 'customers', {
         headers: {
@@ -63,6 +64,7 @@ export class IdentityVerificationService {
    * @return An ``Observable`` of the response, flattened to ``Identity``.
    * */
   createIdentityVerification(data: string): Observable<Identity> {
+    console.log('POST /api/identity_verifications');
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -78,19 +80,32 @@ export class IdentityVerificationService {
   }
 
   /**
-   * Checks for existing identity verifications. If none exists, creates a new one.
+   * Checks for existing identity verifications. If none exists, or it is expired it
+   * creates a new one.
    *
    * @param data ``JSON`` key of the mock data that you want to receive
    * @return An ``Observable`` of type: ``Identity``
    * */
   public getIdentityVerification(data: string): Observable<Identity> {
+    console.log('GET /api/identity_verifications');
     return this.listIdentityVerifications(data).pipe(
       switchMap((list) => {
-        return list.total != 0
-          ? of(list.objects[0])
-          : this.createIdentityVerification('state_storing');
+        const identity = list.objects[0];
+        return identity
+          ? this.handleIdentityVerificationState(identity)
+          : this.createIdentityVerification('state_waiting');
       })
     );
+  }
+
+  handleIdentityVerificationState(identity: Identity): Observable<Identity> {
+    if (
+      identity.state == 'expired' ||
+      identity.persona_state == 'expired' ||
+      identity.persona_state == 'unknown'
+    ) {
+      return this.createIdentityVerification('state_waiting');
+    } else return of(identity);
   }
 
   setPersonaClient(client: any): void {

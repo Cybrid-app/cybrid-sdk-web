@@ -25,8 +25,14 @@ import {
 } from 'rxjs';
 
 // Services
-import { ConfigService, IdentityVerificationService } from '@services';
-import { Poll } from '../../../shared/utility/poll/poll.service';
+import {
+  ConfigService,
+  ErrorService,
+  EventService,
+  IdentityVerificationService,
+  RoutingService
+} from '@services';
+import { Poll } from '../../../shared/utility/poll/poll';
 
 //Models
 import { Customer } from '../../../shared/services/identity-verification/customer.model';
@@ -47,8 +53,8 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   customerDataResponseList = Object.keys(CUSTOMER);
   identityDataResponseList = Object.keys(IDENTITY);
 
-  identity$ = new Subject<Identity | null>();
-  customer$ = new Subject<Customer | null>();
+  identity$ = new BehaviorSubject<Identity | null>(null);
+  customer$ = new BehaviorSubject<Customer | null>(null);
 
   identityDataResponseForm!: FormGroup;
 
@@ -58,17 +64,16 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
 
   poll = new Poll(this.timeout$);
 
-  // personaClient: any = null;
-
-  locale!: string;
-
   unsubscribe$ = new Subject();
 
   constructor(
     @Inject(DOCUMENT) private _document: Document,
-    private _renderer2: Renderer2,
+    public configService: ConfigService,
+    private eventService: EventService,
+    private errorService: ErrorService,
     private identityVerificationService: IdentityVerificationService,
-    public configService: ConfigService
+    private routingService: RoutingService,
+    private _renderer2: Renderer2
   ) {}
 
   ngOnInit(): void {
@@ -93,33 +98,34 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
 
     // Reset component on input
     this.identityDataResponseForm.valueChanges.subscribe(() => {
-      this.isLoading$.next(false);
-      this.timeout$.next(false);
+      this.getCustomerStatus();
+
       this.customer$.next(null);
       this.identity$.next(null);
+      this.isLoading$.next(true);
+      this.timeout$.next(false);
 
-      this.stepper.previous();
-      this.getCustomerStatus();
+      this.stepper.reset();
     });
   }
 
   getCustomerStatus(): void {
+    console.log('\n');
     const data = this.identityDataResponseForm.value;
-    this.customer$.next(null);
-    this.isLoading$.next(true);
 
     this.identityVerificationService
       .getCustomer(data.customerData)
       .pipe(
-        takeUntil(this.unsubscribe$),
+        take(1),
         catchError((err) => {
-          //  handleError()
           return of(err);
         })
       )
       .subscribe((customer) => {
-        this.customer$.next(customer);
-        this.isLoading$.next(false);
+        setTimeout(() => {
+          this.customer$.next(customer);
+          this.isLoading$.next(false);
+        }, 500);
       });
   }
 
@@ -135,30 +141,43 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
           )
         ),
         takeUntil(merge(this.poll.session$, this.unsubscribe$)),
+        // Continues polling if the verification is 'storing',
+        // or if the Persona state is 'completed', but there is no 'outcome'
         skipWhile(
           (identity) =>
-            identity.state == 'storing' || identity.state == 'processing'
-        )
+            identity.state == 'storing' ||
+            (!identity.outcome && identity.persona_state == 'completed')
+        ),
+        map((identity) => {
+          console.log(identity);
+          this.poll.stop();
+          this.handleOutcome(identity);
+          this.identity$.next(identity);
+        })
       )
-      .subscribe((identity) => {
-        this.poll.stop();
-        this.handleIdentityVerificationState(identity);
-        this.identity$.next(identity);
-      });
+      .subscribe();
   }
 
-  handleIdentityVerificationState(identity: Identity): void {
+  handleOutcome(identity: Identity): void {
     switch (identity.state) {
+      case 'completed':
+        this.isLoading$.next(false);
+        break;
+      case 'waiting':
+        this.handlePersonaState(identity);
+        break;
+    }
+  }
+
+  handlePersonaState(identity: Identity): void {
+    switch (identity.persona_state) {
       case 'waiting':
         this.bootstrapPersona(identity.persona_inquiry_id!);
         break;
-      case 'executing':
+      case 'pending':
         this.bootstrapPersona(identity.persona_inquiry_id!);
         break;
       case 'reviewing':
-        this.isLoading$.next(false);
-        break;
-      case 'completed':
         this.isLoading$.next(false);
         break;
     }
@@ -206,7 +225,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
                   client.open();
                 },
                 onComplete: () => {
-                  this.isLoading$.next(false);
+                  this.verifyIdentity();
                 },
                 onCancel: () => {
                   // Store current instance including session token
@@ -214,8 +233,9 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
                   this.isLoading$.next(false);
                   this.stepper.next();
                 },
-                // TODO Add error handling. What happens if the session token is invalid?
-                onError: (error: any) => console.log(error)
+                onError: (error: any) => {
+                  console.log(error);
+                }
               });
             });
           } else {
