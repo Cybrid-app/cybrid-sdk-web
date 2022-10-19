@@ -99,11 +99,7 @@ export class IdentityVerificationService {
   }
 
   handleIdentityVerificationState(identity: Identity): Observable<Identity> {
-    if (
-      identity.state == 'expired' ||
-      identity.persona_state == 'expired' ||
-      identity.persona_state == 'unknown'
-    ) {
+    if (identity.state == 'expired' || identity.persona_state == 'expired') {
       return this.createIdentityVerification('state_waiting');
     } else return of(identity);
   }

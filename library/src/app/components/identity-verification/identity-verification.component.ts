@@ -180,6 +180,8 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
       case 'reviewing':
         this.isLoading$.next(false);
         break;
+      case 'unknown':
+        this.timeout$.next(true);
     }
   }
 
