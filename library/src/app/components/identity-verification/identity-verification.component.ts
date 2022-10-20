@@ -36,11 +36,10 @@ import { Poll } from '../../../shared/utility/poll/poll';
 
 //Models
 import { Customer } from '../../../shared/services/identity-verification/customer.model';
-import { Identity } from '../../../shared/services/identity-verification/identity.model';
+import { IdentityVerificationBankModel } from '@cybrid/cybrid-api-bank-angular';
 
 // Data
 import CUSTOMER from '../../../shared/services/identity-verification/customer.data.json';
-import IDENTITY from '../../../shared/services/identity-verification/identity.data.json';
 
 @Component({
   selector: 'app-identity-verification',
@@ -51,9 +50,8 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   @ViewChild('stepper') stepper!: MatStepper;
 
   customerDataResponseList = Object.keys(CUSTOMER);
-  identityDataResponseList = Object.keys(IDENTITY);
 
-  identity$ = new BehaviorSubject<Identity | null>(null);
+  identity$ = new BehaviorSubject<IdentityVerificationBankModel | null>(null);
   customer$ = new BehaviorSubject<Customer | null>(null);
 
   identityDataResponseForm!: FormGroup;
@@ -90,9 +88,6 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
     this.identityDataResponseForm = new FormGroup({
       customerData: new FormControl(this.customerDataResponseList[2], {
         nonNullable: true
-      }),
-      identityData: new FormControl(this.identityDataResponseList[0], {
-        nonNullable: true
       })
     });
 
@@ -110,7 +105,6 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   }
 
   getCustomerStatus(): void {
-    console.log('\n');
     const data = this.identityDataResponseForm.value;
 
     this.identityVerificationService
@@ -122,10 +116,8 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe((customer) => {
-        setTimeout(() => {
-          this.customer$.next(customer);
-          this.isLoading$.next(false);
-        }, 500);
+        this.customer$.next(customer);
+        this.isLoading$.next(false);
       });
   }
 
@@ -158,7 +150,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  handleOutcome(identity: Identity): void {
+  handleOutcome(identity: IdentityVerificationBankModel): void {
     switch (identity.state) {
       case 'completed':
         this.isLoading$.next(false);
@@ -169,7 +161,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
     }
   }
 
-  handlePersonaState(identity: Identity): void {
+  handlePersonaState(identity: IdentityVerificationBankModel): void {
     switch (identity.persona_state) {
       case 'waiting':
         this.bootstrapPersona(identity.persona_inquiry_id!);
@@ -187,13 +179,12 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
 
   /**
    * Opens a Persona client with applicable configuration settings.
-   * If no existing client is found, it instantiates a new client,
-   * otherwise it checks for an existing client and recovers the session.
+   * If no existing client is found, it instantiates a new client.
    *
-   * @param {string} templateId - The template Id that Persona will use
+   * @param {string} inquiryId - The template Id that Persona will use
    * to launch a certain flow.
    * */
-  bootstrapPersona(templateId: string): void {
+  bootstrapPersona(inquiryId: string): void {
     this.identityVerificationService
       .getPersonaClient()
       .pipe(
@@ -219,8 +210,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
             script.addEventListener('load', () => {
               // @ts-ignore
               client = new Persona.Client({
-                templateId: templateId,
-                environment: 'sandbox',
+                inquiryId: inquiryId,
                 language: locale(),
                 onReady: () => {
                   this.identityVerificationService.setPersonaClient(client);
@@ -230,7 +220,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
                   this.verifyIdentity();
                 },
                 onCancel: () => {
-                  // Store current instance including session token
+                  // Store current instance
                   this.identityVerificationService.setPersonaClient(client);
                   this.isLoading$.next(false);
                   this.stepper.next();

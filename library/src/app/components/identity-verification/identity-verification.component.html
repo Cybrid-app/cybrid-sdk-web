@@ -13,23 +13,6 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>GET /api/identity_verifications</mat-label>
-        <mat-select
-          formControlName="identityData"
-          [disabled]="
-            identityDataResponseForm.get('customerData')?.value !==
-            'kyc_state_required'
-          "
-        >
-          <mat-option
-            *ngFor="let response of identityDataResponseList"
-            [value]="response"
-          >
-            {{ response }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
     </ng-container>
 
     <mat-divider style="margin: 1rem 0"></mat-divider>
@@ -145,7 +128,7 @@
                         'identityVerification.denied' | translate
                       }}</strong>
                     </div>
-                    <p *ngFor="let reason of identity.outcome_reasons">
+                    <p *ngFor="let reason of identity.failure_codes">
                       {{ reason }}
                     </p>
                   </div>
