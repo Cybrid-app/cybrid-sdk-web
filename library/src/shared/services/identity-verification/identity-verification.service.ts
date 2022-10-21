@@ -94,15 +94,12 @@ export class IdentityVerificationService {
   }
 
   /**
-   * Checks for existing identity verifications. If none exists, or it is expired it
+   * Checks for existing identity verifications. If none exist, or it is expired it
    * creates a new one.
    *
-   * @param data ``JSON`` key of the mock data that you want to receive
    * @return An ``Observable`` of type: ``Identity``
    * */
-  public getIdentityVerification(
-    data: string
-  ): Observable<IdentityVerificationBankModel> {
+  public getIdentityVerification(): Observable<IdentityVerificationBankModel> {
     return this.identityVerificationService.listIdentityVerifications().pipe(
       switchMap((list) => {
         const identity = list.objects[0];

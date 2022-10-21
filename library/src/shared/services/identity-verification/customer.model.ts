@@ -4,7 +4,7 @@ import { List } from './list.model';
 export interface Customer extends CustomerBankModel {
   state: Customer.StateEnum;
   kyc_state: Customer.KycStateEnum;
-  kyc_checks: [
+  kyc_checks?: [
     type: Customer.KycChecksTypeEnum,
     outcome: Customer.KycChecksOutcomeEnum,
     outcome_reasons?: Customer.KycChecksOutcomeReasons,

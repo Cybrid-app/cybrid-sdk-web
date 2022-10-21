@@ -2,6 +2,7 @@
 import {
   AccountBankModel,
   AccountListBankModel,
+  IdentityVerificationBankModel,
   PostQuoteBankModel,
   QuoteBankModel,
   SymbolPriceBankModel,
@@ -369,5 +370,26 @@ export class TestConstants {
         created_at: '2022-08-09T18:02:24.675Z'
       }
     ]
+  };
+
+  // Identity-verification component test models
+
+  static CUSTOMER_BANK_MODEL = {
+    guid: '70da92652701b36021acfefb74085750',
+    type: 'kyc',
+    created_at: '2022-08-09T18:02:24.675Z',
+    state: 'created',
+    kyc_state: 'required'
+  };
+
+  static IDENTITY_VERIFICATION_MODEL: IdentityVerificationBankModel = {
+    guid: '70da92652701b36021acfefb74085750',
+    customer_guid: '70da92652701b36021acfefb74085750',
+    type: IdentityVerificationBankModel.TypeEnum.Kyc,
+    method: IdentityVerificationBankModel.MethodEnum.IdAndSelfie,
+    created_at: '2022-08-09T18:02:24.675Z',
+    state: IdentityVerificationBankModel.StateEnum.Waiting,
+    persona_state: IdentityVerificationBankModel.PersonaStateEnum.Waiting,
+    persona_inquiry_id: 'id'
   };
 }

@@ -26,19 +26,21 @@ import {
 
 // Services
 import {
+  CODE,
   ConfigService,
   ErrorService,
   EventService,
   IdentityVerificationService,
+  LEVEL,
   RoutingService
 } from '@services';
 import { Poll } from '../../../shared/utility/poll/poll';
 
 //Models
-import { Customer } from '../../../shared/services/identity-verification/customer.model';
 import { IdentityVerificationBankModel } from '@cybrid/cybrid-api-bank-angular';
 
-// Data
+// Utility
+import { Constants } from '@constants';
 import CUSTOMER from '../../../shared/services/identity-verification/customer.data.json';
 
 @Component({
@@ -52,17 +54,19 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   customerDataResponseList = Object.keys(CUSTOMER);
 
   identity$ = new BehaviorSubject<IdentityVerificationBankModel | null>(null);
-  customer$ = new BehaviorSubject<Customer | null>(null);
+  customer$ = new BehaviorSubject<any | null>(null);
 
   identityDataResponseForm!: FormGroup;
 
-  isRecoverable$ = new BehaviorSubject(true);
   isLoading$ = new BehaviorSubject(true);
-  timeout$ = new BehaviorSubject(false);
+  isRecoverable$ = new BehaviorSubject(true);
+  error$ = new BehaviorSubject(false);
 
-  poll = new Poll(this.timeout$);
+  poll = new Poll(this.error$);
 
   unsubscribe$ = new Subject();
+
+  personaScriptSrc = Constants.PERSONA_SCRIPT_SRC;
 
   constructor(
     @Inject(DOCUMENT) private _document: Document,
@@ -75,6 +79,11 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.eventService.handleEvent(
+      LEVEL.INFO,
+      CODE.COMPONENT_INIT,
+      'Initializing identity-verification component'
+    );
     this.initializeDataForms();
     this.getCustomerStatus();
   }
@@ -98,7 +107,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
       this.customer$.next(null);
       this.identity$.next(null);
       this.isLoading$.next(true);
-      this.timeout$.next(false);
+      this.error$.next(false);
 
       this.stepper.reset();
     });
@@ -111,14 +120,25 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
       .getCustomer(data.customerData)
       .pipe(
         take(1),
+        map((customer) => {
+          this.customer$.next(customer);
+          this.isLoading$.next(false);
+        }),
         catchError((err) => {
+          this.error$.next(true);
+          this.eventService.handleEvent(
+            LEVEL.ERROR,
+            CODE.DATA_ERROR,
+            'There was an error fetching customer kyc status'
+          );
+
+          this.errorService.handleError(
+            new Error('There was an error fetching customer kyc status')
+          );
           return of(err);
         })
       )
-      .subscribe((customer) => {
-        this.customer$.next(customer);
-        this.isLoading$.next(false);
-      });
+      .subscribe();
   }
 
   verifyIdentity(): void {
@@ -128,9 +148,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
       .start()
       .pipe(
         switchMap(() =>
-          this.identityVerificationService.getIdentityVerification(
-            this.identityDataResponseForm.value.identityData
-          )
+          this.identityVerificationService.getIdentityVerification()
         ),
         takeUntil(merge(this.poll.session$, this.unsubscribe$)),
         // Continues polling if the verification is 'storing',
@@ -141,16 +159,29 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
             (!identity.outcome && identity.persona_state == 'completed')
         ),
         map((identity) => {
-          console.log(identity);
           this.poll.stop();
-          this.handleOutcome(identity);
+          this.handleIdentityVerificationState(identity);
           this.identity$.next(identity);
+        }),
+        catchError((err) => {
+          this.error$.next(true);
+          this.eventService.handleEvent(
+            LEVEL.ERROR,
+            CODE.DATA_ERROR,
+            'There was an error fetching identity verification'
+          );
+          this.errorService.handleError(
+            new Error('There was an error fetching identity verification')
+          );
+          return of(err);
         })
       )
       .subscribe();
   }
 
-  handleOutcome(identity: IdentityVerificationBankModel): void {
+  handleIdentityVerificationState(
+    identity: IdentityVerificationBankModel
+  ): void {
     switch (identity.state) {
       case 'completed':
         this.isLoading$.next(false);
@@ -173,8 +204,12 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
         this.isLoading$.next(false);
         break;
       case 'unknown':
-        this.timeout$.next(true);
+        this.error$.next(true);
     }
+  }
+
+  getPersonaLanguageAlias(locale: string): string {
+    return locale == 'fr-CA' ? 'fr' : locale;
   }
 
   /**
@@ -195,23 +230,19 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
         map((obj) => {
           const [personaClient, config] = obj;
 
-          // Alias for Persona language option
-          const locale = () =>
-            config.locale === 'fr-CA' ? 'fr' : config.locale;
-
           if (!personaClient) {
             let client: any;
             let script = this._renderer2.createElement('script');
             script.type = `text/javascript`;
             script.text = 'text';
-            script.src = 'https://cdn.withpersona.com/dist/persona-v4.6.0.js';
+            script.src = this.personaScriptSrc;
 
             this._renderer2.appendChild(this._document.body, script);
             script.addEventListener('load', () => {
               // @ts-ignore
               client = new Persona.Client({
                 inquiryId: inquiryId,
-                language: locale(),
+                language: this.getPersonaLanguageAlias(config.locale),
                 onReady: () => {
                   this.identityVerificationService.setPersonaClient(client);
                   client.open();
@@ -226,12 +257,25 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
                   this.stepper.next();
                 },
                 onError: (error: any) => {
-                  console.log(error);
+                  this.error$.next(true);
+                  this.eventService.handleEvent(
+                    LEVEL.ERROR,
+                    CODE.DATA_ERROR,
+                    'There was an error in the Persona SDK',
+                    error
+                  );
+
+                  this.errorService.handleError(
+                    new Error(`There was an error in the Persona SDK: ${error}`)
+                  );
                 }
               });
             });
           } else {
             // Re-initialize local references
+            personaClient.options.language = this.getPersonaLanguageAlias(
+              config.locale
+            );
             personaClient.options.onComplete = () => {
               this.isLoading$.next(false);
             };
@@ -240,9 +284,32 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
               this.isLoading$.next(false);
               this.stepper.next();
             };
-            personaClient.options.language = locale();
+            personaClient.options.onError = (error: any) => {
+              this.error$.next(true);
+              this.eventService.handleEvent(
+                LEVEL.ERROR,
+                CODE.DATA_ERROR,
+                'There was an error in the Persona SDK',
+                error
+              );
+              this.errorService.handleError(
+                new Error(`"There was an error in the Persona SDK: ${error}"`)
+              );
+            };
             personaClient.open();
           }
+        }),
+        catchError((err) => {
+          this.error$.next(true);
+          this.eventService.handleEvent(
+            LEVEL.ERROR,
+            CODE.DATA_ERROR,
+            'There was an error launching the Persona SDK'
+          );
+          this.errorService.handleError(
+            new Error('There was an error launching the Persona SDK')
+          );
+          return of(err);
         })
       )
       .subscribe();
