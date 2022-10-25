@@ -79,7 +79,7 @@ export class IdentityVerificationService implements OnDestroy {
   getIdentityVerification(): Observable<IdentityVerificationBankModel> {
     return this.identityVerificationService
       .listIdentityVerifications(
-        '1',
+        '0',
         '1',
         undefined,
         undefined,

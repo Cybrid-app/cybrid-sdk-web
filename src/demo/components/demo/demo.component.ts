@@ -102,7 +102,7 @@ export class DemoComponent implements OnDestroy {
 
     this.componentRef.instance.hostConfig = config;
     this.componentRef.instance.auth = credentials.token;
-    this.componentRef.instance.component = 'identity-verification';
+    this.componentRef.instance.component = Constants.DEFAULT_COMPONENT;
 
     // Subscribe to component configuration changes
     this.demoConfigService.config$

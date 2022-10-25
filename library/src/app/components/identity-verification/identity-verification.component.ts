@@ -207,7 +207,6 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   }
 
   personaOnCancel(client: any): void {
-    // Store current instance
     this.identityVerificationService.setPersonaClient(client);
     this.isLoading$.next(false);
     this.stepper.next();

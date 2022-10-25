@@ -153,22 +153,22 @@ export class TestConstants {
     objects: [
       {
         type: 'trading',
-        guid: '85f532eff8604acc6aae30da86894eef',
+        guid: '7e97a31c331b92f9a06d019ee9c67a0f',
         created_at: '2022-06-15T15:37:20.950Z',
         asset: 'ETH',
         name: 'Ethereum',
-        customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+        customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
         platform_balance: '4.9977367924308e21',
         platform_available: '0',
         state: 'created'
       },
       {
         type: 'trading',
-        guid: 'd97bbff33783c4a56806bb94dde9eacb',
+        guid: '286b3fb4d41c6148e41ea08c4e72c79b',
         created_at: '2022-06-15T15:36:44.627Z',
         asset: 'BTC',
         name: 'Bitcoin',
-        customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+        customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
         platform_balance: '23218708499',
         platform_available: '0',
         state: 'created'
@@ -204,7 +204,7 @@ export class TestConstants {
     created_at: '2022-06-15T15:36:44.627Z',
     asset: 'BTC',
     name: 'Bitcoin',
-    customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+    customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
     platform_balance: '23218708499',
     platform_available: '0',
     state: 'created'
@@ -216,7 +216,7 @@ export class TestConstants {
     created_at: '2022-06-15T15:37:20.950Z',
     asset: 'ETH',
     name: 'Ethereum',
-    customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+    customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
     platform_balance: '4.9977367924308e21',
     platform_available: '0',
     state: 'created'
@@ -253,7 +253,7 @@ export class TestConstants {
       created_at: '2022-06-15T15:36:44.627Z',
       asset: 'BTC',
       name: 'Bitcoin',
-      customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+      customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
       platform_balance: '23218708499',
       platform_available: '0',
       state: 'created'
@@ -293,7 +293,7 @@ export class TestConstants {
           created_at: '2022-06-15T15:37:20.950Z',
           asset: 'ETH',
           name: 'Ethereum',
-          customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+          customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
           platform_balance: '4.9977394678408e21',
           platform_available: '0',
           state: 'created'
@@ -330,7 +330,7 @@ export class TestConstants {
           created_at: '2022-06-15T15:36:44.627Z',
           asset: 'BTC',
           name: 'Bitcoin',
-          customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+          customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
           platform_balance: '23218708499',
           platform_available: '0',
           state: 'created'
@@ -349,7 +349,7 @@ export class TestConstants {
     objects: [
       {
         guid: '718902509b27c72748790655c7edc335',
-        customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+        customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
         quote_guid: 'a0a37cd751d3a1e9f3c04110795029b7',
         symbol: 'BTC-USD',
         side: 'buy',
@@ -361,7 +361,7 @@ export class TestConstants {
       },
       {
         guid: '70da92652701b36021acfefb74085750',
-        customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+        customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
         quote_guid: '53abba1599ade22c0797038cc1bcddac',
         symbol: 'BTC-USD',
         side: 'buy',
@@ -377,7 +377,7 @@ export class TestConstants {
   // Identity-verification component test models
 
   static CUSTOMER_BANK_MODEL: CustomerBankModel = {
-    guid: '70da92652701b36021acfefb74085750',
+    guid: '72892100b5fdd31a1bf7a3c341e64cb8',
     type: 'individual',
     created_at: '2022-08-09T18:02:24.675Z',
     state: 'unverified'
@@ -385,22 +385,20 @@ export class TestConstants {
 
   static IDENTITY_VERIFICATION_BANK_MODEL: IdentityVerificationBankModel = {
     guid: '70da92652701b36021acfefb74085750',
-    customer_guid: '70da92652701b36021acfefb74085750',
-    type: IdentityVerificationBankModel.TypeEnum.Kyc,
-    method: IdentityVerificationBankModel.MethodEnum.IdAndSelfie,
+    customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
+    type: 'kyc',
+    method: 'id_and_selfie',
     created_at: '2022-08-09T18:02:24.675Z',
-    state: IdentityVerificationBankModel.StateEnum.Waiting,
-    persona_state: IdentityVerificationBankModel.PersonaStateEnum.Waiting,
+    state: 'waiting',
+    persona_state: 'waiting',
     persona_inquiry_id: 'id'
   };
 
   static IDENTITY_VERIFICATION_LIST_BANK_MODEL: IdentityVerificationListBankModel =
     {
       total: '1',
-      page: '1',
+      page: '0',
       per_page: '1',
       objects: [TestConstants.IDENTITY_VERIFICATION_BANK_MODEL]
     };
-
-  static MOCK_PERSONA_SCRIPT = '';
 }
