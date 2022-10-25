@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CybridSpinnerComponent } from './cybrid-spinner.component';
+import { CybridSpinnerComponent } from '@components';
 
 describe('CybridSpinnerComponent', () => {
   let component: CybridSpinnerComponent;
@@ -8,9 +8,8 @@ describe('CybridSpinnerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CybridSpinnerComponent ]
-    })
-    .compileComponents();
+      declarations: [CybridSpinnerComponent]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(CybridSpinnerComponent);
     component = fixture.componentInstance;
