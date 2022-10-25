@@ -127,7 +127,7 @@ export class TestConstants {
   };
 
   // Account-list component test models
-  static ACCOUNT_GUID = 'd97bbff33783c4a56806bb94dde9eacb';
+  static ACCOUNT_GUID = '286b3fb4d41c6148e41ea08c4e72c79b';
 
   static SYMBOL_PRICE_BANK_MODEL_ARRAY: SymbolPriceBankModel[] = [
     {
@@ -200,7 +200,7 @@ export class TestConstants {
 
   static ACCOUNT_BANK_MODEL_BTC: AccountBankModel = {
     type: 'trading',
-    guid: 'd97bbff33783c4a56806bb94dde9eacb',
+    guid: '286b3fb4d41c6148e41ea08c4e72c79b',
     created_at: '2022-06-15T15:36:44.627Z',
     asset: 'BTC',
     name: 'Bitcoin',
@@ -249,7 +249,7 @@ export class TestConstants {
     value: 4944888.3490320295,
     account: {
       type: 'trading',
-      guid: 'd97bbff33783c4a56806bb94dde9eacb',
+      guid: '286b3fb4d41c6148e41ea08c4e72c79b',
       created_at: '2022-06-15T15:36:44.627Z',
       asset: 'BTC',
       name: 'Bitcoin',
@@ -326,7 +326,7 @@ export class TestConstants {
         value: 5020349.15165378,
         account: {
           type: 'trading',
-          guid: 'd97bbff33783c4a56806bb94dde9eacb',
+          guid: '286b3fb4d41c6148e41ea08c4e72c79b',
           created_at: '2022-06-15T15:36:44.627Z',
           asset: 'BTC',
           name: 'Bitcoin',
