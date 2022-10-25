@@ -2,6 +2,7 @@
 import {
   AccountBankModel,
   AccountListBankModel,
+  CustomerBankModel,
   IdentityVerificationBankModel,
   PostQuoteBankModel,
   QuoteBankModel,
@@ -374,12 +375,11 @@ export class TestConstants {
 
   // Identity-verification component test models
 
-  static CUSTOMER_BANK_MODEL = {
+  static CUSTOMER_BANK_MODEL: CustomerBankModel = {
     guid: '70da92652701b36021acfefb74085750',
-    type: 'kyc',
+    type: 'individual',
     created_at: '2022-08-09T18:02:24.675Z',
-    state: 'created',
-    kyc_state: 'required'
+    state: 'unverified'
   };
 
   static IDENTITY_VERIFICATION_MODEL: IdentityVerificationBankModel = {
@@ -392,4 +392,6 @@ export class TestConstants {
     persona_state: IdentityVerificationBankModel.PersonaStateEnum.Waiting,
     persona_inquiry_id: 'id'
   };
+
+  static MOCK_PERSONA_SCRIPT = '';
 }

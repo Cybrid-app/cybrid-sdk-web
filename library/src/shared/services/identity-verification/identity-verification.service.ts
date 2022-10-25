@@ -1,41 +1,56 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { BehaviorSubject, map, Observable, of, switchMap, take } from 'rxjs';
+import {
+  BehaviorSubject,
+  map,
+  Observable,
+  of,
+  Subject,
+  switchMap,
+  takeUntil
+} from 'rxjs';
 
 // Models
-import { Customer, CustomerList } from './customer.model';
 import {
+  CustomerBankModel,
+  CustomersService,
   IdentityVerificationBankModel,
+  PostIdentityVerificationBankModel,
   IdentityVerificationsService
 } from '@cybrid/cybrid-api-bank-angular';
-import { PostIdentityVerificationBankModel } from '@cybrid/cybrid-api-bank-angular/model/postIdentityVerification';
+
+// Services
 import { ConfigService } from '../config/config.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class IdentityVerificationService {
+export class IdentityVerificationService implements OnDestroy {
   personaClient: BehaviorSubject<any | null> = new BehaviorSubject(null);
+  customerGuid: string = '';
+
+  unsubscribe$ = new Subject();
 
   postIdentityVerificationBankModel: PostIdentityVerificationBankModel = {
     customer_guid: '',
     method: 'id_and_selfie',
     type: 'kyc'
+    // expected_behaviours: ['passed_immediately']
   };
-
-  API_BASE_URL = 'http://localhost:8888/api/';
 
   constructor(
     private http: HttpClient,
     private identityVerificationService: IdentityVerificationsService,
+    private customerService: CustomersService,
     private configService: ConfigService
   ) {
     this.configService
       .getConfig$()
       .pipe(
-        take(1),
+        takeUntil(this.unsubscribe$),
         map((config) => {
+          this.customerGuid = config.customer;
           this.postIdentityVerificationBankModel.customer_guid =
             config.customer;
         })
@@ -43,49 +58,22 @@ export class IdentityVerificationService {
       .subscribe();
   }
 
-  /**
-   * Fetches the customer.
-   *
-   * @param data ``JSON`` key of the mock data that you want to receive
-   * @return An ``Observable`` of the response, flattened to ``Customer``.
-   * */
-  public getCustomer(data: string): Observable<Customer> {
-    return this.http
-      .get(this.API_BASE_URL + 'customers', {
-        headers: {
-          data: data
-        }
-      })
-      .pipe(
-        map((res) => res as CustomerList),
-        map((list) => list.objects[0])
-      );
+  ngOnDestroy() {
+    this.unsubscribe$.next('');
+    this.unsubscribe$.complete();
   }
 
   /**
-   * Fetches the most recent identity verification.
-   *
-   * @param data ``JSON`` key of the mock data that you want to receive
-   * @return An ``Observable`` of the response, type: ``IdentityList``.
+   * Fetches the customer.
+   * @return An ``Observable`` of type: ``CustomerBankModel``.
    * */
-  // private listIdentityVerifications(data: string): Observable<IdentityList> {
-  //   return this.http
-  //     .get(this.API_BASE_URL + 'identity_verifications', {
-  //       headers: {
-  //         data: data
-  //       }
-  //     })
-  //     .pipe(
-  //       map((res) => {
-  //         return res as IdentityList;
-  //       })
-  //     );
-  // }
+  getCustomer(): Observable<CustomerBankModel> {
+    return this.customerService.getCustomer(this.customerGuid);
+  }
 
   /**
    * Initializes a new identity verification workflow.
-   *
-   * @return An ``Observable`` of the response, flattened to ``Identity``.
+   * @return An ``Observable`` of type: ``IdentityVerificationBankModel``.
    * */
   createIdentityVerification(): Observable<IdentityVerificationBankModel> {
     return this.identityVerificationService.createIdentityVerification(
@@ -94,20 +82,27 @@ export class IdentityVerificationService {
   }
 
   /**
-   * Checks for existing identity verifications. If none exist, or it is expired it
-   * creates a new one.
-   *
-   * @return An ``Observable`` of type: ``Identity``
+   * Checks for an existing(most recent) identity verification. If none exist,
+   * or it is expired it creates a new one.
+   * @return An ``Observable`` of type: ``IdentityVerificationBankModel``
    * */
   public getIdentityVerification(): Observable<IdentityVerificationBankModel> {
-    return this.identityVerificationService.listIdentityVerifications().pipe(
-      switchMap((list) => {
-        const identity = list.objects[0];
-        return identity
-          ? this.handleIdentityVerificationState(identity)
-          : this.createIdentityVerification();
-      })
-    );
+    return this.identityVerificationService
+      .listIdentityVerifications(
+        '1',
+        '1',
+        undefined,
+        undefined,
+        this.customerGuid
+      )
+      .pipe(
+        switchMap((list) => {
+          const identity = list.objects[0];
+          return identity
+            ? this.handleIdentityVerificationState(identity)
+            : this.createIdentityVerification();
+        })
+      );
   }
 
   handleIdentityVerificationState(

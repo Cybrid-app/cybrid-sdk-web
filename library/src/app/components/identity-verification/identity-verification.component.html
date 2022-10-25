@@ -1,29 +1,13 @@
-<!-- Demo Controls -->
 <ng-container *ngIf="(isRecoverable$ | async) !== false">
   <ng-container *ngIf="configService.getConfig$() | async as config">
-    <ng-container [formGroup]="identityDataResponseForm">
-      <mat-form-field appearance="outline">
-        <mat-label>GET /api/customer</mat-label>
-        <mat-select formControlName="customerData">
-          <mat-option
-            *ngFor="let response of customerDataResponseList"
-            [value]="response"
-          >
-            {{ response }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </ng-container>
-
-    <mat-divider style="margin: 1rem 0"></mat-divider>
-
-    <!-- Component -->
     <mat-card-title>
       <app-cybrid-logo
         fill="{{ config.theme === 'LIGHT' ? '#3f51b5' : 'white' }}"
       ></app-cybrid-logo>
     </mat-card-title>
     <mat-card-content>
+      <pre>{{ customer$ | async | json }}</pre>
+      <pre>{{ identity$ | async | json }}</pre>
       <ng-container *ngIf="error$ | async; else content">
         <div class="verification-content">
           <div>
@@ -49,9 +33,9 @@
         </ng-container>
         <mat-stepper #stepper linear="true" animationDuration="0">
           <mat-step>
-            <ng-container *ngIf="(customer$ | async)?.kyc_state as state">
+            <ng-container *ngIf="(customer$ | async)?.state as state">
               <ng-container [ngSwitch]="state">
-                <ng-container *ngSwitchCase="'approved'">
+                <ng-container *ngSwitchCase="'verified'">
                   <div class="verification-content">
                     <div>
                       <mat-icon color="primary">check_circle</mat-icon>
@@ -61,7 +45,7 @@
                     </div>
                   </div>
                 </ng-container>
-                <ng-container *ngSwitchCase="'denied'">
+                <ng-container *ngSwitchCase="'rejected'">
                   <div class="verification-content">
                     <div>
                       <mat-icon color="warn">cancel</mat-icon>
@@ -72,7 +56,7 @@
                     <p>{{ 'identityVerification.support' | translate }}</p>
                   </div>
                 </ng-container>
-                <ng-container *ngSwitchCase="'required'">
+                <ng-container *ngSwitchCase="'unverified'">
                   <div class="verification-content">
                     <div>
                       <mat-icon color="primary">arrow_circle_right</mat-icon>
@@ -86,12 +70,12 @@
               <div class="verification-actions">
                 <button
                   mat-stroked-button
-                  [disabled]="state === 'approved' || state === 'denied'"
+                  [disabled]="state === 'verified' || state === 'rejected'"
                 >
                   {{ 'cancel' | translate }}
                 </button>
                 <button
-                  *ngIf="state === 'required'; else done"
+                  *ngIf="state === 'unverified'; else done"
                   mat-flat-button
                   color="primary"
                   matStepperNext

@@ -7,7 +7,6 @@ import {
   ViewChild
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { FormControl, FormGroup } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
 
 import {
@@ -34,14 +33,16 @@ import {
   LEVEL,
   RoutingService
 } from '@services';
-import { Poll } from '../../../shared/utility/poll/poll';
+import { Poll, PollConfig } from '../../../shared/utility/poll/poll';
 
 //Models
-import { IdentityVerificationBankModel } from '@cybrid/cybrid-api-bank-angular';
+import {
+  CustomerBankModel,
+  IdentityVerificationBankModel
+} from '@cybrid/cybrid-api-bank-angular';
 
 // Utility
 import { Constants } from '@constants';
-import CUSTOMER from '../../../shared/services/identity-verification/customer.data.json';
 
 @Component({
   selector: 'app-identity-verification',
@@ -51,25 +52,25 @@ import CUSTOMER from '../../../shared/services/identity-verification/customer.da
 export class IdentityVerificationComponent implements OnInit, OnDestroy {
   @ViewChild('stepper') stepper!: MatStepper;
 
-  customerDataResponseList = Object.keys(CUSTOMER);
-
   identity$ = new BehaviorSubject<IdentityVerificationBankModel | null>(null);
-  customer$ = new BehaviorSubject<any | null>(null);
-
-  identityDataResponseForm!: FormGroup;
+  customer$ = new BehaviorSubject<CustomerBankModel | null>(null);
 
   isLoading$ = new BehaviorSubject(true);
   isRecoverable$ = new BehaviorSubject(true);
   error$ = new BehaviorSubject(false);
 
-  poll = new Poll(this.error$);
+  pollConfig: PollConfig = {
+    timeout: this.error$,
+    interval: Constants.POLL_INTERVAL,
+    duration: Constants.POLL_DURATION
+  };
 
   unsubscribe$ = new Subject();
 
   personaScriptSrc = Constants.PERSONA_SCRIPT_SRC;
 
   constructor(
-    @Inject(DOCUMENT) private _document: Document,
+    @Inject(DOCUMENT) public _document: Document,
     public configService: ConfigService,
     private eventService: EventService,
     private errorService: ErrorService,
@@ -84,7 +85,6 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
       CODE.COMPONENT_INIT,
       'Initializing identity-verification component'
     );
-    this.initializeDataForms();
     this.getCustomerStatus();
   }
 
@@ -93,34 +93,17 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  initializeDataForms(): void {
-    this.identityDataResponseForm = new FormGroup({
-      customerData: new FormControl(this.customerDataResponseList[2], {
-        nonNullable: true
-      })
-    });
-
-    // Reset component on input
-    this.identityDataResponseForm.valueChanges.subscribe(() => {
-      this.getCustomerStatus();
-
-      this.customer$.next(null);
-      this.identity$.next(null);
-      this.isLoading$.next(true);
-      this.error$.next(false);
-
-      this.stepper.reset();
-    });
-  }
-
   getCustomerStatus(): void {
-    const data = this.identityDataResponseForm.value;
+    const poll = new Poll(this.pollConfig);
 
-    this.identityVerificationService
-      .getCustomer(data.customerData)
+    poll
+      .start()
       .pipe(
-        take(1),
+        switchMap(() => this.identityVerificationService.getCustomer()),
+        takeUntil(merge(poll.session$, this.unsubscribe$)),
+        skipWhile((customer) => customer.state === 'storing'),
         map((customer) => {
+          poll.stop();
           this.customer$.next(customer);
           this.isLoading$.next(false);
         }),
@@ -142,24 +125,26 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   }
 
   verifyIdentity(): void {
+    const poll = new Poll(this.pollConfig);
     this.isLoading$.next(true);
 
-    this.poll
+    poll
       .start()
       .pipe(
         switchMap(() =>
           this.identityVerificationService.getIdentityVerification()
         ),
-        takeUntil(merge(this.poll.session$, this.unsubscribe$)),
+        takeUntil(merge(poll.session$, this.unsubscribe$)),
         // Continues polling if the verification is 'storing',
         // or if the Persona state is 'completed', but there is no 'outcome'
         skipWhile(
           (identity) =>
             identity.state == 'storing' ||
-            (!identity.outcome && identity.persona_state == 'completed')
+            (identity.state == 'waiting' &&
+              identity.persona_state == 'completed')
         ),
         map((identity) => {
-          this.poll.stop();
+          poll.stop();
           this.handleIdentityVerificationState(identity);
           this.identity$.next(identity);
         }),
@@ -212,13 +197,36 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
     return locale == 'fr-CA' ? 'fr' : locale;
   }
 
-  /**
-   * Opens a Persona client with applicable configuration settings.
-   * If no existing client is found, it instantiates a new client.
-   *
-   * @param {string} inquiryId - The template Id that Persona will use
-   * to launch a certain flow.
-   * */
+  personaOnReady(client: any) {
+    this.identityVerificationService.setPersonaClient(client);
+    client.open();
+  }
+
+  personaOnComplete(): void {
+    this.verifyIdentity();
+  }
+
+  personaOnCancel(client: any): void {
+    // Store current instance
+    this.identityVerificationService.setPersonaClient(client);
+    this.isLoading$.next(false);
+    this.stepper.next();
+  }
+
+  personaOnError(error: any) {
+    this.error$.next(true);
+    this.eventService.handleEvent(
+      LEVEL.ERROR,
+      CODE.DATA_ERROR,
+      'There was an error in the Persona SDK',
+      error
+    );
+
+    this.errorService.handleError(
+      new Error(`There was an error in the Persona SDK: ${error}`)
+    );
+  }
+
   bootstrapPersona(inquiryId: string): void {
     this.identityVerificationService
       .getPersonaClient()
@@ -233,69 +241,30 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
           if (!personaClient) {
             let client: any;
             let script = this._renderer2.createElement('script');
-            script.type = `text/javascript`;
-            script.text = 'text';
             script.src = this.personaScriptSrc;
-
             this._renderer2.appendChild(this._document.body, script);
+
             script.addEventListener('load', () => {
-              // @ts-ignore
+              //@ts-ignore
               client = new Persona.Client({
                 inquiryId: inquiryId,
                 language: this.getPersonaLanguageAlias(config.locale),
-                onReady: () => {
-                  this.identityVerificationService.setPersonaClient(client);
-                  client.open();
-                },
-                onComplete: () => {
-                  this.verifyIdentity();
-                },
-                onCancel: () => {
-                  // Store current instance
-                  this.identityVerificationService.setPersonaClient(client);
-                  this.isLoading$.next(false);
-                  this.stepper.next();
-                },
-                onError: (error: any) => {
-                  this.error$.next(true);
-                  this.eventService.handleEvent(
-                    LEVEL.ERROR,
-                    CODE.DATA_ERROR,
-                    'There was an error in the Persona SDK',
-                    error
-                  );
-
-                  this.errorService.handleError(
-                    new Error(`There was an error in the Persona SDK: ${error}`)
-                  );
-                }
+                onReady: () => this.personaOnReady(client),
+                onComplete: () => this.personaOnComplete(),
+                onCancel: () => this.personaOnCancel(client),
+                onError: (error: any) => this.personaOnError(error)
               });
             });
           } else {
-            // Re-initialize local references
+            // Re-initialize local references and open client
             personaClient.options.language = this.getPersonaLanguageAlias(
               config.locale
             );
-            personaClient.options.onComplete = () => {
-              this.isLoading$.next(false);
-            };
-            personaClient.options.onCancel = () => {
-              this.identityVerificationService.setPersonaClient(personaClient);
-              this.isLoading$.next(false);
-              this.stepper.next();
-            };
-            personaClient.options.onError = (error: any) => {
-              this.error$.next(true);
-              this.eventService.handleEvent(
-                LEVEL.ERROR,
-                CODE.DATA_ERROR,
-                'There was an error in the Persona SDK',
-                error
-              );
-              this.errorService.handleError(
-                new Error(`"There was an error in the Persona SDK: ${error}"`)
-              );
-            };
+            personaClient.options.onComplete = () => this.personaOnComplete();
+            personaClient.options.onCancel = () =>
+              this.personaOnCancel(personaClient);
+            personaClient.options.onError = (error: any) =>
+              this.personaOnError(error);
             personaClient.open();
           }
         }),

@@ -6,8 +6,6 @@ import {
   timer
 } from 'rxjs';
 
-import { Constants } from '@constants';
-
 /**
  * Creates a new polling class that handles tracking duration, and provides a timeout observable.
  *
@@ -22,21 +20,19 @@ import { Constants } from '@constants';
  * ```
  */
 
-export class Poll {
+export interface PollConfig {
   timeout: BehaviorSubject<boolean>;
   interval: number;
   duration: number;
+}
+
+export class Poll {
+  pollConfig: PollConfig;
   session$ = new Subject<any>();
   sub = new Subscription();
 
-  constructor(
-    timeout: BehaviorSubject<boolean>,
-    interval: number = Constants.POLL_INTERVAL,
-    duration: number = Constants.POLL_DURATION
-  ) {
-    this.timeout = timeout;
-    this.interval = interval;
-    this.duration = duration;
+  constructor(pollConfig: PollConfig) {
+    this.pollConfig = pollConfig;
   }
 
   /**
@@ -46,13 +42,13 @@ export class Poll {
    * @return {Observable<number>} timer - Observable to be piped from.
    * */
   start(): Observable<number> {
-    this.sub = timer(this.duration).subscribe({
+    this.sub = timer(this.pollConfig.duration).subscribe({
       complete: () => {
         this.session$.next('');
-        this.timeout.next(true);
+        this.pollConfig.timeout.next(true);
       }
     });
-    return timer(0, this.interval);
+    return timer(0, this.pollConfig.interval);
   }
 
   /**

@@ -18,7 +18,7 @@ export class Constants {
   static AUTH_EXPIRATION_WARNING = 120;
   static MIN_INTEGER_DIGITS = 0;
   static MIN_FRACTION_DIGITS = 2;
-  static THEME = THEME.DARK;
+  static THEME = THEME.LIGHT;
   static ROUTING = true;
   static ICON_HOST = 'https://images.cybrid.xyz/sdk/assets/svg/color/';
   static PERSONA_SCRIPT_SRC =
