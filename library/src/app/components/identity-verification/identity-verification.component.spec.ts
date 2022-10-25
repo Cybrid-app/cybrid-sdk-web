@@ -88,7 +88,7 @@ describe('IdentityVerificationComponent', () => {
       of(TestConstants.CUSTOMER_BANK_MODEL)
     );
     MockIdentityVerificationService.getIdentityVerification.and.returnValue(
-      of(TestConstants.IDENTITY_VERIFICATION_MODEL)
+      of(TestConstants.IDENTITY_VERIFICATION_BANK_MODEL)
     );
 
     fixture = TestBed.createComponent(IdentityVerificationComponent);
@@ -129,17 +129,17 @@ describe('IdentityVerificationComponent', () => {
     tick(5000);
 
     expect(handleIdentityVerificationStateSpy).toHaveBeenCalledWith(
-      TestConstants.IDENTITY_VERIFICATION_MODEL
+      TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
     );
     expect(identity$Spy).toHaveBeenCalledWith(
-      TestConstants.IDENTITY_VERIFICATION_MODEL
+      TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
     );
 
     discardPeriodicTasks();
   }));
 
   it('should timeout after polling when persona has completed, but state = waiting', fakeAsync(() => {
-    let identity = { ...TestConstants.IDENTITY_VERIFICATION_MODEL };
+    let identity = { ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL };
     identity.state = 'waiting';
     identity.persona_state = 'completed';
     MockIdentityVerificationService.getIdentityVerification.and.returnValue(
@@ -182,7 +182,7 @@ describe('IdentityVerificationComponent', () => {
 
   it('should handle identity verification state', () => {
     const handlePersonaStateSpy = spyOn(component, 'handlePersonaState');
-    let identityVerification = TestConstants.IDENTITY_VERIFICATION_MODEL;
+    let identityVerification = TestConstants.IDENTITY_VERIFICATION_BANK_MODEL;
 
     // State = 'waiting'
     component.handleIdentityVerificationState(identityVerification);
@@ -199,7 +199,7 @@ describe('IdentityVerificationComponent', () => {
     const isLoading$Spy = spyOn(component.isLoading$, 'next');
     const error$Spy = spyOn(component.error$, 'next');
 
-    let identityVerification = TestConstants.IDENTITY_VERIFICATION_MODEL;
+    let identityVerification = TestConstants.IDENTITY_VERIFICATION_BANK_MODEL;
 
     // State = 'waiting'
     identityVerification.persona_state = 'waiting';
@@ -270,7 +270,7 @@ describe('IdentityVerificationComponent', () => {
     component.personaScriptSrc = Constants.PERSONA_SCRIPT_SRC;
 
     component.bootstrapPersona(
-      TestConstants.IDENTITY_VERIFICATION_MODEL.persona_inquiry_id!
+      TestConstants.IDENTITY_VERIFICATION_BANK_MODEL.persona_inquiry_id!
     );
 
     tick();
@@ -280,7 +280,7 @@ describe('IdentityVerificationComponent', () => {
     MockIdentityVerificationService.getPersonaClient.and.returnValue(of(true));
 
     component.bootstrapPersona(
-      TestConstants.IDENTITY_VERIFICATION_MODEL.persona_inquiry_id!
+      TestConstants.IDENTITY_VERIFICATION_BANK_MODEL.persona_inquiry_id!
     );
 
     tick();
@@ -294,7 +294,7 @@ describe('IdentityVerificationComponent', () => {
     MockIdentityVerificationService.getPersonaClient.and.returnValue(error$);
 
     component.bootstrapPersona(
-      TestConstants.IDENTITY_VERIFICATION_MODEL.persona_inquiry_id!
+      TestConstants.IDENTITY_VERIFICATION_BANK_MODEL.persona_inquiry_id!
     );
 
     expect(MockErrorService.handleError).toHaveBeenCalled();
@@ -304,7 +304,7 @@ describe('IdentityVerificationComponent', () => {
     MockConfigService.getConfig$.and.returnValue(error$);
 
     component.bootstrapPersona(
-      TestConstants.IDENTITY_VERIFICATION_MODEL.persona_inquiry_id!
+      TestConstants.IDENTITY_VERIFICATION_BANK_MODEL.persona_inquiry_id!
     );
 
     expect(MockErrorService.handleError).toHaveBeenCalled();

@@ -4,6 +4,7 @@ import {
   AccountListBankModel,
   CustomerBankModel,
   IdentityVerificationBankModel,
+  IdentityVerificationListBankModel,
   PostQuoteBankModel,
   QuoteBankModel,
   SymbolPriceBankModel,
@@ -382,7 +383,7 @@ export class TestConstants {
     state: 'unverified'
   };
 
-  static IDENTITY_VERIFICATION_MODEL: IdentityVerificationBankModel = {
+  static IDENTITY_VERIFICATION_BANK_MODEL: IdentityVerificationBankModel = {
     guid: '70da92652701b36021acfefb74085750',
     customer_guid: '70da92652701b36021acfefb74085750',
     type: IdentityVerificationBankModel.TypeEnum.Kyc,
@@ -392,6 +393,14 @@ export class TestConstants {
     persona_state: IdentityVerificationBankModel.PersonaStateEnum.Waiting,
     persona_inquiry_id: 'id'
   };
+
+  static IDENTITY_VERIFICATION_LIST_BANK_MODEL: IdentityVerificationListBankModel =
+    {
+      total: '1',
+      page: '1',
+      per_page: '1',
+      objects: [TestConstants.IDENTITY_VERIFICATION_BANK_MODEL]
+    };
 
   static MOCK_PERSONA_SCRIPT = '';
 }

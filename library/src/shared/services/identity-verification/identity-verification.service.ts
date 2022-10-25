@@ -34,9 +34,8 @@ export class IdentityVerificationService implements OnDestroy {
 
   postIdentityVerificationBankModel: PostIdentityVerificationBankModel = {
     customer_guid: '',
-    method: 'id_and_selfie',
-    type: 'kyc'
-    // expected_behaviours: ['passed_immediately']
+    method: PostIdentityVerificationBankModel.MethodEnum.IdAndSelfie,
+    type: PostIdentityVerificationBankModel.TypeEnum.Kyc
   };
 
   constructor(
@@ -45,6 +44,15 @@ export class IdentityVerificationService implements OnDestroy {
     private customerService: CustomersService,
     private configService: ConfigService
   ) {
+    this.getCustomerGuid();
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next('');
+    this.unsubscribe$.complete();
+  }
+
+  getCustomerGuid(): void {
     this.configService
       .getConfig$()
       .pipe(
@@ -58,35 +66,17 @@ export class IdentityVerificationService implements OnDestroy {
       .subscribe();
   }
 
-  ngOnDestroy() {
-    this.unsubscribe$.next('');
-    this.unsubscribe$.complete();
-  }
-
-  /**
-   * Fetches the customer.
-   * @return An ``Observable`` of type: ``CustomerBankModel``.
-   * */
   getCustomer(): Observable<CustomerBankModel> {
     return this.customerService.getCustomer(this.customerGuid);
   }
 
-  /**
-   * Initializes a new identity verification workflow.
-   * @return An ``Observable`` of type: ``IdentityVerificationBankModel``.
-   * */
   createIdentityVerification(): Observable<IdentityVerificationBankModel> {
     return this.identityVerificationService.createIdentityVerification(
       this.postIdentityVerificationBankModel
     );
   }
 
-  /**
-   * Checks for an existing(most recent) identity verification. If none exist,
-   * or it is expired it creates a new one.
-   * @return An ``Observable`` of type: ``IdentityVerificationBankModel``
-   * */
-  public getIdentityVerification(): Observable<IdentityVerificationBankModel> {
+  getIdentityVerification(): Observable<IdentityVerificationBankModel> {
     return this.identityVerificationService
       .listIdentityVerifications(
         '1',
