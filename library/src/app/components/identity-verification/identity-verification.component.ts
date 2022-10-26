@@ -141,7 +141,9 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
           (identity) =>
             identity.state == 'storing' ||
             (identity.state == 'waiting' &&
-              identity.persona_state == 'completed')
+              identity.persona_state == 'completed') ||
+            (identity.state == 'waiting' &&
+              identity.persona_state == 'processing')
         ),
         map((identity) => {
           poll.stop();
