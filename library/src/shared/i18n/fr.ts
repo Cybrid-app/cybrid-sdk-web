@@ -4,6 +4,7 @@ export default {
   confirm: 'CONFIRMER',
   done: 'FAIT',
   begin: 'COMMENCER',
+  resume: 'RECOMMENCER',
   back: 'Retourner',
   date: 'Date',
   fatal: "Une erreur irrécupérable s'est produite",
@@ -128,11 +129,11 @@ export default {
     unexpectedError: 'Erreur inattendue.',
     checkStatus: "Vérification de l'état...",
     verifying: 'Vérification...',
-    approved: 'Vous avez été vérifié.',
-    denied: "Impossible de vérifier l'identité.",
+    verified: 'Vous avez été vérifié.',
+    rejected: "Impossible de vérifier l'identité.",
+    unverified: "Commencer la vérification d'identité.",
     support: 'Veuillez contacter le service client.',
-    required: "Commencer la vérification d'identité.",
-    completed: 'Vous avez été vérifié.',
-    reviewing: 'Identité en cours de révision.'
+    reviewing: 'Identité en cours de révision.',
+    resume: "Reprendre la vérification d'identité."
   }
 };

@@ -138,20 +138,32 @@ describe('IdentityVerificationComponent', () => {
     discardPeriodicTasks();
   }));
 
-  it('should timeout after polling when persona has completed, but state = waiting', fakeAsync(() => {
+  it('should timeout after polling', fakeAsync(() => {
+    const identitySpy = spyOn(component.identity$, 'next');
     let identity = { ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL };
-    identity.state = 'waiting';
-    identity.persona_state = 'completed';
     MockIdentityVerificationService.getIdentityVerification.and.returnValue(
       of(identity)
     );
-    const identitySpy = spyOn(component.identity$, 'next');
+
+    // Default res for POST identity_verifications
+    identity.state = 'storing';
+    component.verifyIdentity();
+    tick();
+
+    // Persona is in processing state
+    identity.persona_state = 'processing';
+
+    component.verifyIdentity();
+    tick();
+
+    // Persona has completed but Cybrid is still in waiting state
+    identity.state = 'waiting';
+    identity.persona_state = 'completed';
 
     component.verifyIdentity();
     tick();
 
     expect(identitySpy).toHaveBeenCalledTimes(0);
-
     discardPeriodicTasks();
   }));
 

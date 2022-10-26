@@ -41,7 +41,6 @@ export class LoginComponent implements OnInit {
   };
 
   loginForm!: FormGroup<LoginForm>;
-  loading = false;
 
   constructor(
     private http: HttpClient,
@@ -175,11 +174,8 @@ export class LoginComponent implements OnInit {
       )
       .subscribe((customer: CustomerBankModel) => {
         if (customer.guid) {
-          this.loading = true;
-          setTimeout(() => {
-            this.demoCredentials.customer = customer.guid!;
-            this.credentials.next(this.demoCredentials);
-          }, 1000);
+          this.demoCredentials.customer = customer.guid;
+          this.credentials.next(this.demoCredentials);
         }
       });
   }

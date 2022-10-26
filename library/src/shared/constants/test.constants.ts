@@ -127,7 +127,7 @@ export class TestConstants {
   };
 
   // Account-list component test models
-  static ACCOUNT_GUID = '286b3fb4d41c6148e41ea08c4e72c79b';
+  static ACCOUNT_GUID = 'd97bbff33783c4a56806bb94dde9eacb';
 
   static SYMBOL_PRICE_BANK_MODEL_ARRAY: SymbolPriceBankModel[] = [
     {
@@ -153,22 +153,22 @@ export class TestConstants {
     objects: [
       {
         type: 'trading',
-        guid: '7e97a31c331b92f9a06d019ee9c67a0f',
+        guid: '85f532eff8604acc6aae30da86894eef',
         created_at: '2022-06-15T15:37:20.950Z',
         asset: 'ETH',
         name: 'Ethereum',
-        customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
+        customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
         platform_balance: '4.9977367924308e21',
         platform_available: '0',
         state: 'created'
       },
       {
         type: 'trading',
-        guid: '286b3fb4d41c6148e41ea08c4e72c79b',
+        guid: 'd97bbff33783c4a56806bb94dde9eacb',
         created_at: '2022-06-15T15:36:44.627Z',
         asset: 'BTC',
         name: 'Bitcoin',
-        customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
+        customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
         platform_balance: '23218708499',
         platform_available: '0',
         state: 'created'
@@ -200,11 +200,11 @@ export class TestConstants {
 
   static ACCOUNT_BANK_MODEL_BTC: AccountBankModel = {
     type: 'trading',
-    guid: '286b3fb4d41c6148e41ea08c4e72c79b',
+    guid: 'd97bbff33783c4a56806bb94dde9eacb',
     created_at: '2022-06-15T15:36:44.627Z',
     asset: 'BTC',
     name: 'Bitcoin',
-    customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
+    customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
     platform_balance: '23218708499',
     platform_available: '0',
     state: 'created'
@@ -216,7 +216,7 @@ export class TestConstants {
     created_at: '2022-06-15T15:37:20.950Z',
     asset: 'ETH',
     name: 'Ethereum',
-    customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
+    customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
     platform_balance: '4.9977367924308e21',
     platform_available: '0',
     state: 'created'
@@ -249,11 +249,11 @@ export class TestConstants {
     value: 4944888.3490320295,
     account: {
       type: 'trading',
-      guid: '286b3fb4d41c6148e41ea08c4e72c79b',
+      guid: 'd97bbff33783c4a56806bb94dde9eacb',
       created_at: '2022-06-15T15:36:44.627Z',
       asset: 'BTC',
       name: 'Bitcoin',
-      customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
+      customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
       platform_balance: '23218708499',
       platform_available: '0',
       state: 'created'
@@ -293,7 +293,7 @@ export class TestConstants {
           created_at: '2022-06-15T15:37:20.950Z',
           asset: 'ETH',
           name: 'Ethereum',
-          customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
+          customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
           platform_balance: '4.9977394678408e21',
           platform_available: '0',
           state: 'created'
@@ -326,11 +326,11 @@ export class TestConstants {
         value: 5020349.15165378,
         account: {
           type: 'trading',
-          guid: '286b3fb4d41c6148e41ea08c4e72c79b',
+          guid: 'd97bbff33783c4a56806bb94dde9eacb',
           created_at: '2022-06-15T15:36:44.627Z',
           asset: 'BTC',
           name: 'Bitcoin',
-          customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
+          customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
           platform_balance: '23218708499',
           platform_available: '0',
           state: 'created'
@@ -349,7 +349,7 @@ export class TestConstants {
     objects: [
       {
         guid: '718902509b27c72748790655c7edc335',
-        customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
+        customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
         quote_guid: 'a0a37cd751d3a1e9f3c04110795029b7',
         symbol: 'BTC-USD',
         side: 'buy',
@@ -361,7 +361,7 @@ export class TestConstants {
       },
       {
         guid: '70da92652701b36021acfefb74085750',
-        customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
+        customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
         quote_guid: '53abba1599ade22c0797038cc1bcddac',
         symbol: 'BTC-USD',
         side: 'buy',
@@ -377,21 +377,23 @@ export class TestConstants {
   // Identity-verification component test models
 
   static CUSTOMER_BANK_MODEL: CustomerBankModel = {
-    guid: '72892100b5fdd31a1bf7a3c341e64cb8',
+    guid: '378c691c1b5ba3b938e17c1726202fe4',
     type: 'individual',
-    created_at: '2022-08-09T18:02:24.675Z',
+    created_at: '2022-06-14T13:14:53.314Z',
     state: 'unverified'
   };
 
   static IDENTITY_VERIFICATION_BANK_MODEL: IdentityVerificationBankModel = {
-    guid: '70da92652701b36021acfefb74085750',
-    customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
     type: 'kyc',
+    guid: '59b0b22359e821028bdbcd925c753336',
+    customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+    created_at: '2022-10-26T16:33:40.023Z',
     method: 'id_and_selfie',
-    created_at: '2022-08-09T18:02:24.675Z',
     state: 'waiting',
-    persona_state: 'waiting',
-    persona_inquiry_id: 'id'
+    outcome: null,
+    failure_codes: [],
+    persona_inquiry_id: 'inq_C5qXinDn8igsrUgrQwMyTzah',
+    persona_state: 'waiting'
   };
 
   static IDENTITY_VERIFICATION_LIST_BANK_MODEL: IdentityVerificationListBankModel =

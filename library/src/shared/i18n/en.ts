@@ -4,6 +4,7 @@ export default {
   confirm: 'CONFIRM',
   done: 'DONE',
   begin: 'BEGIN',
+  resume: 'RESUME',
   back: 'Back',
   date: 'Date',
   fatal: 'An unrecoverable error occurred',
@@ -127,11 +128,11 @@ export default {
     unexpectedError: 'Unexpected error.',
     checkStatus: 'Checking status...',
     verifying: 'Verifying...',
-    approved: 'You have been verified.',
-    denied: 'Unable to verify identity.',
+    verified: 'You have been verified.',
+    rejected: 'Unable to verify identity.',
+    unverified: 'Begin identity verification.',
     support: 'Please contact customer support.',
-    required: 'Begin identity verification.',
-    completed: 'You have been verified.',
-    reviewing: 'Identity being reviewed.'
+    reviewing: 'Identity being reviewed.',
+    resume: 'Resume identity verification.'
   }
 };

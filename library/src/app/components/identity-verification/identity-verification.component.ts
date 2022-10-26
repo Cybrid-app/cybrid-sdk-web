@@ -220,7 +220,6 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
       'There was an error in the Persona SDK',
       error
     );
-
     this.errorService.handleError(
       new Error(`There was an error in the Persona SDK: ${error}`)
     );
@@ -281,5 +280,12 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+  }
+
+  onComplete(): void {
+    this.routingService.handleRoute({
+      origin: 'identity-verification',
+      route: 'trade'
+    });
   }
 }
