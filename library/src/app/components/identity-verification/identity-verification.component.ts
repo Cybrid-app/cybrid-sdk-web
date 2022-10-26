@@ -285,7 +285,14 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   onComplete(): void {
     this.routingService.handleRoute({
       origin: 'identity-verification',
-      route: 'trade'
+      route: 'price-list'
+    });
+  }
+
+  onCancel(): void {
+    this.routingService.handleRoute({
+      origin: 'identity-verification',
+      route: 'price-list'
     });
   }
 }

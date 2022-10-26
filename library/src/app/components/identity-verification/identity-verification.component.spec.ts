@@ -18,7 +18,8 @@ import {
   ConfigService,
   ErrorService,
   EventService,
-  IdentityVerificationService
+  IdentityVerificationService,
+  RoutingService
 } from '@services';
 
 import { IdentityVerificationComponent } from '@components';
@@ -47,6 +48,9 @@ describe('IdentityVerificationComponent', () => {
       'setPersonaClient'
     ]
   );
+  let MockRoutingService = jasmine.createSpyObj('RoutingService', [
+    'handleRoute'
+  ]);
   const error$ = throwError(() => {
     new Error('Error');
   });
@@ -74,7 +78,8 @@ describe('IdentityVerificationComponent', () => {
         {
           provide: IdentityVerificationService,
           useValue: MockIdentityVerificationService
-        }
+        },
+        { provide: RoutingService, useValue: MockRoutingService }
       ]
     }).compileComponents();
     MockEventService = TestBed.inject(EventService);
@@ -90,6 +95,7 @@ describe('IdentityVerificationComponent', () => {
     MockIdentityVerificationService.getIdentityVerification.and.returnValue(
       of(TestConstants.IDENTITY_VERIFICATION_BANK_MODEL)
     );
+    MockRoutingService = TestBed.inject(RoutingService);
 
     fixture = TestBed.createComponent(IdentityVerificationComponent);
     component = fixture.componentInstance;
@@ -321,5 +327,17 @@ describe('IdentityVerificationComponent', () => {
 
     expect(MockErrorService.handleError).toHaveBeenCalled();
     expect(MockEventService.handleEvent).toHaveBeenCalled();
+  });
+
+  it('should route when onComplete()', () => {
+    component.onComplete();
+
+    expect(MockRoutingService.handleRoute).toHaveBeenCalled();
+  });
+
+  it('should route when onCancel()', () => {
+    component.onCancel();
+
+    expect(MockRoutingService.handleRoute).toHaveBeenCalled();
   });
 });

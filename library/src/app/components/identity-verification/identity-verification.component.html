@@ -70,6 +70,7 @@
                   id="cancel"
                   mat-stroked-button
                   [disabled]="state === 'verified' || state === 'rejected'"
+                  (click)="onCancel()"
                 >
                   {{ 'cancel' | translate }}
                 </button>
@@ -157,7 +158,9 @@
               </div>
             </div>
             <div class="verification-actions">
-              <button mat-stroked-button>{{ 'cancel' | translate }}</button>
+              <button mat-stroked-button (click)="onCancel()">
+                {{ 'cancel' | translate }}
+              </button>
               <button
                 mat-flat-button
                 color="primary"

@@ -11,7 +11,7 @@ module.exports = [
     target: 'web',
     entry: ['/dist/library/cybrid-sdk-ui.min.js'],
     output: {
-      path: path.resolve(__dirname, 'html-test'),
+      path: path.resolve(__dirname, 'dist/library'),
       filename: 'cybrid-sdk-ui.min.js',
       library: 'cybrid-sdk-ui-js',
       libraryTarget: 'umd'
