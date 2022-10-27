@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-cybrid-logo',
-  templateUrl: './cybrid-logo.component.html'
+  templateUrl: './cybrid-logo.component.svg'
 })
 export class CybridLogoComponent {
   // TODO When implementing global style variables map this to the 'primary' colour

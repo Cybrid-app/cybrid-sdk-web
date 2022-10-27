@@ -132,7 +132,7 @@ describe('IdentityVerificationComponent', () => {
     const identity$Spy = spyOn(component.identity$, 'next');
 
     component.verifyIdentity();
-    tick(5000);
+    tick();
 
     expect(handleIdentityVerificationStateSpy).toHaveBeenCalledWith(
       TestConstants.IDENTITY_VERIFICATION_BANK_MODEL

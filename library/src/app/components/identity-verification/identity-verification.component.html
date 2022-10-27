@@ -6,6 +6,7 @@
       ></app-cybrid-logo>
     </mat-card-title>
     <mat-card-content>
+      <!-- Error -->
       <ng-container *ngIf="error$ | async; else content">
         <div class="verification-content">
           <div>
@@ -16,6 +17,8 @@
           </div>
         </div>
       </ng-container>
+
+      <!-- Content -->
       <ng-template #content>
         <ng-container *ngIf="isLoading$ | async">
           <div class="verification-content">
@@ -30,52 +33,26 @@
           </div>
         </ng-container>
         <mat-stepper #stepper linear="true" animationDuration="0">
+          <!-- Customer Step -->
           <mat-step>
-            <ng-container *ngIf="(customer$ | async)?.state as state">
-              <ng-container [ngSwitch]="state">
-                <ng-container *ngSwitchCase="'verified'">
-                  <div class="verification-content">
-                    <div>
-                      <mat-icon color="primary">check_circle</mat-icon>
-                      <strong>{{
-                        'identityVerification.verified' | translate
-                      }}</strong>
-                    </div>
-                  </div>
-                </ng-container>
-                <ng-container *ngSwitchCase="'rejected'">
-                  <div class="verification-content">
-                    <div>
-                      <mat-icon color="warn">cancel</mat-icon>
-                      <strong>{{
-                        'identityVerification.rejected' | translate
-                      }}</strong>
-                    </div>
-                    <p>{{ 'identityVerification.support' | translate }}</p>
-                  </div>
-                </ng-container>
-                <ng-container *ngSwitchCase="'unverified'">
-                  <div class="verification-content">
-                    <div>
-                      <mat-icon color="primary">arrow_circle_right</mat-icon>
-                      <strong>{{
-                        'identityVerification.unverified' | translate
-                      }}</strong>
-                    </div>
-                  </div>
-                </ng-container>
-              </ng-container>
+            <ng-container *ngIf="customer$ | async as customer">
+              <app-customer-content
+                [customer]="customer"
+              ></app-customer-content>
               <div class="verification-actions">
                 <button
                   id="cancel"
                   mat-stroked-button
-                  [disabled]="state === 'verified' || state === 'rejected'"
+                  [disabled]="
+                    customer.state === 'verified' ||
+                    customer.state === 'rejected'
+                  "
                   (click)="onCancel()"
                 >
                   {{ 'cancel' | translate }}
                 </button>
                 <button
-                  *ngIf="state === 'unverified'; else done"
+                  *ngIf="customer.state === 'unverified'; else done"
                   id="verify"
                   mat-flat-button
                   color="primary"
@@ -97,46 +74,13 @@
               </div>
             </ng-container>
           </mat-step>
+
+          <!-- Identity Step -->
           <mat-step>
             <ng-container *ngIf="identity$ | async as identity">
-              <ng-container [ngSwitch]="identity.outcome">
-                <ng-container *ngSwitchCase="'passed'">
-                  <div class="verification-content">
-                    <div>
-                      <mat-icon color="primary">check_circle</mat-icon>
-                      <strong>{{
-                        'identityVerification.verified' | translate
-                      }}</strong>
-                    </div>
-                  </div>
-                </ng-container>
-                <ng-container *ngSwitchCase="'failed'">
-                  <div class="verification-content">
-                    <div>
-                      <mat-icon color="warn">cancel</mat-icon>
-                      <strong>{{
-                        'identityVerification.rejected' | translate
-                      }}</strong>
-                    </div>
-                    <p *ngFor="let reason of identity.failure_codes">
-                      {{ reason }}
-                    </p>
-                  </div>
-                </ng-container>
-                <ng-container *ngSwitchDefault>
-                  <ng-container *ngIf="identity.persona_state === 'reviewing'">
-                    <div class="verification-content">
-                      <div>
-                        <mat-icon color="primary">help</mat-icon>
-                        <strong>{{
-                          'identityVerification.reviewing' | translate
-                        }}</strong>
-                      </div>
-                      <p>{{ 'identityVerification.support' | translate }}</p>
-                    </div>
-                  </ng-container>
-                </ng-container>
-              </ng-container>
+              <app-identity-content
+                [identity]="identity"
+              ></app-identity-content>
               <div class="verification-actions">
                 <button
                   id="identity-button-done"
@@ -150,6 +94,8 @@
               </div>
             </ng-container>
           </mat-step>
+
+          <!-- Resume step -->
           <mat-step>
             <div class="verification-content">
               <div>

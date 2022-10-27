@@ -55,6 +55,8 @@ import {
   AccountDetailsComponent,
   NavigationComponent,
   IdentityVerificationComponent,
+  IdentityContentComponent,
+  CustomerContentComponent,
   CybridLogoComponent
 } from '@components';
 
@@ -81,6 +83,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     LoadingComponent,
     NavigationComponent,
     IdentityVerificationComponent,
+    IdentityContentComponent,
+    CustomerContentComponent,
     CybridLogoComponent,
     AssetPipe,
     TruncatePipe
