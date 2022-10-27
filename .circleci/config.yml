@@ -44,15 +44,15 @@ jobs:
       - image: cimg/node:16.18.0
     working_directory: ~/project
     steps:
-      - checkout
       - run:
           name: Check Persona version
           command: |
             export LATEST=$(curl https://registry.npmjs.org/persona/latest | jq -r '. | .version')
-            if [ "$LATEST"  = "$PERSONA_VERSION" ]; then
+            export CURRENT=$(grep 'PERSONA' -A 1 library/src/shared/constants/constants.ts | grep 'https' | sed 's/.*-v\(.*\).js.*/\1/')
+            if [ "$LATEST"  = "$CURRENT" ]; then
               echo "Persona is up to date."
             else
-              echo "New Persona version available"
+              echo "Error: new Persona version available."
               exit 1
             fi
 
