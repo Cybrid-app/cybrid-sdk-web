@@ -72,6 +72,7 @@ jobs:
 workflows:
   web-build-and-test:
     jobs:
+      - check-versions
       - node/test:
           name: test
           version: 16.14.2-browsers
