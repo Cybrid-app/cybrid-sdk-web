@@ -21,6 +21,8 @@ export class Constants {
   static THEME = THEME.LIGHT;
   static ROUTING = true;
   static ICON_HOST = 'https://images.cybrid.xyz/sdk/assets/svg/color/';
+  static PERSONA_SCRIPT_SRC =
+    'https://cdn.withpersona.com/dist/persona-v4.6.0.js';
   static BTC_ICON = 'https://images.cybrid.xyz/sdk/assets/svg/color/btc.svg';
   static USD_ICON = 'https://images.cybrid.xyz/sdk/assets/svg/color/usd.svg';
   static BTC_ASSET: Asset = {
@@ -48,4 +50,6 @@ export class Constants {
     fiat: 'USD'
   };
   static DEFAULT_COMPONENT = 'price-list';
+  static POLL_DURATION = 5000;
+  static POLL_INTERVAL = 1000;
 }

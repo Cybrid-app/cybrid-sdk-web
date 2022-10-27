@@ -1,0 +1,34 @@
+<ng-container [ngSwitch]="identity.outcome">
+  <ng-container *ngSwitchCase="'passed'">
+    <div class="verification-content">
+      <div>
+        <mat-icon color="primary">check_circle</mat-icon>
+        <strong>{{ 'identityVerification.verified' | translate }}</strong>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="'failed'">
+    <div class="verification-content">
+      <div>
+        <mat-icon color="warn">cancel</mat-icon>
+        <strong>{{ 'identityVerification.rejected' | translate }}</strong>
+      </div>
+      <p *ngFor="let reason of identity.failure_codes">
+        {{ reason }}
+      </p>
+    </div>
+  </ng-container>
+
+  <ng-container *ngSwitchDefault>
+    <ng-container *ngIf="identity.persona_state === 'reviewing'">
+      <div class="verification-content">
+        <div>
+          <mat-icon color="primary">help</mat-icon>
+          <strong>{{ 'identityVerification.reviewing' | translate }}</strong>
+        </div>
+        <p>{{ 'identityVerification.support' | translate }}</p>
+      </div>
+    </ng-container>
+  </ng-container>
+</ng-container>

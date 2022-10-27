@@ -6,3 +6,4 @@ export { EventService, LEVEL, CODE, EventLog } from './event/event.service';
 export { QuoteService } from './quote/quote.service';
 export { AccountService, Account } from './account/account.service';
 export { RoutingService, RoutingData } from './routing/routing.service';
+export { IdentityVerificationService } from './identity-verification/identity-verification.service';

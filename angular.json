@@ -222,7 +222,8 @@
             "codeCoverageExclude": [
               "library/src/app/modules/*",
               "library/src/shared/utility/*",
-              "library/src/shared/pipes/asset/mock-asset.pipe.ts"
+              "library/src/shared/pipes/asset/mock-asset.pipe.ts",
+              "library/src/app/components/identity-verification/*.ts"
             ],
             "inlineStyleLanguage": "scss",
             "styles": ["library/src/shared/styles/theme.scss"],

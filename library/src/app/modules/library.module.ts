@@ -36,7 +36,8 @@ import {
   QuoteService,
   AssetService,
   RoutingService,
-  AccountService
+  AccountService,
+  IdentityVerificationService
 } from '@services';
 
 // Interceptors
@@ -52,7 +53,11 @@ import {
   TradeSummaryComponent,
   AccountListComponent,
   AccountDetailsComponent,
-  NavigationComponent
+  NavigationComponent,
+  IdentityVerificationComponent,
+  IdentityContentComponent,
+  CustomerContentComponent,
+  CybridLogoComponent
 } from '@components';
 
 // Utility
@@ -77,6 +82,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     AccountDetailsComponent,
     LoadingComponent,
     NavigationComponent,
+    IdentityVerificationComponent,
+    IdentityContentComponent,
+    CustomerContentComponent,
+    CybridLogoComponent,
     AssetPipe,
     TruncatePipe
   ],
@@ -118,6 +127,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AssetService,
     AccountService,
     AssetPipe,
+    IdentityVerificationService,
     TruncatePipe,
     TranslatePipe,
     { provide: APP_BASE_HREF, useValue: '' },

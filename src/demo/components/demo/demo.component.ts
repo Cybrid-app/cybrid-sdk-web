@@ -30,7 +30,13 @@ export class DemoComponent implements OnDestroy {
 
   token = '';
 
-  webComponents = ['price-list', 'trade', 'account-list', 'account-details'];
+  webComponents = [
+    'price-list',
+    'trade',
+    'account-list',
+    'account-details',
+    'identity-verification'
+  ];
   languages = ['en-US', 'fr-CA'];
 
   componentRef!: ComponentRef<AppComponent>;
