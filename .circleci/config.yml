@@ -44,6 +44,7 @@ jobs:
       - image: cimg/node:16.18.0
     working_directory: ~/project
     steps:
+      - checkout
       - run:
           name: Check Persona version
           command: |
