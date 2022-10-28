@@ -39,6 +39,24 @@ jobs:
           name: Publish library
           command: npm run publish:library
 
+  check-versions:
+    docker:
+      - image: cimg/node:16.18.0
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run:
+          name: Check Persona version
+          command: |
+            export LATEST=$(curl https://registry.npmjs.org/persona/latest | jq -r '. | .version')
+            export CURRENT=$(grep 'PERSONA' -A 1 library/src/shared/constants/constants.ts | grep 'https' | sed 's/.*-v\(.*\).js.*/\1/')
+            if [ "$LATEST" = "$CURRENT" ]; then
+              echo "Persona is up to date."
+            else
+              echo "Error: new Persona version available."
+              exit 1
+            fi
+
   deploy-demo:
     docker:
       - image: cimg/node:16.18.0
@@ -55,6 +73,7 @@ jobs:
 workflows:
   web-build-and-test:
     jobs:
+      - check-versions
       - node/test:
           name: test
           version: 16.14.2-browsers
