@@ -40,12 +40,18 @@ export class LoginComponent implements OnInit {
     customer: ''
   };
 
+  // PUBLIC CREDENTIALS FOR NO-LOGIN DEMO
+  readonly publicClientId = 'gtlpql9qUwhhhRBKemkWG2aIofhUZBf-J_1QY-nsNg8';
+  readonly publicClientSecret = '2eEo_u3MYyzawlB7Cm4-mP397EzOz5tAZwQFTiF6EKc';
+  readonly publicCustomerGuid = '72892100b5fdd31a1bf7a3c341e64cb8';
+
   loginForm!: FormGroup<LoginForm>;
 
   constructor(
     private http: HttpClient,
     private configService: DemoConfigService
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.initLoginForm();
@@ -104,12 +110,19 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  login(): void {
-    // Returns bearer token if input, or calls api with keys
+  login(publicUser?: boolean): void {
     const token = (): Observable<string> => {
-      return this.bearer
-        ? of(this.loginForm.controls.bearerToken.value)
-        : this.configService
+      // Logs in public user
+      if (publicUser) {
+        return this.configService.createToken(
+          this.publicClientId,
+          this.publicClientSecret
+        );
+      } else {
+        // Returns bearer token if input, or calls api with keys
+        return this.bearer
+          ? of(this.loginForm.controls.bearerToken.value)
+          : this.configService
             .createToken(
               this.loginForm.value.clientId,
               this.loginForm.value.clientSecret
@@ -122,6 +135,7 @@ export class LoginComponent implements OnInit {
                 return of(err);
               })
             );
+      }
     };
 
     // Validates customer and sets credentials
@@ -132,7 +146,12 @@ export class LoginComponent implements OnInit {
           return token;
         }),
         switchMap((token) => {
-          const url = this.customerApi + this.loginForm.value.customerGuid;
+          const user = () =>
+            publicUser
+              ? this.publicCustomerGuid
+              : this.loginForm.value.customerGuid;
+
+          const url = this.customerApi + user();
           const httpOptions = {
             headers: new HttpHeaders({
               'Content-Type': 'application/json',
