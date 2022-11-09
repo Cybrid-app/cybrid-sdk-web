@@ -98,9 +98,18 @@ export class IdentityVerificationService implements OnDestroy {
   handleIdentityVerificationState(
     identity: IdentityVerificationBankModel
   ): Observable<IdentityVerificationBankModel> {
-    if (identity.state == 'expired' || identity.persona_state == 'expired') {
-      return this.createIdentityVerification();
-    } else return of(identity);
+    return this.identityVerificationService
+      .getIdentityVerification(identity.guid!)
+      .pipe(
+        switchMap((identity) => {
+          if (
+            identity.state == 'expired' ||
+            identity.persona_state == 'expired'
+          ) {
+            return this.createIdentityVerification();
+          } else return of(identity);
+        })
+      );
   }
 
   setPersonaClient(client: any): void {
