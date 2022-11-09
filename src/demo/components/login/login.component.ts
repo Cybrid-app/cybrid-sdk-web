@@ -50,8 +50,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private configService: DemoConfigService
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.initLoginForm();
@@ -123,18 +122,18 @@ export class LoginComponent implements OnInit {
         return this.bearer
           ? of(this.loginForm.controls.bearerToken.value)
           : this.configService
-            .createToken(
-              this.loginForm.value.clientId,
-              this.loginForm.value.clientSecret
-            )
-            .pipe(
-              catchError((err) => {
-                this.loginForm.controls.clientId.setErrors({
-                  unauthorized: true
-                });
-                return of(err);
-              })
-            );
+              .createToken(
+                this.loginForm.value.clientId,
+                this.loginForm.value.clientSecret
+              )
+              .pipe(
+                catchError((err) => {
+                  this.loginForm.controls.clientId.setErrors({
+                    unauthorized: true
+                  });
+                  return of(err);
+                })
+              );
       }
     };
 
