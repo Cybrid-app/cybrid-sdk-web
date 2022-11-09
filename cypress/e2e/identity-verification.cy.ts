@@ -149,7 +149,11 @@ describe('identity-verification test', () => {
 
     cy.intercept('GET', 'api/identity_verifications*', (req) => {
       req.reply(identity);
-    }).as('getIdentity');
+    });
+
+    cy.intercept('GET', 'api/identity_verifications/*', (req) => {
+      req.reply(identity.objects[0]);
+    });
 
     identityVerificationSetup();
     app().find('#verify').click();
@@ -176,6 +180,10 @@ describe('identity-verification test', () => {
     cy.intercept('GET', 'api/identity_verifications*', (req) => {
       req.reply(identity);
     }).as('getIdentity');
+
+    cy.intercept('GET', 'api/identity_verifications/*', (req) => {
+      req.reply(identity.objects[0]);
+    });
 
     identityVerificationSetup();
     app().find('#verify').click();
@@ -206,6 +214,10 @@ describe('identity-verification test', () => {
     cy.intercept('GET', 'api/identity_verifications*', (req) => {
       req.reply(identity);
     }).as('getIdentity');
+
+    cy.intercept('GET', 'api/identity_verifications/*', (req) => {
+      req.reply(identity.objects[0]);
+    });
 
     identityVerificationSetup();
     app().find('#verify').click();

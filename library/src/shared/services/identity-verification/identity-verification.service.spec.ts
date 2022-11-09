@@ -29,6 +29,9 @@ describe('IdentityVerificationService', () => {
       ),
       listIdentityVerifications: of(
         TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL
+      ),
+      getIdentityVerification: of(
+        TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
       )
     }
   );
@@ -124,22 +127,31 @@ describe('IdentityVerificationService', () => {
       ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
     };
     expiredIdentity.state = 'expired';
+    MockIdentityVerificationsService.getIdentityVerification.and.returnValue(
+      of(expiredIdentity)
+    );
+
     service
       .handleIdentityVerificationState(expiredIdentity)
-      .subscribe(() =>
+      .subscribe((res) => {
+        console.log(res);
         expect(
-          MockIdentityVerificationsService.createIdentityVerification
-        ).toHaveBeenCalled()
-      );
+          MockIdentityVerificationsService.getIdentityVerification
+        ).toHaveBeenCalled();
+      });
 
     // Expired Persona state
     let expiredPersona = { ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL };
     expiredPersona.persona_state = 'expired';
+    MockIdentityVerificationsService.getIdentityVerification.and.returnValue(
+      of(expiredIdentity)
+    );
+
     service
       .handleIdentityVerificationState(expiredIdentity)
       .subscribe(() =>
         expect(
-          MockIdentityVerificationsService.createIdentityVerification
+          MockIdentityVerificationsService.getIdentityVerification
         ).toHaveBeenCalled()
       );
   });
