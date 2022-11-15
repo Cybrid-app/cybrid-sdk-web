@@ -42,13 +42,6 @@
   }
 }
 
-.cybrid-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  margin-bottom: 1rem;
-}
-
 .cybrid-table {
   position: relative;
 }
@@ -123,9 +116,9 @@ mat-progress-bar {
     }
   }
 
-  .cybrid-actions {
-    display: none;
-  }
+  //.cybrid-actions {
+  //  display: none;
+  //}
 
   .cybrid-icon {
     height: inherit;

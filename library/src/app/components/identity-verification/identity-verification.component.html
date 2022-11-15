@@ -2,7 +2,7 @@
   <ng-container *ngIf="configService.getConfig$() | async as config">
     <mat-card-title>
       <app-cybrid-logo
-        fill="{{ config.theme === 'LIGHT' ? '#3f51b5' : 'white' }}"
+        fill="{{ config.theme === 'LIGHT' ? '#0270e0' : 'white' }}"
       ></app-cybrid-logo>
     </mat-card-title>
     <mat-card-content>
@@ -39,7 +39,7 @@
               <app-customer-content
                 [customer]="customer"
               ></app-customer-content>
-              <div class="verification-actions">
+              <div class="cybrid-actions">
                 <button
                   id="cancel"
                   mat-stroked-button
@@ -81,7 +81,7 @@
               <app-identity-content
                 [identity]="identity"
               ></app-identity-content>
-              <div class="verification-actions">
+              <div class="cybrid-actions">
                 <button
                   id="identity-button-done"
                   mat-flat-button
@@ -103,7 +103,7 @@
                 <strong>{{ 'identityVerification.resume' | translate }}</strong>
               </div>
             </div>
-            <div class="verification-actions">
+            <div class="cybrid-actions">
               <button mat-stroked-button (click)="onCancel()">
                 {{ 'cancel' | translate }}
               </button>

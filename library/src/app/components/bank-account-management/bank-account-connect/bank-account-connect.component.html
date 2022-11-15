@@ -1,0 +1,76 @@
+<ng-container *ngIf="configService.getConfig$() | async as config">
+  <mat-card-title>
+    <app-cybrid-logo
+      fill="{{ config.theme === 'LIGHT' ? '#0270e0' : 'white' }}"
+    ></app-cybrid-logo>
+  </mat-card-title>
+  <mat-card-content>
+    <!-- Error -->
+    <ng-container *ngIf="error$ | async; else content">
+      <div class="connect-content">
+        <div>
+          <mat-icon color="warn">cancel</mat-icon>
+          <strong>{{
+            'identityVerification.unexpectedError' | translate
+          }}</strong>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #content>
+      <mat-stepper #stepper linear="true" animationDuration="0">
+        <!-- Connect Step -->
+        <mat-step>
+          <div class="connect-content">
+            <div>
+              <ng-container *ngIf="isLoading$ | async; else success">
+                <app-loading [diameter]="16"></app-loading>
+                <strong>Adding account...</strong></ng-container
+              >
+              <ng-template #success>
+                <mat-icon color="primary">check_circle</mat-icon>
+                <strong>Account successfully added.</strong>
+              </ng-template>
+            </div>
+          </div>
+          <div class="cybrid-actions">
+            <button
+              mat-flat-button
+              color="primary"
+              (click)="onComplete()"
+              [disabled]="isLoading$ | async"
+            >
+              Done
+            </button>
+          </div>
+        </mat-step>
+
+        <!-- Resume step -->
+        <mat-step>
+          <div class="connect-content">
+            <div>
+              <mat-icon color="primary">play_circle</mat-icon>
+              <strong>Resume adding account.</strong>
+            </div>
+          </div>
+          <div class="cybrid-actions">
+            <button
+              mat-stroked-button
+              matStepperPrevious
+              (click)="onComplete()"
+            >
+              Cancel
+            </button>
+            <button
+              mat-flat-button
+              color="primary"
+              matStepperPrevious
+              (click)="onAddAccount()"
+            >
+              Resume
+            </button>
+          </div>
+        </mat-step>
+      </mat-stepper>
+    </ng-template>
+  </mat-card-content>
+</ng-container>

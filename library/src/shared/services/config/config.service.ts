@@ -14,6 +14,7 @@ export interface ComponentConfig {
   theme: string;
   routing: boolean;
   customer: string; // Temporary solution until the JWT embeds a customer GUID
+  bank?: string;
   fiat: string;
 }
 

@@ -1,0 +1,3 @@
+var Plaid = {
+  create: function () {}
+};

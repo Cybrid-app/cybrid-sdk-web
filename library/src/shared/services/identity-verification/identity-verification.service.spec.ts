@@ -131,14 +131,11 @@ describe('IdentityVerificationService', () => {
       of(expiredIdentity)
     );
 
-    service
-      .handleIdentityVerificationState(expiredIdentity)
-      .subscribe((res) => {
-        console.log(res);
-        expect(
-          MockIdentityVerificationsService.getIdentityVerification
-        ).toHaveBeenCalled();
-      });
+    service.handleIdentityVerificationState(expiredIdentity).subscribe(() => {
+      expect(
+        MockIdentityVerificationsService.getIdentityVerification
+      ).toHaveBeenCalled();
+    });
 
     // Expired Persona state
     let expiredPersona = { ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL };

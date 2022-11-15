@@ -115,18 +115,19 @@
               </ng-container>
             </div>
           </div>
-          <button
-            id="action"
-            class="cybrid-action"
-            mat-flat-button
-            color="primary"
-            (click)="onTrade()"
-            [disabled]="
-              !quoteGroup.valid || !(amount.value.toString().length > 0)
-            "
-          >
-            {{ 'trade.' + side.toString() | translate | uppercase }}
-          </button>
+          <div class="cybrid-actions">
+            <button
+              id="action"
+              mat-flat-button
+              color="primary"
+              (click)="onTrade()"
+              [disabled]="
+                !quoteGroup.valid || !(amount.value.toString().length > 0)
+              "
+            >
+              {{ 'trade.' + side.toString() | translate | uppercase }}
+            </button>
+          </div>
         </div>
       </ng-container>
     </ng-container>

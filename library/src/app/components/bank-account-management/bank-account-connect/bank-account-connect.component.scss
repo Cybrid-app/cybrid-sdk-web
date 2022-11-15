@@ -1,0 +1,25 @@
+.connect-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+
+  div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1em;
+    gap: 0.5em;
+
+    :last-child {
+      margin-right: 0.5em;
+    }
+  }
+
+  p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5em;
+  }
+}

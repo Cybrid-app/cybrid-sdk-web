@@ -23,6 +23,8 @@ export class Constants {
   static ICON_HOST = 'https://images.cybrid.xyz/sdk/assets/svg/color/';
   static PERSONA_SCRIPT_SRC =
     'https://cdn.withpersona.com/dist/persona-v4.6.0.js';
+  static PLAID_SCRIPT_SRC =
+    'https://cdn.plaid.com/link/v2/stable/link-initialize.js';
   static BTC_ICON = 'https://images.cybrid.xyz/sdk/assets/svg/color/btc.svg';
   static USD_ICON = 'https://images.cybrid.xyz/sdk/assets/svg/color/usd.svg';
   static BTC_ASSET: Asset = {
@@ -47,6 +49,7 @@ export class Constants {
     theme: Constants.THEME,
     routing: Constants.ROUTING,
     customer: '',
+    bank: 'b36cf9028e2356de7732e4c505c84fbc',
     fiat: 'USD'
   };
   static DEFAULT_COMPONENT = 'price-list';
