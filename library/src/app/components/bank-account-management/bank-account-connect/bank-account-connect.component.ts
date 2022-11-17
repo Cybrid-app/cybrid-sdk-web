@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { Platform } from '@angular/cdk/platform';
 import { MatStepper } from '@angular/material/stepper';
 
 import {
@@ -43,7 +43,6 @@ import {
 import { Constants } from '@constants';
 import { Poll, PollConfig } from '../../../../shared/utility/poll/poll';
 import { getLanguageFromLocale } from '../../../../shared/utility/locale-language';
-import { Platform } from '@angular/cdk/platform';
 
 @Component({
   selector: 'app-bank-account-connect',
@@ -65,7 +64,6 @@ export class BankAccountConnectComponent implements OnInit {
     duration: Constants.POLL_DURATION
   };
 
-  internalRouting = false;
   routingData: RoutingData = {
     origin: 'bank-account-connect',
     route: 'price-list'
@@ -85,7 +83,6 @@ export class BankAccountConnectComponent implements OnInit {
     private bankAccountService: BankAccountService,
     private workflowService: WorkflowsService,
     private banksService: BanksService,
-    private route: ActivatedRoute,
     private router: RoutingService,
     private _renderer2: Renderer2,
     private platform: Platform

@@ -49,7 +49,7 @@ export class Constants {
     theme: Constants.THEME,
     routing: Constants.ROUTING,
     customer: '',
-    bank: 'b36cf9028e2356de7732e4c505c84fbc',
+    bank: '',
     fiat: 'USD'
   };
   static DEFAULT_COMPONENT = 'price-list';

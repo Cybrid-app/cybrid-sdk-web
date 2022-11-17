@@ -157,6 +157,8 @@ describe('BankAccountConnectComponent', () => {
   });
 
   it('should handle plaidOnSuccess()', () => {
+    const errorSpy = spyOn(component.error$, 'next');
+
     let testPlaidMetadata = {
       accounts: [{ name: 'test', id: 'test', iso_currency_code: 'USD' }]
     };
@@ -173,10 +175,12 @@ describe('BankAccountConnectComponent', () => {
 
     component.plaidOnSuccess('', testPlaidMetadata);
 
+    expect(errorSpy).toHaveBeenCalled();
+    errorSpy.calls.reset();
+
     // Undefined asset
     // @ts-ignore
     testPlaidMetadata.accounts[0].iso_currency_code = undefined;
-    const errorSpy = spyOn(component.error$, 'next');
 
     component.plaidOnSuccess('', testPlaidMetadata);
 

@@ -37,7 +37,7 @@ export class TestConstants {
     theme: 'LIGHT',
     routing: true,
     customer: '',
-    bank: 'b36cf9028e2356de7732e4c505c84fbc',
+    bank: '',
     fiat: 'USD'
   };
 
