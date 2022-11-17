@@ -97,6 +97,9 @@ describe('BankAccountConnectComponent', () => {
     );
     MockBankAccountService.getPlaidClient.and.returnValue(of(false));
 
+    // Reset call count
+    MockBankAccountService.getPlaidClient.calls.reset();
+
     fixture = TestBed.createComponent(BankAccountConnectComponent);
     component = fixture.componentInstance;
     component.plaidScriptSrc = '/assets/plaidTestScript.js';
@@ -135,7 +138,10 @@ describe('BankAccountConnectComponent', () => {
     MockBankAccountService.getPlaidClient.and.returnValue(of(true));
     component.bootstrapPlaid('');
 
-    expect(MockBankAccountService.setPlaidClient).toHaveBeenCalledWith(true);
+    // Ensure only one client has been loaded
+    expect(MockBankAccountService.setPlaidClient).toHaveBeenCalledOnceWith(
+      true
+    );
   });
 
   it('should handle errors when bootstrapping plaid', () => {
@@ -175,6 +181,8 @@ describe('BankAccountConnectComponent', () => {
   });
 
   it('should handle plaidOnExit()', () => {
+    component.ngOnInit();
+
     const stepperSpy = spyOn(component.stepper, 'next');
 
     // Default exit
@@ -183,7 +191,7 @@ describe('BankAccountConnectComponent', () => {
     expect(stepperSpy).toHaveBeenCalled();
 
     // Exit on error
-    component.plaidOnExit('', 'error');
+    component.plaidOnExit('error');
 
     expect(MockErrorService.handleError).toHaveBeenCalled();
     expect(MockEventService.handleEvent).toHaveBeenCalled();
@@ -192,5 +200,17 @@ describe('BankAccountConnectComponent', () => {
   it('should navigate onComplete()', () => {
     component.onComplete();
     expect(MockRoutingService.handleRoute).toHaveBeenCalled();
+  });
+
+  it('should be disabled on mobile', () => {
+    const mobileSpy = spyOn(component.mobile$, 'next');
+
+    // Emulate mobile
+    component.isMobile = () => true;
+
+    // Re-initialize component
+    component.ngOnInit();
+
+    expect(mobileSpy).toHaveBeenCalledWith(true);
   });
 });

@@ -15,6 +15,14 @@ function customCommand(param: any): void {
 
 // @ts-ignore
 Cypress.Commands.add('login', () => {
+  cy.intercept(
+    'GET',
+    'https://api.github.com/repos/Cybrid-app/cybrid-sdk-web/releases/latest',
+    (req) => {
+      req.reply({});
+    }
+  );
+
   cy.visit('/');
   cy.get('app-login')
     .should('exist')

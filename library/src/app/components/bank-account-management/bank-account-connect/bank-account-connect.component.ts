@@ -43,6 +43,7 @@ import {
 import { Constants } from '@constants';
 import { Poll, PollConfig } from '../../../../shared/utility/poll/poll';
 import { getLanguageFromLocale } from '../../../../shared/utility/locale-language';
+import { Platform } from '@angular/cdk/platform';
 
 @Component({
   selector: 'app-bank-account-connect',
@@ -70,6 +71,10 @@ export class BankAccountConnectComponent implements OnInit {
     route: 'price-list'
   };
 
+  mobile$: BehaviorSubject<boolean | null> = new BehaviorSubject<
+    boolean | null
+  >(null);
+
   plaidScriptSrc = Constants.PLAID_SCRIPT_SRC;
 
   constructor(
@@ -82,11 +87,23 @@ export class BankAccountConnectComponent implements OnInit {
     private banksService: BanksService,
     private route: ActivatedRoute,
     private router: RoutingService,
-    private _renderer2: Renderer2
+    private _renderer2: Renderer2,
+    private platform: Platform
   ) {}
 
   ngOnInit() {
-    this.onAddAccount();
+    this.eventService.handleEvent(
+      LEVEL.INFO,
+      CODE.COMPONENT_INIT,
+      'Initializing bank-account-connect component'
+    );
+    if (this.isMobile()) {
+      this.mobile$.next(true);
+    } else this.onAddAccount();
+  }
+
+  isMobile(): boolean {
+    return this.platform.IOS || this.platform.ANDROID;
   }
 
   onAddAccount(): void {
@@ -146,6 +163,11 @@ export class BankAccountConnectComponent implements OnInit {
             script.src = this.plaidScriptSrc;
             this._renderer2.appendChild(this._document.body, script);
 
+            // Handle error loading the Plaid script
+            script.onerror = () => {
+              this.error$.next(true);
+            };
+
             script.addEventListener('load', () => {
               this.plaidCreate(linkToken, language);
             });
@@ -180,7 +202,7 @@ export class BankAccountConnectComponent implements OnInit {
       onLoad: () => {
         client.open();
       },
-      onExit: (err: any) => this.plaidOnExit(client, err)
+      onExit: (err: any) => this.plaidOnExit(err)
     });
   }
 
@@ -188,8 +210,8 @@ export class BankAccountConnectComponent implements OnInit {
     let customerGuid: string;
 
     // TODO: Test iso_currency_code out of sandbox. Set here to 'USD'
-    const asset = 'USD';
-    // const asset = metadata.accounts[0].iso_currency_code;
+    // const asset = 'USD';
+    const asset = metadata.accounts[0].iso_currency_code;
     const account = metadata.accounts[0];
 
     // Validate the asset is iso_currency
@@ -209,14 +231,15 @@ export class BankAccountConnectComponent implements OnInit {
                 account.id,
                 asset
               );
-            } else return throwError(() => new Error());
+            } else return throwError(() => new Error('Unsupported asset'));
           }),
           catchError((err: any) => {
             this.error$.next(true);
             this.eventService.handleEvent(
               LEVEL.ERROR,
               CODE.DATA_ERROR,
-              'There was an error creating a bank account'
+              'There was an error creating a bank account',
+              err
             );
 
             this.errorService.handleError(
@@ -228,10 +251,16 @@ export class BankAccountConnectComponent implements OnInit {
         .subscribe(() => this.isLoading$.next(false));
     } else {
       this.error$.next(true);
+      this.eventService.handleEvent(
+        LEVEL.ERROR,
+        CODE.DATA_ERROR,
+        'Unsupported asset'
+      );
+      this.errorService.handleError(new Error('Unsupported asset'));
     }
   }
 
-  plaidOnExit(client: any, err?: any): void {
+  plaidOnExit(err?: any): void {
     if (err) {
       this.error$.next(true);
       this.eventService.handleEvent(
