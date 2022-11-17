@@ -131,6 +131,9 @@ describe('BankAccountConnectComponent', () => {
   });
 
   it('should bootstrap the Plaid sdk', () => {
+    // Reset call count
+    MockBankAccountService.setPlaidClient.calls.reset();
+
     // Default
     component.bootstrapPlaid('');
 
