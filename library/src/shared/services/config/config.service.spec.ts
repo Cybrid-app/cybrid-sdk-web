@@ -22,8 +22,9 @@ describe('ConfigService', () => {
     'use'
   ]);
 
-  // Reset temp customer GUID to mock prod
+  // Reset config to mock prod
   TestConstants.CONFIG.customer = '';
+  TestConstants.CONFIG.bank = '';
 
   beforeEach(() => {
     TestBed.configureTestingModule({

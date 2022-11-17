@@ -84,6 +84,7 @@ export class ConfigService implements OnDestroy {
     const routing = (hostConfig as ComponentConfig).routing;
     const customer = (hostConfig as ComponentConfig).customer;
     const fiat = (hostConfig as ComponentConfig).fiat;
+    const bank = (hostConfig as ComponentConfig).bank;
     return (
       refreshInterval !== undefined &&
       refreshInterval !== null &&
@@ -97,7 +98,9 @@ export class ConfigService implements OnDestroy {
       customer !== null &&
       customer !== undefined &&
       fiat !== null &&
-      fiat !== undefined
+      fiat !== undefined &&
+      bank !== null &&
+      bank !== undefined
     );
   }
 

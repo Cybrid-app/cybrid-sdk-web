@@ -11,6 +11,7 @@ describe('login test', () => {
     app().should('exist').get('#clientId').type(Cypress.env('CLIENT_ID'));
     app().get('#clientSecret').type(Cypress.env('CLIENT_SECRET'));
     app().get('#customerGuid').type(Cypress.env('CUSTOMER_GUID'));
+    app().get('#bankGuid').type(Cypress.env('BANK_GUID'));
     app().get('#login').click();
   });
 });

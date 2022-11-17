@@ -92,8 +92,9 @@ export class DemoComponent implements OnDestroy {
   initDemo(credentials: DemoCredentials) {
     this.login$.next(true);
 
-    let config = Constants.DEFAULT_CONFIG;
+    let config = { ...Constants.DEFAULT_CONFIG };
     config.customer = credentials.customer;
+    config.bank = credentials.bank;
 
     this.languageGroup.patchValue({ language: config.locale });
     this.demoConfigService.config$.next(config);

@@ -12,7 +12,8 @@ export const environment = {
   credentials: {
     clientId: '',
     clientSecret: '',
-    customerGuid: ''
+    customerGuid: '',
+    bankGuid: ''
   },
   grant_type: 'client_credentials',
   scope:

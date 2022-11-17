@@ -8,9 +8,10 @@ export default defineConfig({
   defaultCommandTimeout: 10000,
   requestTimeout: 15000,
   env: {
-    CLIENT_ID: '',
     CLIENT_SECRET: '',
-    CUSTOMER_GUID: ''
+    CLIENT_ID: '',
+    CUSTOMER_GUID: '',
+    BANK_GUID: ''
   },
   e2e: {
     baseUrl: 'http://localhost:4200'

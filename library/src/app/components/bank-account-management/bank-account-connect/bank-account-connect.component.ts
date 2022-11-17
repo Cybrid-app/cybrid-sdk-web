@@ -204,10 +204,6 @@ export class BankAccountConnectComponent implements OnInit {
   }
 
   plaidOnSuccess(public_token: string, metadata?: any): void {
-    let customerGuid: string;
-
-    // TODO: Test iso_currency_code out of sandbox. Set here to 'USD'
-    // const asset = 'USD';
     const asset = metadata.accounts[0].iso_currency_code;
     const account = metadata.accounts[0];
 
@@ -217,7 +213,6 @@ export class BankAccountConnectComponent implements OnInit {
         .getConfig$()
         .pipe(
           switchMap((config) => {
-            customerGuid = config.customer;
             return this.banksService.getBank(config.bank!);
           }),
           switchMap((bank) => {
