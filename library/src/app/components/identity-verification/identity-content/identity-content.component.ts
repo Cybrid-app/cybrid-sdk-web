@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { IdentityVerificationBankModel } from '@cybrid/cybrid-api-bank-angular';
+import { IdentityVerificationWithDetailsBankModel } from '@cybrid/cybrid-api-bank-angular';
 
 @Component({
   selector: 'app-identity-content',
@@ -7,5 +7,5 @@ import { IdentityVerificationBankModel } from '@cybrid/cybrid-api-bank-angular';
   styleUrls: ['../identity-verification.component.scss']
 })
 export class IdentityContentComponent {
-  @Input() identity!: IdentityVerificationBankModel;
+  @Input() identity!: IdentityVerificationWithDetailsBankModel;
 }

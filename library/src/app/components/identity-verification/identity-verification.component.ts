@@ -38,7 +38,8 @@ import { Poll, PollConfig } from '../../../shared/utility/poll/poll';
 //Models
 import {
   CustomerBankModel,
-  IdentityVerificationBankModel
+  IdentityVerificationBankModel,
+  IdentityVerificationWithDetailsBankModel
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Utility
@@ -52,7 +53,8 @@ import { Constants } from '@constants';
 export class IdentityVerificationComponent implements OnInit, OnDestroy {
   @ViewChild('stepper') stepper!: MatStepper;
 
-  identity$ = new BehaviorSubject<IdentityVerificationBankModel | null>(null);
+  identity$ =
+    new BehaviorSubject<IdentityVerificationWithDetailsBankModel | null>(null);
   customer$ = new BehaviorSubject<CustomerBankModel | null>(null);
 
   isLoading$ = new BehaviorSubject(true);
@@ -179,7 +181,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
     }
   }
 
-  handlePersonaState(identity: IdentityVerificationBankModel): void {
+  handlePersonaState(identity: IdentityVerificationWithDetailsBankModel): void {
     switch (identity.persona_state) {
       case 'waiting':
         this.bootstrapPersona(identity.persona_inquiry_id!);
