@@ -76,9 +76,11 @@ export class AppComponent implements OnInit {
     this.initEventService();
     this.initErrorService();
 
-    // Get assets and valid config before navigating to initial component
+    // Get assets/config/platform data before navigating to initial component
     combineLatest([
       this.configService.getConfig$(),
+      this.configService.getCustomer$(),
+      this.configService.getBank$(),
       this.assetService.getAssets$()
     ])
       .pipe(

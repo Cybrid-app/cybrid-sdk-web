@@ -176,6 +176,14 @@ $light-theme: mat.define-light-theme(
 
 :root {
   --cybrid-blue: #0270e0;
+
+  .cybrid-logo-light {
+    fill: var(--cybrid-blue);
+  }
+
+  .cybrid-logo-dark {
+    fill: white;
+  }
 }
 
 .cybrid-light-theme {

@@ -38,7 +38,9 @@ describe('BankAccountConnectComponent', () => {
     'handleError'
   ]);
   let MockConfigService = jasmine.createSpyObj('ConfigService', {
-    getConfig$: of(TestConstants.CONFIG)
+    getConfig$: of(TestConstants.CONFIG),
+    getBank$: of(TestConstants.BANK_BANK_MODEL),
+    getCustomer$: of(TestConstants.CUSTOMER_BANK_MODEL)
   });
   let MockRoutingService = jasmine.createSpyObj('RoutingService', [
     'handleRoute'
@@ -157,18 +159,22 @@ describe('BankAccountConnectComponent', () => {
   });
 
   it('should handle plaidOnSuccess()', () => {
-    const errorSpy = spyOn(component.error$, 'next');
-
-    let testPlaidMetadata = {
+    const testPlaidMetadata = {
       accounts: [{ name: 'test', id: 'test', iso_currency_code: 'USD' }]
     };
-    // Valid asset
+
     component.plaidOnSuccess('', testPlaidMetadata);
 
-    expect(MockBankService.getBank).toHaveBeenCalled();
     expect(MockBankAccountService.createExternalBankAccount).toHaveBeenCalled();
+  });
 
-    // Invalid asset
+  it('should handle an invalid asset', () => {
+    const errorSpy = spyOn(component.error$, 'next');
+
+    const testPlaidMetadata = {
+      accounts: [{ name: 'test', id: 'test', iso_currency_code: 'USD' }]
+    };
+
     let bankBankModel = { ...TestConstants.BANK_BANK_MODEL };
     bankBankModel.supported_fiat_account_assets = [];
     MockBankService.getBank.and.returnValue(of(bankBankModel));
@@ -176,11 +182,30 @@ describe('BankAccountConnectComponent', () => {
     component.plaidOnSuccess('', testPlaidMetadata);
 
     expect(errorSpy).toHaveBeenCalled();
-    errorSpy.calls.reset();
+  });
 
-    // Undefined asset
+  it('should handle an undefined asset', () => {
+    const errorSpy = spyOn(component.error$, 'next');
+
+    const testPlaidMetadata = {
+      accounts: [{ name: 'test', id: 'test', iso_currency_code: 'USD' }]
+    };
+
     // @ts-ignore
     testPlaidMetadata.accounts[0].iso_currency_code = undefined;
+
+    component.plaidOnSuccess('', testPlaidMetadata);
+
+    expect(errorSpy).toHaveBeenCalled();
+  });
+
+  it('should handle an unsupported asset', () => {
+    const errorSpy = spyOn(component.error$, 'next');
+
+    // The comparing bank supported asset here is 'USD'
+    const testPlaidMetadata = {
+      accounts: [{ name: 'test', id: 'test', iso_currency_code: 'CAD' }]
+    };
 
     component.plaidOnSuccess('', testPlaidMetadata);
 

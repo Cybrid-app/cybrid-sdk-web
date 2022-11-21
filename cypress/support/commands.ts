@@ -30,7 +30,6 @@ Cypress.Commands.add('login', () => {
     .type(Cypress.env('CLIENT_ID'));
   cy.get('#clientSecret').type(Cypress.env('CLIENT_SECRET'));
   cy.get('#customerGuid').type(Cypress.env('CUSTOMER_GUID'));
-  cy.get('#bankGuid').type(Cypress.env('BANK_GUID'));
   cy.get('#login').click();
 });
 //

@@ -1,7 +1,9 @@
 <ng-container *ngIf="configService.getConfig$() | async as config">
   <mat-card-title>
     <app-cybrid-logo
-      fill="{{ config.theme === 'LIGHT' ? '#0270e0' : 'white' }}"
+      [ngClass]="
+        config.theme === 'LIGHT' ? 'cybrid-logo-light' : 'cybrid-logo-dark'
+      "
     ></app-cybrid-logo>
   </mat-card-title>
   <ng-container *ngIf="(mobile$ | async) !== true; else mobile">

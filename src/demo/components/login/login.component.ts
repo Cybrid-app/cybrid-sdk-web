@@ -18,13 +18,11 @@ interface LoginForm {
   clientSecret: FormControl<string>;
   bearerToken: FormControl<string>;
   customerGuid: FormControl<string>;
-  bankGuid: FormControl<string>;
 }
 
 export interface DemoCredentials {
   token: string;
   customer: string;
-  bank: string;
 }
 
 @Component({
@@ -39,8 +37,7 @@ export class LoginComponent implements OnInit {
   bearer = false;
   demoCredentials: DemoCredentials = {
     token: '',
-    customer: '',
-    bank: ''
+    customer: ''
   };
 
   loginForm!: FormGroup<LoginForm>;
@@ -69,10 +66,6 @@ export class LoginComponent implements OnInit {
         nonNullable: true
       }),
       customerGuid: new FormControl(environment.credentials.customerGuid, {
-        validators: [Validators.required, Validators.minLength(32)],
-        nonNullable: true
-      }),
-      bankGuid: new FormControl(environment.credentials.bankGuid, {
         validators: [Validators.required, Validators.minLength(32)],
         nonNullable: true
       })
@@ -182,7 +175,6 @@ export class LoginComponent implements OnInit {
       .subscribe((customer: CustomerBankModel) => {
         if (customer.guid) {
           this.demoCredentials.customer = customer.guid;
-          this.demoCredentials.bank = this.loginForm.controls.bankGuid.value;
           this.credentials.next(this.demoCredentials);
         }
       });

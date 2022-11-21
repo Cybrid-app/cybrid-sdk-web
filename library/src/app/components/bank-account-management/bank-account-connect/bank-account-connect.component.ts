@@ -23,6 +23,7 @@ import {
 // Services
 import {
   BanksService,
+  CustomersService,
   PostWorkflowBankModel,
   WorkflowsService,
   WorkflowWithDetailsBankModel
@@ -82,6 +83,7 @@ export class BankAccountConnectComponent implements OnInit {
     private eventService: EventService,
     private bankAccountService: BankAccountService,
     private workflowService: WorkflowsService,
+    private customersService: CustomersService,
     private banksService: BanksService,
     private router: RoutingService,
     private _renderer2: Renderer2,
@@ -190,8 +192,6 @@ export class BankAccountConnectComponent implements OnInit {
     //@ts-ignore
     const client = Plaid.create({
       token: linkToken,
-      // Ignore incomplete language types
-      // @ts-ignore
       language: language,
       onSuccess: (public_token: string, metadata: any) => {
         this.plaidOnSuccess(public_token, metadata);
@@ -204,17 +204,21 @@ export class BankAccountConnectComponent implements OnInit {
   }
 
   plaidOnSuccess(public_token: string, metadata?: any): void {
+    function isValidAsset(asset: string | null | undefined) {
+      return typeof asset == 'string';
+    }
+    function isOnlyAccount(accounts: any[]) {
+      return accounts.length == 1;
+    }
+
+    // const asset = 'USD';
     const asset = metadata.accounts[0].iso_currency_code;
     const account = metadata.accounts[0];
 
-    // Validate the asset is iso_currency
-    if (asset) {
+    if (isOnlyAccount(metadata.accounts) && isValidAsset(asset)) {
       this.configService
-        .getConfig$()
+        .getBank$()
         .pipe(
-          switchMap((config) => {
-            return this.banksService.getBank(config.bank!);
-          }),
           switchMap((bank) => {
             if (bank.supported_fiat_account_assets!.includes(asset)) {
               return this.bankAccountService.createExternalBankAccount(
@@ -246,9 +250,9 @@ export class BankAccountConnectComponent implements OnInit {
       this.eventService.handleEvent(
         LEVEL.ERROR,
         CODE.DATA_ERROR,
-        'Unsupported asset'
+        'Invalid account'
       );
-      this.errorService.handleError(new Error('Unsupported asset'));
+      this.errorService.handleError(new Error('Invalid account'));
     }
   }
 

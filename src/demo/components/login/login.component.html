@@ -90,19 +90,6 @@
             Customer not found
           </mat-error>
         </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Bank GUID</mat-label>
-          <input
-            id="bankGuid"
-            formControlName="bankGuid"
-            matInput
-            type="text"
-          />
-          <mat-error *ngIf="loginForm.get('bankGuid')?.hasError('minlength')">
-            Invalid bank
-          </mat-error>
-        </mat-form-field>
       </ng-container>
     </mat-card-content>
     <mat-card-actions>

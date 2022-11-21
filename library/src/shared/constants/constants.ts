@@ -12,6 +12,7 @@ export class Constants {
   static RETRY = 3;
   // How often to request new data
   static REFRESH_INTERVAL = 5000;
+  static PLATFORM_REFRESH_INTERVAL = 30000;
   static LOCALE = 'en-US';
   static SUPPORTED_LOCALES = ['en-US', 'fr-CA'];
   // The time in seconds left on a valid auth token when a session expiry warning event is sent
@@ -49,7 +50,6 @@ export class Constants {
     theme: Constants.THEME,
     routing: Constants.ROUTING,
     customer: '',
-    bank: '',
     fiat: 'USD'
   };
   static DEFAULT_COMPONENT = 'price-list';

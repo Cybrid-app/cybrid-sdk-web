@@ -23,14 +23,14 @@ describe('identity-verification test', () => {
   });
 
   it('should poll on customer status', () => {
+    identityVerificationSetup();
+
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'storing';
     cy.intercept('GET', 'api/customers/*', (req) => {
       req.reply(customer);
     }).as('getCustomer');
-
-    identityVerificationSetup();
 
     app()
       .find('strong')
@@ -45,14 +45,14 @@ describe('identity-verification test', () => {
   });
 
   it('should display verified customer status', () => {
+    identityVerificationSetup();
+
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'verified';
     cy.intercept('GET', 'api/customers/*', (req) => {
       req.reply(customer);
     }).as('getCustomer');
-
-    identityVerificationSetup();
 
     app()
       .find('strong')
@@ -67,6 +67,7 @@ describe('identity-verification test', () => {
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'rejected';
+
     cy.intercept('GET', 'api/customers/*', (req) => {
       req.reply(customer);
     }).as('getCustomer');
@@ -84,6 +85,8 @@ describe('identity-verification test', () => {
   });
 
   it('should display unverified status', () => {
+    identityVerificationSetup();
+
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'unverified';
@@ -91,14 +94,14 @@ describe('identity-verification test', () => {
       req.reply(customer);
     }).as('getCustomer');
 
-    identityVerificationSetup();
-
     app()
       .find('strong')
       .should('contain.text', text.identityVerification.unverified);
   });
 
   it('should poll on identity status', () => {
+    identityVerificationSetup();
+
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'unverified';
@@ -114,7 +117,6 @@ describe('identity-verification test', () => {
       req.reply(identity);
     }).as('getIdentity');
 
-    identityVerificationSetup();
     app().find('#verify').click();
 
     app()
@@ -132,6 +134,8 @@ describe('identity-verification test', () => {
   });
 
   it('should display reviewing identity status', () => {
+    identityVerificationSetup();
+
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     cy.intercept('GET', 'api/customers/*', (req) => {
@@ -151,7 +155,6 @@ describe('identity-verification test', () => {
       req.reply(identity.objects[0]);
     });
 
-    identityVerificationSetup();
     app().find('#verify').click();
     app()
       .find('#identity-button-done')
@@ -161,6 +164,8 @@ describe('identity-verification test', () => {
   });
 
   it('should display passed identity outcome', () => {
+    identityVerificationSetup();
+
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     cy.intercept('GET', 'api/customers/*', (req) => {
@@ -181,7 +186,6 @@ describe('identity-verification test', () => {
       req.reply(identity.objects[0]);
     });
 
-    identityVerificationSetup();
     app().find('#verify').click();
 
     app()
@@ -195,6 +199,8 @@ describe('identity-verification test', () => {
   });
 
   it('should display failed identity outcome', () => {
+    identityVerificationSetup();
+
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     cy.intercept('GET', 'api/customers/*', (req) => {
@@ -215,7 +221,6 @@ describe('identity-verification test', () => {
       req.reply(identity.objects[0]);
     });
 
-    identityVerificationSetup();
     app().find('#verify').click();
 
     app()
