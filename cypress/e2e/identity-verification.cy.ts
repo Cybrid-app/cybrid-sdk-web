@@ -36,7 +36,10 @@ describe('identity-verification test', () => {
       .find('strong')
       .should('contain.text', text.identityVerification.checkStatus);
 
-    app().find('strong').should('contain.text', text.unexpectedError);
+    // Check for error after poll
+    cy.wait(Constants.POLL_DURATION).then(() => {
+      app().find('strong').should('contain.text', text.unexpectedError);
+    });
 
     // Reset component
     cy.visit('/');
