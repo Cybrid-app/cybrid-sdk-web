@@ -16,8 +16,9 @@ function identityVerificationSetup() {
 }
 
 describe('identity-verification test', () => {
-  before(() => {
+  beforeEach(() => {
     cy.visit('/');
+
     //@ts-ignore
     cy.login();
   });
@@ -25,7 +26,7 @@ describe('identity-verification test', () => {
   it('should poll on customer status', () => {
     identityVerificationSetup();
 
-    //Mock customer
+    // Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'storing';
     cy.intercept('GET', 'api/customers/*', (req) => {
@@ -40,11 +41,6 @@ describe('identity-verification test', () => {
     cy.wait(Constants.POLL_DURATION).then(() => {
       app().find('strong').should('contain.text', text.unexpectedError);
     });
-
-    // Reset component
-    cy.visit('/');
-    //@ts-ignore
-    cy.login();
   });
 
   it('should display verified customer status', () => {
@@ -67,14 +63,14 @@ describe('identity-verification test', () => {
   });
 
   it('should display rejected customer status', () => {
+    identityVerificationSetup();
+
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'rejected';
     cy.intercept('GET', 'api/customers/*', (req) => {
       req.reply(customer);
     }).as('getCustomer');
-
-    identityVerificationSetup();
 
     app()
       .find('strong')
