@@ -94,6 +94,7 @@ describe('identity-verification test', () => {
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'unverified';
     cy.intercept('GET', 'api/customers/*', (req) => {
+      delete req.headers['if-none-match'];
       req.reply(customer);
     }).as('getCustomer');
 
@@ -111,16 +112,27 @@ describe('identity-verification test', () => {
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'unverified';
     cy.intercept('GET', 'api/customers/*', (req) => {
+      delete req.headers['if-none-match'];
       req.reply(customer);
     }).as('getCustomer');
 
-    //Mock identity
-    const identity = { ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL };
-    identity.objects[0].state = 'storing';
+    //Mock identity list
+    const identityList = {
+      ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL
+    };
+    identityList.objects[0].state = 'storing';
 
     cy.intercept('GET', 'api/identity_verifications*', (req) => {
-      req.reply(identity);
+      req.reply(identityList);
     }).as('getIdentity');
+
+    //Mock identity
+    const identity = { ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL };
+    identity.persona_state = 'reviewing';
+
+    cy.intercept('GET', 'api/identity_verifications/*', (req) => {
+      req.reply(identity);
+    });
 
     cy.wait('@getCustomer').then(() => {
       app().find('#verify').click();
