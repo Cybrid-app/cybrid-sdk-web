@@ -113,6 +113,10 @@ describe('IdentityVerificationComponent', () => {
   });
 
   it('should get the customer status', fakeAsync(() => {
+    let customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
+    customer.state = 'unverified';
+    MockIdentityVerificationService.getCustomer.and.returnValue(of(customer));
+
     const customer$Spy = spyOn(component.customer$, 'next');
 
     component.getCustomerStatus();

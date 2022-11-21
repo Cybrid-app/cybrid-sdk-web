@@ -386,7 +386,7 @@ export class TestConstants {
     guid: '378c691c1b5ba3b938e17c1726202fe4',
     type: 'individual',
     created_at: '2022-06-14T13:14:53.314Z',
-    state: 'unverified'
+    state: 'storing'
   };
 
   static IDENTITY_VERIFICATION_BANK_MODEL: IdentityVerificationBankModel = {
