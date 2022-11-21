@@ -30,6 +30,7 @@ describe('identity-verification test', () => {
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'storing';
     cy.intercept('GET', 'api/customers/*', (req) => {
+      delete req.headers['if-none-match'];
       req.reply(customer);
     }).as('getCustomer');
 
@@ -50,6 +51,7 @@ describe('identity-verification test', () => {
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'verified';
     cy.intercept('GET', 'api/customers/*', (req) => {
+      delete req.headers['if-none-match'];
       req.reply(customer);
     }).as('getCustomer');
 
@@ -69,6 +71,7 @@ describe('identity-verification test', () => {
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'rejected';
     cy.intercept('GET', 'api/customers/*', (req) => {
+      delete req.headers['if-none-match'];
       req.reply(customer);
     }).as('getCustomer');
 
