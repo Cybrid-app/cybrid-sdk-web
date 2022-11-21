@@ -384,6 +384,7 @@ export class TestConstants {
 
   static CUSTOMER_BANK_MODEL: CustomerBankModel = {
     guid: '378c691c1b5ba3b938e17c1726202fe4',
+    bank_guid: 'b36cf9028e2356de7732e4c505c84fbc',
     type: 'individual',
     created_at: '2022-06-14T13:14:53.314Z',
     state: 'storing'

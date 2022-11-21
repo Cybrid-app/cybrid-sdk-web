@@ -17,6 +17,14 @@ function identityVerificationSetup() {
 
 describe('identity-verification test', () => {
   beforeEach(() => {
+    cy.intercept('GET', 'api/customers/*', (req) => {
+      req.reply(TestConstants.CUSTOMER_BANK_MODEL);
+    }).as('getCustomer');
+
+    cy.intercept('GET', 'api/banks/*', (req) => {
+      req.reply(TestConstants.BANK_BANK_MODEL);
+    }).as('getBank');
+
     //@ts-ignore
     cy.login();
   });
