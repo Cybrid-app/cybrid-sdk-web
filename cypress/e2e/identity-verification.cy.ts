@@ -16,7 +16,7 @@ function identityVerificationSetup() {
 }
 
 describe('identity-verification test', () => {
-  beforeEach(() => {
+  before(() => {
     cy.visit('/');
     //@ts-ignore
     cy.login();
@@ -67,15 +67,14 @@ describe('identity-verification test', () => {
   });
 
   it('should display rejected customer status', () => {
-    identityVerificationSetup();
-
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'rejected';
-
     cy.intercept('GET', 'api/customers/*', (req) => {
       req.reply(customer);
     }).as('getCustomer');
+
+    identityVerificationSetup();
 
     app()
       .find('strong')
