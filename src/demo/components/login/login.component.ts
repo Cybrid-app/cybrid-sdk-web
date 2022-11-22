@@ -23,6 +23,7 @@ interface LoginForm {
 export interface DemoCredentials {
   token: string;
   customer: string;
+  isPublic: boolean;
 }
 
 @Component({
@@ -37,7 +38,8 @@ export class LoginComponent implements OnInit {
   bearer = false;
   demoCredentials: DemoCredentials = {
     token: '',
-    customer: ''
+    customer: '',
+    isPublic: false
   };
 
   // PUBLIC CREDENTIALS FOR NO-LOGIN DEMO
@@ -193,6 +195,11 @@ export class LoginComponent implements OnInit {
       .subscribe((customer: CustomerBankModel) => {
         if (customer.guid) {
           this.demoCredentials.customer = customer.guid;
+
+          publicUser
+            ? (this.demoCredentials.isPublic = publicUser)
+            : (this.demoCredentials.isPublic = false);
+
           this.credentials.next(this.demoCredentials);
         }
       });

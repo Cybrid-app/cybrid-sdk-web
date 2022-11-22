@@ -29,6 +29,7 @@ export class DemoComponent implements OnDestroy {
   public viewContainer!: ViewContainerRef;
 
   token = '';
+  isPublic: boolean = false;
 
   webComponents = [
     'price-list',
@@ -104,6 +105,9 @@ export class DemoComponent implements OnDestroy {
     this.componentRef.instance.hostConfig = config;
     this.componentRef.instance.auth = credentials.token;
     this.componentRef.instance.component = Constants.DEFAULT_COMPONENT;
+
+    // Set Public/Private
+    this.isPublic = credentials.isPublic;
 
     // Subscribe to component configuration changes
     this.demoConfigService.config$
