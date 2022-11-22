@@ -6,6 +6,7 @@
       "
     ></app-cybrid-logo>
   </mat-card-title>
+
   <ng-container *ngIf="(mobile$ | async) !== true; else mobile">
     <mat-card-content>
       <!-- Error -->

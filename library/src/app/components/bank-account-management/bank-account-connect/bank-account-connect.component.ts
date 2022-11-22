@@ -211,11 +211,13 @@ export class BankAccountConnectComponent implements OnInit {
       return accounts.length == 1;
     }
 
-    // const asset = 'USD';
-    const asset = metadata.accounts[0].iso_currency_code;
-    const account = metadata.accounts[0];
+    if (
+      isOnlyAccount(metadata.accounts) &&
+      isValidAsset(metadata.accounts[0].iso_currency_code)
+    ) {
+      const asset = metadata.accounts[0].iso_currency_code;
+      const account = metadata.accounts[0];
 
-    if (isOnlyAccount(metadata.accounts) && isValidAsset(asset)) {
       this.configService
         .getBank$()
         .pipe(
