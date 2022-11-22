@@ -42,13 +42,6 @@
   }
 }
 
-.cybrid-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  margin-bottom: 1rem;
-}
-
 .cybrid-table {
   position: relative;
 }
@@ -121,10 +114,6 @@ mat-progress-bar {
     span {
       font-size: 1rem;
     }
-  }
-
-  .cybrid-actions {
-    display: none;
   }
 
   .cybrid-icon {

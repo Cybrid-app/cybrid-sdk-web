@@ -7,7 +7,8 @@ import {
   TradeComponent,
   AccountListComponent,
   AccountDetailsComponent,
-  IdentityVerificationComponent
+  IdentityVerificationComponent,
+  BankAccountConnectComponent
 } from '@components';
 
 export const routes: Routes = [
@@ -42,6 +43,10 @@ export const routes: Routes = [
       {
         path: 'identity-verification',
         component: IdentityVerificationComponent
+      },
+      {
+        path: 'bank-account-connect',
+        component: BankAccountConnectComponent
       }
     ]
   },

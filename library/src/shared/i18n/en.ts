@@ -8,6 +8,7 @@ export default {
   back: 'Back',
   date: 'Date',
   fatal: 'An unrecoverable error occurred',
+  unexpectedError: 'Unexpected error.',
 
   // Price list component
   priceList: {
@@ -125,7 +126,6 @@ export default {
 
   // Identity verification component
   identityVerification: {
-    unexpectedError: 'Unexpected error.',
     checkStatus: 'Checking status...',
     verifying: 'Verifying...',
     verified: 'You have been verified.',
@@ -134,5 +134,16 @@ export default {
     support: 'Please contact customer support.',
     reviewing: 'Identity being reviewed.',
     resume: 'Resume identity verification.'
+  },
+
+  // Bank account connect component
+  bankAccountConnect: {
+    addAccount: 'Adding account...',
+    success: 'Account successfully added.',
+    resume: 'Resume adding account.',
+    mobile: {
+      warning: 'Temporarily unavailable on mobile.',
+      explanation: 'Please connect your bank account using a desktop browser.'
+    }
   }
 };

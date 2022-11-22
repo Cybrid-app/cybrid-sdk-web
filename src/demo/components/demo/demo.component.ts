@@ -35,7 +35,8 @@ export class DemoComponent implements OnDestroy {
     'trade',
     'account-list',
     'account-details',
-    'identity-verification'
+    'identity-verification',
+    'bank-account-connect'
   ];
   languages = ['en-US', 'fr-CA'];
 
@@ -91,7 +92,7 @@ export class DemoComponent implements OnDestroy {
   initDemo(credentials: DemoCredentials) {
     this.login$.next(true);
 
-    let config = Constants.DEFAULT_CONFIG;
+    let config = { ...Constants.DEFAULT_CONFIG };
     config.customer = credentials.customer;
 
     this.languageGroup.patchValue({ language: config.locale });

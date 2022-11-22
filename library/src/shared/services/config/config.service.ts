@@ -1,12 +1,32 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Constants } from '@constants';
-import { map, Observable, ReplaySubject, Subject, takeUntil } from 'rxjs';
-import { CODE, EventService, LEVEL } from '../event/event.service';
-import { ErrorService } from '../error/error.service';
 import { TranslateService } from '@ngx-translate/core';
 import en from '../../i18n/en';
 import fr from '../../i18n/fr';
 import { OverlayContainer } from '@angular/cdk/overlay';
+
+import {
+  map,
+  Observable,
+  ReplaySubject,
+  startWith,
+  Subject,
+  switchMap,
+  takeUntil,
+  tap,
+  timer
+} from 'rxjs';
+
+// Services
+import { ErrorService, CODE, EventService, LEVEL } from '@services';
+import {
+  BankBankModel,
+  BanksService,
+  CustomerBankModel,
+  CustomersService
+} from '@cybrid/cybrid-api-bank-angular';
+
+// Utility
+import { Constants } from '@constants';
 
 export interface ComponentConfig {
   refreshInterval: number;
@@ -26,16 +46,22 @@ export class ConfigService implements OnDestroy {
 
   component$ = new ReplaySubject<string>(1);
 
+  customer$ = new ReplaySubject<CustomerBankModel>(1);
+  bank$ = new ReplaySubject<BankBankModel>(1);
+
   private unsubscribe$ = new Subject();
 
   constructor(
     private eventService: EventService,
     private errorService: ErrorService,
     private translateService: TranslateService,
-    private overlay: OverlayContainer
+    private overlay: OverlayContainer,
+    private banksService: BanksService,
+    private customersService: CustomersService
   ) {
     this.initLocale();
     this.initStyle();
+    this.initPlatformData();
   }
 
   ngOnDestroy() {
@@ -141,5 +167,35 @@ export class ConfigService implements OnDestroy {
         })
       )
       .subscribe();
+  }
+
+  initPlatformData(): void {
+    timer(0, Constants.PLATFORM_REFRESH_INTERVAL)
+      .pipe(
+        startWith(0),
+        takeUntil(this.unsubscribe$),
+        switchMap(() => this.config$),
+        switchMap((config) => {
+          return this.customersService.getCustomer(config.customer);
+        }),
+        tap((customer: CustomerBankModel) => {
+          this.customer$.next(customer);
+        }),
+        switchMap((customer: CustomerBankModel) =>
+          this.banksService.getBank(customer.bank_guid!)
+        ),
+        tap((bank) => {
+          this.bank$.next(bank);
+        })
+      )
+      .subscribe();
+  }
+
+  getCustomer$(): Observable<CustomerBankModel> {
+    return this.customer$.asObservable();
+  }
+
+  getBank$(): Observable<BankBankModel> {
+    return this.bank$.asObservable();
   }
 }

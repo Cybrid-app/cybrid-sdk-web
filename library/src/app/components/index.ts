@@ -13,4 +13,5 @@ export { NavigationComponent } from './navigation/navigation.component';
 export { IdentityVerificationComponent } from './identity-verification/identity-verification.component';
 export { IdentityContentComponent } from './identity-verification/identity-content/identity-content.component';
 export { CustomerContentComponent } from './identity-verification/customer-content/customer-content.component';
+export * from './bank-account-management';
 export { CybridLogoComponent } from './cybrid-logo/cybrid-logo.component';

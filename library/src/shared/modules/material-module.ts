@@ -32,6 +32,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 import { OverlayModule } from '@angular/cdk/overlay';
+import { PlatformModule } from '@angular/cdk/platform';
 
 @NgModule({
   exports: [
@@ -67,7 +68,8 @@ import { OverlayModule } from '@angular/cdk/overlay';
     MatSortModule,
     MatAutocompleteModule,
     MatButtonToggleModule,
-    OverlayModule
+    OverlayModule,
+    PlatformModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

@@ -144,7 +144,7 @@ describe('AccountDetailComponent', () => {
     );
   });
 
-  it('should hande errors on getTrade()', () => {
+  it('should handle errors on getTrade()', () => {
     MockTradesService.listTrades.and.returnValue(
       of(TestConstants.TRADE_LIST_BANK_MODEL)
     );

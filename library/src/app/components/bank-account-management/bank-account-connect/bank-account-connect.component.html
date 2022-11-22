@@ -1,0 +1,93 @@
+<ng-container *ngIf="configService.getConfig$() | async as config">
+  <mat-card-title>
+    <app-cybrid-logo
+      [ngClass]="
+        config.theme === 'LIGHT' ? 'cybrid-logo-light' : 'cybrid-logo-dark'
+      "
+    ></app-cybrid-logo>
+  </mat-card-title>
+
+  <ng-container *ngIf="(mobile$ | async) !== true; else mobile">
+    <mat-card-content>
+      <!-- Error -->
+      <ng-container *ngIf="error$ | async; else content">
+        <div class="connect-content">
+          <div>
+            <mat-icon color="warn">cancel</mat-icon>
+            <strong>{{ 'unexpectedError' | translate }}</strong>
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #content>
+        <mat-stepper #stepper linear="true" animationDuration="0">
+          <!-- Connect Step -->
+          <mat-step>
+            <div class="connect-content">
+              <div>
+                <ng-container *ngIf="isLoading$ | async; else success">
+                  <app-loading [diameter]="16"></app-loading>
+                  <strong>{{
+                    'bankAccountConnect.addAccount' | translate
+                  }}</strong></ng-container
+                >
+                <ng-template #success>
+                  <mat-icon color="primary">check_circle</mat-icon>
+                  <strong>{{
+                    'bankAccountConnect.success' | translate
+                  }}</strong>
+                </ng-template>
+              </div>
+            </div>
+            <div class="cybrid-actions">
+              <button
+                id="bank-connect-button-done"
+                mat-flat-button
+                color="primary"
+                (click)="onComplete()"
+                [disabled]="isLoading$ | async"
+              >
+                {{ 'done' | translate }}
+              </button>
+            </div>
+          </mat-step>
+
+          <!-- Resume Step -->
+          <mat-step>
+            <div class="connect-content">
+              <div>
+                <mat-icon color="primary">play_circle</mat-icon>
+                <strong>{{ 'bankAccountConnect.resume' | translate }}</strong>
+              </div>
+            </div>
+            <div class="cybrid-actions">
+              <button
+                mat-stroked-button
+                matStepperPrevious
+                (click)="onComplete()"
+              >
+                {{ 'cancel' | translate }}
+              </button>
+              <button
+                mat-flat-button
+                color="primary"
+                matStepperPrevious
+                (click)="onAddAccount()"
+              >
+                {{ 'resume' | translate }}
+              </button>
+            </div>
+          </mat-step>
+        </mat-stepper>
+      </ng-template>
+    </mat-card-content>
+  </ng-container>
+  <ng-template #mobile>
+    <div class="connect-content">
+      <div>
+        <mat-icon color="warn">cancel</mat-icon>
+        <strong>{{ 'bankAccountConnect.mobile.warning' | translate }}</strong>
+      </div>
+      <p>{{ 'bankAccountConnect.mobile.explanation' | translate }}</p>
+    </div>
+  </ng-template>
+</ng-container>

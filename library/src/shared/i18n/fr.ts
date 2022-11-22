@@ -8,6 +8,7 @@ export default {
   back: 'Retourner',
   date: 'Date',
   fatal: "Une erreur irrécupérable s'est produite",
+  unexpectedError: 'Erreur inattendue.',
 
   // Price list component
   priceList: {
@@ -135,5 +136,17 @@ export default {
     support: 'Veuillez contacter le service client.',
     reviewing: 'Identité en cours de révision.',
     resume: "Reprendre la vérification d'identité."
+  },
+
+  // Bank account connect component
+  bankAccountConnect: {
+    addAccount: 'Ajout de compte...',
+    success: 'Compte ajouté avec succès.',
+    resume: "Reprendre l'ajout du compte.",
+    mobile: {
+      warning: 'Temporairement indisponible sur mobile.',
+      explanation:
+        "Veuillez connecter votre compte bancaire à l'aide d'un navigateur de bureau."
+    }
   }
 };

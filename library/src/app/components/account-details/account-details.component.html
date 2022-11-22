@@ -51,16 +51,6 @@
             </div>
           </div>
         </div>
-        <div class="cybrid-actions">
-          <button
-            id="trade"
-            mat-flat-button
-            color="primary"
-            (click)="onTrade()"
-          >
-            {{ 'accountDetails.trade' | translate }}
-          </button>
-        </div>
         <div class="cybrid-table">
           <mat-progress-bar
             *ngIf="isLoadingResults"
@@ -178,6 +168,16 @@
             aria-label="cryptocurrency accounts and balances"
           >
           </mat-paginator>
+        </div>
+        <div class="cybrid-actions">
+          <button
+            id="trade"
+            mat-flat-button
+            color="primary"
+            (click)="onTrade()"
+          >
+            {{ 'accountDetails.trade' | translate }}
+          </button>
         </div>
       </ng-container>
     </ng-container>

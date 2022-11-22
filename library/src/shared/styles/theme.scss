@@ -18,7 +18,7 @@ $cybrid-light-primary-palette: (
   200: #9fa8da,
   300: #7986cb,
   400: #5c6bc0,
-  500: #3f51b5,
+  500: #0270e0,
   600: #3949ab,
   700: #303f9f,
   800: #283593,
@@ -84,7 +84,7 @@ $cybrid-dark-primary-palette: (
   200: #ce93d8,
   300: #ba68c8,
   400: #ab47bc,
-  500: #9c27b0,
+  500: #0270e0,
   600: #8e24aa,
   700: #7b1fa2,
   800: #6a1b9a,
@@ -144,7 +144,7 @@ $cybrid-dark-accent-palette: (
   )
 );
 
-$dark-primary: mat.define-palette(mat.$purple-palette, 500);
+$dark-primary: mat.define-palette($cybrid-dark-primary-palette, 500);
 $dark-accent: mat.define-palette(mat.$green-palette, A200, A100, A400);
 $dark-warn: mat.define-palette(mat.$red-palette);
 
@@ -158,7 +158,7 @@ $dark-theme: mat.define-dark-theme(
   )
 );
 
-$light-primary: mat.define-palette(mat.$indigo-palette, 500);
+$light-primary: mat.define-palette($cybrid-light-primary-palette, 500);
 $light-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
 $light-warn: mat.define-palette(mat.$red-palette);
 
@@ -176,6 +176,14 @@ $light-theme: mat.define-light-theme(
 
 :root {
   --cybrid-blue: #0270e0;
+
+  .cybrid-logo-light {
+    fill: var(--cybrid-blue);
+  }
+
+  .cybrid-logo-dark {
+    fill: white;
+  }
 }
 
 .cybrid-light-theme {
@@ -241,10 +249,18 @@ $light-theme: mat.define-light-theme(
 
   .cybrid-pointer {
     cursor: pointer;
+
+    &:hover {
+      background-color: rgba(1, 1, 1, 0.05);
+    }
   }
 
   .cybrid-spacer {
     flex: 1 0 auto;
+  }
+
+  .cybrid-hide {
+    display: none;
   }
 
   .cybrid-fatal {
@@ -276,11 +292,28 @@ $light-theme: mat.define-light-theme(
       td {
         border-bottom: none;
       }
+
       td:first-of-type {
         border-bottom-left-radius: 5px;
       }
+
       td:last-of-type {
         border-bottom-right-radius: 5px;
+      }
+    }
+  }
+
+  .cybrid-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    justify-content: flex-end;
+
+    button {
+      div {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
       }
     }
   }
@@ -293,6 +326,21 @@ $light-theme: mat.define-light-theme(
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     border-bottom: none;
+  }
+
+  .cybrid-tabs {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: calc(1rem + 0.25em);
+  }
+
+  @media screen and (max-width: 599px) {
+    .cybrid-actions {
+      button {
+        flex: 1;
+      }
+    }
   }
 
   /* Material Style Overrides */

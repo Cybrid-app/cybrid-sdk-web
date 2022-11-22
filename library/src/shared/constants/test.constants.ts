@@ -2,14 +2,20 @@
 import {
   AccountBankModel,
   AccountListBankModel,
+  BankBankModel,
   CustomerBankModel,
-  IdentityVerificationBankModel,
+  ExternalBankAccountBankModel,
+  ExternalBankAccountListBankModel,
   IdentityVerificationListBankModel,
+  IdentityVerificationWithDetailsBankModel,
   PostQuoteBankModel,
+  PostWorkflowBankModel,
   QuoteBankModel,
   SymbolPriceBankModel,
   TradeBankModel,
-  TradeListBankModel
+  TradeListBankModel,
+  WorkflowBankModel,
+  WorkflowWithDetailsBankModel
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
@@ -30,7 +36,7 @@ export class TestConstants {
     locale: 'en-US',
     theme: 'LIGHT',
     routing: true,
-    customer: '',
+    customer: '378c691c1b5ba3b938e17c1726202fe4',
     fiat: 'USD'
   };
 
@@ -378,23 +384,25 @@ export class TestConstants {
 
   static CUSTOMER_BANK_MODEL: CustomerBankModel = {
     guid: '378c691c1b5ba3b938e17c1726202fe4',
+    bank_guid: 'b36cf9028e2356de7732e4c505c84fbc',
     type: 'individual',
     created_at: '2022-06-14T13:14:53.314Z',
-    state: 'unverified'
+    state: 'storing'
   };
 
-  static IDENTITY_VERIFICATION_BANK_MODEL: IdentityVerificationBankModel = {
-    type: 'kyc',
-    guid: '59b0b22359e821028bdbcd925c753336',
-    customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
-    created_at: '2022-10-26T16:33:40.023Z',
-    method: 'id_and_selfie',
-    state: 'waiting',
-    outcome: null,
-    failure_codes: [],
-    persona_inquiry_id: 'inq_C5qXinDn8igsrUgrQwMyTzah',
-    persona_state: 'waiting'
-  };
+  static IDENTITY_VERIFICATION_BANK_MODEL: IdentityVerificationWithDetailsBankModel =
+    {
+      type: 'kyc',
+      guid: '59b0b22359e821028bdbcd925c753336',
+      customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+      created_at: '2022-10-26T16:33:40.023Z',
+      method: 'id_and_selfie',
+      state: 'waiting',
+      outcome: null,
+      failure_codes: [],
+      persona_inquiry_id: 'inq_C5qXinDn8igsrUgrQwMyTzah',
+      persona_state: 'waiting'
+    };
 
   static IDENTITY_VERIFICATION_LIST_BANK_MODEL: IdentityVerificationListBankModel =
     {
@@ -403,4 +411,65 @@ export class TestConstants {
       per_page: '1',
       objects: [TestConstants.IDENTITY_VERIFICATION_BANK_MODEL]
     };
+
+  // Bank-account-management test models
+
+  static EXTERNAL_BANK_ACCOUNT_BANK_MODEL: ExternalBankAccountBankModel = {
+    guid: '2de5669f53be9d52f25f0ede2c35769c',
+    name: 'USD',
+    asset_code: 'USD',
+    account_kind: 'plaid',
+    environment: 'sandbox',
+    created_at: '2022-11-08T20:03:51.916Z',
+    customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
+    bank_guid: 'b36cf9028e2356de7732e4c505c84fbc',
+    plaid_access_token: 'access-sandbox-9bb68f2b-954c-4706-ac5a-f44f9a6689b9'
+  };
+
+  static EXTERNAL_BANK_ACCOUNT_LIST_BANK_MODEL: ExternalBankAccountListBankModel =
+    {
+      total: '1',
+      page: '0',
+      per_page: '10',
+      objects: [TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL]
+    };
+
+  // Workflow models
+
+  static POST_WORKFLOW_BANK_MODEL: PostWorkflowBankModel = {
+    type: 'plaid',
+    kind: undefined,
+    customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
+    language: 'en',
+    link_customization_name: 'default'
+  };
+
+  static WORKFLOW_BANK_MODEL: WorkflowBankModel = {
+    guid: '7ede907d414a06f126befcb87ef839bc',
+    customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
+    type: 'plaid',
+    created_at: '2022-11-10T21:05:13.932Z'
+  };
+
+  static WORKFLOW_BANK_MODEL_WITH_DETAILS: WorkflowWithDetailsBankModel = {
+    guid: '7ede907d414a06f126befcb87ef839bc',
+    customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
+    type: 'plaid',
+    created_at: '2022-11-10T21:05:13.932Z',
+    plaid_link_token: 'link-sandbox-b46225aa-ec75-4de9-b8a7-7ed4c8630401'
+  };
+
+  // Bank models
+
+  static BANK_BANK_MODEL: BankBankModel = {
+    guid: 'b36cf9028e2356de7732e4c505c84fbc',
+    organization_guid: '62342aeb3c733f62a54fcd185f8a9253',
+    name: 'dustin',
+    supported_trading_symbols: ['BTC-USD', 'ETH-USD'],
+    supported_fiat_account_assets: ['USD'],
+    supported_country_codes: ['US'],
+    type: 'sandbox',
+    features: ['attestation_identity_records', 'backstopped_funding_source'],
+    created_at: '2022-04-30T03:40:54.629Z'
+  };
 }

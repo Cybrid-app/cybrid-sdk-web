@@ -16,5 +16,5 @@ export const environment = {
   },
   grant_type: 'client_credentials',
   scope:
-    'banks:read banks:write accounts:read accounts:execute customers:read customers:write customers:execute prices:read quotes:execute trades:execute trades:read'
+    'banks:read banks:write accounts:read accounts:execute customers:read customers:write customers:execute prices:read quotes:execute trades:execute trades:read external_bank_accounts:read external_bank_accounts:execute workflows:read workflows:execute'
 };

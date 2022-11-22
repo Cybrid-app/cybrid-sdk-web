@@ -12,6 +12,7 @@ export class Constants {
   static RETRY = 3;
   // How often to request new data
   static REFRESH_INTERVAL = 5000;
+  static PLATFORM_REFRESH_INTERVAL = 30000;
   static LOCALE = 'en-US';
   static SUPPORTED_LOCALES = ['en-US', 'fr-CA'];
   // The time in seconds left on a valid auth token when a session expiry warning event is sent
@@ -22,7 +23,9 @@ export class Constants {
   static ROUTING = true;
   static ICON_HOST = 'https://images.cybrid.xyz/sdk/assets/svg/color/';
   static PERSONA_SCRIPT_SRC =
-    'https://cdn.withpersona.com/dist/persona-v4.6.0.js';
+    'https://cdn.withpersona.com/dist/persona-v4.7.1.js';
+  static PLAID_SCRIPT_SRC =
+    'https://cdn.plaid.com/link/v2/stable/link-initialize.js';
   static BTC_ICON = 'https://images.cybrid.xyz/sdk/assets/svg/color/btc.svg';
   static USD_ICON = 'https://images.cybrid.xyz/sdk/assets/svg/color/usd.svg';
   static BTC_ASSET: Asset = {

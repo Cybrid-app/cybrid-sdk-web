@@ -16,91 +16,148 @@ function identityVerificationSetup() {
 }
 
 describe('identity-verification test', () => {
-  before(() => {
-    cy.visit('/');
+  beforeEach(() => {
+    cy.intercept('GET', 'api/customers/*', (req) => {
+      req.reply(TestConstants.CUSTOMER_BANK_MODEL);
+    }).as('getCustomer');
+
+    cy.intercept('GET', 'api/banks/*', (req) => {
+      req.reply(TestConstants.BANK_BANK_MODEL);
+    }).as('getBank');
+
     //@ts-ignore
     cy.login();
   });
 
   it('should poll on customer status', () => {
-    //Mock customer
+    identityVerificationSetup();
+
+    // Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'storing';
     cy.intercept('GET', 'api/customers/*', (req) => {
+      delete req.headers['if-none-match'];
       req.reply(customer);
     }).as('getCustomer');
-
-    identityVerificationSetup();
 
     app()
       .find('strong')
       .should('contain.text', text.identityVerification.checkStatus);
 
-    app()
-      .find('strong')
-      .should('contain.text', text.identityVerification.unexpectedError);
-
-    // Reset component
-    cy.visit('/');
-    //@ts-ignore
-    cy.login();
+    // Check for error after poll
+    cy.wait(Constants.POLL_DURATION).then(() => {
+      app().find('strong').should('contain.text', text.unexpectedError);
+    });
   });
 
   it('should display verified customer status', () => {
+    identityVerificationSetup();
+
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'verified';
     cy.intercept('GET', 'api/customers/*', (req) => {
+      delete req.headers['if-none-match'];
       req.reply(customer);
     }).as('getCustomer');
 
-    identityVerificationSetup();
-
-    app()
-      .find('strong')
-      .should('contain.text', text.identityVerification.verified);
-    app()
-      .find('#customer-button-done')
-      .should('contain.text', text.done)
-      .click();
+    cy.wait('@getCustomer').then(() => {
+      app()
+        .find('strong')
+        .should('contain.text', text.identityVerification.verified);
+      app()
+        .find('#customer-button-done')
+        .should('contain.text', text.done)
+        .click();
+    });
   });
 
   it('should display rejected customer status', () => {
+    identityVerificationSetup();
+
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'rejected';
     cy.intercept('GET', 'api/customers/*', (req) => {
+      delete req.headers['if-none-match'];
       req.reply(customer);
     }).as('getCustomer');
 
-    identityVerificationSetup();
+    cy.wait('@getCustomer').then(() => {
+      app()
+        .find('strong')
+        .should('contain.text', text.identityVerification.rejected);
+      app().find('p').should('contain.text', text.identityVerification.support);
+      app().find('#cancel').should('be.disabled');
+      app().find('#customer-button-done').contains(text.done).click();
 
-    app()
-      .find('strong')
-      .should('contain.text', text.identityVerification.rejected);
-    app().find('p').should('contain.text', text.identityVerification.support);
-    app().find('#cancel').should('be.disabled');
-    app().find('#customer-button-done').contains(text.done).click();
-
-    app().should('not.exist');
+      app().should('not.exist');
+    });
   });
 
   it('should display unverified status', () => {
+    identityVerificationSetup();
+
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'unverified';
     cy.intercept('GET', 'api/customers/*', (req) => {
+      delete req.headers['if-none-match'];
       req.reply(customer);
     }).as('getCustomer');
 
-    identityVerificationSetup();
-
-    app()
-      .find('strong')
-      .should('contain.text', text.identityVerification.unverified);
+    cy.wait('@getCustomer').then(() => {
+      app()
+        .find('strong')
+        .should('contain.text', text.identityVerification.unverified);
+    });
   });
 
   it('should poll on identity status', () => {
+    identityVerificationSetup();
+
+    //Mock customer
+    const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
+    customer.state = 'unverified';
+    cy.intercept('GET', 'api/customers/*', (req) => {
+      delete req.headers['if-none-match'];
+      req.reply(customer);
+    }).as('getCustomer');
+
+    //Mock identity list
+    const identityList = {
+      ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL
+    };
+    identityList.objects[0].state = 'storing';
+
+    cy.intercept('GET', 'api/identity_verifications*', (req) => {
+      req.reply(identityList);
+    }).as('getIdentity');
+
+    //Mock identity
+    const identity = { ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL };
+    identity.persona_state = 'reviewing';
+
+    cy.intercept('GET', 'api/identity_verifications/*', (req) => {
+      req.reply(identity);
+    });
+
+    cy.wait('@getCustomer').then(() => {
+      app().find('#verify').click();
+
+      app()
+        .find('strong')
+        .should('contain.text', text.identityVerification.verifying);
+
+      cy.wait(Constants.POLL_DURATION).then(() => {
+        app().find('strong').should('contain.text', text.unexpectedError);
+      });
+    });
+  });
+
+  it('should display reviewing identity status', () => {
+    identityVerificationSetup();
+
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'unverified';
@@ -108,65 +165,40 @@ describe('identity-verification test', () => {
       req.reply(customer);
     }).as('getCustomer');
 
-    //Mock identity
-    const identity = { ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL };
-    identity.objects[0].state = 'storing';
-
-    cy.intercept('GET', 'api/identity_verifications*', (req) => {
-      req.reply(identity);
-    }).as('getIdentity');
-
-    identityVerificationSetup();
-    app().find('#verify').click();
-
-    app()
-      .find('strong')
-      .should('contain.text', text.identityVerification.verifying);
-
-    cy.wait(Constants.POLL_DURATION).then(() => {
-      app()
-        .find('strong')
-        .should('contain.text', text.identityVerification.unexpectedError);
-    });
-
-    // Reset component
-    cy.visit('/');
-    //@ts-ignore
-    cy.login();
-  });
-
-  it('should display reviewing identity status', () => {
-    //Mock customer
-    const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
-    cy.intercept('GET', 'api/customers/*', (req) => {
-      req.reply(customer);
-    }).as('getCustomer');
-
     //Mock list identity
-    const identity = { ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL };
-    identity.objects[0].state = 'completed';
-    identity.objects[0].persona_state = 'reviewing';
+    const identityList = {
+      ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL
+    };
+    identityList.objects[0].state = 'completed';
+
+    //Mock identity
+    const identity = { ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL };
+    identity.persona_state = 'reviewing';
 
     cy.intercept('GET', 'api/identity_verifications*', (req) => {
-      req.reply(identity);
+      req.reply(identityList);
     });
 
     cy.intercept('GET', 'api/identity_verifications/*', (req) => {
-      req.reply(identity.objects[0]);
+      req.reply(identity);
     });
 
-    identityVerificationSetup();
-    app().find('#verify').click();
-    app()
-      .find('#identity-button-done')
-      .should('contain.text', text.done)
-      .click();
-    app().should('not.exist');
+    cy.wait('@getCustomer').then(() => {
+      app().find('#verify').click();
+      app()
+        .find('#identity-button-done')
+        .should('contain.text', text.done)
+        .click();
+      app().should('not.exist');
+    });
   });
 
   it('should display passed identity outcome', () => {
+    identityVerificationSetup();
+
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
+    customer.state = 'unverified';
     cy.intercept('GET', 'api/customers/*', (req) => {
       req.reply(customer);
     }).as('getCustomer');
@@ -174,7 +206,6 @@ describe('identity-verification test', () => {
     //Mock list identity
     const identity = { ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL };
     identity.objects[0].state = 'completed';
-    identity.objects[0].persona_state = 'completed';
     identity.objects[0].outcome = 'passed';
 
     cy.intercept('GET', 'api/identity_verifications*', (req) => {
@@ -185,50 +216,60 @@ describe('identity-verification test', () => {
       req.reply(identity.objects[0]);
     });
 
-    identityVerificationSetup();
-    app().find('#verify').click();
+    cy.wait('@getCustomer').then(() => {
+      app().find('#verify').click();
 
-    app()
-      .find('strong')
-      .should('contain.text', text.identityVerification.verified);
-    app()
-      .find('#identity-button-done')
-      .should('contain.text', text.done)
-      .click();
-    app().should('not.exist');
+      app()
+        .find('strong')
+        .should('contain.text', text.identityVerification.verified);
+      app()
+        .find('#identity-button-done')
+        .should('contain.text', text.done)
+        .click();
+      app().should('not.exist');
+    });
   });
 
   it('should display failed identity outcome', () => {
+    identityVerificationSetup();
+
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
+    customer.state = 'unverified';
     cy.intercept('GET', 'api/customers/*', (req) => {
       req.reply(customer);
     }).as('getCustomer');
 
     //Mock list identity
-    const identity = { ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL };
-    identity.objects[0].state = 'completed';
-    identity.objects[0].persona_state = 'completed';
-    identity.objects[0].outcome = 'failed';
+    const identityList = {
+      ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL
+    };
+    identityList.objects[0].state = 'completed';
+    identityList.objects[0].outcome = 'failed';
 
     cy.intercept('GET', 'api/identity_verifications*', (req) => {
-      req.reply(identity);
+      req.reply(identityList);
     }).as('getIdentity');
 
+    // Mock identity
+    const identity = { ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL };
+    identity.persona_state = 'completed';
+
     cy.intercept('GET', 'api/identity_verifications/*', (req) => {
-      req.reply(identity.objects[0]);
+      req.reply(identity);
     });
 
-    identityVerificationSetup();
-    app().find('#verify').click();
+    cy.wait('@getCustomer').then(() => {
+      app().find('#verify').click();
 
-    app()
-      .find('strong')
-      .should('contain.text', text.identityVerification.rejected);
-    app()
-      .find('#identity-button-done')
-      .should('contain.text', text.done)
-      .click();
-    app().should('not.exist');
+      app()
+        .find('strong')
+        .should('contain.text', text.identityVerification.rejected);
+      app()
+        .find('#identity-button-done')
+        .should('contain.text', text.done)
+        .click();
+      app().should('not.exist');
+    });
   });
 });

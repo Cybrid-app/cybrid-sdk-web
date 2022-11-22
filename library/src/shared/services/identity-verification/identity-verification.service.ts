@@ -17,7 +17,8 @@ import {
   CustomersService,
   IdentityVerificationBankModel,
   PostIdentityVerificationBankModel,
-  IdentityVerificationsService
+  IdentityVerificationsService,
+  IdentityVerificationWithDetailsBankModel
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
@@ -76,7 +77,7 @@ export class IdentityVerificationService implements OnDestroy {
     );
   }
 
-  getIdentityVerification(): Observable<IdentityVerificationBankModel> {
+  getIdentityVerification(): Observable<IdentityVerificationWithDetailsBankModel> {
     return this.identityVerificationService
       .listIdentityVerifications(
         '0',
@@ -97,7 +98,7 @@ export class IdentityVerificationService implements OnDestroy {
 
   handleIdentityVerificationState(
     identity: IdentityVerificationBankModel
-  ): Observable<IdentityVerificationBankModel> {
+  ): Observable<IdentityVerificationWithDetailsBankModel> {
     return this.identityVerificationService
       .getIdentityVerification(identity.guid!)
       .pipe(

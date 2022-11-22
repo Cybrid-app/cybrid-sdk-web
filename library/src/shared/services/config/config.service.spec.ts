@@ -1,4 +1,5 @@
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { of } from 'rxjs';
 
 // Services
 import {
@@ -11,6 +12,12 @@ import {
 // Utility
 import { TranslateService } from '@ngx-translate/core';
 import { TestConstants } from '@constants';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import {
+  BanksService,
+  CustomersService
+} from '@cybrid/cybrid-api-bank-angular';
 
 describe('ConfigService', () => {
   let service: ConfigService;
@@ -21,22 +28,33 @@ describe('ConfigService', () => {
     'setDefaultLang',
     'use'
   ]);
+  let MockCustomersService = jasmine.createSpyObj(['getCustomer']);
+  let MockBanksService = jasmine.createSpyObj(['getBank']);
 
-  // Reset temp customer GUID to mock prod
+  // Reset config to mock prod
   TestConstants.CONFIG.customer = '';
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [BrowserAnimationsModule, HttpClientTestingModule],
       providers: [
         { provide: ErrorService, useValue: MockErrorService },
         { provide: EventService, useValue: MockEventService },
-        { provide: TranslateService, useValue: MockTranslateService }
+        { provide: TranslateService, useValue: MockTranslateService },
+        { provide: CustomersService, useValue: MockCustomersService },
+        { provide: BanksService, useValue: MockBanksService }
       ]
     });
     service = TestBed.inject(ConfigService);
     MockErrorService = TestBed.inject(ErrorService);
     MockEventService = TestBed.inject(EventService);
     MockTranslateService = TestBed.inject(TranslateService);
+    MockCustomersService = TestBed.inject(CustomersService);
+    MockCustomersService.getCustomer.and.returnValue(
+      of(TestConstants.CUSTOMER_BANK_MODEL)
+    );
+    MockBanksService = TestBed.inject(BanksService);
+    MockBanksService.getBank.and.returnValue(of(TestConstants.BANK_BANK_MODEL));
   });
 
   it('should be created', () => {
@@ -96,16 +114,28 @@ describe('ConfigService', () => {
     });
   });
 
-  it('should set light and dark mode', () => {
-    // Modify default test config theme
-    TestConstants.CONFIG.theme = 'DARK';
+  it('should set theme', () => {
+    let config = { ...TestConstants.CONFIG };
+    config.theme = 'DARK';
 
-    service.setConfig(TestConstants.CONFIG);
-    service.config$.subscribe((cfg) => {
-      expect(cfg).toEqual(TestConstants.CONFIG);
+    service.setConfig(config);
+
+    service.getConfig$().subscribe((cfg) => {
+      expect(cfg.theme).toEqual('DARK');
     });
+  });
 
-    // Reset theme
-    TestConstants.CONFIG.theme = 'LIGHT';
+  it('should fetch customer data', () => {
+    service
+      .getCustomer$()
+      .subscribe((customer) =>
+        expect(customer).toEqual(TestConstants.CUSTOMER_BANK_MODEL)
+      );
+  });
+
+  it('should fetch bank data', () => {
+    service
+      .getBank$()
+      .subscribe((bank) => expect(bank).toEqual(TestConstants.BANK_BANK_MODEL));
   });
 });
