@@ -118,18 +118,18 @@ export class TestConstants {
   };
 
   static TRADE_BANK_MODEL: TradeBankModel = {
-    guid: '3a1afe49232332f69d8c52f1157fdf81',
-    customer_guid: '',
-    quote_guid: 'ede5f73db305fbd27ec0eb0894ae8aa7',
+    guid: 'f21f8cf0bcb30fad80db7a04edebdff0',
+    customer_guid: 'c6cce7287f22d1fd8b38765cba0d5bf2',
+    quote_guid: 'dac5e23b30d81ad2fb290b4a6c3bbb7b',
     symbol: 'ETH-USD',
     side: 'buy',
-    state: 'storing',
+    state: 'settling',
     // @ts-ignore
     failure_code: null,
-    receive_amount: '1000000000000000000',
-    deliver_amount: '103331',
+    receive_amount: '863431100000000',
+    deliver_amount: '100',
     fee: '0',
-    created_at: '2022-06-30T17:04:39.049Z'
+    created_at: '2022-11-23T14:28:28.223Z'
   };
 
   // Account-list component test models
