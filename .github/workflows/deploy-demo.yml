@@ -4,14 +4,19 @@ on:
   repository_dispatch:
     types: deploy
 jobs:
-  build-and-delpoy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
+      - name: Update public demo credentials
+        run: |
+          cd src/environments && \
+          contents="$(jq -r --arg id "$cypress_CLIENT_ID_BACKSTOPPED" --arg secret "$cypress_CLIENT_SECRET_BACKSTOPPED" --arg customer "$cypress_CUSTOMER_GUID_BACKSTOPPED" '.environment.credentials.publicCustomerGuid=$customer | .environment.credentials.publicClientId=$id | .environment.credentials.publicClientSecret=$secret' environment.ci.json)" && \
+          echo "${contents}" > environment.ci.json \ &&
+          cd ...
       - name: Install and Build
         run: |
           npm ci

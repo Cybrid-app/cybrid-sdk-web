@@ -43,9 +43,9 @@ export class LoginComponent implements OnInit {
   };
 
   // PUBLIC CREDENTIALS FOR NO-LOGIN DEMO
-  readonly publicClientId = 'gtlpql9qUwhhhRBKemkWG2aIofhUZBf-J_1QY-nsNg8';
-  readonly publicClientSecret = '2eEo_u3MYyzawlB7Cm4-mP397EzOz5tAZwQFTiF6EKc';
-  readonly publicCustomerGuid = '72892100b5fdd31a1bf7a3c341e64cb8';
+  readonly publicClientId = environment.credentials.publicClientId;
+  readonly publicClientSecret = environment.credentials.publicClientSecret;
+  readonly publicCustomerGuid = environment.credentials.publicCustomerGuid;
 
   loginForm!: FormGroup<LoginForm>;
 

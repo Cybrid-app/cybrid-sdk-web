@@ -45,7 +45,11 @@ Cypress.Commands.add('login', (backstopped?: 'backstopped') => {
         'CLIENT_SECRET_BACKSTOPPED',
         'CUSTOMER_GUID_BACKSTOPPED'
       )
-    : typeCredentials('CLIENT_ID', 'CLIENT_SECRET', 'CUSTOMER_GUID');
+    : typeCredentials(
+        'CLIENT_ID_PLAID',
+        'CLIENT_SECRET_PLAID',
+        'CUSTOMER_GUID_PLAID'
+      );
 });
 //
 // NOTE: You can use it like so:
