@@ -185,20 +185,14 @@ describe('trade test', () => {
   });
 
   it('should display the order summary', () => {
-    cy.intercept('GET', '/api/trades/*', (req) => {
-      req.reply(TestConstants.TRADE_BANK_MODEL);
-    }).as('getTrade');
-
     // Check order submitted dialog
-    cy.wait('@getTrade').then(() => {
-      app()
-        .get('app-trade-summary')
-        .find('.cybrid-list-item')
-        .should('contain.text', 'Purchased')
-        .should('contain.text', 'ETH')
-        .should('contain.text', 'USD')
-        .should('contain.text', '$1.00');
-    });
+    app()
+      .get('app-trade-summary')
+      .find('.cybrid-list-item')
+      .should('contain.text', 'Purchased')
+      .should('contain.text', 'ETH')
+      .should('contain.text', 'USD')
+      .should('contain.text', '$1.00');
   });
 
   it('should exit the dialog and navigate to the price-list on done', () => {
