@@ -23,6 +23,7 @@ interface LoginForm {
 export interface DemoCredentials {
   token: string;
   customer: string;
+  isPublic: boolean;
 }
 
 @Component({
@@ -37,8 +38,14 @@ export class LoginComponent implements OnInit {
   bearer = false;
   demoCredentials: DemoCredentials = {
     token: '',
-    customer: ''
+    customer: '',
+    isPublic: false
   };
+
+  // PUBLIC CREDENTIALS FOR NO-LOGIN DEMO
+  readonly publicClientId = environment.credentials.publicClientId;
+  readonly publicClientSecret = environment.credentials.publicClientSecret;
+  readonly publicCustomerGuid = environment.credentials.publicCustomerGuid;
 
   loginForm!: FormGroup<LoginForm>;
 
@@ -104,24 +111,32 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  login(): void {
-    // Returns bearer token if input, or calls api with keys
+  login(publicUser?: boolean): void {
     const token = (): Observable<string> => {
-      return this.bearer
-        ? of(this.loginForm.controls.bearerToken.value)
-        : this.configService
-            .createToken(
-              this.loginForm.value.clientId,
-              this.loginForm.value.clientSecret
-            )
-            .pipe(
-              catchError((err) => {
-                this.loginForm.controls.clientId.setErrors({
-                  unauthorized: true
-                });
-                return of(err);
-              })
-            );
+      // Logs in public user
+      if (publicUser) {
+        return this.configService.createToken(
+          this.publicClientId,
+          this.publicClientSecret
+        );
+      } else {
+        // Returns bearer token if input, or calls api with keys
+        return this.bearer
+          ? of(this.loginForm.controls.bearerToken.value)
+          : this.configService
+              .createToken(
+                this.loginForm.value.clientId,
+                this.loginForm.value.clientSecret
+              )
+              .pipe(
+                catchError((err) => {
+                  this.loginForm.controls.clientId.setErrors({
+                    unauthorized: true
+                  });
+                  return of(err);
+                })
+              );
+      }
     };
 
     // Validates customer and sets credentials
@@ -132,7 +147,12 @@ export class LoginComponent implements OnInit {
           return token;
         }),
         switchMap((token) => {
-          const url = this.customerApi + this.loginForm.value.customerGuid;
+          const user = () =>
+            publicUser
+              ? this.publicCustomerGuid
+              : this.loginForm.value.customerGuid;
+
+          const url = this.customerApi + user();
           const httpOptions = {
             headers: new HttpHeaders({
               'Content-Type': 'application/json',
@@ -175,6 +195,11 @@ export class LoginComponent implements OnInit {
       .subscribe((customer: CustomerBankModel) => {
         if (customer.guid) {
           this.demoCredentials.customer = customer.guid;
+
+          publicUser
+            ? (this.demoCredentials.isPublic = publicUser)
+            : (this.demoCredentials.isPublic = false);
+
           this.credentials.next(this.demoCredentials);
         }
       });

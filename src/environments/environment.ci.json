@@ -1,0 +1,12 @@
+{
+  "environment": {
+    "credentials": {
+      "clientSecret": "",
+      "clientId": "",
+      "customerGuid": "",
+      "publicClientId": "",
+      "publicClientSecret": "",
+      "publicCustomerGuid": ""
+    }
+  }
+}

@@ -12,7 +12,7 @@ describe('trade test', () => {
   before(() => {
     cy.visit('/');
     // @ts-ignore
-    cy.login();
+    cy.login('backstopped');
   });
   it('should render the trade component', () => {
     tradeSetup();
@@ -192,7 +192,7 @@ describe('trade test', () => {
       .should('contain.text', 'Purchased')
       .should('contain.text', 'ETH')
       .should('contain.text', 'USD')
-      .should('contain.text', '$1,033.31');
+      .should('contain.text', '$1.00');
   });
 
   it('should exit the dialog and navigate to the price-list on done', () => {

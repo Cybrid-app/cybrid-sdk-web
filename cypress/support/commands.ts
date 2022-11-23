@@ -14,7 +14,7 @@ function customCommand(param: any): void {
 }
 
 // @ts-ignore
-Cypress.Commands.add('login', () => {
+Cypress.Commands.add('login', (backstopped?: 'backstopped') => {
   cy.intercept(
     'GET',
     'https://api.github.com/repos/Cybrid-app/cybrid-sdk-web/releases/latest',
@@ -24,13 +24,32 @@ Cypress.Commands.add('login', () => {
   );
 
   cy.visit('/');
-  cy.get('app-login')
-    .should('exist')
-    .get('#clientId')
-    .type(Cypress.env('CLIENT_ID'));
-  cy.get('#clientSecret').type(Cypress.env('CLIENT_SECRET'));
-  cy.get('#customerGuid').type(Cypress.env('CUSTOMER_GUID'));
-  cy.get('#login').click();
+
+  function typeCredentials(
+    client_id: string,
+    client_secret: string,
+    customer_guid: string
+  ) {
+    cy.get('app-login')
+      .should('exist')
+      .get('#clientId')
+      .type(Cypress.env(client_id));
+    cy.get('#clientSecret').type(Cypress.env(client_secret));
+    cy.get('#customerGuid').type(Cypress.env(customer_guid));
+    cy.get('#login').click();
+  }
+
+  backstopped
+    ? typeCredentials(
+        'CLIENT_ID_BACKSTOPPED',
+        'CLIENT_SECRET_BACKSTOPPED',
+        'CUSTOMER_GUID_BACKSTOPPED'
+      )
+    : typeCredentials(
+        'CLIENT_ID_PLAID',
+        'CLIENT_SECRET_PLAID',
+        'CUSTOMER_GUID_PLAID'
+      );
 });
 //
 // NOTE: You can use it like so:

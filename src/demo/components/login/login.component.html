@@ -94,6 +94,14 @@
     </mat-card-content>
     <mat-card-actions>
       <button
+        id="publicLogin"
+        mat-flat-button
+        color="primary"
+        (click)="login(true)"
+      >
+        Instant Demo
+      </button>
+      <button
         id="login"
         [disabled]="loginForm.invalid"
         mat-flat-button

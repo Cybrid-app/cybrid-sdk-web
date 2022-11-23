@@ -12,7 +12,10 @@ export const environment = {
   credentials: {
     clientId: '',
     clientSecret: '',
-    customerGuid: ''
+    customerGuid: '',
+    publicClientId: '',
+    publicClientSecret: '',
+    publicCustomerGuid: ''
   },
   grant_type: 'client_credentials',
   scope:
