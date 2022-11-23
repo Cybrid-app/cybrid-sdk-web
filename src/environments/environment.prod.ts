@@ -2,7 +2,7 @@
  * CircleCi friendly json used to update public user keys
  * (for instant demo) when building the production web demo
  */
-import * as ci from './environment.ci.json';
+import ci from './environment.ci.json';
 
 export const environment = {
   production: true,
