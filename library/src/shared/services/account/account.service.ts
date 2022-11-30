@@ -36,6 +36,7 @@ export interface Account {
 
 export interface AccountOverview {
   accounts: Account[];
+  fiatAccount: AccountBankModel;
   balance: number;
 }
 
@@ -58,8 +59,7 @@ export class AccountService implements OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  // Filter for 'trading' accounts
-  filterAccounts(): Observable<AccountBankModel[]> {
+  getAccounts(): Observable<AccountBankModel[]> {
     return this.configService.getConfig$().pipe(
       switchMap((config) => {
         return this.accountsService.listAccounts(
@@ -70,11 +70,7 @@ export class AccountService implements OnDestroy {
           config.customer
         );
       }),
-      map((accounts) => {
-        return accounts.objects.filter((account) => {
-          return account.type == 'trading';
-        });
-      })
+      map((accounts) => accounts.objects)
     );
   }
 
@@ -117,7 +113,7 @@ export class AccountService implements OnDestroy {
     counterAsset: string
   ): Observable<Account> {
     return combineLatest([
-      this.filterAccounts().pipe(
+      this.getAccounts().pipe(
         map((accounts) => {
           return accounts.find((account) => {
             return accountGuid == account.guid;
@@ -173,7 +169,7 @@ export class AccountService implements OnDestroy {
 
   getPortfolio(): Observable<AccountOverview> {
     return combineLatest([
-      this.filterAccounts().pipe(
+      this.getAccounts().pipe(
         catchError((err) => {
           return of(err);
         })
@@ -186,11 +182,19 @@ export class AccountService implements OnDestroy {
     ]).pipe(
       map((combined) => {
         const [accounts, prices] = combined;
+        const cryptoAccounts = accounts.filter(
+          (account: AccountBankModel) =>
+            account.type == AccountBankModel.TypeEnum.Trading
+        );
+        const fiatAccount = accounts.find(
+          (account: AccountBankModel) =>
+            account.type == AccountBankModel.TypeEnum.Fiat
+        );
 
         let portfolioBalance = 0;
         let tradingAccounts: Account[] = [];
 
-        accounts.forEach((accountModel: AccountBankModel) => {
+        cryptoAccounts.forEach((accountModel: AccountBankModel) => {
           const priceModel = this.filterPrices(prices, accountModel);
 
           const [assetCode, counterAssetCode] = symbolSplit(prices[0].symbol!);
@@ -228,7 +232,11 @@ export class AccountService implements OnDestroy {
           portfolioBalance = portfolioBalance + account.value!;
         });
 
-        return { accounts: tradingAccounts, balance: portfolioBalance };
+        return {
+          accounts: tradingAccounts,
+          fiatAccount: fiatAccount,
+          balance: portfolioBalance
+        };
       }),
       catchError((err) => {
         return of(err);

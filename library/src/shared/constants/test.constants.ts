@@ -343,7 +343,8 @@ export class TestConstants {
         }
       }
     ],
-    balance: 12518457.675255332
+    balance: 12518457.675255332,
+    fiatAccount: {} as AccountBankModel
   };
 
   // Account-details component test models
@@ -417,7 +418,7 @@ export class TestConstants {
   static EXTERNAL_BANK_ACCOUNT_BANK_MODEL: ExternalBankAccountBankModel = {
     guid: '2de5669f53be9d52f25f0ede2c35769c',
     name: 'USD',
-    asset_code: 'USD',
+    asset: 'USD',
     account_kind: 'plaid',
     environment: 'sandbox',
     created_at: '2022-11-08T20:03:51.916Z',

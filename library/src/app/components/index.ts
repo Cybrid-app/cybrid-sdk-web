@@ -14,4 +14,5 @@ export { IdentityVerificationComponent } from './identity-verification/identity-
 export { IdentityContentComponent } from './identity-verification/identity-content/identity-content.component';
 export { CustomerContentComponent } from './identity-verification/customer-content/customer-content.component';
 export * from './bank-account-management';
+export * from './transfer';
 export { CybridLogoComponent } from './cybrid-logo/cybrid-logo.component';

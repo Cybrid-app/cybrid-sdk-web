@@ -2,12 +2,14 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
+import { NavigationExtras } from '@angular/router';
 
 import {
   BehaviorSubject,
   catchError,
   map,
   of,
+  ReplaySubject,
   Subject,
   switchMap,
   take,
@@ -30,10 +32,13 @@ import {
   RoutingData,
   RoutingService
 } from '@services';
+import {
+  AccountBankModel,
+  AccountsService
+} from '@cybrid/cybrid-api-bank-angular';
 
 // Utility
 import { Constants } from '@constants';
-import { NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'app-account-list',
@@ -50,20 +55,23 @@ export class AccountListComponent implements OnInit, OnDestroy {
     this.dataSource.paginator = paginator;
   }
 
+  dataSource = new MatTableDataSource<Account>();
+  displayedColumns: string[] = ['asset', 'balance'];
+  getAccountsError = false;
+
   balance$ = new BehaviorSubject<number>(0);
+  fiatAccount$: ReplaySubject<AccountBankModel> =
+    new ReplaySubject<AccountBankModel>(1);
   currentFiat: Asset = Constants.USD_ASSET;
 
   isLoading$ = new BehaviorSubject(true);
   isRecoverable$ = new BehaviorSubject(true);
   private unsubscribe$ = new Subject();
+
   routingData: RoutingData = {
     route: 'price-list',
     origin: 'account-list'
   };
-
-  dataSource = new MatTableDataSource<Account>();
-  displayedColumns: string[] = ['asset', 'balance'];
-  getAccountsError = false;
 
   constructor(
     public configService: ConfigService,
@@ -71,6 +79,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
     private eventService: EventService,
     private errorService: ErrorService,
     private accountService: AccountService,
+    private accountsService: AccountsService,
     private routingService: RoutingService
   ) {}
 
@@ -107,9 +116,8 @@ export class AccountListComponent implements OnInit, OnDestroy {
       .getPortfolio()
       .pipe(
         map((accountOverview) => {
-          this.isLoading$.next(false);
-
           this.balance$.next(accountOverview.balance);
+          this.fiatAccount$.next(accountOverview.fiatAccount);
           this.dataSource.data = accountOverview.accounts;
           this.getAccountsError = false;
 
@@ -118,6 +126,8 @@ export class AccountListComponent implements OnInit, OnDestroy {
             CODE.DATA_REFRESHED,
             'Accounts successfully updated'
           );
+
+          this.isLoading$.next(false);
         }),
         catchError((err) => {
           this.eventService.handleEvent(

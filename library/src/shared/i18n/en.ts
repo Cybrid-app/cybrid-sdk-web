@@ -7,6 +7,8 @@ export default {
   resume: 'RESUME',
   back: 'Back',
   date: 'Date',
+  to: 'To',
+  from: 'From',
   fatal: 'An unrecoverable error occurred',
   unexpectedError: 'Unexpected error.',
 
@@ -68,7 +70,8 @@ export default {
 
   // Account list component
   accountList: {
-    total: 'TOTAL VALUE',
+    total: 'Account Value',
+    available: 'Available to Trade',
     account: {
       header: 'Asset',
       subheader: 'Market Price'
@@ -144,6 +147,30 @@ export default {
     mobile: {
       warning: 'Temporarily unavailable on mobile.',
       explanation: 'Please connect your bank account using a desktop browser.'
+    }
+  },
+
+  // Transfer component
+  transfer: {
+    transfer: 'Transfer',
+    amount: 'Amount',
+    bankAccount: 'Bank Account',
+    deposit: 'Deposit',
+    withdraw: 'Withdraw',
+    noAccount: 'No bank accounts connected.',
+    addAccount: 'Add Account',
+
+    // Confirm dialog
+    confirm: {
+      confirm: 'Confirm',
+      loading: 'Initiating',
+      depositDate: 'Deposit Date'
+    },
+
+    // Details dialog
+    details: {
+      details: 'Details',
+      state: 'State'
     }
   }
 };

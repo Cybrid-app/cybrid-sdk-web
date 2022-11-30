@@ -1,0 +1,58 @@
+.cybrid-option {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cybrid-prefix {
+  margin-top: 4px;
+  position: relative;
+
+  .cybrid-amount-divider {
+    position: absolute;
+    height: 1rem;
+    width: 1px;
+    top: 0;
+    right: -8px;
+    background: currentColor;
+  }
+}
+
+.cybrid-balance {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  h5 {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+}
+
+.cybrid-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.cybrid-amount-input {
+  margin-left: 15px;
+  width: calc(100% - 15px);
+}
+
+.cybrid-no-accounts {
+  align-items: center;
+}
+
+@media screen and (min-width: 1535px) {
+  .cybrid-input-wrapper {
+    flex-direction: row;
+    gap: 1rem;
+  }
+  .cybrid-input-flex {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 50%;
+  }
+}

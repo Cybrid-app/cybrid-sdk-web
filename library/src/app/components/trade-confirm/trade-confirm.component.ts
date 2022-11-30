@@ -39,10 +39,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'app-trade-confirm',
   templateUrl: './trade-confirm.component.html',
-  styleUrls: [
-    './trade-confirm.component.scss',
-    '../../../shared/styles/global.scss'
-  ]
+  styleUrls: ['./trade-confirm.component.scss']
 })
 export class TradeConfirmComponent implements OnInit, OnDestroy {
   quote$: Subject<QuoteBankModel> = new Subject<QuoteBankModel>();

@@ -59,7 +59,10 @@ import {
   IdentityContentComponent,
   CustomerContentComponent,
   CybridLogoComponent,
-  BankAccountConnectComponent
+  BankAccountConnectComponent,
+  TransferComponent,
+  TransferConfirmComponent,
+  TransferDetailsComponent
 } from '@components';
 
 // Utility
@@ -89,6 +92,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     CustomerContentComponent,
     CybridLogoComponent,
     BankAccountConnectComponent,
+    TransferComponent,
+    TransferConfirmComponent,
+    TransferDetailsComponent,
     AssetPipe,
     TruncatePipe
   ],
