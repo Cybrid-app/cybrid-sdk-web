@@ -162,6 +162,7 @@ export default {
     withdraw: 'Se désister',
     noAccount: 'Aucun compte bancaire connecté.',
     addAccount: 'Ajouter un compte',
+    insufficientFunds: 'Fonds insuffisants',
     error: 'Erreur lors de la création du transfert',
 
     // Confirm dialog

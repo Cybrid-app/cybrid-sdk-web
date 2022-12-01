@@ -159,6 +159,7 @@ export default {
     withdraw: 'Withdraw',
     noAccount: 'No bank accounts connected.',
     addAccount: 'Add Account',
+    insufficientFunds: 'Insufficient funds',
     error: 'Error creating transfer',
 
     // Confirm dialog
