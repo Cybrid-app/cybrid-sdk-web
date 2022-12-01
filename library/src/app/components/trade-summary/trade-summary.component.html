@@ -34,7 +34,7 @@
             (trade.side === 'buy'
               ? trade.deliver_amount!
               : trade.receive_amount!
-            ) | asset: data.counter_asset
+            ) | asset : data.counter_asset
           }}</span>
           <span> {{ data.counter_asset.code + ' ' }}</span>
           <span>{{ ('accountTrade.subheader' | translate) + ' ' }}</span>
@@ -46,7 +46,7 @@
             <div class="inner">
               <span class="mat-body-strong">Transaction ID:</span>
               <span matTooltip="{{ trade.guid }}" matTooltipPosition="above">{{
-                trade.guid! | truncate: 9
+                trade.guid! | truncate : 9
               }}</span>
             </div>
             <div class="inner">
@@ -74,7 +74,7 @@
             </span>
             <div>
               <span>
-                {{ (trade.deliver_amount! | asset: data.counter_asset) + ' ' }}
+                {{ (trade.deliver_amount! | asset : data.counter_asset) + ' ' }}
               </span>
               <span class="mat-hint">{{ data.counter_asset.code }}</span>
             </div>
@@ -90,7 +90,7 @@
             </span>
             <div>
               <span>{{
-                (trade.receive_amount! | asset: data.asset:'trade') + ' '
+                (trade.receive_amount! | asset : data.asset : 'trade') + ' '
               }}</span>
               <span class="mat-hint">{{ data.asset.code }}</span>
             </div>
@@ -100,7 +100,7 @@
             <span>{{ 'trade.transaction' | translate }}</span>
             <div>
               <span>
-                {{ (trade.fee! | asset: data.counter_asset) + ' ' }}
+                {{ (trade.fee! | asset : data.counter_asset) + ' ' }}
               </span>
               <span class="mat-hint">{{ data.counter_asset.code }}</span>
             </div>
@@ -112,7 +112,7 @@
             <div class="inner">
               <span class="mat-body-strong">Transaction ID:</span>
               <span matTooltip="{{ trade.guid }}" matTooltipPosition="above">{{
-                trade.guid! | truncate: 9
+                trade.guid! | truncate : 9
               }}</span>
             </div>
             <div class="inner">
@@ -140,7 +140,7 @@
             </span>
             <div>
               <span>
-                {{ (trade.receive_amount! | asset: data.counter_asset) + ' ' }}
+                {{ (trade.receive_amount! | asset : data.counter_asset) + ' ' }}
               </span>
               <span class="mat-hint">{{ data.counter_asset.code }}</span>
             </div>
@@ -156,7 +156,7 @@
             </span>
             <div>
               <span>{{
-                (trade.deliver_amount! | asset: data.asset:'trade') + ' '
+                (trade.deliver_amount! | asset : data.asset : 'trade') + ' '
               }}</span>
               <span class="mat-hint">{{ data.asset.code }}</span>
             </div>
@@ -168,7 +168,7 @@
               <span>
                 {{
                   data.counter_asset.symbol +
-                    (trade.fee! | asset: data.counter_asset:'trade') +
+                    (trade.fee! | asset : data.counter_asset : 'trade') +
                     ' '
                 }}
               </span>

@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import {
   BehaviorSubject,
@@ -9,9 +10,9 @@ import {
   map,
   of,
   switchMap,
-  take,
   takeUntil,
-  Subject
+  Subject,
+  take
 } from 'rxjs';
 
 // Services
@@ -50,6 +51,7 @@ import {
 // Utility
 import { AssetPipe } from '@pipes';
 import { CurrencyMask } from '../../../shared/utility/currency-mask';
+import { TranslatePipe } from '@ngx-translate/core';
 
 interface TransferGroup {
   account: FormControl<ExternalBankAccountBankModel>;
@@ -70,9 +72,9 @@ export class TransferComponent implements OnInit, OnDestroy {
   fiatAsset!: Asset;
   side: string = 'deposit';
   transferGroup!: FormGroup<TransferGroup>;
+  isCreatingTransfer$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   isLoading$ = new BehaviorSubject(true);
-  error$ = new BehaviorSubject(false);
   unsubscribe$ = new Subject();
 
   routingData: RoutingData = {
@@ -80,29 +82,19 @@ export class TransferComponent implements OnInit, OnDestroy {
     origin: 'transfer'
   };
 
-  MockFiatAccount: AccountBankModel = {
-    type: 'fiat',
-    guid: 'ce3fa5a7fc35b632f2526df447f75f89',
-    created_at: '2022-11-24T18:32:53.196Z',
-    asset: 'USD',
-    name: 'USD',
-    customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
-    platform_balance: '500',
-    platform_available: '500',
-    state: 'created'
-  };
-
   constructor(
     public configService: ConfigService,
     private bankAccountService: BankAccountService,
     private quotesService: QuotesService,
     private accountsService: AccountsService,
-    private assetPipe: AssetPipe,
+    public assetPipe: AssetPipe,
+    private translatePipe: TranslatePipe,
     private assetService: AssetService,
     private errorService: ErrorService,
     private eventService: EventService,
     private router: RoutingService,
-    public dialog: MatDialog
+    private dialog: MatDialog,
+    private snackbar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -223,78 +215,88 @@ export class TransferComponent implements OnInit, OnDestroy {
   }
 
   onTransfer(): void {
+    this.isCreatingTransfer$.next(true);
+
     const account = this.transferGroup.value.account;
     const asset = this.assetService.getAsset(
       this.transferGroup.value.account?.asset!
     );
     const amount = this.transferGroup.value.amount;
 
-    if (asset && amount) {
-      let postQuoteBankModel: PostQuoteBankModel;
+    let postQuoteBankModel: PostQuoteBankModel;
 
-      this.configService
-        .getCustomer$()
-        .pipe(
-          take(1),
-          switchMap((customer) => {
-            this.eventService.handleEvent(
-              LEVEL.INFO,
-              CODE.DATA_FETCHING,
-              'Fetching quote...'
-            );
-            postQuoteBankModel = {
-              product_type: PostQuoteBankModel.ProductTypeEnum.Funding,
-              customer_guid: customer.guid,
-              asset: asset.code,
-              side: this.side as PostQuoteBankModel.SideEnum,
-              deliver_amount: this.assetPipe.transform(
-                amount,
-                asset,
-                'base'
-              ) as string
-            };
-            return this.quotesService.createQuote(postQuoteBankModel);
-          }),
-          switchMap((quoteBankModel: QuoteBankModel) => {
-            const transferConfirmData: TransferConfirmData = {
-              quoteBankModel: quoteBankModel,
-              postQuoteBankModel: postQuoteBankModel,
+    this.configService
+      .getCustomer$()
+      .pipe(
+        take(1),
+        switchMap((customer) => {
+          this.eventService.handleEvent(
+            LEVEL.INFO,
+            CODE.DATA_FETCHING,
+            'Fetching quote...'
+          );
+          postQuoteBankModel = {
+            product_type: PostQuoteBankModel.ProductTypeEnum.Funding,
+            customer_guid: customer.guid,
+            asset: asset.code,
+            side: this.side as PostQuoteBankModel.SideEnum,
+            deliver_amount: this.assetPipe.transform(
+              amount!,
+              asset,
+              'base'
+            ) as string
+          };
+          return this.quotesService.createQuote(postQuoteBankModel);
+        }),
+        switchMap((quoteBankModel: QuoteBankModel) => {
+          const transferConfirmData: TransferConfirmData = {
+            quoteBankModel: quoteBankModel,
+            postQuoteBankModel: postQuoteBankModel,
+            externalBankAccountBankModel: account!,
+            asset: asset
+          };
+
+          const dialogRef = this.dialog.open(TransferConfirmComponent, {
+            data: transferConfirmData
+          });
+          return dialogRef.afterClosed();
+        }),
+        map((transferBankModel: TransferBankModel) => {
+          this.isCreatingTransfer$.next(false);
+
+          if (transferBankModel) {
+            const transferDetailsData: TransferDetailsData = {
+              transferBankModel: transferBankModel,
               externalBankAccountBankModel: account!,
               asset: asset
             };
-
-            const dialogRef = this.dialog.open(TransferConfirmComponent, {
-              data: transferConfirmData
+            this.dialog.open(TransferDetailsComponent, {
+              disableClose: false,
+              data: transferDetailsData
             });
-            return dialogRef.afterClosed();
-          }),
-          map((transferBankModel: TransferBankModel) => {
-            if (transferBankModel) {
-              const transferDetailsData: TransferDetailsData = {
-                transferBankModel: transferBankModel,
-                externalBankAccountBankModel: account!,
-                asset: asset
-              };
-              this.dialog.open(TransferDetailsComponent, {
-                disableClose: false,
-                data: transferDetailsData
-              });
-            }
-          }),
-          catchError((err) => {
-            this.eventService.handleEvent(
-              LEVEL.ERROR,
-              CODE.DATA_ERROR,
-              'Error creating transfer'
-            );
-            this.errorService.handleError(err);
-            return of(err);
-          })
-        )
-        .subscribe();
-    } else {
-      this.error$.next(true);
-    }
+          }
+        }),
+        catchError((err) => {
+          this.isCreatingTransfer$.next(false);
+
+          this.snackbar.open(
+            this.translatePipe.transform('transfer.error'),
+            'OK'
+          );
+          this.eventService.handleEvent(
+            LEVEL.ERROR,
+            CODE.DATA_ERROR,
+            'Error creating transfer'
+          );
+          this.errorService.handleError(err);
+          this.snackbar.open(
+            this.translatePipe.transform('transfer.error'),
+            'OK'
+          );
+          return of(err);
+        })
+      )
+      .subscribe();
   }
 
   onAddAccount(): void {

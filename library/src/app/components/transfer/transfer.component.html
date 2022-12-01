@@ -16,7 +16,7 @@
             <h1>
               {{
                 accounts.fiatAccount?.platform_available!
-                  | asset: fiatAsset:'formatted'
+                  | asset : fiatAsset : 'formatted'
               }}
               <span class="mat-hint">{{
                 accounts.fiatAccount?.asset | uppercase
@@ -102,7 +102,9 @@
               mat-flat-button
               color="primary"
               (click)="onTransfer()"
-              [disabled]="transferGroup.invalid"
+              [disabled]="
+                transferGroup.invalid || (isCreatingTransfer$ | async)
+              "
             >
               {{
                 side === 'deposit'
@@ -115,9 +117,9 @@
       </ng-container>
       <ng-template #noAccount>
         <div class="cybrid-column cybrid-no-accounts">
-          <p>No bank accounts connected.</p>
+          <p>{{ 'transfer.noAccount' | translate }}</p>
           <button mat-flat-button color="primary" (click)="onAddAccount()">
-            Add Account
+            {{ 'transfer.addAccount' | translate }}
           </button>
         </div>
       </ng-template>

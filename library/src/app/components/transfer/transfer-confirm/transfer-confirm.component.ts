@@ -104,6 +104,7 @@ export class TransferConfirmComponent implements OnInit, OnDestroy {
         ),
         map((quote) => this.quote$.next(quote)),
         catchError((err) => {
+          this.dialogRef.close();
           const message = this.translatePipe.transform(
             'trade.confirm.error.quote'
           );
@@ -114,7 +115,6 @@ export class TransferConfirmComponent implements OnInit, OnDestroy {
             'Error fetching quote'
           );
           this.errorService.handleError(err);
-          this.dialogRef.close();
           return of(err);
         })
       )
@@ -133,6 +133,22 @@ export class TransferConfirmComponent implements OnInit, OnDestroy {
     let poll: Poll = new Poll(this.pollConfig);
     let transfer: TransferBankModel;
 
+    this.error$.pipe(takeUntil(this.unsubscribe$)).subscribe((res) => {
+      if (res) {
+        this.dialogRef.close();
+        this.snackBar.open(
+          this.translatePipe.transform('transfer.error'),
+          'OK'
+        );
+        this.eventService.handleEvent(
+          LEVEL.ERROR,
+          CODE.DATA_ERROR,
+          'Error creating transfer'
+        );
+        this.errorService.handleError(new Error('Error creating transfer'));
+      }
+    });
+
     this.transfersService
       .createTransfer(postTransferBankModel)
       .pipe(
@@ -148,10 +164,12 @@ export class TransferConfirmComponent implements OnInit, OnDestroy {
           this.dialogRef.close(transfer);
         }),
         catchError((err) => {
-          const message = this.translatePipe.transform(
-            'transfer.confirm.error.transfer'
+          poll.stop();
+          this.dialogRef.close();
+          this.snackBar.open(
+            this.translatePipe.transform('transfer.error'),
+            'OK'
           );
-          this.snackBar.open(message, 'OK');
           this.eventService.handleEvent(
             LEVEL.ERROR,
             CODE.DATA_ERROR,

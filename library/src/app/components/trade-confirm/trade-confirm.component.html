@@ -16,7 +16,7 @@
           }}</span>
           <div>
             <span>
-              {{ (quote.deliver_amount! | asset: counter_asset) + ' ' }}
+              {{ (quote.deliver_amount! | asset : counter_asset) + ' ' }}
             </span>
             <span class="mat-hint">{{ counter_asset.code }}</span>
           </div>
@@ -30,7 +30,7 @@
           }}</span>
           <div>
             <span>{{
-              (quote.receive_amount! | asset: asset:'trade') + ' '
+              (quote.receive_amount! | asset : asset : 'trade') + ' '
             }}</span>
             <span class="mat-hint">{{ asset.code }}</span>
           </div>
@@ -39,7 +39,7 @@
         <div class="cybrid-list-item">
           <span>{{ 'trade.transaction' | translate }}</span>
           <div>
-            <span>{{ (quote.fee! | asset: counter_asset) + ' ' }} </span>
+            <span>{{ (quote.fee! | asset : counter_asset) + ' ' }} </span>
             <span class="mat-hint">{{ counter_asset.code }}</span>
           </div>
         </div>
@@ -54,7 +54,7 @@
           }}</span>
           <div>
             <span>{{
-              (quote.receive_amount! | asset: counter_asset) + ' '
+              (quote.receive_amount! | asset : counter_asset) + ' '
             }}</span>
             <span class="mat-hint"> {{ counter_asset.code }}</span>
           </div>
@@ -68,7 +68,7 @@
           }}</span>
           <div>
             <span>{{
-              (quote.deliver_amount! | asset: asset:'trade') + ' '
+              (quote.deliver_amount! | asset : asset : 'trade') + ' '
             }}</span>
             <span class="mat-hint">{{ asset.code }}</span>
           </div>
@@ -77,7 +77,7 @@
         <div class="cybrid-list-item">
           <span>{{ 'trade.transaction' | translate }}</span>
           <div>
-            <span>{{ (quote.fee! | asset: counter_asset) + ' ' }}</span>
+            <span>{{ (quote.fee! | asset : counter_asset) + ' ' }}</span>
             <span class="mat-hint">{{ counter_asset.code }}</span>
           </div>
         </div>

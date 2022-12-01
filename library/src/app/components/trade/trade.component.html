@@ -91,7 +91,7 @@
                 </span>
                 <span> = </span>
                 <span>
-                  {{ price.buy_price! | asset: counterAsset }}
+                  {{ price.buy_price! | asset : counterAsset }}
                 </span>
                 <span>{{ ' ' + counterAsset.code }}</span>
               </ng-container>
@@ -105,7 +105,7 @@
                 <span>
                   {{
                     input === 'asset'
-                      ? (display.counter_asset | asset: counterAsset)
+                      ? (display.counter_asset | asset : counterAsset)
                       : display.asset
                   }}
                 </span>

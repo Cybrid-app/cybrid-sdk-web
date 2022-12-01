@@ -16,7 +16,7 @@
   <div class="cybrid-list-item">
     <span>{{ 'transfer.amount' | translate }}</span>
     <div>
-      <span>{{ (transfer.amount! | asset: data.asset) + ' ' }}</span>
+      <span>{{ (transfer.amount! | asset : data.asset) + ' ' }}</span>
       <span class="mat-hint">{{ data.asset.code! }}</span>
     </div>
   </div>
@@ -31,7 +31,7 @@
   <div class="cybrid-list-item">
     <span>{{ 'from' | translate }}</span>
     <div>
-      <span class="mat-hint">{{ account.guid! | truncate: 10 }}</span>
+      <span class="mat-hint">{{ account.guid! | truncate : 10 }}</span>
     </div>
   </div>
 </mat-dialog-content>
