@@ -221,6 +221,7 @@ export class BankAccountConnectComponent implements OnInit {
       this.configService
         .getBank$()
         .pipe(
+          take(1),
           switchMap((bank) => {
             if (bank.supported_fiat_account_assets!.includes(asset)) {
               return this.bankAccountService.createExternalBankAccount(

@@ -160,15 +160,15 @@ export default {
     bankAccount: 'Compte Bancaire',
     deposit: 'Verser',
     withdraw: 'Se désister',
+    processing: 'Traitement',
     noAccount: 'Aucun compte bancaire connecté.',
     addAccount: 'Ajouter un compte',
-    insufficientFunds: 'Fonds insuffisants',
+    nonSufficientFunds: 'Fonds non suffisants',
     error: 'Erreur lors de la création du transfert',
 
     // Confirm dialog
     confirm: {
       confirm: 'Confirmer',
-      loading: 'Initier',
       depositDate: 'Date de dépôt'
     },
 

@@ -11,9 +11,7 @@ import {
   of,
   Subject,
   switchMap,
-  takeUntil,
-  merge,
-  skipWhile
+  takeUntil
 } from 'rxjs';
 
 // Services
@@ -32,13 +30,11 @@ import {
   PostTransferBankModel,
   QuoteBankModel,
   QuotesService,
-  TransferBankModel,
   TransfersService
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Utility
 import { Constants } from '@constants';
-import { Poll, PollConfig } from '../../../../shared/utility/poll/poll';
 
 export interface TransferConfirmData {
   quoteBankModel: QuoteBankModel;
@@ -66,12 +62,6 @@ export class TransferConfirmComponent implements OnInit, OnDestroy {
   error$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   unsubscribe$ = new Subject();
-
-  pollConfig: PollConfig = {
-    timeout: this.error$,
-    interval: Constants.POLL_INTERVAL,
-    duration: Constants.POLL_DURATION
-  };
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
@@ -130,41 +120,13 @@ export class TransferConfirmComponent implements OnInit, OnDestroy {
       transfer_type: PostTransferBankModel.TransferTypeEnum.Funding
     };
 
-    let poll: Poll = new Poll(this.pollConfig);
-    let transfer: TransferBankModel;
-
-    this.error$.pipe(takeUntil(this.unsubscribe$)).subscribe((res) => {
-      if (res) {
-        this.dialogRef.close();
-        this.snackBar.open(
-          this.translatePipe.transform('transfer.error'),
-          'OK'
-        );
-        this.eventService.handleEvent(
-          LEVEL.ERROR,
-          CODE.DATA_ERROR,
-          'Error creating transfer'
-        );
-        this.errorService.handleError(new Error('Error creating transfer'));
-      }
-    });
-
     this.transfersService
       .createTransfer(postTransferBankModel)
       .pipe(
-        switchMap((res) => {
-          transfer = res;
-          return poll.start();
-        }),
-        switchMap(() => this.transfersService.getTransfer(transfer.guid!)),
-        takeUntil(merge(poll.session$, this.unsubscribe$)),
-        skipWhile((transfer) => transfer.state === 'storing'),
         map((transfer) => {
-          poll.stop();
           this.dialogRef.close(transfer);
         }),
         catchError((err) => {
-          poll.stop();
           this.dialogRef.close();
           this.snackBar.open(
             this.translatePipe.transform('transfer.error'),

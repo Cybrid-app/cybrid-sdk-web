@@ -435,8 +435,7 @@ export class TestConstants {
     environment: 'sandbox',
     created_at: '2022-11-08T20:03:51.916Z',
     customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
-    bank_guid: 'b36cf9028e2356de7732e4c505c84fbc',
-    plaid_access_token: 'access-sandbox-9bb68f2b-954c-4706-ac5a-f44f9a6689b9'
+    bank_guid: 'b36cf9028e2356de7732e4c505c84fbc'
   };
 
   static EXTERNAL_BANK_ACCOUNT_LIST_BANK_MODEL: ExternalBankAccountListBankModel =

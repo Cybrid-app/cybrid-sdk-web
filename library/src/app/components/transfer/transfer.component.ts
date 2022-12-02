@@ -50,7 +50,7 @@ import {
 
 // Utility
 import { AssetPipe } from '@pipes';
-import { CurrencyMask } from '../../../shared/utility/currency-mask';
+import { FiatMask } from '../../../shared/utility/fiat-mask';
 import { TranslatePipe } from '@ngx-translate/core';
 
 interface TransferGroup {
@@ -130,13 +130,13 @@ export class TransferComponent implements OnInit, OnDestroy {
           ) as number;
 
           if (value.toString().includes('.')) {
-            amountControl.setValue(CurrencyMask(value), {
+            amountControl.setValue(FiatMask(value), {
               emitEvent: false
             });
           }
 
           if (this.side == 'withdrawal' && value > platformAvailable) {
-            amountControl.setErrors({ insufficient_funds: true });
+            amountControl.setErrors({ nonSufficientFunds: true });
           }
         }
       });
@@ -165,9 +165,14 @@ export class TransferComponent implements OnInit, OnDestroy {
       .pipe(
         switchMap((customer) =>
           combineLatest([
-            this.bankAccountService
-              .listExternalBankAccounts()
-              .pipe(catchError((err) => of(err))),
+            this.bankAccountService.listExternalBankAccounts().pipe(
+              map((list) => {
+                return list.objects.filter(
+                  (account) => account.state === 'completed'
+                );
+              }),
+              catchError((err) => of(err))
+            ),
             this.accountsService
               .listAccounts(
                 undefined,
@@ -187,14 +192,17 @@ export class TransferComponent implements OnInit, OnDestroy {
           ])
         ),
         map((combined) => {
-          const [bankAccounts, fiatAccount] = combined;
+          const [bankAccounts, fiatAccount]: [
+            ExternalBankAccountBankModel[],
+            AccountBankModel
+          ] = combined;
 
           this.fiatAsset = this.assetService.getAsset(fiatAccount.asset!);
           this.fiatAccount$.next(fiatAccount);
-          this.bankAccounts$.next(bankAccounts.objects);
+          this.bankAccounts$.next(bankAccounts);
 
           this.transferGroup.patchValue({
-            account: bankAccounts.objects[0]
+            account: bankAccounts[0]
           });
 
           this.isLoading$.next(false);

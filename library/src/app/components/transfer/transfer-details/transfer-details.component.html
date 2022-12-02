@@ -8,8 +8,23 @@
 <mat-dialog-content>
   <div class="cybrid-list-item">
     <span>{{ 'transfer.details.state' | translate }}</span>
-    <div>
-      <span>{{ transfer.state | titlecase }}</span>
+    <div class="state">
+      <ng-container [ngSwitch]="transfer.state">
+        <mat-icon
+          *ngSwitchCase="'storing' || 'initiating' || 'pending'"
+          color="primary"
+          >pending</mat-icon
+        >
+        <mat-icon *ngSwitchCase="'completed'" color="primary"
+          >check_circle</mat-icon
+        >
+        <mat-icon *ngSwitchCase="'failed'" color="primary">cancel</mat-icon>
+      </ng-container>
+      <span>{{
+        transfer.state === ('storing' || 'initiating' || 'pending')
+          ? ('transfer.processing' | translate)
+          : (transfer.state | titlecase)
+      }}</span>
     </div>
   </div>
   <mat-divider></mat-divider>
@@ -31,7 +46,7 @@
   <div class="cybrid-list-item">
     <span>{{ 'from' | translate }}</span>
     <div>
-      <span class="mat-hint">{{ account.guid! | truncate : 10 }}</span>
+      <span>{{ account.guid! | truncate : 10 }}</span>
     </div>
   </div>
 </mat-dialog-content>

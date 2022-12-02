@@ -47,9 +47,15 @@
                     <mat-select-trigger>
                       <div class="cybrid-option">
                         <mat-icon>savings</mat-icon>
-                        <span class="cybrid-trigger-name">{{
-                          account.value.guid
-                        }}</span>
+                        <span class="cybrid-trigger-name">
+                          <strong>{{
+                            account.value.plaid_institution_id + ' - '
+                          }}</strong>
+                          <span>{{ account.value.plaid_account_name }}</span>
+                          <span class="mat-hint">{{
+                            ' (' + account.value.plaid_account_mask + ')'
+                          }}</span>
+                        </span>
                       </div>
                     </mat-select-trigger>
                     <mat-option
@@ -58,7 +64,11 @@
                     >
                       <div class="cybrid-option">
                         <mat-icon>savings</mat-icon>
-                        <span>{{ account.guid }}</span>
+                        <span>{{ account.plaid_institution_id }}</span>
+                        <span>{{ account.plaid_account_name }}</span>
+                        <span>{{
+                          '(' + account.plaid_account_mask + ')'
+                        }}</span>
                       </div>
                     </mat-option>
                   </mat-select>
@@ -87,11 +97,11 @@
                   <mat-error
                     *ngIf="
                       transferGroup.controls.amount.hasError(
-                        'insufficient_funds'
+                        'nonSufficientFunds'
                       )
                     "
                   >
-                    {{ 'transfer.insufficientFunds' | translate }}
+                    {{ 'transfer.nonSufficientFunds' | translate }}
                   </mat-error>
                 </mat-form-field>
               </div>

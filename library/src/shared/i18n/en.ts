@@ -157,15 +157,15 @@ export default {
     bankAccount: 'Bank Account',
     deposit: 'Deposit',
     withdraw: 'Withdraw',
+    processing: 'Processing',
     noAccount: 'No bank accounts connected.',
     addAccount: 'Add Account',
-    insufficientFunds: 'Insufficient funds',
+    nonSufficientFunds: 'Non-sufficient funds',
     error: 'Error creating transfer',
 
     // Confirm dialog
     confirm: {
       confirm: 'Confirm',
-      loading: 'Initiating',
       depositDate: 'Deposit Date'
     },
 

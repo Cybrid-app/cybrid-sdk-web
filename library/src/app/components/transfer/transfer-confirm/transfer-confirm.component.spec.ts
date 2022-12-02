@@ -56,7 +56,6 @@ describe('TransferConfirmComponent', () => {
     'createQuote'
   ]);
   let MockTransfersService = jasmine.createSpyObj('TransfersService', [
-    'getTransfer',
     'createTransfer'
   ]);
   let MockDialog = jasmine.createSpyObj('Dialog', ['open', 'close']);
@@ -120,9 +119,6 @@ describe('TransferConfirmComponent', () => {
     MockTransfersService.createTransfer.and.returnValue(
       of(TestConstants.TRANSFER_BANK_MODEL)
     );
-    MockTransfersService.getTransfer.and.returnValue(
-      of(TestConstants.TRANSFER_BANK_MODEL)
-    );
     MockDialog = TestBed.inject(MatDialogRef);
     MockDialog.open.and.returnValue({
       afterClosed: () => of(TestConstants.TRANSFER_BANK_MODEL)
@@ -167,63 +163,8 @@ describe('TransferConfirmComponent', () => {
     expect(MockTransfersService.createTransfer).toHaveBeenCalled();
   });
 
-  it('should get transfer onConfirmTransfer()', fakeAsync(() => {
-    let transfer = { ...TestConstants.TRANSFER_BANK_MODEL };
-    transfer.state = 'storing';
-
-    // Mock 'state' as 'storing' for create call
-    MockTransfersService.createTransfer.and.returnValue(of(transfer));
-
-    component.onConfirmTransfer();
-
-    tick();
-    expect(MockTransfersService.getTransfer).toHaveBeenCalled();
-    expect(MockDialog.close).toHaveBeenCalled();
-  }));
-
-  it('should poll on getTransfer()', fakeAsync(() => {
-    let transfer = { ...TestConstants.TRANSFER_BANK_MODEL };
-    transfer.state = 'storing';
-
-    // Mock 'state' as 'storing' for both create and get calls
-    MockTransfersService.createTransfer.and.returnValue(of(transfer));
-    MockTransfersService.getTransfer.and.returnValue(of(transfer));
-
-    // Reset spy
-    MockTransfersService.getTransfer.calls.reset();
-
-    component.onConfirmTransfer();
-    tick(Constants.POLL_DURATION);
-
-    const callCount = Constants.POLL_DURATION / Constants.POLL_INTERVAL;
-    expect(MockTransfersService.getTransfer).toHaveBeenCalledTimes(callCount);
-  }));
-
-  it('should handle a timeout on getTransfer()', () => {
-    component.onConfirmTransfer();
-
-    // Force timeout
-    component.error$.next(true);
-
-    expect(MockDialog.close).toHaveBeenCalled();
-    expect(MockSnackbar.open).toHaveBeenCalled();
-    expect(MockErrorService.handleError).toHaveBeenCalled();
-    expect(MockEventService.handleEvent).toHaveBeenCalled();
-  });
-
   it('should handle an error on createTransfer()', fakeAsync(() => {
     MockTransfersService.createTransfer.and.returnValue(error$);
-
-    component.onConfirmTransfer();
-
-    tick();
-    expect(MockDialog.close).toHaveBeenCalled();
-    expect(MockErrorService.handleError).toHaveBeenCalled();
-    expect(MockEventService.handleEvent).toHaveBeenCalled();
-  }));
-
-  it('should handle an error on getTransfer()', fakeAsync(() => {
-    MockTransfersService.getTransfer.and.returnValue(error$);
 
     component.onConfirmTransfer();
 
