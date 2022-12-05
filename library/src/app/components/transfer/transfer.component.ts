@@ -297,10 +297,6 @@ export class TransferComponent implements OnInit, OnDestroy {
             'Error creating transfer'
           );
           this.errorService.handleError(err);
-          this.snackbar.open(
-            this.translatePipe.transform('transfer.error'),
-            'OK'
-          );
           return of(err);
         })
       )

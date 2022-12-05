@@ -428,22 +428,58 @@ export class TestConstants {
   // Bank-account-management test models
 
   static EXTERNAL_BANK_ACCOUNT_BANK_MODEL: ExternalBankAccountBankModel = {
-    guid: '2de5669f53be9d52f25f0ede2c35769c',
+    guid: '2e118eeed5cfd69f3d9b45d8efc769ff',
     name: 'USD',
     asset: 'USD',
     account_kind: 'plaid',
     environment: 'sandbox',
-    created_at: '2022-11-08T20:03:51.916Z',
-    customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
-    bank_guid: 'b36cf9028e2356de7732e4c505c84fbc'
+    created_at: '2022-12-02T16:54:24.562Z',
+    customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+    bank_guid: 'b36cf9028e2356de7732e4c505c84fbc',
+    state: 'completed',
+    failure_code: null,
+    plaid_institution_id: 'ins_56',
+    plaid_account_mask: '1111',
+    plaid_account_name: 'Plaid Saving'
   };
 
   static EXTERNAL_BANK_ACCOUNT_LIST_BANK_MODEL: ExternalBankAccountListBankModel =
     {
-      total: '1',
+      total: '2',
       page: '0',
       per_page: '10',
-      objects: [TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL]
+      objects: [
+        {
+          guid: '2e118eeed5cfd69f3d9b45d8efc769ff',
+          name: 'USD',
+          asset: 'USD',
+          account_kind: 'plaid',
+          environment: 'sandbox',
+          created_at: '2022-12-02T16:54:24.562Z',
+          customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+          bank_guid: 'b36cf9028e2356de7732e4c505c84fbc',
+          state: 'completed',
+          failure_code: null,
+          plaid_institution_id: 'ins_56',
+          plaid_account_mask: '1111',
+          plaid_account_name: 'Plaid Saving'
+        },
+        {
+          guid: '598bbcc4da21f4bd38daf64c1076217b',
+          name: 'USD',
+          asset: 'USD',
+          account_kind: 'plaid',
+          environment: 'sandbox',
+          created_at: '2022-12-02T16:45:29.087Z',
+          customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+          bank_guid: 'b36cf9028e2356de7732e4c505c84fbc',
+          state: 'storing',
+          failure_code: null,
+          plaid_institution_id: null,
+          plaid_account_mask: null,
+          plaid_account_name: null
+        }
+      ]
     };
 
   // Workflow models
@@ -490,7 +526,7 @@ export class TestConstants {
     guid: 'c7f8778ed298afb81cf3bca3c9bb8556',
     product_type: 'funding',
     customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
-    side: 'withdrawal',
+    side: 'deposit',
     receive_amount: '500',
     deliver_amount: '500',
     fee: '0',
@@ -505,7 +541,7 @@ export class TestConstants {
     asset: 'USD',
     side: 'deposit',
     state: 'pending',
-    amount: '2300',
+    amount: '500',
     fee: '0',
     created_at: '2022-11-30T17:32:34.123Z'
   };

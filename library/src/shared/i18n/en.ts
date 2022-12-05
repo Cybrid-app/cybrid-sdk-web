@@ -157,6 +157,7 @@ export default {
     bankAccount: 'Bank Account',
     deposit: 'Deposit',
     withdraw: 'Withdraw',
+    withdrawal: 'Withdrawal',
     processing: 'Processing',
     noAccount: 'No bank accounts connected.',
     addAccount: 'Add Account',

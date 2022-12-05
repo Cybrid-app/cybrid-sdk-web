@@ -160,6 +160,7 @@ export default {
     bankAccount: 'Compte Bancaire',
     deposit: 'Verser',
     withdraw: 'Se désister',
+    withdrawal: 'Retrait',
     processing: 'Traitement',
     noAccount: 'Aucun compte bancaire connecté.',
     addAccount: 'Ajouter un compte',
