@@ -16,7 +16,7 @@
             <h1>
               {{
                 accounts.fiatAccount?.platform_available!
-                  | asset : fiatAsset : 'formatted'
+                  | asset: fiatAsset:'formatted'
               }}
               <span class="mat-hint">{{
                 accounts.fiatAccount?.asset | uppercase
@@ -109,6 +109,7 @@
           </div>
           <div class="cybrid-actions">
             <button
+              id="action"
               mat-flat-button
               color="primary"
               (click)="onTransfer()"
