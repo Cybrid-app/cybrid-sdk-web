@@ -14,6 +14,7 @@ import {
   SymbolPriceBankModel,
   TradeBankModel,
   TradeListBankModel,
+  TransferBankModel,
   WorkflowBankModel,
   WorkflowWithDetailsBankModel
 } from '@cybrid/cybrid-api-bank-angular';
@@ -157,6 +158,17 @@ export class TestConstants {
     page: '0',
     per_page: '10',
     objects: [
+      {
+        type: 'fiat',
+        guid: 'ce3fa5a7fc35b632f2526df447f75f89',
+        created_at: '2022-11-24T18:32:53.196Z',
+        asset: 'USD',
+        name: 'USD',
+        customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+        platform_balance: '100',
+        platform_available: '100',
+        state: 'created'
+      },
       {
         type: 'trading',
         guid: '85f532eff8604acc6aae30da86894eef',
@@ -343,7 +355,8 @@ export class TestConstants {
         }
       }
     ],
-    balance: 12518457.675255332
+    balance: 12518457.675255332,
+    fiatAccount: {} as AccountBankModel
   };
 
   // Account-details component test models
@@ -417,13 +430,12 @@ export class TestConstants {
   static EXTERNAL_BANK_ACCOUNT_BANK_MODEL: ExternalBankAccountBankModel = {
     guid: '2de5669f53be9d52f25f0ede2c35769c',
     name: 'USD',
-    asset_code: 'USD',
+    asset: 'USD',
     account_kind: 'plaid',
     environment: 'sandbox',
     created_at: '2022-11-08T20:03:51.916Z',
     customer_guid: '72892100b5fdd31a1bf7a3c341e64cb8',
-    bank_guid: 'b36cf9028e2356de7732e4c505c84fbc',
-    plaid_access_token: 'access-sandbox-9bb68f2b-954c-4706-ac5a-f44f9a6689b9'
+    bank_guid: 'b36cf9028e2356de7732e4c505c84fbc'
   };
 
   static EXTERNAL_BANK_ACCOUNT_LIST_BANK_MODEL: ExternalBankAccountListBankModel =
@@ -471,5 +483,42 @@ export class TestConstants {
     type: 'sandbox',
     features: ['attestation_identity_records', 'backstopped_funding_source'],
     created_at: '2022-04-30T03:40:54.629Z'
+  };
+
+  // Transfer models
+  static QUOTE_BANK_MODEL_TRANSFER: QuoteBankModel = {
+    guid: 'c7f8778ed298afb81cf3bca3c9bb8556',
+    product_type: 'funding',
+    customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+    side: 'withdrawal',
+    receive_amount: '500',
+    deliver_amount: '500',
+    fee: '0',
+    issued_at: '2022-11-30T21:07:51.448Z'
+  };
+
+  static TRANSFER_BANK_MODEL: TransferBankModel = {
+    guid: '1d2095b323e17fba5d2a6b75eb82e128',
+    transfer_type: 'funding',
+    customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+    quote_guid: 'c4e98a5c77bf70138880744e04acc12b',
+    asset: 'USD',
+    side: 'deposit',
+    state: 'pending',
+    amount: '2300',
+    fee: '0',
+    created_at: '2022-11-30T17:32:34.123Z'
+  };
+
+  static ACCOUNT_BANK_MODEL_USD: AccountBankModel = {
+    type: 'fiat',
+    guid: 'ce3fa5a7fc35b632f2526df447f75f89',
+    created_at: '2022-11-24T18:32:53.196Z',
+    asset: 'USD',
+    name: 'USD',
+    customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+    platform_balance: '100',
+    platform_available: '100',
+    state: 'created'
   };
 }

@@ -37,7 +37,8 @@ export class DemoComponent implements OnDestroy {
     'account-list',
     'account-details',
     'identity-verification',
-    'bank-account-connect'
+    'bank-account-connect',
+    'transfer'
   ];
   languages = ['en-US', 'fr-CA'];
 

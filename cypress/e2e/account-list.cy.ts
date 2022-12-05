@@ -37,8 +37,8 @@ describe('account-list test', () => {
 
     // Check for mocked data and labels
     app()
-      .find('.cybrid-balance')
-      .should('contain.text', 'TOTAL VALUE')
+      .find('#account-value')
+      .should('contain.text', 'Account Value')
       .should('contain.text', '$12,294,060.30 USD');
     app()
       .find('#assetList')

@@ -2,17 +2,46 @@
   <ng-container *ngIf="(isLoading$ | async) !== true; else loading">
     <ng-container *ngIf="configService.getConfig$() | async as config">
       <app-navigation [routingData]="routingData"></app-navigation>
-      <ng-container *ngIf="balance$ | async as balance">
-        <div class="cybrid-balance">
+      <ng-container
+        *ngIf="{
+          balance: balance$ | async,
+          fiatAccount: fiatAccount$ | async
+        } as data"
+      >
+        <div id="account-value" class="cybrid-balance">
           <span class="mat-hint">{{ 'accountList.total' | translate }}</span>
           <div>
             <h1>
               {{
                 currentFiat.symbol +
-                  (balance | currency: '':'':'':config.locale)
+                  (data.balance | currency : '' : '' : '' : config.locale)
               }}
               <span class="mat-hint">{{ currentFiat.code }}</span>
             </h1>
+          </div>
+        </div>
+        <div id="account-available" class="cybrid-balance">
+          <span class="mat-hint">{{
+            'accountList.available' | translate
+          }}</span>
+          <div>
+            <h1 class="cybrid-h1">
+              {{
+                currentFiat.symbol +
+                  (data.fiatAccount?.platform_available
+                    | currency : '' : '' : '' : config.locale)
+              }}
+              <span class="mat-hint">{{ currentFiat.code }}</span>
+            </h1>
+            <h5 class="mat-hint cybrid-h5">
+              {{
+                currentFiat.symbol +
+                  (data.fiatAccount?.platform_balance
+                    | currency : '' : '' : '' : config.locale) +
+                  ' ' +
+                  'Pending'
+              }}
+            </h5>
           </div>
         </div>
       </ng-container>
@@ -50,7 +79,7 @@
                   }}</span>
                 </div>
                 <span class="mat-hint cybrid-h5 cybrid-code">{{
-                  asset.price.sell_price | asset: asset.counter_asset
+                  asset.price.sell_price | asset : asset.counter_asset
                 }}</span>
               </div>
             </div>
@@ -75,13 +104,13 @@
               <span
                 >{{
                   account.account.platform_balance
-                    | asset: account.asset:'trade'
+                    | asset : account.asset : 'trade'
                 }}
               </span>
               <span class="mat-hint cybrid-h5 cybrid-code">
                 {{
                   account.counter_asset.symbol +
-                    (account.value | currency: '':'':'':config.locale)
+                    (account.value | currency : '' : '' : '' : config.locale)
                 }}</span
               >
             </div>

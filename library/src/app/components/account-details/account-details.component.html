@@ -24,7 +24,7 @@
               </div>
               <div class="cybrid-asset-value">
                 <span>
-                  {{ account.price.buy_price! | asset: account.counter_asset }}
+                  {{ account.price.buy_price! | asset : account.counter_asset }}
                 </span>
                 <span class="mat-hint">{{ account.counter_asset.code }}</span>
               </div>
@@ -35,7 +35,7 @@
               <span class="cybrid-h2 cybrid-strong"
                 >{{
                   account.account.platform_balance!
-                    | asset: account.asset:'trade'
+                    | asset : account.asset : 'trade'
                 }}
               </span>
               <span class="cybrid-h2 mat-hint">{{
@@ -45,7 +45,8 @@
             <div>
               <span>{{ account.counter_asset.symbol }}</span>
               <span>{{
-                (account.value | currency: '':'':'':data.config!.locale) + ' '
+                (account.value
+                  | currency : '' : '' : '' : data.config!.locale) + ' '
               }}</span>
               <span class="mat-hint">{{ account.counter_asset.code }}</span>
             </div>
@@ -112,13 +113,13 @@
                     <span class="mat-body-strong"
                       >{{
                         (balance.receive_amount
-                          | asset: account.asset:'trade') + ' '
+                          | asset : account.asset : 'trade') + ' '
                       }}
                     </span>
                     <span class="mat-hint"> {{ account.asset.code }}</span>
                   </div>
                   <span class="cybrid-h5">{{
-                    balance.deliver_amount | asset: account.counter_asset
+                    balance.deliver_amount | asset : account.counter_asset
                   }}</span>
                 </div>
                 <div
@@ -130,13 +131,13 @@
                       >{{
                         '-' +
                           (balance.deliver_amount
-                            | asset: account.asset:'trade')
+                            | asset : account.asset : 'trade')
                       }}
                     </span>
                     <span class="mat-hint"> {{ account.asset.code }}</span>
                   </div>
                   <span class="cybrid-h5">{{
-                    balance.receive_amount | asset: account.counter_asset
+                    balance.receive_amount | asset : account.counter_asset
                   }}</span>
                 </div>
               </td>

@@ -1,0 +1,57 @@
+<h2 mat-dialog-title>
+  {{
+    ('transfer.' + data.transferBankModel.side | translate) +
+      ' ' +
+      ('transfer.details.details' | translate)
+  }}
+</h2>
+<mat-dialog-content>
+  <div class="cybrid-list-item">
+    <span>{{ 'transfer.details.state' | translate }}</span>
+    <div class="state">
+      <ng-container [ngSwitch]="transfer.state">
+        <mat-icon
+          *ngSwitchCase="'storing' || 'initiating' || 'pending'"
+          color="primary"
+          >pending</mat-icon
+        >
+        <mat-icon *ngSwitchCase="'completed'" color="primary"
+          >check_circle</mat-icon
+        >
+        <mat-icon *ngSwitchCase="'failed'" color="primary">cancel</mat-icon>
+      </ng-container>
+      <span>{{
+        transfer.state === ('storing' || 'initiating' || 'pending')
+          ? ('transfer.processing' | translate)
+          : (transfer.state | titlecase)
+      }}</span>
+    </div>
+  </div>
+  <mat-divider></mat-divider>
+  <div class="cybrid-list-item">
+    <span>{{ 'transfer.amount' | translate }}</span>
+    <div>
+      <span>{{ (transfer.amount! | asset : data.asset) + ' ' }}</span>
+      <span class="mat-hint">{{ data.asset.code! }}</span>
+    </div>
+  </div>
+  <mat-divider></mat-divider>
+  <div class="cybrid-list-item">
+    <span>{{ 'transfer.confirm.depositDate' | translate }}</span>
+    <div>
+      <span>{{ transfer.created_at! | date }}</span>
+    </div>
+  </div>
+  <mat-divider></mat-divider>
+  <div class="cybrid-list-item">
+    <span>{{ 'from' | translate }}</span>
+    <div>
+      <span>{{ account.guid! | truncate : 10 }}</span>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button id="done" mat-stroked-button [mat-dialog-close]="true">
+    {{ 'done' | translate }}
+  </button>
+</mat-dialog-actions>

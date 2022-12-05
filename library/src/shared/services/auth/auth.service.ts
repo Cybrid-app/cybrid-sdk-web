@@ -57,6 +57,7 @@ export class AuthService {
     }
   }
 
+  // TODO: Disconnect all polling in the app if the token is invalid
   timeSession(token: JwtPayload) {
     const timeLeft = token.exp! - token.iat!;
     const warning = timeLeft - Constants.AUTH_EXPIRATION_WARNING;

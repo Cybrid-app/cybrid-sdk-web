@@ -7,6 +7,8 @@ export default {
   resume: 'RECOMMENCER',
   back: 'Retourner',
   date: 'Date',
+  to: 'À',
+  from: 'De',
   fatal: "Une erreur irrécupérable s'est produite",
   unexpectedError: 'Erreur inattendue.',
 
@@ -69,7 +71,8 @@ export default {
 
   // Account list component
   accountList: {
-    total: 'VALEUR TOTALE',
+    total: 'Valeur du Compte',
+    available: 'Disponible pour le Commerce',
     account: {
       header: 'Actif',
       subheader: 'Prix du Marché'
@@ -147,6 +150,32 @@ export default {
       warning: 'Temporairement indisponible sur mobile.',
       explanation:
         "Veuillez connecter votre compte bancaire à l'aide d'un navigateur de bureau."
+    }
+  },
+
+  // Transfer component
+  transfer: {
+    transfer: 'Transférer',
+    amount: 'Quantité',
+    bankAccount: 'Compte Bancaire',
+    deposit: 'Verser',
+    withdraw: 'Se désister',
+    processing: 'Traitement',
+    noAccount: 'Aucun compte bancaire connecté.',
+    addAccount: 'Ajouter un compte',
+    nonSufficientFunds: 'Fonds non suffisants',
+    error: 'Erreur lors de la création du transfert',
+
+    // Confirm dialog
+    confirm: {
+      confirm: 'Confirmer',
+      depositDate: 'Date de dépôt'
+    },
+
+    // Details dialog
+    details: {
+      details: 'Détails',
+      state: 'État'
     }
   }
 };

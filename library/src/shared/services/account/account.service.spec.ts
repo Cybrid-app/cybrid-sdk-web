@@ -80,14 +80,11 @@ describe('AccountService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should filter accounts', () => {
-    const filteredAccounts =
-      TestConstants.ACCOUNT_LIST_BANK_MODEL.objects.filter((account) => {
-        return account.type == 'trading';
-      });
+  it('should get accounts', () => {
+    const testAccounts = TestConstants.ACCOUNT_LIST_BANK_MODEL.objects;
 
-    service.filterAccounts().subscribe((accounts) => {
-      expect(accounts).toEqual(filteredAccounts);
+    service.getAccounts().subscribe((accounts) => {
+      expect(accounts).toEqual(testAccounts);
     });
   });
 

@@ -8,7 +8,8 @@ import {
   AccountListComponent,
   AccountDetailsComponent,
   IdentityVerificationComponent,
-  BankAccountConnectComponent
+  BankAccountConnectComponent,
+  TransferComponent
 } from '@components';
 
 export const routes: Routes = [
@@ -47,6 +48,10 @@ export const routes: Routes = [
       {
         path: 'bank-account-connect',
         component: BankAccountConnectComponent
+      },
+      {
+        path: 'transfer',
+        component: TransferComponent
       }
     ]
   },
