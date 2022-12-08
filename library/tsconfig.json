@@ -25,6 +25,7 @@
       "@components": ["src/app/components/index"],
       "@services": ["src/shared/services/index"],
       "@interceptors": ["src/shared/interceptors/index"],
+      "@guards": ["src/shared/guards/index"],
       "@pipes": ["src/shared/pipes/index"],
       "@constants": ["src/shared/constants/index"],
       "@utility": ["src/shared/utility/index"]

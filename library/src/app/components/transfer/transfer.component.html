@@ -16,7 +16,7 @@
             <h1>
               {{
                 accounts.fiatAccount?.platform_available!
-                  | asset: fiatAsset:'formatted'
+                  | asset : fiatAsset : 'formatted'
               }}
               <span class="mat-hint">{{
                 accounts.fiatAccount?.asset | uppercase

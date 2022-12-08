@@ -7,17 +7,18 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 
-import { BehaviorSubject, filter, map, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, filter, map, Subject, take, takeUntil } from 'rxjs';
 
 import { DemoConfigService } from '../../services/demo-config/demo-config.service';
 
 // Library
 import { AppComponent } from '@components';
-import { CODE, EventLog } from '@services';
+import { CODE, ConfigService, EventLog } from '@services';
 import { Constants } from '@constants';
 
 // Components
 import { DemoCredentials } from '../login/login.component';
+import { BankBankModel } from '@cybrid/cybrid-api-bank-angular';
 
 @Component({
   selector: 'app-demo',
@@ -28,19 +29,12 @@ export class DemoComponent implements OnDestroy {
   @ViewChild('viewContainer', { static: true, read: ViewContainerRef })
   public viewContainer!: ViewContainerRef;
 
-  token = '';
   isPublic: boolean = false;
 
-  webComponents = [
-    'price-list',
-    'trade',
-    'account-list',
-    'account-details',
-    'identity-verification',
-    'bank-account-connect',
-    'transfer'
-  ];
+  componentList = Constants.COMPONENTS_PLAID;
+
   languages = ['en-US', 'fr-CA'];
+  bank$ = new BehaviorSubject<BankBankModel | null>(null);
 
   componentRef!: ComponentRef<AppComponent>;
   componentGroup: FormGroup = new FormGroup({
@@ -52,15 +46,59 @@ export class DemoComponent implements OnDestroy {
   });
 
   login$ = new BehaviorSubject(false);
-  loading$ = new BehaviorSubject(true);
+  isLoading$ = new BehaviorSubject(true);
 
   private unsubscribe$ = new Subject();
 
-  constructor(public demoConfigService: DemoConfigService) {}
+  constructor(
+    public demoConfigService: DemoConfigService,
+    private configService: ConfigService
+  ) {}
 
   ngOnDestroy() {
     this.unsubscribe$.next('');
     this.unsubscribe$.complete();
+  }
+
+  initBank() {
+    this.configService
+      .getBank$()
+      .pipe(
+        take(1),
+        map((bank) => {
+          this.bank$.next(bank);
+          this.isLoading$.next(false);
+        })
+      )
+      .subscribe();
+  }
+
+  isBackstopped(): boolean {
+    return this.bank$
+      .getValue()!
+      .features.includes(BankBankModel.FeaturesEnum.BackstoppedFundingSource);
+  }
+
+  getTooltip(component: string): string {
+    if (component == 'account-details')
+      return 'Disabled: Navigate via account-list';
+    else if (this.isPublic && component == 'identity-verification')
+      return 'Disabled: Sign in as a private use to access';
+    else {
+      if (this.isBackstopped() && this.isDisabled(component)) {
+        return 'Component is unavailable to backstopped banks';
+      } else return '';
+    }
+  }
+
+  isDisabled(component: string): boolean {
+    if (component == 'account-details') return true;
+    else if (this.isPublic && component == 'identity-verification') return true;
+    else {
+      if (this.isBackstopped()) {
+        return !Constants.COMPONENTS_BACKSTOPPED.includes(component);
+      } else return false;
+    }
   }
 
   // Set component on changes
@@ -103,7 +141,7 @@ export class DemoComponent implements OnDestroy {
     // Create main app
     this.componentRef = this.viewContainer.createComponent(AppComponent);
 
-    this.componentRef.instance.hostConfig = config;
+    this.componentRef.instance.config = config;
     this.componentRef.instance.auth = credentials.token;
     this.componentRef.instance.component = Constants.DEFAULT_COMPONENT;
 
@@ -114,7 +152,7 @@ export class DemoComponent implements OnDestroy {
     this.demoConfigService.config$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((config) => {
-        this.componentRef.instance.hostConfig = config;
+        this.componentRef.instance.config = config;
       });
 
     // Subscribe to routing events and set component selector value
@@ -125,7 +163,8 @@ export class DemoComponent implements OnDestroy {
           return (
             event.code == CODE.ROUTING_END ||
             event.code == CODE.ROUTING_START ||
-            event.code == CODE.ROUTING_REQUEST
+            event.code == CODE.ROUTING_REQUEST ||
+            event.code == CODE.ROUTING_DENIED
           );
         }),
         map((event) => {
@@ -142,8 +181,8 @@ export class DemoComponent implements OnDestroy {
       console.log(error)
     );
 
+    this.initBank();
     this.initComponentGroup();
     this.initLanguageGroup();
-    this.loading$.next(false);
   }
 }

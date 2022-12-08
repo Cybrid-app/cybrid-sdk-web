@@ -5,7 +5,7 @@ import {
   TestBed,
   tick
 } from '@angular/core/testing';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Pipe, PipeTransform } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -30,8 +30,8 @@ import {
 import { AccountListComponent } from '@components';
 
 // Utility
-import { AssetPipe, MockAssetPipe } from '@pipes';
-import { TestConstants } from '@constants';
+import { AssetPipe } from '@pipes';
+import { Constants, TestConstants } from '@constants';
 import { SharedModule } from '../../../shared/modules/shared.module';
 
 describe('AccountListComponent', () => {
@@ -58,9 +58,18 @@ describe('AccountListComponent', () => {
     new Error('Error');
   });
 
+  @Pipe({
+    name: 'asset'
+  })
+  class MockAssetPipe implements PipeTransform {
+    transform(value: any): any {
+      return value;
+    }
+  }
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AccountListComponent, AssetPipe],
+      declarations: [AccountListComponent, MockAssetPipe],
       imports: [
         BrowserAnimationsModule,
         HttpClientTestingModule,
@@ -99,6 +108,7 @@ describe('AccountListComponent', () => {
 
     fixture = TestBed.createComponent(AccountListComponent);
     component = fixture.componentInstance;
+    component.currentFiat = Constants.USD_ASSET;
     fixture.detectChanges();
   });
 
@@ -110,32 +120,26 @@ describe('AccountListComponent', () => {
     expect(MockEventService.handleEvent).toHaveBeenCalled();
   });
 
-  it('should call init functions in ngOnInit()', () => {
-    component.getAccounts = () => undefined;
-    component.refreshData = () => undefined;
-    const getAccountsSpy = spyOn(component, 'getAccounts').and.callThrough();
-    const refreshDataSpy = spyOn(component, 'refreshData').and.callThrough();
-
-    component.ngOnInit();
-
-    expect(getAccountsSpy).toHaveBeenCalled();
-    expect(refreshDataSpy).toHaveBeenCalled();
-  });
-
-  it('should get accounts', () => {
+  it('should get accounts', fakeAsync(() => {
     const balance$Spy = spyOn(component.balance$, 'next');
+    const fiatAccount$Spy = spyOn(component.fiatAccount$, 'next');
 
     component.ngOnInit();
+    tick();
 
     expect(MockAccountService.getPortfolio).toHaveBeenCalled();
     expect(MockEventService.handleEvent).toHaveBeenCalled();
     expect(balance$Spy).toHaveBeenCalledWith(
       TestConstants.ACCOUNT_OVERVIEW.balance
     );
+    expect(fiatAccount$Spy).toHaveBeenCalledWith(
+      TestConstants.ACCOUNT_OVERVIEW.fiatAccount
+    );
     expect(component.dataSource.data).toEqual(
       TestConstants.ACCOUNT_OVERVIEW.accounts
     );
-  });
+    discardPeriodicTasks();
+  }));
 
   it('should handle errors when calling get accounts', () => {
     MockAccountService.getPortfolio.and.returnValue(error$);

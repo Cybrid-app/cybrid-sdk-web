@@ -10,29 +10,19 @@
   </ng-template>
 
   <ng-container
-    *ngIf="(loading$ | async) === false; else loading"
+    *ngIf="(isLoading$ | async) === false; else loading"
     [formGroup]="componentGroup"
   >
-    <mat-form-field id="component" appearance="outline">
+    <mat-form-field appearance="outline">
       <mat-label>Component</mat-label>
-      <mat-select formControlName="component">
+      <mat-select id="component" formControlName="component">
         <mat-option
           id="option"
-          *ngFor="let component of webComponents"
+          *ngFor="let component of componentList"
           [value]="component"
-          [disabled]="
-            component === 'account-details' ||
-            (isPublic && component === 'identity-verification')
-          "
+          [disabled]="isDisabled(component)"
           matTooltipPosition="before"
-          [matTooltip]="
-            (component === 'account-details'
-              ? 'Disabled: Navigate via account-list'
-              : '') ||
-            (isPublic && component === 'identity-verification'
-              ? 'Disabled: Sign in as a private use to access'
-              : '')
-          "
+          [matTooltip]="getTooltip(component)"
         >
           {{ component }}
         </mat-option>
@@ -40,7 +30,7 @@
     </mat-form-field>
   </ng-container>
   <ng-container
-    *ngIf="(loading$ | async) === false"
+    *ngIf="(isLoading$ | async) === false"
     [formGroup]="languageGroup"
   >
     <mat-form-field appearance="outline">

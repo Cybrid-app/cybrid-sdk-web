@@ -12,6 +12,8 @@ import {
   TransferComponent
 } from '@components';
 
+import { ComponentGuard } from '@guards';
+
 export const routes: Routes = [
   {
     path: '',
@@ -27,31 +29,38 @@ export const routes: Routes = [
     children: [
       {
         path: 'price-list',
-        component: PriceListComponent
+        component: PriceListComponent,
+        canActivate: [ComponentGuard]
       },
       {
         path: 'trade',
-        component: TradeComponent
+        component: TradeComponent,
+        canActivate: [ComponentGuard]
       },
       {
         path: 'account-list',
-        component: AccountListComponent
+        component: AccountListComponent,
+        canActivate: [ComponentGuard]
       },
       {
         path: 'account-details',
-        component: AccountDetailsComponent
+        component: AccountDetailsComponent,
+        canActivate: [ComponentGuard]
       },
       {
         path: 'identity-verification',
-        component: IdentityVerificationComponent
+        component: IdentityVerificationComponent,
+        canActivate: [ComponentGuard]
       },
       {
         path: 'bank-account-connect',
-        component: BankAccountConnectComponent
+        component: BankAccountConnectComponent,
+        canActivate: [ComponentGuard]
       },
       {
         path: 'transfer',
-        component: TransferComponent
+        component: TransferComponent,
+        canActivate: [ComponentGuard]
       }
     ]
   },
@@ -63,6 +72,7 @@ export const routes: Routes = [
 
 @NgModule({
   imports: [RouterTestingModule.withRoutes(routes)],
-  exports: [RouterTestingModule]
+  exports: [RouterTestingModule],
+  providers: [ComponentGuard]
 })
 export class RoutingModule {}

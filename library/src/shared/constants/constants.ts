@@ -55,4 +55,20 @@ export class Constants {
   static DEFAULT_COMPONENT = 'price-list';
   static POLL_DURATION = 5000;
   static POLL_INTERVAL = 1000;
+  static COMPONENTS_PLAID = [
+    'price-list',
+    'trade',
+    'account-list',
+    'account-details',
+    'identity-verification',
+    'bank-account-connect',
+    'transfer'
+  ];
+  static COMPONENTS_BACKSTOPPED = [
+    'price-list',
+    'trade',
+    'account-list',
+    'account-details',
+    'identity-verification'
+  ];
 }

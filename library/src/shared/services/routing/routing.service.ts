@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { CODE, EventService, LEVEL } from '../event/event.service';
 import { ComponentConfig, ConfigService } from '../config/config.service';
-import { map } from 'rxjs';
+import { map, take } from 'rxjs';
 
 export interface RoutingData {
   route: string;
@@ -24,6 +24,7 @@ export class RoutingService {
     this.configService
       .getConfig$()
       .pipe(
+        take(1),
         map((config: ComponentConfig) => {
           const path = 'app/' + routingData.route;
 
@@ -38,18 +39,20 @@ export class RoutingService {
               }
             );
 
-            this.configService.setComponent(routingData.route);
+            this.router.navigate([path], routingData.extras).then((res) => {
+              if (res) {
+                this.configService.setComponent(routingData.route);
 
-            this.router.navigate([path], routingData.extras).then(() => {
-              this.eventService.handleEvent(
-                LEVEL.INFO,
-                CODE.ROUTING_END,
-                'Successfully routed to: ' + routingData.route,
-                {
-                  origin: routingData.origin,
-                  default: routingData.route
-                }
-              );
+                this.eventService.handleEvent(
+                  LEVEL.INFO,
+                  CODE.ROUTING_END,
+                  'Successfully routed to: ' + routingData.route,
+                  {
+                    origin: routingData.origin,
+                    default: routingData.route
+                  }
+                );
+              }
             });
           } else {
             this.eventService.handleEvent(
