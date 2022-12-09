@@ -10,7 +10,12 @@ function transferSetup() {
 describe('transfer test', () => {
   before(() => {
     cy.intercept('GET', '/api/banks/*', (req) => {
-      req.reply(TestConstants.BANK_BANK_MODEL);
+      const plaidBank = { ...TestConstants.BANK_BANK_MODEL };
+      plaidBank.features = [
+        'attestation_identity_records',
+        'plaid_funding_source'
+      ];
+      req.reply(plaidBank);
     }).as('getBank');
 
     cy.intercept('GET', '/api/customers/*', (req) => {

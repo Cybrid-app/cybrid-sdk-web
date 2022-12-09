@@ -27,6 +27,7 @@
       "@components": ["library/src/app/components/index"],
       "@services": ["library/src/shared/services/index"],
       "@interceptors": ["library/src/shared/interceptors/index"],
+      "@guards": ["library/src/shared/guards/index"],
       "@pipes": ["library/src/shared/pipes/index"],
       "@constants": ["library/src/shared/constants/index"],
       "@utility": ["library/src/shared/utility/index"]

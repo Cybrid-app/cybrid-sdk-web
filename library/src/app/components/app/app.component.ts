@@ -49,18 +49,16 @@ export class AppComponent implements OnInit {
     this.authService.setToken(token);
   }
   @Input()
-  set hostConfig(config: ComponentConfig) {
+  set config(config: ComponentConfig) {
     this.configService.setConfig(config);
   }
   @Input()
   set component(selector: string) {
-    this.configService.setComponent(selector);
-    this.currentComponent$.next(selector);
+    this.component$.next(selector);
   }
 
-  currentComponent$ = new ReplaySubject<string>(1);
-
-  private unsubscribe$ = new Subject();
+  component$ = new ReplaySubject<string>(1);
+  unsubscribe$ = new Subject();
 
   constructor(
     private router: Router,
@@ -154,14 +152,10 @@ export class AppComponent implements OnInit {
   }
 
   initNavigation(): void {
-    this.currentComponent$
+    this.component$
       .pipe(
         takeUntil(this.unsubscribe$),
         map((component) => {
-          // Navigates whenever component is set
-          this.router.navigate(['app/' + component]);
-
-          // Handles host navigation request for events
           this.routingService.handleRoute({
             route: component,
             origin: 'cybrid-app'

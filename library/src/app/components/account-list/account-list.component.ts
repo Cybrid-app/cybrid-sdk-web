@@ -14,7 +14,8 @@ import {
   switchMap,
   take,
   takeUntil,
-  timer
+  timer,
+  combineLatest
 } from 'rxjs';
 
 // Services
@@ -37,8 +38,10 @@ import {
   AccountsService
 } from '@cybrid/cybrid-api-bank-angular';
 
-// Utility
-import { Constants } from '@constants';
+interface AccountData {
+  balance: number;
+  fiatAccount: AccountBankModel;
+}
 
 @Component({
   selector: 'app-account-list',
@@ -59,10 +62,19 @@ export class AccountListComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['asset', 'balance'];
   getAccountsError = false;
 
-  balance$ = new BehaviorSubject<number>(0);
+  balance$ = new ReplaySubject<number>(1);
   fiatAccount$: ReplaySubject<AccountBankModel> =
     new ReplaySubject<AccountBankModel>(1);
-  currentFiat: Asset = Constants.USD_ASSET;
+  currentFiat!: Asset;
+
+  accountData$ = combineLatest([this.balance$, this.fiatAccount$]).pipe(
+    map(([balance, fiatAccount]) => {
+      return <AccountData>{
+        balance,
+        fiatAccount
+      };
+    })
+  );
 
   isLoading$ = new BehaviorSubject(true);
   isRecoverable$ = new BehaviorSubject(true);
@@ -89,7 +101,6 @@ export class AccountListComponent implements OnInit, OnDestroy {
       CODE.COMPONENT_INIT,
       'Initializing account-list component'
     );
-    this.getCurrentFiat();
     this.getAccounts();
     this.refreshData();
   }
@@ -99,23 +110,15 @@ export class AccountListComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  getCurrentFiat(): void {
-    this.configService
-      .getConfig$()
-      .pipe(
-        takeUntil(this.unsubscribe$),
-        map((config) => {
-          this.currentFiat = this.assetService.getAsset(config.fiat);
-        })
-      )
-      .subscribe();
-  }
-
   getAccounts(): void {
     this.accountService
       .getPortfolio()
       .pipe(
         map((accountOverview) => {
+          this.currentFiat = this.assetService.getAsset(
+            accountOverview.fiatAccount.asset!
+          );
+
           this.balance$.next(accountOverview.balance);
           this.fiatAccount$.next(accountOverview.fiatAccount);
           this.dataSource.data = accountOverview.accounts;

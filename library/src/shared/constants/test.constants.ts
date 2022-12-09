@@ -160,7 +160,7 @@ export class TestConstants {
     objects: [
       {
         type: 'fiat',
-        guid: 'ce3fa5a7fc35b632f2526df447f75f89',
+        guid: '23e94568c47bbcd50e01ab18e525aaf3',
         created_at: '2022-11-24T18:32:53.196Z',
         asset: 'USD',
         name: 'USD',
@@ -548,7 +548,7 @@ export class TestConstants {
 
   static ACCOUNT_BANK_MODEL_USD: AccountBankModel = {
     type: 'fiat',
-    guid: 'ce3fa5a7fc35b632f2526df447f75f89',
+    guid: '23e94568c47bbcd50e01ab18e525aaf3',
     created_at: '2022-11-24T18:32:53.196Z',
     asset: 'USD',
     name: 'USD',

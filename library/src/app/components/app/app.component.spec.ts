@@ -116,30 +116,21 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const component = fixture.componentInstance;
     const testConfig = TestConstants.CONFIG;
-    component.hostConfig = testConfig;
+    component.config = testConfig;
     tick();
     expect(MockConfigService.setConfig).toHaveBeenCalledWith(testConfig);
   }));
 
-  it('should set the current component', () => {
+  it('should set the current component', fakeAsync(() => {
     const fixture = TestBed.createComponent(AppComponent);
     const component = fixture.componentInstance;
 
-    MockConfigService.component$ = () => {};
-
-    // Test default currentComponent
     component.initNavigation();
     component.component = Constants.DEFAULT_COMPONENT;
+    tick();
 
-    expect(MockRouter.navigate).toHaveBeenCalled();
     expect(MockRoutingService.handleRoute).toHaveBeenCalled();
-
-    // Set currentComponent
-    component.component = 'test';
-
-    expect(MockRouter.navigate).toHaveBeenCalled();
-    expect(MockRoutingService.handleRoute).toHaveBeenCalled();
-  });
+  }));
 
   it('should call init functions in ngOnInit()', () => {
     const fixture = TestBed.createComponent(AppComponent);
