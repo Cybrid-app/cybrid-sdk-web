@@ -66,7 +66,6 @@ import {
 } from '@components';
 
 // Utility
-import { environment } from '@environment';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AssetPipe, TruncatePipe } from '@pipes';
 import { MatPaginatorIntl } from '@angular/material/paginator';
@@ -121,7 +120,6 @@ export function HttpLoaderFactory(http: HttpClient) {
       provide: Configuration,
       useFactory: (authService: AuthService) =>
         new Configuration({
-          basePath: environment.apiUrl,
           credentials: {
             BearerAuth: authService.getToken.bind(authService)
           }

@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://bank.demo.cybrid.app'
+  sandboxBankApiBasePath: 'https://bank.demo.cybrid.app',
+  productionBankApiBasePath: 'https://bank.production.cybrid.app'
 };
 
 /*

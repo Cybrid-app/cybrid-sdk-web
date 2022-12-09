@@ -18,12 +18,14 @@ interface LoginForm {
   clientSecret: FormControl<string>;
   bearerToken: FormControl<string>;
   customerGuid: FormControl<string>;
+  production: FormControl<boolean>;
 }
 
 export interface DemoCredentials {
   token: string;
   customer: string;
   isPublic: boolean;
+  production: boolean;
 }
 
 @Component({
@@ -39,7 +41,8 @@ export class LoginComponent implements OnInit {
   demoCredentials: DemoCredentials = {
     token: '',
     customer: '',
-    isPublic: false
+    isPublic: false,
+    production: false
   };
 
   // PUBLIC CREDENTIALS FOR NO-LOGIN DEMO
@@ -75,7 +78,8 @@ export class LoginComponent implements OnInit {
       customerGuid: new FormControl(environment.credentials.customerGuid, {
         validators: [Validators.required, Validators.minLength(32)],
         nonNullable: true
-      })
+      }),
+      production: new FormControl()
     });
 
     if (this.loginForm.valid) this.login();
@@ -195,6 +199,8 @@ export class LoginComponent implements OnInit {
       .subscribe((customer: CustomerBankModel) => {
         if (customer.guid) {
           this.demoCredentials.customer = customer.guid;
+          this.demoCredentials.production =
+            this.loginForm.controls.production.value;
 
           publicUser
             ? (this.demoCredentials.isPublic = publicUser)
