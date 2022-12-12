@@ -51,7 +51,7 @@ export class Constants {
     routing: Constants.ROUTING,
     customer: '',
     fiat: 'USD',
-    environment: 'sandbox'
+    environment: 'demo'
   };
   static DEFAULT_COMPONENT = 'price-list';
   static POLL_DURATION = 5000;

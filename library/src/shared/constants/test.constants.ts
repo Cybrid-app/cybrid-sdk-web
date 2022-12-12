@@ -39,7 +39,7 @@ export class TestConstants {
     routing: true,
     customer: '378c691c1b5ba3b938e17c1726202fe4',
     fiat: 'USD',
-    environment: 'sandbox'
+    environment: 'demo'
   };
 
   // Extension of AssetBankModel to include urls

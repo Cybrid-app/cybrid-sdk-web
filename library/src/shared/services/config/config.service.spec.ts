@@ -132,19 +132,34 @@ describe('ConfigService', () => {
   });
 
   it('should set environment', () => {
-    // 'sandbox'
+    // 'demo'
     service.setEnvironment(TestConstants.CONFIG);
 
+    expect(service['configuration'].basePath).toEqual(
+      environment.demoBankApiBasePath
+    );
+
+    // 'staging'
+    let testConfig = { ...TestConstants.CONFIG };
+    testConfig.environment = 'staging';
+
+    service.setEnvironment(testConfig);
+    expect(service['configuration'].basePath).toEqual(
+      environment.stagingBankApiBasePath
+    );
+
+    // 'sandbox'
+    testConfig.environment = 'sandbox';
+
+    service.setEnvironment(testConfig);
     expect(service['configuration'].basePath).toEqual(
       environment.sandboxBankApiBasePath
     );
 
     // 'production'
-    let productionTestConfig = { ...TestConstants.CONFIG };
-    productionTestConfig.environment = 'production';
+    testConfig.environment = 'production';
 
-    service.setEnvironment(productionTestConfig);
-
+    service.setEnvironment(testConfig);
     expect(service['configuration'].basePath).toEqual(
       environment.productionBankApiBasePath
     );

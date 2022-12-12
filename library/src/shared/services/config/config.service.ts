@@ -37,7 +37,7 @@ export interface ComponentConfig {
   routing: boolean;
   customer: string; // Temporary solution until the JWT embeds a customer GUID
   fiat: string;
-  environment: 'sandbox' | 'production';
+  environment: 'demo' | 'staging' | 'sandbox' | 'production';
 }
 
 @Injectable({
@@ -135,6 +135,12 @@ export class ConfigService implements OnDestroy {
 
   setEnvironment(config: ComponentConfig): boolean {
     switch (config.environment) {
+      case 'demo':
+        this.configuration.basePath = environment.demoBankApiBasePath;
+        return true;
+      case 'staging':
+        this.configuration.basePath = environment.stagingBankApiBasePath;
+        return true;
       case 'sandbox':
         this.configuration.basePath = environment.sandboxBankApiBasePath;
         return true;
