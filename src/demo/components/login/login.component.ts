@@ -18,14 +18,14 @@ interface LoginForm {
   clientSecret: FormControl<string>;
   bearerToken: FormControl<string>;
   customerGuid: FormControl<string>;
-  production: FormControl<boolean>;
+  environment: FormControl<'sandbox' | 'production'>;
 }
 
 export interface DemoCredentials {
   token: string;
   customer: string;
   isPublic: boolean;
-  production: boolean;
+  environment: 'sandbox' | 'production';
 }
 
 @Component({
@@ -38,11 +38,12 @@ export class LoginComponent implements OnInit {
 
   customerApi = 'https://bank.demo.cybrid.app/api/customers/';
   bearer = false;
+  environment = ['sandbox', 'production'];
   demoCredentials: DemoCredentials = {
     token: '',
     customer: '',
     isPublic: false,
-    production: false
+    environment: 'sandbox'
   };
 
   // PUBLIC CREDENTIALS FOR NO-LOGIN DEMO
@@ -79,7 +80,7 @@ export class LoginComponent implements OnInit {
         validators: [Validators.required, Validators.minLength(32)],
         nonNullable: true
       }),
-      production: new FormControl()
+      environment: new FormControl('sandbox', { nonNullable: true })
     });
 
     if (this.loginForm.valid) this.login();
@@ -199,8 +200,8 @@ export class LoginComponent implements OnInit {
       .subscribe((customer: CustomerBankModel) => {
         if (customer.guid) {
           this.demoCredentials.customer = customer.guid;
-          this.demoCredentials.production =
-            this.loginForm.controls.production.value;
+          this.demoCredentials.environment =
+            this.loginForm.controls.environment.value;
 
           publicUser
             ? (this.demoCredentials.isPublic = publicUser)

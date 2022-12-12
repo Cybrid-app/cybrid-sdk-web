@@ -12,6 +12,7 @@ import {
   LEVEL,
   RoutingService
 } from '@services';
+import { Configuration } from '@cybrid/cybrid-api-bank-angular';
 
 // Utility
 import { TranslateService } from '@ngx-translate/core';
@@ -43,7 +44,8 @@ describe('RoutingService', () => {
         { provide: TranslateService, useValue: MockTranslateService },
         { provide: EventService, useValue: MockEventService },
         { provide: ConfigService, useValue: MockConfigService },
-        { provide: Router, useValue: MockRouter }
+        { provide: Router, useValue: MockRouter },
+        Configuration
       ]
     });
     service = TestBed.inject(RoutingService);

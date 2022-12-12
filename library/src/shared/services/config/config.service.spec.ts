@@ -16,8 +16,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {
   BanksService,
+  Configuration,
   CustomersService
 } from '@cybrid/cybrid-api-bank-angular';
+import { environment } from '@environment';
 
 describe('ConfigService', () => {
   let service: ConfigService;
@@ -30,6 +32,9 @@ describe('ConfigService', () => {
   ]);
   let MockCustomersService = jasmine.createSpyObj(['getCustomer']);
   let MockBanksService = jasmine.createSpyObj(['getBank']);
+  class MockConfiguration extends Configuration {
+    override basePath = environment.sandboxBankApiBasePath;
+  }
 
   // Reset config to mock prod
   TestConstants.CONFIG.customer = '';
@@ -41,6 +46,7 @@ describe('ConfigService', () => {
         { provide: ErrorService, useValue: MockErrorService },
         { provide: EventService, useValue: MockEventService },
         { provide: TranslateService, useValue: MockTranslateService },
+        { provide: Configuration, useClass: MockConfiguration },
         { provide: CustomersService, useValue: MockCustomersService },
         { provide: BanksService, useValue: MockBanksService }
       ]
@@ -123,6 +129,25 @@ describe('ConfigService', () => {
     service.getConfig$().subscribe((cfg) => {
       expect(cfg.theme).toEqual('DARK');
     });
+  });
+
+  it('should set environment', () => {
+    // 'sandbox'
+    service.setEnvironment(TestConstants.CONFIG);
+
+    expect(service['configuration'].basePath).toEqual(
+      environment.sandboxBankApiBasePath
+    );
+
+    // 'production'
+    let productionTestConfig = { ...TestConstants.CONFIG };
+    productionTestConfig.environment = 'production';
+
+    service.setEnvironment(productionTestConfig);
+
+    expect(service['configuration'].basePath).toEqual(
+      environment.productionBankApiBasePath
+    );
   });
 
   it('should fetch customer data', () => {

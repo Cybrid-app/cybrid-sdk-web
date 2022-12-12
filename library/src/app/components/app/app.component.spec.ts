@@ -85,8 +85,7 @@ describe('AppComponent', () => {
         { provide: ConfigService, useValue: MockConfigService },
         { provide: Configuration, useClass: MockConfiguration },
         { provide: RoutingService, useValue: MockRoutingService },
-        { provide: Router, useValue: MockRouter },
-        Configuration
+        { provide: Router, useValue: MockRouter }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
@@ -122,19 +121,6 @@ describe('AppComponent', () => {
     expect(MockAuthService.setToken).toHaveBeenCalledWith(testToken);
     flushMicrotasks();
   }));
-
-  it('should set the environment to production', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const component = fixture.componentInstance;
-
-    // Default
-    expect(component.configuration.basePath).toBeUndefined();
-
-    component.production = true;
-    expect(component.configuration.basePath).toEqual(
-      environment.productionBankApiBasePath
-    );
-  });
 
   it('should set the config', fakeAsync(() => {
     const fixture = TestBed.createComponent(AppComponent);

@@ -16,6 +16,9 @@ import {
   MatDialogRef
 } from '@angular/material/dialog';
 
+// Services
+import { Configuration } from '@cybrid/cybrid-api-bank-angular';
+
 // Components
 import { TransferDetailsComponent, TransferDetailsData } from '@components';
 
@@ -64,7 +67,8 @@ describe('TransferDetailsComponent', () => {
         },
         { provide: AssetPipe, useClass: MockAssetPipe },
         TruncatePipe,
-        TranslatePipe
+        TranslatePipe,
+        Configuration
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();

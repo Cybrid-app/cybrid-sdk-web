@@ -21,12 +21,14 @@ import { ErrorService, CODE, EventService, LEVEL } from '@services';
 import {
   BankBankModel,
   BanksService,
+  Configuration,
   CustomerBankModel,
   CustomersService
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Utility
 import { Constants } from '@constants';
+import { environment } from '@environment';
 
 export interface ComponentConfig {
   refreshInterval: number;
@@ -35,6 +37,7 @@ export interface ComponentConfig {
   routing: boolean;
   customer: string; // Temporary solution until the JWT embeds a customer GUID
   fiat: string;
+  environment: 'sandbox' | 'production';
 }
 
 @Injectable({
@@ -57,7 +60,8 @@ export class ConfigService implements OnDestroy {
     private translateService: TranslateService,
     private overlay: OverlayContainer,
     private banksService: BanksService,
-    private customersService: CustomersService
+    private customersService: CustomersService,
+    private configuration: Configuration
   ) {
     this.initLocale();
     this.initStyle();
@@ -70,7 +74,7 @@ export class ConfigService implements OnDestroy {
   }
 
   setConfig(hostConfig: ComponentConfig) {
-    if (this.validateConfig(hostConfig)) {
+    if (this.validateConfig(hostConfig) && this.setEnvironment(hostConfig)) {
       this.eventService.handleEvent(
         LEVEL.INFO,
         CODE.CONFIG_SET,
@@ -109,6 +113,7 @@ export class ConfigService implements OnDestroy {
     const routing = (hostConfig as ComponentConfig).routing;
     const customer = (hostConfig as ComponentConfig).customer;
     const fiat = (hostConfig as ComponentConfig).fiat;
+    const environment = (hostConfig as ComponentConfig).environment;
     return (
       refreshInterval !== undefined &&
       refreshInterval !== null &&
@@ -122,8 +127,21 @@ export class ConfigService implements OnDestroy {
       customer !== null &&
       customer !== undefined &&
       fiat !== null &&
-      fiat !== undefined
+      fiat !== undefined &&
+      environment !== null &&
+      environment !== undefined
     );
+  }
+
+  setEnvironment(config: ComponentConfig): boolean {
+    switch (config.environment) {
+      case 'sandbox':
+        this.configuration.basePath = environment.sandboxBankApiBasePath;
+        return true;
+      case 'production':
+        this.configuration.basePath = environment.productionBankApiBasePath;
+        return true;
+    }
   }
 
   initLocale(): void {

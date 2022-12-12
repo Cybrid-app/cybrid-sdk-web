@@ -36,9 +36,6 @@ import {
 } from '@services';
 import { Configuration } from '@cybrid/cybrid-api-bank-angular';
 
-// Utility
-import { environment } from '@environment';
-
 @Component({
   selector: 'app-app',
   templateUrl: './app.component.html',
@@ -49,15 +46,6 @@ export class AppComponent implements OnInit {
   @Output() eventLog = new EventEmitter<EventLog>();
   @Output() errorLog = new EventEmitter<ErrorLog>();
 
-  /**
-   * Sets the environment to production
-   * The Bank client is configured by default with the demo environment base path
-   * */
-  @Input()
-  set production(prod: boolean) {
-    if (prod)
-      this.configuration.basePath = environment.productionBankApiBasePath;
-  }
   @Input()
   set auth(token: string) {
     this.authService.setToken(token);
