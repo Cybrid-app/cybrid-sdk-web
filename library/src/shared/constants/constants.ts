@@ -50,7 +50,8 @@ export class Constants {
     theme: Constants.THEME,
     routing: Constants.ROUTING,
     customer: '',
-    fiat: 'USD'
+    fiat: 'USD',
+    environment: 'demo'
   };
   static DEFAULT_COMPONENT = 'price-list';
   static POLL_DURATION = 5000;

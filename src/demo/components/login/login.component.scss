@@ -33,6 +33,10 @@
   mat-card-content {
     display: flex;
     flex-direction: column;
+
+    p {
+      padding-left: 0.5rem;
+    }
   }
   mat-card-actions {
     display: flex;

@@ -16,8 +16,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {
   BanksService,
+  Configuration,
   CustomersService
 } from '@cybrid/cybrid-api-bank-angular';
+import { environment } from '@environment';
 
 describe('ConfigService', () => {
   let service: ConfigService;
@@ -30,6 +32,9 @@ describe('ConfigService', () => {
   ]);
   let MockCustomersService = jasmine.createSpyObj(['getCustomer']);
   let MockBanksService = jasmine.createSpyObj(['getBank']);
+  class MockConfiguration extends Configuration {
+    override basePath = environment.sandboxBankApiBasePath;
+  }
 
   // Reset config to mock prod
   TestConstants.CONFIG.customer = '';
@@ -41,6 +46,7 @@ describe('ConfigService', () => {
         { provide: ErrorService, useValue: MockErrorService },
         { provide: EventService, useValue: MockEventService },
         { provide: TranslateService, useValue: MockTranslateService },
+        { provide: Configuration, useClass: MockConfiguration },
         { provide: CustomersService, useValue: MockCustomersService },
         { provide: BanksService, useValue: MockBanksService }
       ]
@@ -123,6 +129,40 @@ describe('ConfigService', () => {
     service.getConfig$().subscribe((cfg) => {
       expect(cfg.theme).toEqual('DARK');
     });
+  });
+
+  it('should set environment', () => {
+    // 'demo'
+    service.setEnvironment(TestConstants.CONFIG);
+
+    expect(service['configuration'].basePath).toEqual(
+      environment.demoBankApiBasePath
+    );
+
+    // 'staging'
+    let testConfig = { ...TestConstants.CONFIG };
+    testConfig.environment = 'staging';
+
+    service.setEnvironment(testConfig);
+    expect(service['configuration'].basePath).toEqual(
+      environment.stagingBankApiBasePath
+    );
+
+    // 'sandbox'
+    testConfig.environment = 'sandbox';
+
+    service.setEnvironment(testConfig);
+    expect(service['configuration'].basePath).toEqual(
+      environment.sandboxBankApiBasePath
+    );
+
+    // 'production'
+    testConfig.environment = 'production';
+
+    service.setEnvironment(testConfig);
+    expect(service['configuration'].basePath).toEqual(
+      environment.productionBankApiBasePath
+    );
   });
 
   it('should fetch customer data', () => {

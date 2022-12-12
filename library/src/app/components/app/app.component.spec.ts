@@ -24,9 +24,14 @@ import {
   ConfigService,
   RoutingService
 } from '@services';
+import { Configuration } from '@cybrid/cybrid-api-bank-angular';
 
+// Components
 import { AppComponent } from '@components';
+
+// Utility
 import { Constants, TestConstants } from '@constants';
+import { environment } from '@environment';
 
 describe('AppComponent', () => {
   let MockAuthService = jasmine.createSpyObj('AuthService', [
@@ -57,6 +62,10 @@ describe('AppComponent', () => {
   ]);
   let MockRouter = jasmine.createSpyObj('Router', ['navigate']);
 
+  class MockConfiguration extends Configuration {
+    override basePath = environment.sandboxBankApiBasePath;
+  }
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
@@ -74,6 +83,7 @@ describe('AppComponent', () => {
         { provide: EventService, useValue: MockEventService },
         { provide: ErrorService, useValue: MockErrorService },
         { provide: ConfigService, useValue: MockConfigService },
+        { provide: Configuration, useClass: MockConfiguration },
         { provide: RoutingService, useValue: MockRoutingService },
         { provide: Router, useValue: MockRouter }
       ],

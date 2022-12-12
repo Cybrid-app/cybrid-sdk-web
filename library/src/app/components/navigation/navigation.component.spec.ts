@@ -8,6 +8,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RoutingData, RoutingService } from '@services';
+import { Configuration } from '@cybrid/cybrid-api-bank-angular';
 
 describe('NavigationComponent', () => {
   let component: NavigationComponent;
@@ -31,7 +32,10 @@ describe('NavigationComponent', () => {
           }
         })
       ],
-      providers: [{ provide: RoutingService, useValue: MockRoutingService }],
+      providers: [
+        { provide: RoutingService, useValue: MockRoutingService },
+        Configuration
+      ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
 

@@ -90,6 +90,15 @@
             Customer not found
           </mat-error>
         </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Environment</mat-label>
+          <mat-select formControlName="environment">
+            <mat-option *ngFor="let env of environment" [value]="env">{{
+              env | titlecase
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
       </ng-container>
     </mat-card-content>
     <mat-card-actions>

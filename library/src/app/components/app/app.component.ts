@@ -34,6 +34,7 @@ import {
   CODE,
   LEVEL
 } from '@services';
+import { Configuration } from '@cybrid/cybrid-api-bank-angular';
 
 @Component({
   selector: 'app-app',
@@ -44,6 +45,7 @@ import {
 export class AppComponent implements OnInit {
   @Output() eventLog = new EventEmitter<EventLog>();
   @Output() errorLog = new EventEmitter<ErrorLog>();
+
   @Input()
   set auth(token: string) {
     this.authService.setToken(token);
@@ -61,6 +63,7 @@ export class AppComponent implements OnInit {
   unsubscribe$ = new Subject();
 
   constructor(
+    public configuration: Configuration,
     private router: Router,
     private authService: AuthService,
     private assetService: AssetService,
