@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { map, ReplaySubject, switchMap, take } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
 
 import {
-  AccountBankModel,
+  AccountListBankModel,
   AccountsService
 } from '@cybrid/cybrid-api-bank-angular';
 
@@ -12,25 +12,19 @@ import { ConfigService } from '@services';
   providedIn: 'root'
 })
 export class TestAccountsService {
-  /**
-   * Cached list of accounts
-   * */
-  accounts$: ReplaySubject<AccountBankModel[]> = new ReplaySubject(1);
-
   constructor(
     private configService: ConfigService,
     private clientAccountsService: AccountsService
   ) {}
 
   /**
-   * Get a list of accounts given the current customer, and flatten the AccountListBankModel
-   * @return An array of AccountBankModel
+   * Get a list of accounts given the current customer
+   * @return An account list
    **/
-  listAccounts(): void {
-    this.configService
+  listAccounts(): Observable<AccountListBankModel> {
+    return this.configService
       .getConfig$()
       .pipe(
-        take(1),
         switchMap((config) =>
           this.clientAccountsService.listAccounts(
             undefined,
@@ -39,9 +33,7 @@ export class TestAccountsService {
             undefined,
             config.customer
           )
-        ),
-        map((list) => this.accounts$.next(list.objects))
-      )
-      .subscribe();
+        )
+      );
   }
 }

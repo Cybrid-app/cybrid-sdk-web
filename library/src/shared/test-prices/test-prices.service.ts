@@ -11,20 +11,13 @@ import {
   providedIn: 'root'
 })
 export class TestPricesService {
-  prices$: ReplaySubject<SymbolPriceBankModel[]> = new ReplaySubject(1);
-
-  constructor(private clientPricesService: PricesService) {
-    this.listPrices();
-  }
+  constructor(private clientPricesService: PricesService) {}
 
   /**
    * Get a list of prices
    * @return An array of SymbolPriceBankModel
    **/
   listPrices(): void {
-    this.clientPricesService
-      .listPrices()
-      .pipe(map((prices) => this.prices$.next(prices)))
-      .subscribe();
+    this.clientPricesService.listPrices().subscribe();
   }
 }

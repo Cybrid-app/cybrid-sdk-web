@@ -4,70 +4,90 @@
       <mat-tab label="{{ 'trade.buy' | translate }}"></mat-tab>
       <mat-tab label="{{ 'trade.sell' | translate }}"></mat-tab>
     </mat-tab-group>
-    <pre>{{ input }}</pre>
-    <pre>{{ side }}</pre>
     <ng-container [formGroup]="tradeFormGroup">
-      <mat-form-field id="asset" appearance="outline">
-        <mat-select #matSelect formControlName="account">
-          <mat-select-trigger>
-            <div class="cybrid-option">
-              <img
-                class="cybrid-option-icon"
-                alt="Crypto currency icon"
-                src="{{ matSelect.value.asset | assetIcon }}"
-              />
-              <span class="cybrid-trigger-name">{{
-                matSelect.value.name
-              }}</span>
-              <span>{{
-                matSelect.value.platform_balance
-                  | assetFormat : matSelect.value.asset : 'trade'
-              }}</span>
-            </div>
-          </mat-select-trigger>
-          <mat-option *ngFor="let account of data.accounts" [value]="account">
-            <div class="cybrid-option">
-              <img
-                class="cybrid-option-icon"
-                alt="Crypto currency icon"
-                src="{{ account.asset | assetIcon }}"
-              />
-              <span>{{ account.name }}</span>
-              <span>{{
-                account.platform_balance
-                  | assetFormat : account.asset! : 'trade'
-              }}</span>
-            </div>
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <input
-          matInput
-          #amount="matInput"
-          id="amount"
-          formControlName="amount"
-          type="number"
-          min="0"
-          placeholder="0"
-          [ngClass]="{ 'cybrid-amount-input': amount.value }"
-        />
-        <div *ngIf="amount.value" class="cybrid-prefix" matPrefix>
-          {{ tradeFormGroup.controls.account.value?.asset }}
-          <div class="cybrid-amount-divider"></div>
+      <div class="cybrid-tabs">
+        <div class="cybrid-input-wrapper">
+          <div class="cybrid-input-flex">
+            <label class="mat-hint cybrid-h5">{{
+              'trade.currency' | translate
+            }}</label>
+            <mat-form-field id="asset" appearance="outline">
+              <mat-select #matSelect formControlName="account">
+                <mat-select-trigger>
+                  <div class="cybrid-option">
+                    <img
+                      class="cybrid-trigger-icon"
+                      alt="Crypto currency icon"
+                      src="{{ matSelect.value.asset | assetIcon }}"
+                    />
+                    <span class="cybrid-trigger-name">{{
+                      matSelect.value.name
+                    }}</span>
+                    <span class="mat-hint">{{
+                      '(' +
+                        (matSelect.value.platform_balance
+                          | assetFormat : matSelect.value.asset : 'trade') +
+                        ')'
+                    }}</span>
+                  </div>
+                </mat-select-trigger>
+                <mat-option
+                  *ngFor="let account of data.accounts"
+                  [value]="account"
+                >
+                  <div class="cybrid-option">
+                    <img
+                      class="cybrid-option-icon"
+                      alt="Crypto currency icon"
+                      src="{{ account.asset | assetIcon }}"
+                    />
+                    <span>{{ account.name }}</span>
+                    <span class="mat-hint">{{
+                      '(' +
+                        (account.platform_balance
+                          | assetFormat : account.asset! : 'trade') +
+                        ')'
+                    }}</span>
+                  </div>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
         </div>
-        <button
-          id="swap"
-          mat-icon-button
-          color="primary"
-          matSuffix
-          (click)="onSwitchInput()"
-        >
-          <mat-icon>swap_vert</mat-icon>
-        </button>
-        <mat-error>{{ 'trade.error' | translate }}</mat-error>
-      </mat-form-field>
+        <div class="cybrid-input-flex">
+          <label class="mat-hint cybrid-h5">{{
+            'trade.amount' | translate | titlecase
+          }}</label>
+          <mat-form-field appearance="outline">
+            <input
+              matInput
+              #amount="matInput"
+              id="amount"
+              formControlName="amount"
+              type="number"
+              min="0"
+              placeholder="0"
+              [ngClass]="{ 'cybrid-amount-input': amount.value }"
+            />
+            <div *ngIf="amount.value" class="cybrid-prefix" matPrefix>
+              {{ tradeFormGroup.controls.account.value?.asset }}
+              <div class="cybrid-amount-divider"></div>
+            </div>
+            <button
+              id="swap"
+              mat-icon-button
+              color="primary"
+              matSuffix
+              (click)="onSwitchInput()"
+            >
+              <mat-icon>swap_vert</mat-icon>
+            </button>
+            <mat-error>{{ 'trade.error' | translate }}</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <pre>{{ input + ' ' + side }}</pre>
 
       <pre>{{ tradeData$ | async | json }}</pre>
       <pre>{{ tradeFormGroup.value | json }}</pre>
