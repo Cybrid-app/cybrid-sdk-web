@@ -63,7 +63,8 @@ export class Constants {
     'account-details',
     'identity-verification',
     'bank-account-connect',
-    'transfer'
+    'transfer',
+    'test-trade'
   ];
   static COMPONENTS_BACKSTOPPED = [
     'price-list',

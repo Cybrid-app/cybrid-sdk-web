@@ -67,9 +67,17 @@ import {
 
 // Utility
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { AssetPipe, TruncatePipe } from '@pipes';
+import {
+  AssetPipe,
+  AssetIconPipe,
+  TruncatePipe,
+  AssetFormatPipe
+} from '@pipes';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { CustomPaginatorIntl } from '@utility';
+import { TestAccountsService } from '../../shared/services/test-accounts/test-accounts.service';
+import { TestTradeComponent } from '../components/test-trade/test-trade/test-trade.component';
+import { TestPricesService } from '../../shared/test-prices/test-prices.service';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -80,6 +88,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppComponent,
     PriceListComponent,
     TradeComponent,
+    TestTradeComponent,
     TradeConfirmComponent,
     TradeSummaryComponent,
     AccountListComponent,
@@ -95,7 +104,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     TransferConfirmComponent,
     TransferDetailsComponent,
     AssetPipe,
-    TruncatePipe
+    AssetFormatPipe,
+    TruncatePipe,
+    AssetIconPipe,
+    AssetFormatPipe
   ],
   imports: [
     BrowserModule,
@@ -132,10 +144,14 @@ export function HttpLoaderFactory(http: HttpClient) {
     QuoteService,
     EventService,
     AssetService,
+    TestAccountsService,
+    TestPricesService,
     AccountService,
     AssetPipe,
+    AssetIconPipe,
     IdentityVerificationService,
     BankAccountService,
+    AssetFormatPipe,
     TruncatePipe,
     TranslatePipe,
     { provide: APP_BASE_HREF, useValue: '' },

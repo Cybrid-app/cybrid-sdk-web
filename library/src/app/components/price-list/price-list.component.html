@@ -61,7 +61,7 @@
           class="cybrid-pointer"
           mat-row
           *matRowDef="let row; columns: displayedColumns"
-          (click)="onRowClick(row)"
+          (click)="onRowClick(row.asset.code)"
         ></tr>
       </ng-container>
       <tr class="mat-row" *matNoDataRow>

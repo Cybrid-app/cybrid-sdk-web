@@ -13,6 +13,7 @@ import {
 } from '@components';
 
 import { ComponentGuard } from '@guards';
+import { TestTradeComponent } from '../components/test-trade/test-trade/test-trade.component';
 
 export const routes: Routes = [
   {
@@ -61,6 +62,10 @@ export const routes: Routes = [
         path: 'transfer',
         component: TransferComponent,
         canActivate: [ComponentGuard]
+      },
+      {
+        path: 'test-trade',
+        component: TestTradeComponent
       }
     ]
   },

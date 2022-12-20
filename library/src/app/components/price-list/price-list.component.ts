@@ -180,7 +180,7 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
       });
   }
 
-  onRowClick(row: SymbolPrice): void {
+  onRowClick(code: string): void {
     this.config$
       .pipe(
         take(1),
@@ -188,12 +188,11 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
           if (config.routing) {
             const extras: NavigationExtras = {
               queryParams: {
-                asset: JSON.stringify(row.asset),
-                symbol_pair: row.symbol
+                code: code
               }
             };
             this.routingService.handleRoute({
-              route: 'trade',
+              route: 'test-trade',
               origin: 'price-list',
               extras
             });
