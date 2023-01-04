@@ -1,57 +1,65 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { FormControl, FormGroup } from '@angular/forms';
 
 import {
   BehaviorSubject,
-  catchError,
+  combineLatest,
+  interval,
   map,
-  of,
+  Observable,
+  ReplaySubject,
+  startWith,
   Subject,
   switchMap,
   take,
-  takeUntil,
-  timer
+  takeUntil
 } from 'rxjs';
 
 // Client
 import {
+  AccountBankModel,
   PostQuoteBankModel,
-  PricesService,
+  QuoteBankModel,
   SymbolPriceBankModel,
   TradeBankModel
 } from '@cybrid/cybrid-api-bank-angular';
-import SideEnum = PostQuoteBankModel.SideEnum;
 
-// Services
-import {
-  AssetService,
-  Asset,
-  EventService,
-  CODE,
-  LEVEL,
-  ErrorService,
-  ConfigService,
-  ComponentConfig,
-  QuoteService,
-  RoutingService,
-  RoutingData
-} from '@services';
-
-// Pipes
-import { AssetPipe } from '@pipes';
+import SideEnum = QuoteBankModel.SideEnum;
+import TypeEnum = AccountBankModel.TypeEnum;
 
 // Utility
-import { Constants } from '@constants';
-import { compareObjects, symbolSplit, symbolBuild } from '@utility';
-
-// Components
+import { fiatMask, symbolBuild } from '@utility';
+import { AssetFormatPipe } from '@pipes';
+import {
+  AccountService,
+  AssetService,
+  ComponentConfig,
+  ConfigService,
+  ErrorService,
+  EventService,
+  PriceService,
+  QuoteService,
+  RoutingData
+} from '@services';
 import { TradeConfirmComponent, TradeSummaryComponent } from '@components';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
-interface Display {
-  asset: number | string;
-  counter_asset: number | string;
+interface Accounts {
+  assets: AccountBankModel[];
+  counterAsset: AccountBankModel;
+}
+
+interface Price {
+  base: number;
+  asset: number;
+  counterAsset: number;
+}
+
+interface TradeFormGroup {
+  tradingAccount: FormControl<AccountBankModel | null>;
+  fiatAccount: FormControl<AccountBankModel | null>;
+  amount: FormControl<number | null>;
 }
 
 @Component({
@@ -60,63 +68,45 @@ interface Display {
   styleUrls: ['./trade.component.scss']
 })
 export class TradeComponent implements OnInit, OnDestroy {
-  compareObjects = compareObjects;
+  accounts$ = new ReplaySubject<Accounts>(1);
+  priceList$ = new ReplaySubject<SymbolPriceBankModel[]>(1);
 
-  asset: Asset = Constants.BTC_ASSET;
-  counterAsset: Asset = Constants.USD_ASSET;
-  cryptoAssets!: Asset[];
-  fiatAssets!: Asset[];
+  price$ = new ReplaySubject<Price>(1);
+  tradeData$ = new Observable<{ accounts: Accounts; price: Price }>();
 
+  tradeFormGroup!: FormGroup<TradeFormGroup>;
   side: SideEnum = SideEnum.Buy;
-  input: 'asset' | 'counter_asset' = 'asset';
-  amount: number = 0;
-  price: SymbolPriceBankModel = {};
+  input: TypeEnum = TypeEnum.Trading;
 
-  quote$: Subject<PostQuoteBankModel> = new Subject<PostQuoteBankModel>();
-
-  quoteGroup: FormGroup = new FormGroup({
-    asset: new FormControl(),
-    amount: new FormControl()
-  });
-
-  display: Display = {
-    asset: 0,
-    counter_asset: 0
-  };
-
-  dialogRef!: MatDialogRef<TradeConfirmComponent>;
-
-  isLoading$ = new BehaviorSubject(true);
-  isRecoverable$ = new BehaviorSubject(true);
-  unsubscribe$ = new Subject();
   routingData: RoutingData = {
     route: 'price-list',
     origin: 'trade'
   };
 
+  dialogRef!: MatDialogRef<TradeConfirmComponent>;
+
+  isLoading$ = new BehaviorSubject(true);
+  unsubscribe$ = new Subject();
+
   constructor(
-    private errorService: ErrorService,
+    private configService: ConfigService,
     private eventService: EventService,
-    private assetService: AssetService,
-    public configService: ConfigService,
-    private routingService: RoutingService,
+    private errorService: ErrorService,
+    private accountService: AccountService,
+    private priceService: PriceService,
     private quoteService: QuoteService,
-    private pricesService: PricesService,
-    public dialog: MatDialog,
-    private assetPipe: AssetPipe,
-    private route: ActivatedRoute
+    private assetService: AssetService,
+    private assetFormatPipe: AssetFormatPipe,
+    private route: ActivatedRoute,
+    public dialog: MatDialog
   ) {}
 
-  ngOnInit() {
-    this.eventService.handleEvent(
-      LEVEL.INFO,
-      CODE.COMPONENT_INIT,
-      'Initializing trade component'
+  ngOnInit(): void {
+    this.tradeData$ = combineLatest([this.accounts$, this.price$]).pipe(
+      map(([accounts, price]) => ({ accounts, price }))
     );
-    this.getAssets();
-    this.initQuoteGroup();
-    this.getPrice();
-    this.refreshData();
+
+    this.getAccountList();
   }
 
   ngOnDestroy() {
@@ -124,212 +114,303 @@ export class TradeComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  getAssets(): void {
-    // Set counter-asset from component config; asset remains default (BTC)
-    this.configService
-      .getConfig$()
+  getAccountList(): void {
+    this.accountService
+      .getAccounts()
       .pipe(
-        map((config) => {
-          this.counterAsset = this.assetService.getAsset(config.fiat);
-        })
-      )
-      .subscribe();
-
-    // Set currently selected assets based on routing data, for instance from a price list row click
-    this.route.queryParams
-      .pipe(
-        take(1),
-        map((params) => {
-          this.asset = this.assetService.getAsset(
-            symbolSplit(params['symbol_pair'])[0]
-          );
-          this.counterAsset = this.assetService.getAsset(
-            symbolSplit(params['symbol_pair'])[1]
-          );
-        })
-      )
-      .subscribe();
-
-    // Set list of available trading assets
-    this.assetService
-      .getAssets$()
-      .pipe(
-        take(1),
-        map((assets: Asset[]) => {
-          this.cryptoAssets = assets.filter((asset) => {
-            return asset.type == 'crypto';
+        map((list) => list.filter((account) => account.state == 'created')),
+        map((accounts) => {
+          this.accounts$.next({
+            assets: accounts.filter((account) => account.type == 'trading'),
+            counterAsset: accounts.filter(
+              (account) => account.type == 'fiat'
+            )[0]
           });
-          /*
-          Filtering here on the counterAsset supplied by the price-list.
-          This is assuming a single fiat account for the customer for now.
-          * */
-          this.fiatAssets = assets.filter((asset) => {
-            return asset.code == this.counterAsset.code;
-          });
+
+          this.initTradeForm();
         })
       )
       .subscribe();
   }
 
-  initQuoteGroup(): void {
-    this.quoteGroup.patchValue({
-      asset: this.assetService.getAsset(this.asset.code)
-    });
-    this.quoteGroup.valueChanges
+  getPriceList(): void {
+    this.configService
+      .getConfig$()
+      .pipe(
+        takeUntil(this.unsubscribe$),
+        switchMap((config) => interval(config.refreshInterval)),
+        startWith(0),
+        switchMap(() => this.priceService.listPrices()),
+        map((priceList) => {
+          this.priceList$.next(priceList);
+          this.evaluatePrice();
+        })
+      )
+      .subscribe();
+  }
+
+  initTradeForm(): void {
+    combineLatest([this.route.queryParams, this.accounts$])
+      .pipe(
+        take(1),
+        map(([params, accounts]) => {
+          const selectedAccount = params['code']
+            ? <AccountBankModel>(
+                accounts.assets.find(
+                  (account) => account.asset == params['code']
+                )
+              )
+            : accounts.assets[0];
+
+          this.tradeFormGroup = new FormGroup<TradeFormGroup>({
+            fiatAccount: new FormControl(accounts.counterAsset),
+            tradingAccount: new FormControl(selectedAccount),
+            amount: new FormControl(null, {
+              validators: [
+                Validators.min(0),
+                Validators.pattern(
+                  /^(0*[1-9][0-9]*(\.[0-9]+)?|0+\.[0-9]*[1-9][0-9]*)$/
+                )
+              ]
+            })
+          });
+
+          this.getPriceList();
+          this.evaluatePrice();
+
+          this.maskTradeForm();
+          this.validateTradeForm();
+        })
+      )
+      .subscribe();
+
+    this.tradeFormGroup.valueChanges
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((value) => {
-        this.asset = value.asset;
-        this.amount = value.amount;
-        this.getPrice();
-      });
+      .subscribe(() => this.evaluatePrice());
   }
 
-  /*
-  Set the price passed to the quote service.
-  Format the displayed data.
-  * */
-  getPrice(): void {
-    this.pricesService
-      .listPrices(symbolBuild(this.asset.code, this.counterAsset.code))
+  evaluatePrice(): void {
+    const symbol = symbolBuild(
+      <string>this.tradeFormGroup.controls.tradingAccount.value?.asset,
+      <string>this.tradeFormGroup.controls.fiatAccount.value?.asset
+    );
+
+    this.priceList$
       .pipe(
-        map((priceArray) => {
-          this.price = priceArray[0];
+        take(1),
+        map((priceList) => {
+          const prices = priceList.find((prices) => prices.symbol == symbol);
 
-          // Set amount to 0 if null
-          const amount = this.quoteGroup.get('amount')?.value;
-          if (amount == null) {
-            this.amount = 0;
-          }
+          let price: Price = {
+            base: 0,
+            asset: 0,
+            counterAsset: 0
+          };
 
-          switch (this.input) {
-            case 'asset': {
-              const sidePrice =
-                this.side == 'buy'
-                  ? Number(this.price.sell_price)
-                  : Number(this.price.buy_price);
-              this.display.asset = this.amount;
-              this.display.counter_asset = this.amount * sidePrice!;
-              break;
+          // Get current amount. If null, set to 0
+          const amount = this.tradeFormGroup.controls.amount.value
+            ? this.tradeFormGroup.controls.amount.value
+            : 0;
+
+          if (prices)
+            switch (this.input) {
+              case 'trading': {
+                const sidePrice =
+                  this.side == 'buy'
+                    ? Number(prices.sell_price)
+                    : Number(prices.buy_price);
+                price.base = sidePrice;
+                price.asset = amount;
+                price.counterAsset = amount * sidePrice;
+                break;
+              }
+              case 'fiat': {
+                const sidePrice =
+                  this.side == 'buy'
+                    ? Number(prices.buy_price)
+                    : Number(prices.sell_price);
+                let baseValue = Number(
+                  this.assetFormatPipe.transform(
+                    amount,
+                    <string>(
+                      this.tradeFormGroup.controls.fiatAccount.value?.asset
+                    ),
+                    'base'
+                  )
+                );
+                price.base = sidePrice;
+                price.asset = baseValue / sidePrice;
+                price.counterAsset = baseValue;
+                break;
+              }
             }
-            case 'counter_asset': {
-              const sidePrice =
-                this.side == 'buy'
-                  ? Number(this.price.buy_price)
-                  : Number(this.price.sell_price);
-              let baseValue = this.assetPipe.transform(
-                this.amount,
-                this.counterAsset,
-                'base'
-              ) as number;
-              this.display.asset = baseValue / sidePrice!;
-              this.display.counter_asset = baseValue;
-              break;
-            }
-          }
-          this.eventService.handleEvent(
-            LEVEL.INFO,
-            CODE.DATA_REFRESHED,
-            'Price successfully updated'
-          );
-        }),
-        catchError((err) => {
-          this.eventService.handleEvent(
-            LEVEL.ERROR,
-            CODE.DATA_ERROR,
-            'There was an error fetching price'
-          );
-          this.errorService.handleError(
-            new Error('There was an error fetching price')
-          );
-          return of(err);
+          this.price$.next(price);
         })
       )
-      .subscribe(() => {
-        this.isLoading$.next(false);
-      });
+      .subscribe();
   }
 
-  refreshData(): void {
-    this.configService
-      .getConfig$()
+  maskTradeForm(): void {
+    this.tradeFormGroup.controls.amount.valueChanges
       .pipe(
-        switchMap((cfg: ComponentConfig) => {
-          return timer(cfg.refreshInterval, cfg.refreshInterval);
-        }),
-        takeUntil(this.unsubscribe$)
+        takeUntil(this.unsubscribe$),
+        map((amount) => {
+          if (this.input == TypeEnum.Fiat && amount?.toString().includes('.')) {
+            this.tradeFormGroup.controls.amount.setValue(fiatMask(amount), {
+              emitEvent: false,
+              onlySelf: true
+            });
+          }
+        })
       )
-      .subscribe({
-        next: () => {
-          this.eventService.handleEvent(
-            LEVEL.INFO,
-            CODE.DATA_FETCHING,
-            'Refreshing price...'
-          );
-          this.getPrice();
-        }
-      });
+      .subscribe();
+  }
+
+  validateTradeForm(): void {
+    // Activate validation before blur
+    this.tradeFormGroup.controls.amount.markAsTouched();
+
+    combineLatest([
+      this.configService.getConfig$(),
+      this.price$,
+      this.accounts$
+    ])
+      .pipe(
+        takeUntil(this.unsubscribe$),
+        map(([config, price, accounts]) => {
+          switch (this.side) {
+            case 'buy': {
+              if (
+                price.asset !== 0 &&
+                price.counterAsset >
+                  Number(accounts.counterAsset.platform_available)
+              )
+                this.tradeFormGroup.controls.amount.setErrors({
+                  insufficientFunds: true
+                });
+              break;
+            }
+            case 'sell': {
+              if (
+                price.asset !== 0 &&
+                price.asset > this.getTradingPlatformAvailable(config)
+              )
+                this.tradeFormGroup.controls.amount.setErrors({
+                  insufficientFunds: true
+                });
+            }
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  // Check environment to bypass 'demo' platform_available always being '0'
+  getTradingPlatformAvailable(config: ComponentConfig): number {
+    return config.environment == 'demo'
+      ? (this.assetFormatPipe.transform(
+          this.tradeFormGroup.controls.tradingAccount.value?.platform_balance,
+          <string>this.tradeFormGroup.controls.tradingAccount.value?.asset
+        ) as number)
+      : (this.assetFormatPipe.transform(
+          this.tradeFormGroup.controls.tradingAccount.value?.platform_available,
+          <string>this.tradeFormGroup.controls.tradingAccount.value?.asset
+        ) as number);
   }
 
   onSwitchInput(): void {
-    switch (this.input) {
-      case 'asset': {
-        this.input = 'counter_asset';
-        break;
-      }
-      case 'counter_asset': {
-        this.input = 'asset';
-        break;
-      }
-    }
-    this.getPrice();
+    this.input == TypeEnum.Fiat
+      ? (this.input = TypeEnum.Trading)
+      : (this.input = TypeEnum.Fiat);
+
+    // Trigger input masking
+    this.tradeFormGroup.controls.amount.patchValue(
+      this.tradeFormGroup.controls.amount.value
+    );
   }
 
-  onSwitchSide(tab: number | null): void {
-    switch (tab) {
-      case -1: {
-        this.side = SideEnum.Buy;
-        break;
-      }
-      case 1: {
-        this.side = SideEnum.Sell;
-        break;
-      }
-    }
-    this.getPrice();
+  onSwitchSide(): void {
+    this.side == SideEnum.Buy
+      ? (this.side = SideEnum.Sell)
+      : (this.side = SideEnum.Buy);
+
+    // Update validation
+    this.tradeFormGroup.updateValueAndValidity();
   }
 
+  isMaxDisabled(): boolean {
+    return this.side === 'buy'
+      ? this.input.includes(TypeEnum.Trading)
+      : this.input.includes(TypeEnum.Fiat);
+  }
+
+  onSetMax(): void {
+    this.configService
+      .getConfig$()
+      .pipe(
+        take(1),
+        map((config) => {
+          return this.side === 'buy'
+            ? this.tradeFormGroup.controls.amount.setValue(
+                <number>(
+                  this.assetFormatPipe.transform(
+                    this.tradeFormGroup.controls.fiatAccount.value
+                      ?.platform_available,
+                    <string>(
+                      this.tradeFormGroup.controls.fiatAccount.value?.asset
+                    ),
+                    'trade'
+                  )
+                )
+              )
+            : this.tradeFormGroup.controls.amount.setValue(
+                this.getTradingPlatformAvailable(config)
+              );
+        })
+      )
+      .subscribe();
+  }
+
+  //TODO: Extend the quote service to take the asset code as a string instead of the model
   onTrade(): void {
-    // const postQuoteBankModel: PostQuoteBankModel = this.quoteService.getQuote(
-    //   this.amount,
-    //   this.input,
-    //   this.side,
-    //   this.asset,
-    //   this.counterAsset
-    // );
-    //
-    // this.dialogRef = this.dialog.open(TradeConfirmComponent, {
-    //   data: {
-    //     model: postQuoteBankModel,
-    //     asset: this.asset,
-    //     counter_asset: this.counterAsset
-    //   }
-    // });
-    //
-    // this.dialogRef
-    //   .afterClosed()
-    //   .pipe(
-    //     map((tradeBankModel: TradeBankModel) => {
-    //       if (tradeBankModel) {
-    //         this.dialog.open(TradeSummaryComponent, {
-    //           data: {
-    //             model: tradeBankModel,
-    //             asset: this.asset,
-    //             counter_asset: this.counterAsset
-    //           }
-    //         });
-    //       }
-    //     })
-    //   )
-    //   .subscribe();
+    const asset = this.assetService.getAsset(
+      <string>this.tradeFormGroup.controls.tradingAccount.value?.asset
+    );
+    const counterAsset = this.assetService.getAsset(
+      <string>this.tradeFormGroup.controls.fiatAccount.value?.asset
+    );
+
+    const postQuoteBankModel: PostQuoteBankModel = this.quoteService.getQuote(
+      <number>this.tradeFormGroup.controls.amount.value,
+      this.input,
+      this.side,
+      asset,
+      counterAsset
+    );
+
+    this.dialogRef = this.dialog.open(TradeConfirmComponent, {
+      data: {
+        model: postQuoteBankModel,
+        asset: asset,
+        counter_asset: counterAsset
+      }
+    });
+
+    this.dialogRef
+      .afterClosed()
+      .pipe(
+        map((tradeBankModel: TradeBankModel) => {
+          if (tradeBankModel) {
+            this.dialog.open(TradeSummaryComponent, {
+              data: {
+                model: tradeBankModel,
+                asset: asset,
+                counter_asset: counterAsset
+              }
+            });
+          }
+        })
+      )
+      .subscribe();
   }
 }

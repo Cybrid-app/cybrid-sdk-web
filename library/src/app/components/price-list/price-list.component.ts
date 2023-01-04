@@ -192,7 +192,7 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
               }
             };
             this.routingService.handleRoute({
-              route: 'test-trade',
+              route: 'trade',
               origin: 'price-list',
               extras
             });

@@ -20,12 +20,14 @@ import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 // Modules
 import { MaterialModule } from '@modules';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ApiModule, Configuration } from '@cybrid/cybrid-api-bank-angular';
+import { MatPaginatorIntl } from '@angular/material/paginator';
 import {
   TranslateModule,
   TranslateLoader,
   TranslatePipe
 } from '@ngx-translate/core';
+
+import { ApiModule, Configuration } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
 import {
@@ -38,7 +40,8 @@ import {
   RoutingService,
   AccountService,
   IdentityVerificationService,
-  BankAccountService
+  BankAccountService,
+  PriceService
 } from '@services';
 
 // Interceptors
@@ -74,11 +77,7 @@ import {
   TruncatePipe,
   AssetFormatPipe
 } from '@pipes';
-import { MatPaginatorIntl } from '@angular/material/paginator';
 import { CustomPaginatorIntl } from '@utility';
-import { TestAccountsService } from '../../shared/services/test-accounts/test-accounts.service';
-import { TestTradeComponent } from '../components/test-trade/test-trade/test-trade.component';
-import { TestPricesService } from '../../shared/test-prices/test-prices.service';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -89,7 +88,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppComponent,
     PriceListComponent,
     TradeComponent,
-    TestTradeComponent,
+    TradeComponent,
     TradeConfirmComponent,
     TradeSummaryComponent,
     TradeBalanceComponent,
@@ -146,8 +145,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     QuoteService,
     EventService,
     AssetService,
-    TestAccountsService,
-    TestPricesService,
+    PriceService,
     AccountService,
     AssetPipe,
     AssetIconPipe,

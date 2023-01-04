@@ -246,7 +246,7 @@ describe('ListComponent', () => {
     MockConfigService.getConfig$.and.returnValue(of({ routing: true }));
     const fixture = TestBed.createComponent(PriceListComponent);
     const component = fixture.componentInstance;
-    component.onRowClick(TestConstants.SYMBOL_PRICE);
+    component.onRowClick(TestConstants.SYMBOL_PRICE.symbol!);
     expect(MockRoutingService.handleRoute).toHaveBeenCalled();
   });
 });

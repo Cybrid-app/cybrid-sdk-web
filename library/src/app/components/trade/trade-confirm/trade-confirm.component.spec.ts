@@ -16,7 +16,7 @@ import {
 } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-import { HttpLoaderFactory } from '../../modules/library.module';
+import { HttpLoaderFactory } from '../../../modules/library.module';
 import {
   TranslateLoader,
   TranslateModule,

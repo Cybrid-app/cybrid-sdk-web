@@ -5,7 +5,7 @@
 }
 
 .cybrid-prefix {
-  margin-top: 5px;
+  margin-top: 4px;
   position: relative;
   .cybrid-amount-divider {
     position: absolute;
@@ -18,19 +18,14 @@
 }
 
 .cybrid-option {
-  position: relative;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   gap: 0.5rem;
 }
 
-.cybrid-trigger-name {
-  margin-left: 2.2rem;
-}
-
 .cybrid-trigger-icon {
-  position: absolute;
+  position: fixed;
   max-height: 1.7rem;
   max-width: 1.7rem;
 }
@@ -38,6 +33,10 @@
 .cybrid-option-icon {
   max-height: 1.7rem;
   max-width: 1.7rem;
+}
+
+.cybrid-trigger-name {
+  margin-left: 2.2rem;
 }
 
 .cybrid-amount-input {

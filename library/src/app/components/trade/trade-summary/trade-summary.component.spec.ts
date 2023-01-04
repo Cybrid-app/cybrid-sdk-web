@@ -16,7 +16,7 @@ import {
   TranslateModule,
   TranslatePipe
 } from '@ngx-translate/core';
-import { HttpLoaderFactory } from '../../modules/library.module';
+import { HttpLoaderFactory } from '../../../modules/library.module';
 import { of, throwError } from 'rxjs';
 
 // Client

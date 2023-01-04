@@ -4,10 +4,7 @@ export {
   PriceListComponent,
   SymbolPrice
 } from './price-list/price-list.component';
-export { TradeComponent } from './trade/trade.component';
-export { TradeConfirmComponent } from './trade-confirm/trade-confirm.component';
-export { TradeSummaryComponent } from './trade-summary/trade-summary.component';
-export { TradeBalanceComponent } from './trade-balance/trade-balance.component';
+export * from './trade';
 export { AccountListComponent } from './account-list/account-list.component';
 export { AccountDetailsComponent } from './account-details/account-details.component';
 export { NavigationComponent } from './navigation/navigation.component';
