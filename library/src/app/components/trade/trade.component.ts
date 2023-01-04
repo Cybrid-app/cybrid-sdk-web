@@ -299,37 +299,37 @@ export class TradeComponent implements OnInit, OnDestroy {
   }
 
   onTrade(): void {
-    const postQuoteBankModel: PostQuoteBankModel = this.quoteService.getQuote(
-      this.amount,
-      this.input,
-      this.side,
-      this.asset,
-      this.counterAsset
-    );
-
-    this.dialogRef = this.dialog.open(TradeConfirmComponent, {
-      data: {
-        model: postQuoteBankModel,
-        asset: this.asset,
-        counter_asset: this.counterAsset
-      }
-    });
-
-    this.dialogRef
-      .afterClosed()
-      .pipe(
-        map((tradeBankModel: TradeBankModel) => {
-          if (tradeBankModel) {
-            this.dialog.open(TradeSummaryComponent, {
-              data: {
-                model: tradeBankModel,
-                asset: this.asset,
-                counter_asset: this.counterAsset
-              }
-            });
-          }
-        })
-      )
-      .subscribe();
+    // const postQuoteBankModel: PostQuoteBankModel = this.quoteService.getQuote(
+    //   this.amount,
+    //   this.input,
+    //   this.side,
+    //   this.asset,
+    //   this.counterAsset
+    // );
+    //
+    // this.dialogRef = this.dialog.open(TradeConfirmComponent, {
+    //   data: {
+    //     model: postQuoteBankModel,
+    //     asset: this.asset,
+    //     counter_asset: this.counterAsset
+    //   }
+    // });
+    //
+    // this.dialogRef
+    //   .afterClosed()
+    //   .pipe(
+    //     map((tradeBankModel: TradeBankModel) => {
+    //       if (tradeBankModel) {
+    //         this.dialog.open(TradeSummaryComponent, {
+    //           data: {
+    //             model: tradeBankModel,
+    //             asset: this.asset,
+    //             counter_asset: this.counterAsset
+    //           }
+    //         });
+    //       }
+    //     })
+    //   )
+    //   .subscribe();
   }
 }

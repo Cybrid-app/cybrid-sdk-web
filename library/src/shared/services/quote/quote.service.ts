@@ -4,6 +4,7 @@ import { map, Subject, takeUntil } from 'rxjs';
 
 // Client
 import {
+  AccountBankModel,
   AssetBankModel,
   PostQuoteBankModel,
   QuotesService
@@ -51,7 +52,7 @@ export class QuoteService implements OnDestroy {
 
   getQuote(
     amount: string | number,
-    input: string,
+    input: AccountBankModel.TypeEnum,
     side: PostQuoteBankModel.SideEnum,
     asset: AssetBankModel,
     counterAsset: AssetBankModel
@@ -65,7 +66,7 @@ export class QuoteService implements OnDestroy {
 
     switch (side) {
       case 'buy': {
-        if (input == 'asset') {
+        if (input == 'trading') {
           postQuoteBankModel.receive_amount = this.assetPipe.transform(
             amount,
             asset,
@@ -81,7 +82,7 @@ export class QuoteService implements OnDestroy {
         break;
       }
       case 'sell': {
-        if (input == 'counter_asset') {
+        if (input == 'fiat') {
           postQuoteBankModel.receive_amount = this.assetPipe.transform(
             amount,
             counterAsset,

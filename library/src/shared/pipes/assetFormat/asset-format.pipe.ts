@@ -5,9 +5,7 @@ import '@angular/common/locales/global/fr';
 import { map, Subject, takeUntil } from 'rxjs';
 
 // Client
-import { AssetBankModel } from '@cybrid/cybrid-api-bank-angular';
-
-import { ConfigService, Asset, AssetService } from '@services';
+import { ConfigService, AssetService } from '@services';
 import { Constants } from '@constants';
 
 // Utility
@@ -56,7 +54,7 @@ export class AssetFormatPipe implements PipeTransform, OnDestroy {
   transform(
     value: string | number | undefined,
     code: string,
-    unit: 'trade' | 'base' | 'formatted' = 'formatted'
+    unit: 'trade' | 'base' | 'trim' | 'formatted' = 'formatted'
   ): string | number | undefined {
     if (value) {
       const asset = this.assetService.getAsset(code);
@@ -85,6 +83,11 @@ export class AssetFormatPipe implements PipeTransform, OnDestroy {
           return base;
         }
 
+        // Takes trade units and trims to the asset decimal places
+        case 'trim': {
+          return Number(value).toFixed(asset.decimals);
+        }
+
         // Takes base units and returns trade units with formatting, ex. 1,230.22 ETH
         case 'formatted': {
           if (tradeUnit.toString().includes('.')) {
@@ -105,7 +108,6 @@ export class AssetFormatPipe implements PipeTransform, OnDestroy {
               );
             } else {
               return (
-                asset.symbol +
                 formatNumber(new Big(integer).toNumber(), this.locale) +
                 separator!.char +
                 decimal.slice(0, asset.decimals)

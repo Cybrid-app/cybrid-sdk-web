@@ -50,7 +50,7 @@ import {
 
 // Utility
 import { AssetPipe } from '@pipes';
-import { FiatMask } from '../../../shared/utility/fiat-mask';
+import { fiatMask } from '@utility';
 import { TranslatePipe } from '@ngx-translate/core';
 
 interface TransferGroup {
@@ -130,7 +130,7 @@ export class TransferComponent implements OnInit, OnDestroy {
           ) as number;
 
           if (value.toString().includes('.')) {
-            amountControl.setValue(FiatMask(value), {
+            amountControl.setValue(fiatMask(value), {
               emitEvent: false
             });
           }
