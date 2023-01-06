@@ -15,25 +15,24 @@ function accountDetailsSetup() {
 
 describe('account-details test', () => {
   before(() => {
-    cy.intercept('GET', 'api/prices*', (req) => {
-      req.reply(TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY);
-    }).as('listPrices');
-    cy.intercept('GET', 'api/accounts*', (req) => {
-      req.reply(TestConstants.ACCOUNT_LIST_BANK_MODEL);
-    }).as('listAccount');
-    cy.intercept('GET', 'api/trades*', (req) => {
-      req.reply(TestConstants.TRADE_LIST_BANK_MODEL);
-    }).as('listTrades');
-    cy.intercept('GET', '/api/banks/*', (req) => {
-      req.reply(TestConstants.BANK_BANK_MODEL);
-    }).as('getBank');
-    cy.intercept('GET', '/api/customers/*', (req) => {
-      req.reply(TestConstants.CUSTOMER_BANK_MODEL);
-    }).as('getCustomer');
-
     cy.visit('/');
     // @ts-ignore
     cy.login();
+  });
+
+  beforeEach(() => {
+    // Mock prices
+    cy.intercept('GET', 'api/prices*', (req) => {
+      req.reply(TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY);
+    }).as('listPrices');
+    // Mock accounts
+    cy.intercept('GET', 'api/accounts*', (req) => {
+      req.reply(TestConstants.ACCOUNT_LIST_BANK_MODEL);
+    }).as('listAccount');
+    // Mock trades
+    cy.intercept('GET', 'api/trades*', (req) => {
+      req.reply(TestConstants.TRADE_LIST_BANK_MODEL);
+    }).as('listTrades');
   });
 
   it('should render account details', () => {
