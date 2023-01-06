@@ -31,7 +31,7 @@ import {
 } from '@services';
 
 // Utility
-import { symbolBuild, symbolSplit } from '@utility';
+import { filterPrices, symbolSplit } from '@utility';
 import { AssetPipe } from '@pipes';
 
 export interface Account {
@@ -52,6 +52,9 @@ export interface AccountOverview {
   providedIn: 'root'
 })
 export class AccountService implements OnDestroy {
+  symbolSplit = symbolSplit;
+  filterPrices = filterPrices;
+
   private unsubscribe$ = new Subject();
 
   constructor(
@@ -197,7 +200,7 @@ export class AccountService implements OnDestroy {
           (account: AccountBankModel) =>
             account.type == AccountBankModel.TypeEnum.Trading
         );
-        const fiatAccount = accounts.find(
+        const fiatAccount: AccountBankModel = accounts.find(
           (account: AccountBankModel) =>
             account.type == AccountBankModel.TypeEnum.Fiat
         );
@@ -206,15 +209,10 @@ export class AccountService implements OnDestroy {
         let tradingAccounts: Account[] = [];
 
         cryptoAccounts.forEach((accountModel: AccountBankModel) => {
-          const [assetCode, counterAssetCode] = symbolSplit(prices[0].symbol!);
-          const priceModel = prices.find(
-            (price: SymbolPriceBankModel) =>
-              (price.symbol = symbolBuild(assetCode, counterAssetCode))
-          );
-
+          const priceModel = this.filterPrices(prices, accountModel.asset!);
           const [assetModel, counterAssetModel] = this.getAccountAssets([
             accountModel.asset!,
-            counterAssetCode
+            fiatAccount.asset!
           ]);
 
           const accountValue = this.getAccountValue(

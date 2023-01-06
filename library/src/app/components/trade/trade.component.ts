@@ -29,7 +29,7 @@ import SideEnum = QuoteBankModel.SideEnum;
 import TypeEnum = AccountBankModel.TypeEnum;
 
 // Utility
-import { fiatMask, symbolBuild } from '@utility';
+import { fiatMask, symbolBuild, filterPrices } from '@utility';
 import { AssetFormatPipe } from '@pipes';
 import {
   AccountService,
@@ -68,6 +68,8 @@ export interface TradeFormGroup {
   styleUrls: ['./trade.component.scss']
 })
 export class TradeComponent implements OnInit, OnDestroy {
+  filterPrices = filterPrices;
+
   accounts$ = new ReplaySubject<Accounts>(1);
   priceList$ = new ReplaySubject<SymbolPriceBankModel[]>(1);
 
@@ -118,6 +120,7 @@ export class TradeComponent implements OnInit, OnDestroy {
     this.accountService
       .getAccounts()
       .pipe(
+        take(1),
         map((list) => list.filter((account) => account.state == 'created')),
         map((accounts) => {
           this.accounts$.next({
@@ -199,12 +202,11 @@ export class TradeComponent implements OnInit, OnDestroy {
       .pipe(
         take(1),
         map((priceList) => {
-          const prices = priceList.find((prices) => prices.symbol == symbol);
-
           // Get current amount. If null, set to 0
           const amount = this.tradeFormGroup.controls.amount.value
             ? this.tradeFormGroup.controls.amount.value
             : 0;
+          const prices = this.filterPrices(priceList, symbol);
 
           if (prices)
             switch (this.input) {

@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { of, take, throwError } from 'rxjs';
@@ -134,6 +134,9 @@ describe('AccountService', () => {
   });
 
   it('should get portfolio (all accounts, account values, asset models, and total value)', (done) => {
+    service.symbolSplit = () => ['BTC', 'USD'];
+    service.filterPrices = () => TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY[0];
+
     service.getPortfolio().subscribe((portfolio) => {
       expect(portfolio).toBeDefined();
       done();
