@@ -91,9 +91,9 @@ describe('AssetService', () => {
   }));
 
   it('should return the asset list as an observable', () => {
-    assetService.getAssets$().subscribe((list) => {
-      expect(list).toEqual([testAssetModel]);
-    });
+    assetService
+      .getAssets$()
+      .subscribe((list) => expect(list).toEqual([testAssetModel]));
   });
 
   it('should return the asset if it exists', fakeAsync(() => {

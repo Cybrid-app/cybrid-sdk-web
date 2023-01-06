@@ -1,4 +1,4 @@
-export { AssetService, Asset } from './asset/asset.service';
+export * from './asset/asset.service';
 export { AuthService } from './auth/auth.service';
 export { ConfigService, ComponentConfig } from './config/config.service';
 export { ErrorService, ErrorLog } from './error/error.service';

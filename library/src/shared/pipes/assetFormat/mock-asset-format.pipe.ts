@@ -5,8 +5,8 @@ import '@angular/common/locales/global/fr';
 import { map, Subject, takeUntil } from 'rxjs';
 
 // Client
-import { ConfigService, AssetService } from '@services';
-import { Constants } from '@constants';
+import { ConfigService } from '@services';
+import { Constants, TestConstants } from '@constants';
 
 // Utility
 import { Big } from 'big.js';
@@ -19,20 +19,15 @@ interface NumberSeparator {
 @Pipe({
   name: 'assetFormat'
 })
-export class AssetFormatPipe implements PipeTransform, OnDestroy {
-  locale = '';
+export class MockAssetFormatPipe implements PipeTransform, OnDestroy {
+  locale = 'en-US';
   separator: NumberSeparator[] = [
     { locale: 'en-US', char: '.' },
     { locale: 'fr-CA', char: ',' }
   ];
   unsubscribe$: Subject<any> = new Subject();
 
-  constructor(
-    private configService: ConfigService,
-    private assetService: AssetService
-  ) {
-    this.initLocale();
-  }
+  constructor(private configService: ConfigService) {}
 
   ngOnDestroy() {
     this.unsubscribe$.next('');
@@ -57,7 +52,9 @@ export class AssetFormatPipe implements PipeTransform, OnDestroy {
     unit: 'trade' | 'base' | 'trim' | 'formatted' = 'formatted'
   ): string | number | undefined {
     if (value) {
-      const asset = this.assetService.getAsset(code);
+      const asset = <any>(
+        TestConstants.ASSETS.find((asset) => asset.code == code)
+      );
       const divisor = new Big(10).pow(Number(asset.decimals));
       const tradeUnit = new Big(value).div(divisor);
       const baseUnit = new Big(value).mul(divisor);
@@ -85,9 +82,7 @@ export class AssetFormatPipe implements PipeTransform, OnDestroy {
 
         // Takes trade units and trims to the asset decimal places
         case 'trim': {
-          if (value.toString().includes('.')) {
-            return Number(Number(value).toFixed(asset.decimals));
-          } else return Number(value);
+          return Number(value).toFixed(asset.decimals);
         }
 
         // Takes base units and returns trade units with formatting, ex. 1,230.22 ETH
@@ -106,7 +101,7 @@ export class AssetFormatPipe implements PipeTransform, OnDestroy {
                 asset.symbol +
                 formatNumber(new Big(integer).toNumber(), this.locale) +
                 separator!.char +
-                decimal.slice(0, asset.decimals)
+                decimal.slice(0, 2)
               );
             } else {
               return (

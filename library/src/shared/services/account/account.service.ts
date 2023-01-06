@@ -20,7 +20,15 @@ import {
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
-import { AssetService, Asset, ConfigService } from '@services';
+import {
+  AssetService,
+  Asset,
+  ConfigService,
+  LEVEL,
+  CODE,
+  EventService,
+  ErrorService
+} from '@services';
 
 // Utility
 import { symbolSplit } from '@utility';
@@ -47,6 +55,8 @@ export class AccountService implements OnDestroy {
   private unsubscribe$ = new Subject();
 
   constructor(
+    private eventService: EventService,
+    private errorService: ErrorService,
     private accountsService: AccountsService,
     private pricesService: PricesService,
     private assetService: AssetService,
@@ -70,7 +80,19 @@ export class AccountService implements OnDestroy {
           config.customer
         );
       }),
-      map((accounts) => accounts.objects)
+      map((accounts) => accounts.objects),
+      catchError((err) => {
+        this.eventService.handleEvent(
+          LEVEL.ERROR,
+          CODE.DATA_ERROR,
+          'There was an error fetching accounts'
+        );
+
+        this.errorService.handleError(
+          new Error('There was an error fetching accounts')
+        );
+        return of(err);
+      })
     );
   }
 
@@ -79,9 +101,12 @@ export class AccountService implements OnDestroy {
     prices: SymbolPriceBankModel[],
     accountModel: AccountBankModel
   ): SymbolPriceBankModel | undefined {
+    // @ts-ignore
     return prices.find((price) => {
-      const [asset] = symbolSplit(price.symbol!);
-      return asset == accountModel.asset;
+      if (price.symbol) {
+        const [asset, counterAsset] = symbolSplit(price.symbol);
+        return asset == accountModel.asset;
+      }
     });
   }
 

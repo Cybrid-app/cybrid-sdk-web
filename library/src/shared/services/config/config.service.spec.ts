@@ -1,5 +1,5 @@
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { Observable, of, take } from 'rxjs';
 
 // Services
 import {
@@ -15,8 +15,10 @@ import { TestConstants } from '@constants';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {
+  BankBankModel,
   BanksService,
   Configuration,
+  CustomerBankModel,
   CustomersService
 } from '@cybrid/cybrid-api-bank-angular';
 import { environment } from '@environment';
@@ -166,16 +168,24 @@ describe('ConfigService', () => {
   });
 
   it('should fetch customer data', () => {
+    expect(service.getCustomer$()).toBeInstanceOf(
+      Observable<CustomerBankModel>
+    );
+
     service
       .getCustomer$()
+      .pipe(take(1))
       .subscribe((customer) =>
         expect(customer).toEqual(TestConstants.CUSTOMER_BANK_MODEL)
       );
   });
 
   it('should fetch bank data', () => {
+    expect(service.getBank$()).toBeInstanceOf(Observable<BankBankModel>);
+
     service
       .getBank$()
+      .pipe(take(1))
       .subscribe((bank) => expect(bank).toEqual(TestConstants.BANK_BANK_MODEL));
   });
 });

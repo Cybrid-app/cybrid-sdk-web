@@ -45,18 +45,18 @@ import {
 import { TradeConfirmComponent, TradeSummaryComponent } from '@components';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
-interface Accounts {
+export interface Accounts {
   assets: AccountBankModel[];
   counterAsset: AccountBankModel;
 }
 
-interface Price {
+export interface Price {
   base: number;
   asset: number;
   counterAsset: number;
 }
 
-interface TradeFormGroup {
+export interface TradeFormGroup {
   tradingAccount: FormControl<AccountBankModel | null>;
   fiatAccount: FormControl<AccountBankModel | null>;
   amount: FormControl<number | null>;
@@ -201,12 +201,6 @@ export class TradeComponent implements OnInit, OnDestroy {
         map((priceList) => {
           const prices = priceList.find((prices) => prices.symbol == symbol);
 
-          let price: Price = {
-            base: 0,
-            asset: 0,
-            counterAsset: 0
-          };
-
           // Get current amount. If null, set to 0
           const amount = this.tradeFormGroup.controls.amount.value
             ? this.tradeFormGroup.controls.amount.value
@@ -219,9 +213,11 @@ export class TradeComponent implements OnInit, OnDestroy {
                   this.side == 'buy'
                     ? Number(prices.sell_price)
                     : Number(prices.buy_price);
-                price.base = sidePrice;
-                price.asset = amount;
-                price.counterAsset = amount * sidePrice;
+                this.price$.next({
+                  base: sidePrice,
+                  asset: amount,
+                  counterAsset: amount * sidePrice
+                });
                 break;
               }
               case 'fiat': {
@@ -238,13 +234,14 @@ export class TradeComponent implements OnInit, OnDestroy {
                     'base'
                   )
                 );
-                price.base = sidePrice;
-                price.asset = baseValue / sidePrice;
-                price.counterAsset = baseValue;
+                this.price$.next({
+                  base: sidePrice,
+                  asset: baseValue / sidePrice,
+                  counterAsset: baseValue
+                });
                 break;
               }
             }
-          this.price$.next(price);
         })
       )
       .subscribe();
@@ -310,11 +307,13 @@ export class TradeComponent implements OnInit, OnDestroy {
     return config.environment == 'demo'
       ? (this.assetFormatPipe.transform(
           this.tradeFormGroup.controls.tradingAccount.value?.platform_balance,
-          <string>this.tradeFormGroup.controls.tradingAccount.value?.asset
+          <string>this.tradeFormGroup.controls.tradingAccount.value?.asset,
+          'trade'
         ) as number)
       : (this.assetFormatPipe.transform(
           this.tradeFormGroup.controls.tradingAccount.value?.platform_available,
-          <string>this.tradeFormGroup.controls.tradingAccount.value?.asset
+          <string>this.tradeFormGroup.controls.tradingAccount.value?.asset,
+          'trade'
         ) as number);
   }
 

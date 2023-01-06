@@ -15,7 +15,7 @@ import { ErrorService } from '../error/error.service';
 })
 export class PriceService {
   constructor(
-    private clientPricesService: PricesService,
+    private pricesService: PricesService,
     private eventService: EventService,
     private errorService: ErrorService
   ) {}
@@ -25,7 +25,7 @@ export class PriceService {
    * @return An array of SymbolPriceBankModel
    **/
   listPrices(): Observable<SymbolPriceBankModel[]> {
-    return this.clientPricesService.listPrices().pipe(
+    return this.pricesService.listPrices().pipe(
       map((priceList) => {
         this.eventService.handleEvent(
           LEVEL.INFO,
