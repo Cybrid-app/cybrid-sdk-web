@@ -234,6 +234,8 @@ export class BankAccountConnectComponent implements OnInit {
         ? 'USD'
         : metadata.accounts[0].iso_currency_code
     );
+    console.log(asset);
+    console.log(metadata.accounts);
     console.log(isValidAsset(asset));
     console.log(isOnlyAccount(metadata.accounts));
 
