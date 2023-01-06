@@ -32,6 +32,7 @@ import {
 import {
   BankAccountService,
   CODE,
+  ComponentConfig,
   ConfigService,
   ErrorService,
   EventService,
@@ -76,6 +77,8 @@ export class BankAccountConnectComponent implements OnInit {
 
   plaidScriptSrc = Constants.PLAID_SCRIPT_SRC;
 
+  config!: ComponentConfig;
+
   constructor(
     @Inject(DOCUMENT) public _document: Document,
     public configService: ConfigService,
@@ -99,6 +102,14 @@ export class BankAccountConnectComponent implements OnInit {
     if (this.isMobile()) {
       this.mobile$.next(true);
     } else this.onAddAccount();
+
+    this.configService
+      .getConfig$()
+      .pipe(
+        take(1),
+        map((config) => (this.config = config))
+      )
+      .subscribe();
   }
 
   isMobile(): boolean {
@@ -211,13 +222,13 @@ export class BankAccountConnectComponent implements OnInit {
       return accounts.length == 1;
     }
 
-    if (
-      isOnlyAccount(metadata.accounts) &&
-      isValidAsset(metadata.accounts[0].iso_currency_code)
-    ) {
-      const asset = metadata.accounts[0].iso_currency_code;
-      const account = metadata.accounts[0];
+    const asset =
+      this.config.environment == 'demo'
+        ? 'USD'
+        : metadata.accounts[0].iso_currency_code;
+    const account = metadata.accounts[0];
 
+    if (isOnlyAccount(metadata.accounts) && isValidAsset(asset)) {
       this.configService
         .getBank$()
         .pipe(
