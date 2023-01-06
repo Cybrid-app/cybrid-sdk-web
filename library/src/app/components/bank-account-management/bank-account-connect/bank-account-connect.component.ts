@@ -228,6 +228,17 @@ export class BankAccountConnectComponent implements OnInit {
         : metadata.accounts[0].iso_currency_code;
     const account = metadata.accounts[0];
 
+    console.log(this.config.environment);
+    console.log(
+      this.config.environment == 'demo'
+        ? 'USD'
+        : metadata.accounts[0].iso_currency_code
+    );
+    console.log(asset);
+    console.log(metadata.accounts);
+    console.log(isValidAsset(asset));
+    console.log(isOnlyAccount(metadata.accounts));
+
     if (isOnlyAccount(metadata.accounts) && isValidAsset(asset)) {
       this.configService
         .getBank$()
