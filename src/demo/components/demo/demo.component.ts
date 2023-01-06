@@ -146,7 +146,7 @@ export class DemoComponent implements OnDestroy {
 
     this.componentRef.instance.config = config;
     this.componentRef.instance.auth = credentials.token;
-    this.componentRef.instance.component = 'trade';
+    this.componentRef.instance.component = Constants.DEFAULT_COMPONENT;
 
     // Set Public/Private
     this.isPublic = credentials.isPublic;

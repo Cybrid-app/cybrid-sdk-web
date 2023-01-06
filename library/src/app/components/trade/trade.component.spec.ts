@@ -19,7 +19,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { ReactiveFormsModule } from '@angular/forms';
 
-import { of, take } from 'rxjs';
+import { of } from 'rxjs';
 
 // Services
 import {
@@ -206,53 +206,83 @@ describe('TradeComponent', () => {
     expect(component.tradeFormGroup.controls.amount.value).toBeNull();
   });
 
-  it('should evaluate the price', () => {
+  it('should evaluate the price', fakeAsync(() => {
     fixture.detectChanges();
 
+    const price$Spy = spyOn(component.price$, 'next');
+
     component.side = 'buy';
     component.input = 'trading';
     component.tradeFormGroup.controls.amount.setValue(1);
 
-    component.price$
-      .pipe(take(1))
-      .subscribe((price) =>
-        expect(price).toEqual({ base: 147050, asset: 1, counterAsset: 147050 })
-      );
+    tick();
+    expect(price$Spy).toHaveBeenCalledWith({
+      base: 147050,
+      asset: 1,
+      counterAsset: 147050
+    });
 
+    // component.price$
+    //   .pipe(take(1))
+    //   .subscribe((price) =>
+    //     expect(price).toEqual({ base: 147050, asset: 1, counterAsset: 147050 })
+    //   );
+    //
     component.side = 'buy';
     component.input = 'fiat';
     component.tradeFormGroup.controls.amount.setValue(1);
 
-    component.price$.pipe(take(1)).subscribe((price) =>
-      expect(price).toEqual({
-        base: 147030,
-        asset: 0.0006801333061280011,
-        counterAsset: 100
-      })
-    );
-
+    tick();
+    expect(price$Spy).toHaveBeenCalledWith({
+      base: 147030,
+      asset: 0.0006801333061280011,
+      counterAsset: 100
+    });
+    //
+    // component.price$.pipe(take(1)).subscribe((price) =>
+    //   expect(price).toEqual({
+    //     base: 147030,
+    //     asset: 0.0006801333061280011,
+    //     counterAsset: 100
+    //   })
+    // );
+    //
     component.side = 'sell';
     component.input = 'trading';
     component.tradeFormGroup.controls.amount.setValue(1);
+    //
 
-    component.price$
-      .pipe(take(1))
-      .subscribe((price) =>
-        expect(price).toEqual({ base: 147030, asset: 1, counterAsset: 147030 })
-      );
-
+    tick();
+    expect(price$Spy).toHaveBeenCalledWith({
+      base: 147030,
+      asset: 1,
+      counterAsset: 147030
+    });
+    // component.price$
+    //   .pipe(take(1))
+    //   .subscribe((price) =>
+    //     expect(price).toEqual({ base: 147030, asset: 1, counterAsset: 147030 })
+    //   );
+    //
     component.side = 'sell';
     component.input = 'fiat';
     component.tradeFormGroup.controls.amount.setValue(1);
-
-    component.price$.pipe(take(1)).subscribe((price) =>
-      expect(price).toEqual({
-        base: 147050,
-        asset: 0.0006800408024481469,
-        counterAsset: 100
-      })
-    );
-  });
+    //
+    tick();
+    expect(price$Spy).toHaveBeenCalledWith({
+      base: 147050,
+      asset: 0.0006800408024481469,
+      counterAsset: 100
+    });
+    // component.price$.pipe(take(1)).subscribe((price) =>
+    //   expect(price).toEqual({
+    //     base: 147050,
+    //     asset: 0.0006800408024481469,
+    //     counterAsset: 100
+    //   })
+    // );
+    discardPeriodicTasks();
+  }));
 
   it('should mask the amount control if input = "trading" and the number is a decimal', fakeAsync(() => {
     fixture.detectChanges();
