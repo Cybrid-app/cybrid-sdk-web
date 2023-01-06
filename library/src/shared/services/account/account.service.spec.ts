@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { of, take, throwError } from 'rxjs';
@@ -83,35 +83,9 @@ describe('AccountService', () => {
   it('should get accounts', () => {
     const testAccounts = TestConstants.ACCOUNT_LIST_BANK_MODEL.objects;
 
-    service
-      .getAccounts()
-      .pipe(take(1))
-      .subscribe((accounts) => {
-        expect(accounts).toEqual(testAccounts);
-      });
-  });
-
-  it('should filter prices', () => {
-    // Test for asset = BTC
-    let filteredPrice = TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY[0];
-
-    // Call filter prices with BTC AccountBankModel
-    let price = service.filterPrices(
-      TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY,
-      TestConstants.ACCOUNT_BANK_MODEL_BTC
-    );
-
-    expect(price).toEqual(filteredPrice);
-
-    // Test for asset = ETH
-    filteredPrice = TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY[1];
-
-    // Call filter prices with ETH AccountBankModel
-    price = service.filterPrices(
-      TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY,
-      TestConstants.ACCOUNT_BANK_MODEL_ETH
-    );
-    expect(price).toEqual(filteredPrice);
+    service.getAccounts().subscribe((accounts) => {
+      expect(accounts).toEqual(testAccounts);
+    });
   });
 
   it('should get account assets', () => {
@@ -159,28 +133,29 @@ describe('AccountService', () => {
     expect(accountValue).toEqual(121932.62852004268); // $121,932.63 USD
   });
 
-  it('should get portfolio (all accounts, account values, asset models, and total value)', () => {
-    service
-      .getPortfolio()
-      .pipe(take(1))
-      .subscribe((portfolio) => {
-        expect(portfolio).toBeDefined();
-      });
+  it('should get portfolio (all accounts, account values, asset models, and total value)', (done) => {
+    service.getPortfolio().subscribe((portfolio) => {
+      expect(portfolio).toBeDefined();
+      done();
+    });
   });
 
-  it('should pass through price errors on getPortfolio()', () => {
+  it('should pass through price errors on getPortfolio()', (done) => {
     // Set error on listPrices
     MockPricesService.listPrices.and.returnValue(error$);
 
-    service
-      .getPortfolio()
-      .pipe(take(1))
-      .subscribe((error) => {
-        expect(error).toBeInstanceOf(Error);
-      });
+    service.getPortfolio().subscribe((error) => {
+      expect(error).toBeInstanceOf(Error);
+      done();
+    });
+
+    // Reset
+    MockPricesService.listPrices.and.returnValue(
+      of(TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY)
+    );
   });
 
-  it('should pass through price errors on getAccounts()', () => {
+  it('should pass through price errors on getAccounts()', (done) => {
     // Set error on listAccounts
     service.getAccounts = () => error$;
 
@@ -189,6 +164,7 @@ describe('AccountService', () => {
       .pipe(take(1))
       .subscribe((error) => {
         expect(error).toBeInstanceOf(Error);
+        done();
       });
   });
 
@@ -198,7 +174,6 @@ describe('AccountService', () => {
         TestConstants.ACCOUNT_GUID,
         TestConstants.USD_ASSET.code
       )
-      .pipe(take(1))
       .subscribe((account) => {
         expect(account).toEqual(TestConstants.ACCOUNT_MODEL);
       });
@@ -213,7 +188,6 @@ describe('AccountService', () => {
         TestConstants.ACCOUNT_GUID,
         TestConstants.USD_ASSET.code
       )
-      .pipe(take(1))
       .subscribe((error) => {
         expect(error).toBeInstanceOf(Error);
       });
@@ -231,7 +205,6 @@ describe('AccountService', () => {
         TestConstants.ACCOUNT_GUID,
         TestConstants.USD_ASSET.code
       )
-      .pipe(take(1))
       .subscribe((error) => {
         expect(error).toBeInstanceOf(Error);
       });

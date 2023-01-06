@@ -31,7 +31,7 @@ import {
 } from '@services';
 
 // Utility
-import { symbolSplit } from '@utility';
+import { symbolBuild, symbolSplit } from '@utility';
 import { AssetPipe } from '@pipes';
 
 export interface Account {
@@ -94,17 +94,6 @@ export class AccountService implements OnDestroy {
         return of(err);
       })
     );
-  }
-
-  // Filter for specific asset price
-  filterPrices(
-    prices: SymbolPriceBankModel[],
-    accountModel: AccountBankModel
-  ): SymbolPriceBankModel | undefined {
-    return prices.find((price) => {
-      const [asset] = symbolSplit(price.symbol!);
-      return asset == accountModel.asset;
-    });
   }
 
   // Returns asset and counter asset models
@@ -217,9 +206,12 @@ export class AccountService implements OnDestroy {
         let tradingAccounts: Account[] = [];
 
         cryptoAccounts.forEach((accountModel: AccountBankModel) => {
-          const priceModel = this.filterPrices(prices, accountModel);
-
           const [assetCode, counterAssetCode] = symbolSplit(prices[0].symbol!);
+          const priceModel = prices.find(
+            (price: SymbolPriceBankModel) =>
+              (price.symbol = symbolBuild(assetCode, counterAssetCode))
+          );
+
           const [assetModel, counterAssetModel] = this.getAccountAssets([
             accountModel.asset!,
             counterAssetCode

@@ -1,4 +1,5 @@
-export function symbolSplit(symbol: string): readonly [string, string] {
-  let split = symbol.split('-');
-  return [split[0], split[1]] as const;
+export function symbolSplit(symbol: string) {
+  const asset = symbol.split('-')[0];
+  const counter_asset = symbol.split('-')[1];
+  return [asset, counter_asset] as const;
 }
