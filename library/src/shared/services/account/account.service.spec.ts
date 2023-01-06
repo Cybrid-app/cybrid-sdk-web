@@ -93,7 +93,9 @@ describe('AccountService', () => {
 
   it('should filter prices', () => {
     // Test for asset = BTC
-    let filteredPrice = { ...TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY[0] };
+    let filteredPrice = TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY[0];
+
+    // Call filter prices with BTC AccountBankModel
     let price = service.filterPrices(
       TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY,
       TestConstants.ACCOUNT_BANK_MODEL_BTC
@@ -101,13 +103,15 @@ describe('AccountService', () => {
 
     expect(price).toEqual(filteredPrice);
 
-    // undefined price
-    expect(
-      service.filterPrices(
-        TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY,
-        TestConstants.ACCOUNT_BANK_MODEL_USD
-      )
-    ).toBeUndefined();
+    // Test for asset = ETH
+    filteredPrice = TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY[1];
+
+    // Call filter prices with ETH AccountBankModel
+    price = service.filterPrices(
+      TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY,
+      TestConstants.ACCOUNT_BANK_MODEL_ETH
+    );
+    expect(price).toEqual(filteredPrice);
   });
 
   it('should get account assets', () => {

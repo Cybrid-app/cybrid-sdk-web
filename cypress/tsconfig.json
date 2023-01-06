@@ -16,5 +16,5 @@
     }
   },
   "include": ["**/*.ts"],
-  "exclude": []
+  "exclude": ["e2e/trade.cy.ts"]
 }

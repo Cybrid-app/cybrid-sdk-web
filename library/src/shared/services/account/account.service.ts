@@ -101,12 +101,9 @@ export class AccountService implements OnDestroy {
     prices: SymbolPriceBankModel[],
     accountModel: AccountBankModel
   ): SymbolPriceBankModel | undefined {
-    // @ts-ignore
     return prices.find((price) => {
-      if (price.symbol) {
-        const [asset, counterAsset] = symbolSplit(price.symbol);
-        return asset == accountModel.asset;
-      }
+      const [asset] = symbolSplit(price.symbol!);
+      return asset == accountModel.asset;
     });
   }
 
