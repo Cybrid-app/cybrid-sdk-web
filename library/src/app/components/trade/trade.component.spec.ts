@@ -206,14 +206,12 @@ describe('TradeComponent', () => {
     expect(component.tradeFormGroup.controls.amount.value).toBeNull();
   });
 
-  it('should evaluate the price', fakeAsync(() => {
+  it('should evaluate the price', () => {
     fixture.detectChanges();
 
     component.side = 'buy';
     component.input = 'trading';
     component.tradeFormGroup.controls.amount.setValue(1);
-
-    tick();
 
     component.price$
       .pipe(take(1))
@@ -224,8 +222,6 @@ describe('TradeComponent', () => {
     component.side = 'buy';
     component.input = 'fiat';
     component.tradeFormGroup.controls.amount.setValue(1);
-
-    tick();
 
     component.price$.pipe(take(1)).subscribe((price) =>
       expect(price).toEqual({
@@ -239,8 +235,6 @@ describe('TradeComponent', () => {
     component.input = 'trading';
     component.tradeFormGroup.controls.amount.setValue(1);
 
-    tick();
-
     component.price$
       .pipe(take(1))
       .subscribe((price) =>
@@ -251,8 +245,6 @@ describe('TradeComponent', () => {
     component.input = 'fiat';
     component.tradeFormGroup.controls.amount.setValue(1);
 
-    tick();
-
     component.price$.pipe(take(1)).subscribe((price) =>
       expect(price).toEqual({
         base: 147050,
@@ -260,9 +252,7 @@ describe('TradeComponent', () => {
         counterAsset: 100
       })
     );
-
-    discardPeriodicTasks();
-  }));
+  });
 
   it('should mask the amount control if input = "trading" and the number is a decimal', fakeAsync(() => {
     fixture.detectChanges();
