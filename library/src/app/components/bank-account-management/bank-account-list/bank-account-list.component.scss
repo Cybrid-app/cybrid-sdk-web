@@ -1,0 +1,46 @@
+table {
+  mat-row:last-of-type {
+    border-bottom: none;
+  }
+}
+
+.cybrid-table {
+  position: relative;
+}
+
+mat-progress-bar {
+  position: absolute;
+  top: 3.5rem;
+}
+
+.cybrid-sort-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.cybrid-account-cell {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+
+  div {
+    display: flex;
+    gap: 0.25rem;
+  }
+}
+
+.mat-column-status {
+  justify-content: flex-end;
+}
+
+.cybrid-status-cell {
+  text-align: end;
+}
+
+.cybrid-hide {
+  display: none;
+}
+
+@media screen and (max-width: 599px) {}

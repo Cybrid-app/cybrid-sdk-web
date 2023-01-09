@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>Confirm Disconnect</h2>
+<mat-dialog-content>
+  <p>
+    <span>{{ 'Please confirm removal of ' }}</span>
+    <strong>{{ account.name + ' ' }}</strong
+    ><span class="mat-hint">{{ account.guid }}</span>
+  </p>
+  <i>Deposits will no longer be possible from this account.</i>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button id="done" mat-stroked-button [mat-dialog-close]="true">
+    {{ 'cancel' | translate }}
+  </button>
+  <button id="confirm" color="warn" mat-flat-button>CONFIRM</button>
+</mat-dialog-actions>
