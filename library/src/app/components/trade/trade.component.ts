@@ -88,6 +88,7 @@ export class TradeComponent implements OnInit, OnDestroy {
   dialogRef!: MatDialogRef<TradeConfirmComponent>;
 
   isLoading$ = new BehaviorSubject(true);
+  isRecoverable$ = new BehaviorSubject(true);
   unsubscribe$ = new Subject();
 
   constructor(
