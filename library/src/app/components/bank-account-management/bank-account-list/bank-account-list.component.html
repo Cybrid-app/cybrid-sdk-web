@@ -1,0 +1,103 @@
+<ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
+  <app-navigation [routingData]="routingData"></app-navigation>
+  <ng-container *ngIf="(isLoading$ | async) !== true; else loading">
+    <div class="cybrid-table">
+      <mat-progress-bar
+        *ngIf="isLoadingResults"
+        mode="indeterminate"
+      ></mat-progress-bar>
+      <table
+        id="bank-account-list"
+        mat-table
+        matSort
+        matSortDisableClear
+        (matSortChange)="sortChange()"
+        [dataSource]="dataSource"
+        class="mat-button-toggle-group-appearance-standard"
+        [ngClass]="{ 'cybrid-paginator': dataSource.data.length > 0 }"
+      >
+        <!-- Account -->
+        <ng-container matColumnDef="account">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header=""
+            arrowPosition="after"
+          >
+            <div class="cybrid-sort-header">Account</div>
+          </th>
+          <td id="account" mat-cell *matCellDef="let account">
+            <div class="cybrid-account-cell">
+              <mat-icon>savings</mat-icon>
+              <div class="bank-account-name">
+                <span>{{ account.name }}</span>
+                <span class="mat-hint">{{
+                  '(***' + account.plaid_account_mask + ')'
+                }}</span>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Status -->
+        <ng-container matColumnDef="status">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header=""
+            arrowPosition="before"
+          >
+            <div class="cybrid-sort-header">Status</div>
+          </th>
+          <td id="status" mat-cell *matCellDef="let account">
+            <div class="cybrid-status-cell">
+              <mat-icon color="primary"> check_circle</mat-icon>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          class="cybrid-pointer"
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          (click)="onAccountSelect(row)"
+        ></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td id="warning" class="mat-cell cybrid-no-data" colspan="2">
+            No bank accounts connected.
+          </td>
+        </tr>
+      </table>
+    </div>
+  </ng-container>
+  <mat-paginator
+    [pageSize]="pageSize"
+    [pageIndex]="currentPage"
+    [length]="totalRows"
+    [pageSizeOptions]="pageSizeOptions"
+    (page)="pageChange($event)"
+    class="mat-button-toggle-group-appearance-standard"
+    [ngClass]="{ 'cybrid-hide': dataSource.data.length === 0 }"
+    aria-label="bank accounts"
+  >
+  </mat-paginator>
+  <div *ngIf="(isLoading$ | async) !== true" class="cybrid-actions">
+    <button mat-stroked-button>VIEW HISTORY</button>
+    <button mat-flat-button color="primary" (click)="onAddAccount()">
+      ADD ACCOUNT
+    </button>
+  </div>
+</ng-container>
+<ng-template #loading>
+  <app-loading></app-loading>
+</ng-template>
+<ng-template #error>
+  <mat-card>
+    <mat-card-content>
+      <div class="cybrid-fatal">
+        <p>{{ 'fatal' | translate }}</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</ng-template>

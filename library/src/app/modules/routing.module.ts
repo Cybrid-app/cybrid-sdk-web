@@ -9,7 +9,8 @@ import {
   AccountDetailsComponent,
   IdentityVerificationComponent,
   BankAccountConnectComponent,
-  TransferComponent
+  TransferComponent,
+  BankAccountListComponent
 } from '@components';
 
 import { ComponentGuard } from '@guards';
@@ -55,6 +56,11 @@ export const routes: Routes = [
       {
         path: 'bank-account-connect',
         component: BankAccountConnectComponent,
+        canActivate: [ComponentGuard]
+      },
+      {
+        path: 'bank-account-list',
+        component: BankAccountListComponent,
         canActivate: [ComponentGuard]
       },
       {
