@@ -1,0 +1,23 @@
+<div *ngIf="account" id="account-available" class="cybrid-balance">
+  <span class="mat-hint">{{ 'accountList.available' | translate }}</span>
+  <div>
+    <h1 class="cybrid-h1">
+      {{ Balance | assetFormat : account.asset! }}
+      <span class="mat-hint">{{ account.asset! }}</span>
+    </h1>
+    <h5 class="mat-hint cybrid-h5">
+      <span *ngIf="Pending; else settled">
+        {{
+          (Pending | assetFormat : account.asset!) +
+            ' ' +
+            account.asset +
+            ' ' +
+            ('accountBalance.pending' | translate)
+        }}</span
+      >
+      <ng-template #settled>{{
+        'accountBalance.settled' | translate
+      }}</ng-template>
+    </h5>
+  </div>
+</div>

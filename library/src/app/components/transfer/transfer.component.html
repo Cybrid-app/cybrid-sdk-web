@@ -8,22 +8,9 @@
     <ng-container *ngIf="configService.getConfig$() | async as config">
       <app-navigation [routingData]="routingData"></app-navigation>
       <ng-container *ngIf="accounts.bankAccounts!.length > 0; else noAccount">
-        <div class="cybrid-balance">
-          <span class="mat-hint">{{
-            'accountList.available' | translate
-          }}</span>
-          <div>
-            <h1>
-              {{
-                accounts.fiatAccount?.platform_available!
-                  | asset : fiatAsset : 'formatted'
-              }}
-              <span class="mat-hint">{{
-                accounts.fiatAccount?.asset | uppercase
-              }}</span>
-            </h1>
-          </div>
-        </div>
+        <app-account-balance
+          [account]="accounts.fiatAccount"
+        ></app-account-balance>
         <mat-tab-group
           animationDuration="0ms"
           (selectedTabChange)="onSwitchSide($event.tab.origin)"

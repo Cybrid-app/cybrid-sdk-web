@@ -8,11 +8,11 @@ import {
 
 import { AccountDetailsComponent } from '@components';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { HttpLoaderFactory } from '../../modules/library.module';
+import { HttpLoaderFactory } from '../../../modules/library.module';
 import { HttpClient } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { SharedModule } from '../../../shared/modules/shared.module';
+import { SharedModule } from '../../../../shared/modules/shared.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AssetPipe } from '@pipes';
 import { of, throwError } from 'rxjs';

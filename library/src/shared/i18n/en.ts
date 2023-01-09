@@ -65,11 +65,6 @@ export default {
       submitting: 'Submitting crypto order',
       loading: 'Loading crypto order',
       error: 'Error fetching trade'
-    },
-
-    // Balance
-    balance: {
-      pending: 'Pending'
     }
   },
 
@@ -98,6 +93,12 @@ export default {
       trade: 'Error fetching trades',
       noData: 'No trades found'
     }
+  },
+
+  // Account balance component
+  accountBalance: {
+    pending: 'Pending',
+    settled: 'No trades pending'
   },
 
   // Account trade component

@@ -66,11 +66,6 @@ export default {
       submitting: 'Soumettre une commande de crypto',
       loading: 'Chargement de la commande crypto',
       error: 'Erreur lors de la récupération de léchange'
-    },
-
-    // Balance
-    balance: {
-      pending: 'En attente'
     }
   },
 
@@ -99,6 +94,12 @@ export default {
       account: 'Erreur lors de la récupération des transactions',
       noData: 'Aucun commerce trouvé'
     }
+  },
+
+  // Account balance component
+  accountBalance: {
+    pending: 'En attente',
+    settled: 'Aucune transaction en attente'
   },
 
   // Account trade component

@@ -1,13 +1,13 @@
 <app-navigation [routingData]="routingData"></app-navigation>
 <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
   <ng-container *ngIf="tradeData$ | async as data; else loading">
-    <app-trade-balance
+    <app-account-balance
       [account]="
         side === 'buy'
           ? tradeFormGroup.controls.fiatAccount.value
           : tradeFormGroup.controls.tradingAccount.value
       "
-    ></app-trade-balance>
+    ></app-account-balance>
     <mat-tab-group animationDuration="0ms" (selectedTabChange)="onSwitchSide()">
       <mat-tab label="{{ 'trade.buy' | translate }}"></mat-tab>
       <mat-tab label="{{ 'trade.sell' | translate }}"></mat-tab>
