@@ -66,6 +66,11 @@ export default {
       submitting: 'Soumettre une commande de crypto',
       loading: 'Chargement de la commande crypto',
       error: 'Erreur lors de la récupération de léchange'
+    },
+
+    // Balance
+    balance: {
+      pending: 'En attente'
     }
   },
 

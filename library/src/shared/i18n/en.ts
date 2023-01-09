@@ -65,6 +65,11 @@ export default {
       submitting: 'Submitting crypto order',
       loading: 'Loading crypto order',
       error: 'Error fetching trade'
+    },
+
+    // Balance
+    balance: {
+      pending: 'Pending'
     }
   },
 

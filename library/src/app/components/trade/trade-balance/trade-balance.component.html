@@ -1,18 +1,18 @@
-  <div *ngIf="account" id="account-available" class="cybrid-balance">
-    <span class="mat-hint">{{ 'accountList.available' | translate }}</span>
-    <div>
-      <h1 class="cybrid-h1">
-        {{ account.platform_available! | assetFormat : account.asset! }}
-        <span class="mat-hint">{{ account.asset! }}</span>
-      </h1>
-      <h5 class="mat-hint cybrid-h5">
-        {{
+<div *ngIf="account" id="account-available" class="cybrid-balance">
+  <span class="mat-hint">{{ 'accountList.available' | translate }}</span>
+  <div>
+    <h1 class="cybrid-h1">
+      {{ account.platform_available! | assetFormat : account.asset! }}
+      <span class="mat-hint">{{ account.asset! }}</span>
+    </h1>
+    <h5 class="mat-hint cybrid-h5">
+      {{
         (account.platform_balance! | assetFormat : account.asset!) +
-        ' ' +
-        account.asset +
-        ' ' +
-        'Pending'
-        }}
-      </h5>
-    </div>
+          ' ' +
+          account.asset +
+          ' ' +
+          ('trade.balance.pending' | translate)
+      }}
+    </h5>
   </div>
+</div>
