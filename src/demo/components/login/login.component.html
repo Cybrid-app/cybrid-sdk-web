@@ -106,6 +106,7 @@
         id="publicLogin"
         mat-flat-button
         color="primary"
+        [disabled]="!(loginForm.controls.environment.value === 'demo')"
         (click)="login(true)"
       >
         Instant Demo

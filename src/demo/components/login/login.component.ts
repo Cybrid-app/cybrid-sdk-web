@@ -36,7 +36,6 @@ export interface DemoCredentials {
 export class LoginComponent implements OnInit {
   @Output() credentials = new EventEmitter<DemoCredentials>();
 
-  customerApi = 'https://bank.demo.cybrid.app/api/customers/';
   bearer = false;
   environment = ['demo', 'staging', 'sandbox', 'production'];
   demoCredentials: DemoCredentials = {
@@ -86,6 +85,25 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid) this.login();
   }
 
+  getBankApiBasePath(env: string): string {
+    switch (env) {
+      case 'demo': {
+        return environment.bankApiCustomerBasePath.demo;
+      }
+      case 'staging': {
+        return environment.bankApiCustomerBasePath.staging;
+      }
+      case 'sandbox': {
+        return environment.bankApiCustomerBasePath.sandbox;
+      }
+      case 'production': {
+        return environment.bankApiCustomerBasePath.production;
+      }
+      default:
+        return environment.bankApiCustomerBasePath.demo;
+    }
+  }
+
   // Handle input validation between api keys and bearer token
   switchInput() {
     const apiKeyControls = [
@@ -130,6 +148,7 @@ export class LoginComponent implements OnInit {
           ? of(this.loginForm.controls.bearerToken.value)
           : this.configService
               .createToken(
+                this.loginForm.value.environment!,
                 this.loginForm.value.clientId,
                 this.loginForm.value.clientSecret
               )
@@ -157,7 +176,9 @@ export class LoginComponent implements OnInit {
               ? this.publicCustomerGuid
               : this.loginForm.value.customerGuid;
 
-          const url = this.customerApi + user();
+          const url =
+            this.getBankApiBasePath(this.loginForm.controls.environment.value) +
+            user();
           const httpOptions = {
             headers: new HttpHeaders({
               'Content-Type': 'application/json',

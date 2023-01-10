@@ -16,8 +16,31 @@ export class DemoConfigService {
 
   constructor(private http: HttpClient) {}
 
-  createToken(clientId?: string, clientSecret?: string): Observable<string> {
-    const url = environment.authUrl;
+  getAuthUrl(env: string): string {
+    switch (env) {
+      case 'demo': {
+        return environment.idpAuthUrl.demo;
+      }
+      case 'staging': {
+        return environment.idpAuthUrl.staging;
+      }
+      case 'sandbox': {
+        return environment.idpAuthUrl.sandbox;
+      }
+      case 'production': {
+        return environment.idpAuthUrl.production;
+      }
+      default:
+        return environment.idpAuthUrl.demo;
+    }
+  }
+
+  createToken(
+    env: string,
+    clientId?: string,
+    clientSecret?: string
+  ): Observable<string> {
+    const url = this.getAuthUrl(env);
     const body = {
       grant_type: environment.grant_type,
       client_id: clientId,
