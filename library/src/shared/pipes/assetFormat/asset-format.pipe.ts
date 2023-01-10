@@ -10,6 +10,7 @@ import { Constants } from '@constants';
 
 // Utility
 import { Big } from 'big.js';
+import { trimTrailingZeros } from '@utility';
 
 interface NumberSeparator {
   locale: string;
@@ -50,7 +51,10 @@ export class AssetFormatPipe implements PipeTransform, OnDestroy {
       )
       .subscribe();
   }
-
+  /**
+   * Provides common value transformation for trading assets.
+   * Note: Pass value: string whenever possible to avoid any JS number formatting
+   * */
   transform(
     value: string | number | undefined,
     code: string,
@@ -58,63 +62,69 @@ export class AssetFormatPipe implements PipeTransform, OnDestroy {
   ): string | number | undefined {
     if (value) {
       const asset = this.assetService.getAsset(code);
-      const divisor = new Big(10).pow(Number(asset.decimals));
-      const tradeUnit = new Big(value).div(divisor);
-      const baseUnit = new Big(value).mul(divisor);
+      const assetDecimals = Number(asset.decimals);
+      const divisor = new Big(10).pow(assetDecimals);
 
       switch (unit) {
-        // Takes base units and returns trade units without formatting, ex. 0.0023 BTC
+        /**
+         * Takes base units and returns trade units, fixed to the assets defined decimal places
+         * Example: 1 Satoshi => 0.00000001 BTC, 1 Wei => 0.000000000000000001 ETH
+         * */
         case 'trade': {
-          return tradeUnit.toNumber();
+          let trade = new Big(value).div(divisor).toFixed(assetDecimals);
+          return trimTrailingZeros(trade);
         }
 
-        // Base coin unit without formatting, ex. 2000000000 Wei
-        // Type 'string' is returned here to disable scientific notation from JS 'number' Type
+        /**
+         * Takes trade units and returns trade units
+         * Example: 1 USD => 100, 1 BTC => 100000000 Satoshi
+         * */
         case 'base': {
-          const defaultPE = Big.PE;
-
-          // Set the positive exponent value at and above which toString returns exponential notation.
-          Big.PE = 100;
-
-          let base = baseUnit.toString();
-
-          // Reset to default
-          Big.PE = defaultPE;
-          return base;
+          let base = new Big(value).mul(divisor).toFixed();
+          return trimTrailingZeros(base);
         }
 
-        // Takes trade units and trims to the asset decimal places
+        /**
+         * Takes trade units and checks if a decimal and if the values number of decimal digits
+         * is greater than the defined number of asset decimals, then trims and returns the value
+         * Example: (BTC, 8 Decimals) 1234.1234567891 BTC => 1234.12345679 BTC
+         * */
         case 'trim': {
-          if (value.toString().includes('.')) {
-            return Number(Number(value).toFixed(asset.decimals));
-          } else return Number(value);
+          if (
+            value.toString().includes('.') &&
+            value.toString().split('.')[1].length > assetDecimals
+          ) {
+            let fixed = new Big(value).toFixed(assetDecimals);
+            return trimTrailingZeros(fixed);
+          } else {
+            return value;
+          }
         }
 
-        // Takes base units and returns trade units with formatting, ex. 1,230.22 ETH
+        /**
+         * Takes base units and returns trade units with locale formatting
+         * Example: 12345678910.12345678910 Satoshi => 123.45678910 BTC
+         * Note: The function formatNumber applies localisation takes the type number,
+         * resulting in scientific notation being returned if the value.length > 24
+         * */
         case 'formatted': {
+          const tradeUnit = new Big(value).div(divisor).toFixed(assetDecimals);
+
           if (tradeUnit.toString().includes('.')) {
-            let separator = this.separator.find((value) => {
-              return value.locale == this.locale;
+            let separator = this.separator.find((separator) => {
+              return separator.locale == this.locale;
             });
             let integer = tradeUnit.toString().split('.')[0];
             let decimal = tradeUnit.toString().split('.')[1];
+
             if (decimal.length < Constants.MIN_FRACTION_DIGITS) {
               decimal += '0';
             }
-            if (asset.type == 'fiat') {
-              return (
-                asset.symbol +
-                formatNumber(new Big(integer).toNumber(), this.locale) +
-                separator!.char +
-                decimal.slice(0, asset.decimals)
-              );
-            } else {
-              return (
-                formatNumber(new Big(integer).toNumber(), this.locale) +
-                separator!.char +
-                decimal.slice(0, asset.decimals)
-              );
-            }
+            return (
+              formatNumber(new Big(integer).toNumber(), this.locale) +
+              separator!.char +
+              decimal.slice(0, assetDecimals)
+            );
           } else {
             const digitsInfo =
               Constants.MIN_INTEGER_DIGITS.toString() +
@@ -122,10 +132,7 @@ export class AssetFormatPipe implements PipeTransform, OnDestroy {
               Constants.MIN_FRACTION_DIGITS.toString() +
               '-' +
               asset.decimals.toString();
-            return (
-              asset.symbol +
-              formatNumber(tradeUnit.toNumber(), this.locale, digitsInfo)
-            );
+            return formatNumber(Number(tradeUnit), this.locale, digitsInfo);
           }
         }
       }

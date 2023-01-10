@@ -49,13 +49,14 @@ describe('AssetFormatPipe', () => {
     expect(pipe.transform(0, TestConstants.BTC_ASSET.code)).toEqual(0);
     expect(pipe.transform(0, TestConstants.ETH_ASSET.code)).toEqual(0);
     expect(pipe.transform(0, TestConstants.CAD_ASSET.code)).toEqual(0);
-    expect(pipe.transform(1, TestConstants.BTC_ASSET.code)).toEqual(
-      '₿0.00000001'
-    );
+    expect(pipe.transform(1, 'BTC')).toEqual('0.00000001');
     expect(pipe.transform(1, TestConstants.ETH_ASSET.code)).toEqual(
-      'Ξ0.000000000000000001'
+      '0.000000000000000001'
     );
-    expect(pipe.transform(1, TestConstants.CAD_ASSET.code)).toEqual('$0.01');
+    expect(pipe.transform(1, TestConstants.CAD_ASSET.code)).toEqual('0.01');
+    expect(pipe.transform(1.1, TestConstants.BTC_ASSET.code)).toEqual(
+      '0.00000001'
+    );
     expect(
       pipe.transform(
         Number.MAX_SAFE_INTEGER.toString(),
@@ -67,13 +68,13 @@ describe('AssetFormatPipe', () => {
         Number.MIN_SAFE_INTEGER.toString(),
         TestConstants.CAD_ASSET.code
       )
-    ).toEqual('$-90,071,992,547,409.91');
+    ).toEqual('-90,071,992,547,409.91');
     expect(
       pipe.transform(
         '123456789123456789123456789123',
         TestConstants.BTC_ASSET.code
       )
-    ).toEqual('1.23456789');
+    ).toEqual('1,234,567,891,234,568,000,000.56789123');
     expect(
       pipe.transform(
         '123456789123456789123456789123',
@@ -81,17 +82,14 @@ describe('AssetFormatPipe', () => {
       )
     ).toEqual('123,456,789,123.456789123456789123');
     expect(
-      pipe.transform(
-        '123456789123456789123456789123',
-        TestConstants.CAD_ASSET.code
-      )
-    ).toEqual('$1.23');
+      pipe.transform('123456789123456789123456', TestConstants.CAD_ASSET.code)
+    ).toEqual('1,234,567,891,234,568,000,000.56');
   });
 
   it('should trim asset values', () => {
     // Fiat
     expect(pipe.transform(36010, TestConstants.CAD_ASSET.code, 'trim')).toEqual(
-      36010.0
+      36010
     );
 
     // Trading
@@ -101,19 +99,19 @@ describe('AssetFormatPipe', () => {
         TestConstants.BTC_ASSET.code,
         'trim'
       )
-    ).toEqual(36010.12345679);
+    ).toEqual('36010.12345679');
   });
 
   it('should adjust to a minimum of 2 decimal places', () => {
     expect(pipe.transform(36010, TestConstants.CAD_ASSET.code)).toEqual(
-      '$360.10'
+      '360.10'
     );
   });
 
   it('should return a trade unit when the param is set to trade', () => {
     expect(
       pipe.transform(36010, TestConstants.BTC_ASSET.code, 'trade')
-    ).toEqual(0.0003601);
+    ).toEqual('0.0003601');
   });
 
   it('should return a base unit when the param is set to base', () => {
