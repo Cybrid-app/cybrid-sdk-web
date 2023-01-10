@@ -222,8 +222,10 @@ export class LoginComponent implements OnInit {
       .subscribe((customer: CustomerBankModel) => {
         if (customer.guid) {
           this.demoCredentials.customer = customer.guid;
-          this.demoCredentials.environment =
-            this.loginForm.controls.environment.value;
+
+          this.demoCredentials.environment = publicUser
+            ? 'demo'
+            : this.loginForm.controls.environment.value;
 
           publicUser
             ? (this.demoCredentials.isPublic = publicUser)
