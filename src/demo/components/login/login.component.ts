@@ -139,6 +139,7 @@ export class LoginComponent implements OnInit {
       // Logs in public user
       if (publicUser) {
         return this.configService.createToken(
+          'demo',
           this.publicClientId,
           this.publicClientSecret
         );
