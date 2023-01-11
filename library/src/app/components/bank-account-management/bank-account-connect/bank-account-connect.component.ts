@@ -22,6 +22,7 @@ import {
 
 // Services
 import {
+  BankBankModel,
   BanksService,
   CustomersService,
   PostWorkflowBankModel,
@@ -215,36 +216,20 @@ export class BankAccountConnectComponent implements OnInit {
   }
 
   plaidOnSuccess(public_token: string, metadata?: any): void {
-    function isValidAsset(asset: string | null | undefined) {
-      return typeof asset == 'string';
-    }
-    function isOnlyAccount(accounts: any[]) {
-      return accounts.length == 1;
-    }
+    if (metadata.accounts.length == 1) {
+      const account = metadata.accounts[0];
 
-    const asset =
-      this.config.environment == 'demo'
-        ? 'USD'
-        : metadata.accounts[0].iso_currency_code;
-    const account = metadata.accounts[0];
-
-    console.log(this.config.environment);
-    console.log(
-      this.config.environment == 'demo'
-        ? 'USD'
-        : metadata.accounts[0].iso_currency_code
-    );
-    console.log(asset);
-    console.log(metadata.accounts);
-    console.log(isValidAsset(asset));
-    console.log(isOnlyAccount(metadata.accounts));
-
-    if (isOnlyAccount(metadata.accounts) && isValidAsset(asset)) {
       this.configService
         .getBank$()
         .pipe(
           take(1),
           switchMap((bank) => {
+            // Default asset to 'USD' for non-production banks
+            const asset =
+              bank.type == BankBankModel.TypeEnum.Sandbox
+                ? bank.supported_fiat_account_assets![0]
+                : account.iso_currency_code;
+
             if (bank.supported_fiat_account_assets!.includes(asset)) {
               return this.bankAccountService.createExternalBankAccount(
                 account.name,
@@ -259,8 +244,7 @@ export class BankAccountConnectComponent implements OnInit {
             this.eventService.handleEvent(
               LEVEL.ERROR,
               CODE.DATA_ERROR,
-              'There was an error creating a bank account',
-              err
+              err.message
             );
 
             this.errorService.handleError(
@@ -275,9 +259,11 @@ export class BankAccountConnectComponent implements OnInit {
       this.eventService.handleEvent(
         LEVEL.ERROR,
         CODE.DATA_ERROR,
-        'Invalid account'
+        'Multiple accounts unsupported, select only one account'
       );
-      this.errorService.handleError(new Error('Invalid account'));
+      this.errorService.handleError(
+        new Error('Multiple accounts unsupported, select only one account')
+      );
     }
   }
 
