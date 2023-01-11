@@ -227,13 +227,10 @@ export class BankAccountConnectComponent implements OnInit {
             // Default asset to 'USD' for non-production banks
             const asset =
               bank.type == BankBankModel.TypeEnum.Sandbox
-                ? 'USD'
+                ? bank.supported_fiat_account_assets![0]
                 : account.iso_currency_code;
 
-            if (
-              bank.type == BankBankModel.TypeEnum.Sandbox ||
-              bank.supported_fiat_account_assets!.includes(asset)
-            ) {
+            if (bank.supported_fiat_account_assets!.includes(asset)) {
               return this.bankAccountService.createExternalBankAccount(
                 account.name,
                 public_token,
