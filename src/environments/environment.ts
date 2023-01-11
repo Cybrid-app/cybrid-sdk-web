@@ -8,7 +8,18 @@
 
 export const environment = {
   production: false,
-  authUrl: 'https://id.demo.cybrid.app/oauth/token',
+  idpAuthUrl: {
+    demo: 'https://id.demo.cybrid.app/oauth/token',
+    staging: 'https://id.staging.cybrid.app/oauth/token',
+    sandbox: 'https://id.sandbox.cybrid.app/oauth/token',
+    production: 'https://id.production.cybrid.app/oauth/token'
+  },
+  bankApiCustomerBasePath: {
+    demo: 'https://bank.demo.cybrid.app/api/customers/',
+    staging: 'https://bank.staging.cybrid.app/api/customers/',
+    sandbox: 'https://bank.sandbox.cybrid.app/api/customers/',
+    production: 'https://bank.production.cybrid.app/api/customers/'
+  },
   credentials: {
     clientId: '',
     clientSecret: '',
