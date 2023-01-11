@@ -145,7 +145,7 @@ workflows:
                 name: Install libraries
                 command: |
                   apt update -y
-                  apt install -y software-properties-common apt-transport-https wget fonts-liberation xdg-utils gnupg
+                  apt install -y software-properties-common apt-transport-https wget fonts-liberation xdg-utils gnupg libu2f-udev
             - run:
                 name: Download/Install Chrome stable
                 command: |
