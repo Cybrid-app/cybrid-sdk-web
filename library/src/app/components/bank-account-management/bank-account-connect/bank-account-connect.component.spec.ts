@@ -23,7 +23,7 @@ import { BankAccountConnectComponent } from '@components';
 
 // Utility
 import { TestConstants } from '@constants';
-import { BanksService } from '@cybrid/cybrid-api-bank-angular';
+import { BankBankModel, BanksService } from '@cybrid/cybrid-api-bank-angular';
 
 describe('BankAccountConnectComponent', () => {
   let component: BankAccountConnectComponent;
@@ -168,7 +168,7 @@ describe('BankAccountConnectComponent', () => {
     expect(MockBankAccountService.createExternalBankAccount).toHaveBeenCalled();
   });
 
-  it('should handle an invalid asset', () => {
+  it('should handle an invalid asset in production banks', () => {
     const errorSpy = spyOn(component.error$, 'next');
 
     const testPlaidMetadata = {
@@ -176,12 +176,28 @@ describe('BankAccountConnectComponent', () => {
     };
 
     let bankBankModel = { ...TestConstants.BANK_BANK_MODEL };
+    bankBankModel.type = BankBankModel.TypeEnum.Production;
     bankBankModel.supported_fiat_account_assets = [];
     MockBankService.getBank.and.returnValue(of(bankBankModel));
 
     component.plaidOnSuccess('', testPlaidMetadata);
 
     expect(errorSpy).toHaveBeenCalled();
+  });
+
+  it('should always validate assets in sandbox banks', () => {
+    const testPlaidMetadata = {
+      accounts: [{ name: 'test', id: 'test', iso_currency_code: 'USD' }]
+    };
+
+    let bankBankModel = { ...TestConstants.BANK_BANK_MODEL };
+    bankBankModel.type = BankBankModel.TypeEnum.Sandbox;
+    bankBankModel.supported_fiat_account_assets = [];
+    MockBankService.getBank.and.returnValue(of(bankBankModel));
+
+    component.plaidOnSuccess('', testPlaidMetadata);
+
+    expect(MockBankAccountService.createExternalBankAccount).toHaveBeenCalled();
   });
 
   it('should handle an undefined asset', () => {
