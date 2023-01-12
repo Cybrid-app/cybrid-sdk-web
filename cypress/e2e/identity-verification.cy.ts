@@ -88,28 +88,9 @@ describe('identity-verification test', () => {
         .find('strong')
         .should('contain.text', text.identityVerification.rejected);
       app().find('p').should('contain.text', text.identityVerification.support);
-      app().find('#cancel').should('be.disabled');
       app().find('#customer-button-done').contains(text.done).click();
 
       app().should('not.exist');
-    });
-  });
-
-  it('should display unverified status', () => {
-    identityVerificationSetup();
-
-    //Mock customer
-    const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
-    customer.state = 'unverified';
-    cy.intercept('GET', 'api/customers/*', (req) => {
-      delete req.headers['if-none-match'];
-      req.reply(customer);
-    }).as('getCustomer');
-
-    cy.wait('@getCustomer').then(() => {
-      app()
-        .find('strong')
-        .should('contain.text', text.identityVerification.unverified);
     });
   });
 
@@ -143,8 +124,6 @@ describe('identity-verification test', () => {
     });
 
     cy.wait('@getCustomer').then(() => {
-      app().find('#verify').click();
-
       app()
         .find('strong')
         .should('contain.text', text.identityVerification.verifying);
@@ -184,7 +163,9 @@ describe('identity-verification test', () => {
     });
 
     cy.wait('@getCustomer').then(() => {
-      app().find('#verify').click();
+      app()
+        .find('strong')
+        .should('contain.text', text.identityVerification.reviewing);
       app()
         .find('#identity-button-done')
         .should('contain.text', text.done)
@@ -193,7 +174,47 @@ describe('identity-verification test', () => {
     });
   });
 
-  it('should display passed identity outcome', () => {
+  it('should display processing identity status', () => {
+    identityVerificationSetup();
+
+    //Mock customer
+    const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
+    customer.state = 'unverified';
+    cy.intercept('GET', 'api/customers/*', (req) => {
+      req.reply(customer);
+    }).as('getCustomer');
+
+    //Mock list identity
+    const identityList = {
+      ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL
+    };
+    identityList.objects[0].state = 'waiting';
+
+    //Mock identity
+    const identity = { ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL };
+    identity.persona_state = 'processing';
+
+    cy.intercept('GET', 'api/identity_verifications*', (req) => {
+      req.reply(identityList);
+    });
+
+    cy.intercept('GET', 'api/identity_verifications/*', (req) => {
+      req.reply(identity);
+    });
+
+    cy.wait('@getCustomer').then(() => {
+      app()
+        .find('strong')
+        .should('contain.text', text.identityVerification.processing);
+      app()
+        .find('#identity-button-done')
+        .should('contain.text', text.done)
+        .click();
+      app().should('not.exist');
+    });
+  });
+
+  it('should display passed identity status', () => {
     identityVerificationSetup();
 
     //Mock customer
@@ -217,8 +238,6 @@ describe('identity-verification test', () => {
     });
 
     cy.wait('@getCustomer').then(() => {
-      app().find('#verify').click();
-
       app()
         .find('strong')
         .should('contain.text', text.identityVerification.verified);
@@ -230,7 +249,7 @@ describe('identity-verification test', () => {
     });
   });
 
-  it('should display failed identity outcome', () => {
+  it('should display failed identity status', () => {
     identityVerificationSetup();
 
     //Mock customer
@@ -260,8 +279,6 @@ describe('identity-verification test', () => {
     });
 
     cy.wait('@getCustomer').then(() => {
-      app().find('#verify').click();
-
       app()
         .find('strong')
         .should('contain.text', text.identityVerification.rejected);

@@ -133,9 +133,9 @@ export default {
     verifying: 'Verifying...',
     verified: 'You have been verified.',
     rejected: 'Unable to verify identity.',
-    unverified: 'Begin identity verification.',
     support: 'Please contact customer support.',
     reviewing: 'Identity being reviewed.',
+    processing: 'Processing identity verification, check back later',
     resume: 'Resume identity verification.'
   },
 

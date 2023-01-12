@@ -260,7 +260,6 @@ describe('IdentityVerificationComponent', () => {
 
   it('should handle Persona callbacks', () => {
     const isLoading$Spy = spyOn(component.isLoading$, 'next');
-    const stepperSpy = spyOn(component.stepper, 'next');
 
     // Define Persona client with open method
     let client = {
@@ -279,7 +278,6 @@ describe('IdentityVerificationComponent', () => {
       MockIdentityVerificationService.setPersonaClient
     ).toHaveBeenCalledWith(client);
     expect(isLoading$Spy).toHaveBeenCalled();
-    expect(stepperSpy).toHaveBeenCalled();
 
     component.personaOnError(new Error('error'));
 
