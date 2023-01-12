@@ -230,6 +230,11 @@ export class BankAccountConnectComponent implements OnInit {
                 ? bank.supported_fiat_account_assets![0]
                 : account.iso_currency_code;
 
+            console.log(this.config.environment);
+            console.log(asset);
+            console.log(metadata.accounts);
+            console.log(bank.supported_fiat_account_assets!.includes(asset));
+
             if (bank.supported_fiat_account_assets!.includes(asset)) {
               return this.bankAccountService.createExternalBankAccount(
                 account.name,
