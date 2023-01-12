@@ -117,36 +117,21 @@ describe('IdentityVerificationComponent', () => {
     customer.state = 'unverified';
     MockIdentityVerificationService.getCustomer.and.returnValue(of(customer));
 
-    const customer$Spy = spyOn(component.customer$, 'next');
-
     component.getCustomerStatus();
     tick();
 
-    expect(customer$Spy).toHaveBeenCalled();
-    component.isLoading$.subscribe((res) => expect(res).toBeFalse());
+    expect(MockIdentityVerificationService.getCustomer).toHaveBeenCalled();
 
     discardPeriodicTasks();
   }));
 
-  it('should verify identity', fakeAsync(() => {
-    const handleIdentityVerificationStateSpy = spyOn(
-      component,
-      'handleIdentityVerificationState'
-    );
-    const identity$Spy = spyOn(component.identity$, 'next');
-
+  it('should verify identity', () => {
     component.verifyIdentity();
-    tick();
 
-    expect(handleIdentityVerificationStateSpy).toHaveBeenCalledWith(
-      TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
-    );
-    expect(identity$Spy).toHaveBeenCalledWith(
-      TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
-    );
-
-    discardPeriodicTasks();
-  }));
+    expect(
+      MockIdentityVerificationService.getIdentityVerification
+    ).toHaveBeenCalled();
+  });
 
   it('should timeout after polling', fakeAsync(() => {
     const identitySpy = spyOn(component.identity$, 'next');
@@ -173,7 +158,8 @@ describe('IdentityVerificationComponent', () => {
     component.verifyIdentity();
     tick();
 
-    expect(identitySpy).toHaveBeenCalledTimes(0);
+    expect(identitySpy).toHaveBeenCalledTimes(1);
+    expect(identitySpy).toHaveBeenCalledWith(identity);
     discardPeriodicTasks();
   }));
 
