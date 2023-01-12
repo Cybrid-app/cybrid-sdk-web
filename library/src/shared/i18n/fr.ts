@@ -130,14 +130,13 @@ export default {
 
   // Identity verification component
   identityVerification: {
-    unexpectedError: 'Erreur inattendue.',
     checkStatus: "Vérification de l'état...",
     verifying: 'Vérification...',
     verified: 'Vous avez été vérifié.',
     rejected: "Impossible de vérifier l'identité.",
-    unverified: "Commencer la vérification d'identité.",
     support: 'Veuillez contacter le service client.',
     reviewing: 'Identité en cours de révision.',
+    processing: "Traitement de la vérification d'identité, revenez plus tard",
     resume: "Reprendre la vérification d'identité."
   },
 

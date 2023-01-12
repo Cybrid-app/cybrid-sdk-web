@@ -1,13 +1,5 @@
-import {
-  Component,
-  Inject,
-  OnDestroy,
-  OnInit,
-  Renderer2,
-  ViewChild
-} from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { MatStepper } from '@angular/material/stepper';
 
 import {
   BehaviorSubject,
@@ -51,14 +43,13 @@ import { Constants } from '@constants';
   styleUrls: ['./identity-verification.component.scss']
 })
 export class IdentityVerificationComponent implements OnInit, OnDestroy {
-  @ViewChild('stepper') stepper!: MatStepper;
-
   identity$ =
     new BehaviorSubject<IdentityVerificationWithDetailsBankModel | null>(null);
   customer$ = new BehaviorSubject<CustomerBankModel | null>(null);
 
+  isVerifying: boolean = false;
+  isCanceled: boolean = false;
   isLoading$ = new BehaviorSubject(true);
-  isRecoverable$ = new BehaviorSubject(true);
   error$ = new BehaviorSubject(false);
 
   pollConfig: PollConfig = {
@@ -105,9 +96,9 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
         takeUntil(merge(poll.session$, this.unsubscribe$)),
         skipWhile((customer) => customer.state === 'storing'),
         map((customer) => {
+          this.isVerifying = true;
           poll.stop();
-          this.customer$.next(customer);
-          this.isLoading$.next(false);
+          this.handleCustomerState(customer);
         }),
         catchError((err) => {
           this.error$.next(true);
@@ -126,9 +117,27 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
+  handleCustomerState(customer: CustomerBankModel): void {
+    switch (customer.state) {
+      case 'unverified':
+        this.verifyIdentity();
+        break;
+      case 'verified':
+        this.customer$.next(customer);
+        this.isLoading$.next(false);
+        break;
+      case 'rejected':
+        this.customer$.next(customer);
+        this.isLoading$.next(false);
+        break;
+      default:
+        this.error$.next(true);
+    }
+  }
+
   verifyIdentity(): void {
-    const poll = new Poll(this.pollConfig);
     this.isLoading$.next(true);
+    const poll = new Poll(this.pollConfig);
 
     poll
       .start()
@@ -137,20 +146,10 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
           this.identityVerificationService.getIdentityVerification()
         ),
         takeUntil(merge(poll.session$, this.unsubscribe$)),
-        // Continues polling if the verification is 'storing',
-        // or if the Persona state is 'completed', but there is no 'outcome'
-        skipWhile(
-          (identity) =>
-            identity.state == 'storing' ||
-            (identity.state == 'waiting' &&
-              identity.persona_state == 'completed') ||
-            (identity.state == 'waiting' &&
-              identity.persona_state == 'processing')
-        ),
+        skipWhile((identity) => identity.state == 'storing'),
         map((identity) => {
           poll.stop();
           this.handleIdentityVerificationState(identity);
-          this.identity$.next(identity);
         }),
         catchError((err) => {
           this.error$.next(true);
@@ -172,11 +171,12 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
     identity: IdentityVerificationBankModel
   ): void {
     switch (identity.state) {
-      case 'completed':
-        this.isLoading$.next(false);
-        break;
       case 'waiting':
         this.handlePersonaState(identity);
+        break;
+      case 'completed':
+        this.isLoading$.next(false);
+        this.identity$.next(identity);
         break;
     }
   }
@@ -190,6 +190,18 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
         this.bootstrapPersona(identity.persona_inquiry_id!);
         break;
       case 'reviewing':
+        this.identity$.next(identity);
+        this.isLoading$.next(false);
+        break;
+      case 'processing':
+        this.identity$.next(identity);
+        this.isLoading$.next(false);
+        break;
+      case 'expired':
+        this.getCustomerStatus();
+        break;
+      case 'completed':
+        this.identity$.next(identity);
         this.isLoading$.next(false);
         break;
       case 'unknown':
@@ -211,9 +223,9 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   }
 
   personaOnCancel(client: any): void {
-    this.identityVerificationService.setPersonaClient(client);
+    this.isCanceled = true;
     this.isLoading$.next(false);
-    this.stepper.next();
+    this.identityVerificationService.setPersonaClient(client);
   }
 
   personaOnError(error: any) {

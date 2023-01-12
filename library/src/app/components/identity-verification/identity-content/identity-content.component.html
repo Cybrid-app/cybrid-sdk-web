@@ -1,4 +1,7 @@
-<ng-container [ngSwitch]="identity.outcome">
+<ng-container
+  *ngIf="identity.outcome !== null; else personaState"
+  [ngSwitch]="identity.outcome"
+>
   <ng-container *ngSwitchCase="'passed'">
     <div class="verification-content">
       <div>
@@ -19,16 +22,34 @@
       </p>
     </div>
   </ng-container>
-
-  <ng-container *ngSwitchDefault>
-    <ng-container *ngIf="identity.persona_state === 'reviewing'">
-      <div class="verification-content">
-        <div>
-          <mat-icon color="primary">help</mat-icon>
-          <strong>{{ 'identityVerification.reviewing' | translate }}</strong>
-        </div>
-        <p>{{ 'identityVerification.support' | translate }}</p>
-      </div>
-    </ng-container>
-  </ng-container>
 </ng-container>
+
+<ng-template #personaState [ngSwitch]="identity.persona_state">
+  <ng-container *ngSwitchCase="'reviewing'">
+    <div class="verification-content">
+      <div>
+        <mat-icon color="primary">help</mat-icon>
+        <strong>{{ 'identityVerification.reviewing' | translate }}</strong>
+      </div>
+      <p>{{ 'identityVerification.support' | translate }}</p>
+    </div>
+  </ng-container>
+  <ng-container *ngSwitchCase="'processing'">
+    <div class="verification-content">
+      <div>
+        <mat-icon color="primary">cached</mat-icon>
+        <strong>{{ 'identityVerification.processing' | translate }}</strong>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Edge case where Persona has completed, but the platform is still waiting  -->
+  <ng-container *ngSwitchCase="'completed'">
+    <div class="verification-content">
+      <div>
+        <mat-icon color="primary">cached</mat-icon>
+        <strong>{{ 'identityVerification.processing' | translate }}</strong>
+      </div>
+    </div>
+  </ng-container>
+</ng-template>
