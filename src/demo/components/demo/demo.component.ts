@@ -10,6 +10,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { BehaviorSubject, filter, map, Subject, take, takeUntil } from 'rxjs';
 
 import { DemoConfigService } from '../../services/demo-config/demo-config.service';
+import { DemoErrorService } from '../../services/demo-error/demo-error.service';
 
 // Library
 import { AppComponent } from '@components';
@@ -52,6 +53,7 @@ export class DemoComponent implements OnDestroy {
 
   constructor(
     public demoConfigService: DemoConfigService,
+    private demoErrorService: DemoErrorService,
     private configService: ConfigService
   ) {}
 
@@ -178,9 +180,10 @@ export class DemoComponent implements OnDestroy {
       .subscribe();
 
     // Subscribe to errors
-    this.componentRef.instance.errorLog.subscribe((error) =>
-      console.log(error)
-    );
+    this.componentRef.instance.errorLog.subscribe((error) => {
+      this.demoErrorService.handleError(error);
+      console.log(error);
+    });
 
     this.initBank();
     this.initComponentGroup();

@@ -232,13 +232,11 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
     this.error$.next(true);
     this.eventService.handleEvent(
       LEVEL.ERROR,
-      CODE.DATA_ERROR,
+      CODE.PERSONA_SDK_ERROR,
       'There was an error in the Persona SDK',
       error
     );
-    this.errorService.handleError(
-      new Error(`There was an error in the Persona SDK: ${error}`)
-    );
+    this.errorService.handleError(new Error(CODE.PERSONA_SDK_ERROR));
   }
 
   bootstrapPersona(inquiryId: string): void {
