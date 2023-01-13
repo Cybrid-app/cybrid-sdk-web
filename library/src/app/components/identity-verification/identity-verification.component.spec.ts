@@ -125,13 +125,24 @@ describe('IdentityVerificationComponent', () => {
     discardPeriodicTasks();
   }));
 
-  it('should verify identity', () => {
+  it('should verify identity', fakeAsync(() => {
+    const handleIdentityVerificationStateSpy = spyOn(
+      component,
+      'handleIdentityVerificationState'
+    );
+
     component.verifyIdentity();
 
+    tick();
     expect(
       MockIdentityVerificationService.getIdentityVerification
     ).toHaveBeenCalled();
-  });
+    expect(handleIdentityVerificationStateSpy).toHaveBeenCalledWith(
+      TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
+    );
+
+    discardPeriodicTasks();
+  }));
 
   it('should timeout after polling', fakeAsync(() => {
     const identitySpy = spyOn(component.identity$, 'next');
