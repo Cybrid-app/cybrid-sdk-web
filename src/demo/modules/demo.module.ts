@@ -9,6 +9,7 @@ import { SharedModule } from '../../../library/src/shared/modules/shared.module'
 
 // Services
 import { DemoConfigService } from '../services/demo-config/demo-config.service';
+import { DemoErrorService } from '../services/demo-error/demo-error.service';
 
 // Components
 import { AppComponent } from '../components/app/app.component';
@@ -24,7 +25,7 @@ import { LoginComponent } from '../components/login/login.component';
     SharedModule
   ],
   declarations: [AppComponent, DemoComponent, LoginComponent],
-  providers: [DemoConfigService],
+  providers: [DemoConfigService, DemoErrorService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]
 })
