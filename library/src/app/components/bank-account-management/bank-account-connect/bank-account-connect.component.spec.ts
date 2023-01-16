@@ -23,7 +23,6 @@ import { BankAccountConnectComponent } from '@components';
 
 // Utility
 import { TestConstants } from '@constants';
-import { BankBankModel, BanksService } from '@cybrid/cybrid-api-bank-angular';
 
 describe('BankAccountConnectComponent', () => {
   let component: BankAccountConnectComponent;
@@ -52,7 +51,6 @@ describe('BankAccountConnectComponent', () => {
     'setPlaidClient',
     'createExternalBankAccount'
   ]);
-  let MockBankService = jasmine.createSpyObj('BanksService', ['getBank']);
   const error$ = throwError(() => {
     new Error('Error');
   });
@@ -79,7 +77,6 @@ describe('BankAccountConnectComponent', () => {
         { provide: ConfigService, useValue: MockConfigService },
         { provide: RoutingService, useValue: MockRoutingService },
         { provide: BankAccountService, useValue: MockBankAccountService },
-        { provide: BanksService, useValue: MockBankService },
         Renderer2
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -88,8 +85,6 @@ describe('BankAccountConnectComponent', () => {
     MockErrorService = TestBed.inject(ErrorService);
     MockConfigService = TestBed.inject(ConfigService);
     MockRoutingService = TestBed.inject(RoutingService);
-    MockBankService = TestBed.inject(BanksService);
-    MockBankService.getBank.and.returnValue(of(TestConstants.BANK_BANK_MODEL));
     MockBankAccountService = TestBed.inject(BankAccountService);
     MockBankAccountService.createWorkflow.and.returnValue(
       of(TestConstants.WORKFLOW_BANK_MODEL)
@@ -98,9 +93,6 @@ describe('BankAccountConnectComponent', () => {
       of(TestConstants.WORKFLOW_BANK_MODEL_WITH_DETAILS)
     );
     MockBankAccountService.getPlaidClient.and.returnValue(of(false));
-
-    // Reset call count
-    MockBankAccountService.getPlaidClient.calls.reset();
 
     fixture = TestBed.createComponent(BankAccountConnectComponent);
     component = fixture.componentInstance;
@@ -168,51 +160,39 @@ describe('BankAccountConnectComponent', () => {
     expect(MockBankAccountService.createExternalBankAccount).toHaveBeenCalled();
   });
 
-  it('should handle an invalid asset in production banks', () => {
-    const errorSpy = spyOn(component.error$, 'next');
-
+  it('should handle an undefined asset', () => {
     const testPlaidMetadata = {
-      accounts: [{ name: 'test', id: 'test', iso_currency_code: 'USD' }]
+      accounts: [{ name: 'test', id: 'test', iso_currency_code: undefined }]
     };
-
-    let bankBankModel = { ...TestConstants.BANK_BANK_MODEL };
-    bankBankModel.type = BankBankModel.TypeEnum.Production;
-    bankBankModel.supported_fiat_account_assets = [];
-    MockBankService.getBank.and.returnValue(of(bankBankModel));
-
-    component.plaidOnSuccess('', testPlaidMetadata);
-
-    expect(errorSpy).toHaveBeenCalled();
-  });
-
-  it('should always validate assets in sandbox banks', () => {
-    const testPlaidMetadata = {
-      accounts: [{ name: 'test', id: 'test', iso_currency_code: 'USD' }]
-    };
-
-    let bankBankModel = { ...TestConstants.BANK_BANK_MODEL };
-    bankBankModel.type = BankBankModel.TypeEnum.Sandbox;
-    bankBankModel.supported_fiat_account_assets = [];
-    MockBankService.getBank.and.returnValue(of(bankBankModel));
 
     component.plaidOnSuccess('', testPlaidMetadata);
 
     expect(MockBankAccountService.createExternalBankAccount).toHaveBeenCalled();
   });
 
-  it('should handle an undefined asset', () => {
+  it('should handle an invalid asset', () => {
     const errorSpy = spyOn(component.error$, 'next');
-
     const testPlaidMetadata = {
       accounts: [{ name: 'test', id: 'test', iso_currency_code: 'USD' }]
     };
 
-    // @ts-ignore
-    testPlaidMetadata.accounts[0].iso_currency_code = undefined;
+    MockBankAccountService.createExternalBankAccount.calls.reset();
+
+    let bankBankModel = { ...TestConstants.BANK_BANK_MODEL };
+    bankBankModel.supported_fiat_account_assets = [];
+    MockConfigService.getBank$.and.returnValue(of(bankBankModel));
 
     component.plaidOnSuccess('', testPlaidMetadata);
 
     expect(errorSpy).toHaveBeenCalled();
+    expect(
+      MockBankAccountService.createExternalBankAccount
+    ).toHaveBeenCalledTimes(0);
+
+    // Reset
+    MockConfigService.getBank$.and.returnValue(
+      of(TestConstants.BANK_BANK_MODEL)
+    );
   });
 
   it('should handle an unsupported asset', () => {
