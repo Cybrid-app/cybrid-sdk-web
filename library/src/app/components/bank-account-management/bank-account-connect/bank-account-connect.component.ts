@@ -22,8 +22,6 @@ import {
 
 // Services
 import {
-  BankBankModel,
-  BanksService,
   CustomersService,
   PostWorkflowBankModel,
   WorkflowsService,
@@ -88,7 +86,6 @@ export class BankAccountConnectComponent implements OnInit {
     private bankAccountService: BankAccountService,
     private workflowService: WorkflowsService,
     private customersService: CustomersService,
-    private banksService: BanksService,
     private router: RoutingService,
     private _renderer2: Renderer2,
     private platform: Platform
@@ -224,25 +221,21 @@ export class BankAccountConnectComponent implements OnInit {
         .pipe(
           take(1),
           switchMap((bank) => {
-            // Default asset to 'USD' for non-production banks
-            const asset =
-              bank.type == BankBankModel.TypeEnum.Sandbox
-                ? bank.supported_fiat_account_assets![0]
-                : account.iso_currency_code;
-
-            console.log(this.config.environment);
-            console.log(asset);
-            console.log(metadata.accounts);
-            console.log(bank.supported_fiat_account_assets!.includes(asset));
-
-            if (bank.supported_fiat_account_assets!.includes(asset)) {
+            if (
+              bank.supported_fiat_account_assets!.includes(
+                account.iso_currency_code
+              ) ||
+              account.iso_currency_code == undefined
+            ) {
               return this.bankAccountService.createExternalBankAccount(
                 account.name,
                 public_token,
                 account.id,
-                asset
+                account.iso_currency_code
               );
-            } else return throwError(() => new Error('Unsupported asset'));
+            } else {
+              return throwError(() => new Error('Unsupported asset'));
+            }
           }),
           catchError((err: any) => {
             this.error$.next(true);
