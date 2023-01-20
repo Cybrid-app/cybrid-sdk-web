@@ -38,7 +38,7 @@ The following setup should be preformed prior to using the Web Demo application.
 1. Create your customer using the `POST /api/customers` API
 2. Create a `type=fiat` account with `asset=USD` using `POST /api/accounts` API for your customer
 3. Create a `type=trading` account with `asset=BTC` using the `POST /api/accounts` (this is required to trade Bitcoin)
-4. Create a `type=trading` account with `asset=ETH` using the `POST /api/accounts` API (this is required to trade Ethereum)
+4. Create a `type=trading` account with `asset=ETH` using the `POST /api/accounts` API (this is required to trade Ether)
 
 ## Demo Setup
 
@@ -50,17 +50,17 @@ The following are a set of first time steps you should follow in the Demo applic
 
 If you call `GET /api/banks/{bank_guid}` you will get back your bank details, which includes the `features` your bank is configured with.
 
-If your bank is configured as `backstopped` the sandbox environment will automatically fund your fiat account for you. If your bank is configured with a `plaid_funding_source` you will have to add an external bank account.
+If your bank is configured with a `backstopped_funding_source` the sandbox environment will automatically fund your fiat account for you. In production you will be required to make a book transfer via the transfers api.
+
+If your bank is configured with a `plaid_funding_source` you will need to add an external bank account.
 
 2. (`plaid_funding_source`) Connect a bank account using the `bank-account-connect` component. In sandbox mode you don't need to enter any real credentials into Plaid. Choose a bank from the list. Only select a single bank account (this is enforced in the production instance). If Plaid does ask for credentials:
 
 > Username: user_good \
 > Password: pass_good
 
-Once you have gone through Plaid and connected a bank account, the identity verification should be complete.
-
-3. (`plaid_funding_source`) Transfer funds into the customer's fiat account using the `transfer` component.
-4. Your customer can now preform trades using the `trade` component.
+Once you have gone through Plaid and connected a bank account, the identity verification should be complete.\*\*
+\*\* 3. (`plaid_funding_source`) Transfer funds into the customer's fiat account using the `transfer` component. 4. Your customer can now preform trades using the `trade` component.
 
 ## Installation
 
