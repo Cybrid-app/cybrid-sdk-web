@@ -53,7 +53,7 @@ describe('AssetFormatPipe', () => {
     expect(pipe.transform(1, TestConstants.ETH_ASSET.code)).toEqual(
       '0.000000000000000001'
     );
-    expect(pipe.transform(1, TestConstants.CAD_ASSET.code)).toEqual('0.01');
+    expect(pipe.transform(1, TestConstants.CAD_ASSET.code)).toEqual('$0.01');
     expect(pipe.transform(1.1, TestConstants.BTC_ASSET.code)).toEqual(
       '0.00000001'
     );
@@ -68,7 +68,7 @@ describe('AssetFormatPipe', () => {
         Number.MIN_SAFE_INTEGER.toString(),
         TestConstants.CAD_ASSET.code
       )
-    ).toEqual('-90,071,992,547,409.91');
+    ).toEqual('$-90,071,992,547,409.91');
     expect(
       pipe.transform(
         '123456789123456789123456789123',
@@ -83,14 +83,18 @@ describe('AssetFormatPipe', () => {
     ).toEqual('123,456,789,123.456789123456789123');
     expect(
       pipe.transform('123456789123456789123456', TestConstants.CAD_ASSET.code)
-    ).toEqual('1,234,567,891,234,568,000,000.56');
+    ).toEqual('$1,234,567,891,234,568,000,000.56');
   });
 
   it('should trim asset values', () => {
     // Fiat
-    expect(pipe.transform(36010, TestConstants.CAD_ASSET.code, 'trim')).toEqual(
-      36010
-    );
+    expect(
+      pipe.transform(
+        36010.12345678910111213141516,
+        TestConstants.CAD_ASSET.code,
+        'trim'
+      )
+    ).toEqual('36010.12');
 
     // Trading
     expect(
@@ -102,9 +106,12 @@ describe('AssetFormatPipe', () => {
     ).toEqual('36010.12345679');
   });
 
-  it('should adjust to a minimum of 2 decimal places', () => {
+  it('should return formatted fiat assets', () => {
     expect(pipe.transform(36010, TestConstants.CAD_ASSET.code)).toEqual(
-      '360.10'
+      '$360.10'
+    );
+    expect(pipe.transform(50003.1003, TestConstants.USD_ASSET.code)).toEqual(
+      '$500.03'
     );
   });
 
