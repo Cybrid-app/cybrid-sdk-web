@@ -166,7 +166,7 @@ describe('bank-account-connect test', () => {
     // @ts-ignore
     mockPlaidSuccess.PLAID_NEXT_ON_SUCCESS.next_pane.sink.result.metadata.accounts[0][
       'iso_currency_code'
-      ] = undefined;
+    ] = undefined;
 
     cy.intercept('POST', '/link/workflow/next', (req) => {
       req.reply(mockPlaidSuccess.PLAID_NEXT_ON_SUCCESS);
