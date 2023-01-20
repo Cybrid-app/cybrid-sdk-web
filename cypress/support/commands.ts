@@ -13,8 +13,7 @@ function customCommand(param: any): void {
   console.warn(param);
 }
 
-// @ts-ignore
-Cypress.Commands.add('login', (backstopped?: 'backstopped') => {
+before(() => {
   cy.intercept(
     'GET',
     'https://api.github.com/repos/Cybrid-app/cybrid-sdk-web/releases/latest',
@@ -22,7 +21,10 @@ Cypress.Commands.add('login', (backstopped?: 'backstopped') => {
       req.reply({});
     }
   );
+});
 
+// @ts-ignore
+Cypress.Commands.add('login', (backstopped?: 'backstopped') => {
   cy.visit('/');
 
   function typeCredentials(

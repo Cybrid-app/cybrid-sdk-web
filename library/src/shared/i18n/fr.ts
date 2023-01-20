@@ -96,6 +96,12 @@ export default {
     }
   },
 
+  // Account balance component
+  accountBalance: {
+    pending: 'En attente',
+    settled: 'Aucune transaction en attente'
+  },
+
   // Account trade component
   accountTrade: {
     side: {

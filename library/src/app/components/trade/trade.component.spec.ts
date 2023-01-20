@@ -1,4 +1,3 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import {
   ComponentFixture,
   discardPeriodicTasks,
@@ -7,47 +6,43 @@ import {
   tick
 } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClient } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatDialog } from '@angular/material/dialog';
-
-import { of, throwError } from 'rxjs';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { HttpLoaderFactory } from '../../modules/library.module';
+import { HttpClient } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { ReactiveFormsModule } from '@angular/forms';
 
-// Client
-import { PricesService } from '@cybrid/cybrid-api-bank-angular';
-
-// Components
-import { TradeComponent, TradeConfirmComponent } from '@components';
-import { AssetPipe } from '@pipes';
+import { of } from 'rxjs';
 
 // Services
 import {
-  AssetService,
+  ConfigService,
   EventService,
   ErrorService,
-  ConfigService,
-  QuoteService
+  AccountService,
+  PriceService,
+  QuoteService,
+  AssetService
 } from '@services';
 
+// Components
+import { Price, TradeComponent } from '@components';
+
 // Utility
+import { AssetFormatPipe, MockAssetFormatPipe, AssetIconPipe } from '@pipes';
 import { TestConstants } from '@constants';
 
 describe('TradeComponent', () => {
   let component: TradeComponent;
   let fixture: ComponentFixture<TradeComponent>;
 
-  let MockAssetService = jasmine.createSpyObj('AssetService', [
-    'getAsset',
-    'getAssets$'
-  ]);
   let MockEventService = jasmine.createSpyObj('EventService', [
     'getEvent',
     'handleEvent'
@@ -56,23 +51,21 @@ describe('TradeComponent', () => {
     'getError',
     'handleError'
   ]);
-  let MockConfigService = jasmine.createSpyObj('ConfigService', [
-    'setConfig',
-    'getConfig$'
+  let MockConfigService = jasmine.createSpyObj('ConfigService', ['getConfig$']);
+  let MockAccountService = jasmine.createSpyObj('AccountService', [
+    'getAccounts'
   ]);
-  let MockPricesService = jasmine.createSpyObj('PricesService', ['listPrices']);
-  let MockQueryParams = of({
-    symbol_pair: 'BTC-USD'
-  });
+  let MockPriceService = jasmine.createSpyObj('PriceService', ['listPrices']);
   let MockDialogService = jasmine.createSpyObj('MockDialogService', ['open']);
-  const error$ = throwError(() => {
-    new Error('Error');
-  });
   let MockQuoteService = jasmine.createSpyObj('QuoteService', ['getQuote']);
+  let MockAssetService = jasmine.createSpyObj('AssetService', [
+    'getAssets$',
+    'getAsset'
+  ]);
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [TradeComponent, AssetPipe],
+      declarations: [TradeComponent, MockAssetFormatPipe, AssetIconPipe],
       imports: [
         BrowserAnimationsModule,
         HttpClientTestingModule,
@@ -91,7 +84,8 @@ describe('TradeComponent', () => {
       ],
       providers: [
         { provide: AssetService, useValue: MockAssetService },
-        { provide: PricesService, useValue: MockPricesService },
+        { provide: AccountService, useValue: MockAccountService },
+        { provide: PriceService, useValue: MockPriceService },
         { provide: EventService, useValue: MockEventService },
         { provide: ErrorService, useValue: MockErrorService },
         { provide: ConfigService, useValue: MockConfigService },
@@ -100,18 +94,23 @@ describe('TradeComponent', () => {
         {
           provide: ActivatedRoute,
           useValue: {
-            queryParams: MockQueryParams
+            queryParams: of({})
           }
         },
-        AssetPipe
+        { provide: AssetFormatPipe, useClass: MockAssetFormatPipe },
+        AssetIconPipe
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
     MockAssetService = TestBed.inject(AssetService);
     MockAssetService.getAssets$.and.returnValue(of(TestConstants.ASSETS));
-    MockPricesService = TestBed.inject(PricesService);
-    MockPricesService.listPrices.and.returnValue(
-      of([TestConstants.SYMBOL_PRICE_BANK_MODEL])
+    MockAssetService.getAsset.and.returnValue(of(TestConstants.BTC_ASSET));
+    MockAccountService.getAccounts.and.returnValue(
+      of(TestConstants.ACCOUNT_LIST_BANK_MODEL.objects)
+    );
+    MockPriceService = TestBed.inject(PriceService);
+    MockPriceService.listPrices.and.returnValue(
+      of(TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY)
     );
     MockEventService = TestBed.inject(EventService);
     MockErrorService = TestBed.inject(ErrorService);
@@ -126,153 +125,336 @@ describe('TradeComponent', () => {
     });
     MockQuoteService = TestBed.inject(QuoteService);
     MockQuoteService.getQuote.and.returnValue(TestConstants.POST_QUOTE);
-  });
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(TradeComponent);
     component = fixture.componentInstance;
-    MockAssetService.getAsset.and.returnValue(TestConstants.BTC_ASSET);
-    component.getAssets(); // Set the asset code
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call init functions in ngOnInit()', () => {
-    component.getAssets = () => undefined;
-    component.initQuoteGroup = () => undefined;
-    component.getPrice = () => undefined;
-    component.refreshData = () => undefined;
-    const getAssets = spyOn(component, 'getAssets').and.callThrough();
-    const initQuoteGroup = spyOn(component, 'initQuoteGroup').and.callThrough();
-    const getPrice = spyOn(component, 'getPrice').and.callThrough();
-    const refreshData = spyOn(component, 'refreshData').and.callThrough();
-    component.ngOnInit();
-    expect(getAssets).toHaveBeenCalled();
-    expect(initQuoteGroup).toHaveBeenCalled();
-    expect(getPrice).toHaveBeenCalled();
-    expect(refreshData).toHaveBeenCalled();
+  it('should get the account list', () => {
+    const accounts$Spy = spyOn(component.accounts$, 'next');
+
+    fixture.detectChanges();
+
+    expect(MockAccountService.getAccounts).toHaveBeenCalled();
+    expect(accounts$Spy).toHaveBeenCalled();
+
+    component.accounts$.subscribe((accounts) => expect(accounts).toBeDefined());
   });
 
-  it('should get router parameters', () => {
-    MockAssetService.getAsset.and.returnValue(TestConstants.BTC_ASSET);
-    component.getAssets();
-    expect(component.asset.code).toEqual('BTC');
-    MockAssetService.getAsset.and.returnValue(TestConstants.USD_ASSET);
-    component.getAssets();
-    expect(component.counterAsset.code).toEqual('USD');
+  it('should get the price list', () => {
+    const priceList$Spy = spyOn(component.priceList$, 'next');
+    const evaluatePriceSpy = spyOn(component, 'evaluatePrice');
+
+    fixture.detectChanges();
+
+    expect(MockConfigService.getConfig$).toHaveBeenCalled();
+    expect(MockPriceService.listPrices).toHaveBeenCalled();
+    expect(priceList$Spy).toHaveBeenCalledWith(
+      TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY
+    );
+    expect(evaluatePriceSpy).toHaveBeenCalled();
   });
 
-  it('should get and filter assets', () => {
-    const cryptoAssets = [TestConstants.BTC_ASSET, TestConstants.ETH_ASSET];
-    const fiatAssets = [TestConstants.USD_ASSET]; // Filtering here for only one fiat
-    MockAssetService.getAsset.and.returnValue(TestConstants.USD_ASSET);
-    component.getAssets();
-    expect(component.cryptoAssets).toEqual(cryptoAssets);
-    expect(component.fiatAssets).toEqual(fiatAssets);
-  });
+  it('should refresh the price list', fakeAsync(() => {
+    const priceList$Spy = spyOn(component.priceList$, 'next');
+    fixture.detectChanges();
 
-  it('should initialize the quote group', () => {
-    MockAssetService.getAsset.and.returnValue(TestConstants.BTC_ASSET);
-    const getPriceSpy = spyOn(component, 'getPrice');
-    component.initQuoteGroup();
-    expect(component.asset).toEqual(TestConstants.BTC_ASSET);
-    component.quoteGroup.patchValue({
-      asset: TestConstants.ETH_ASSET,
-      amount: 10
-    });
-    expect(getPriceSpy).toHaveBeenCalled();
-    expect(component.amount).toEqual(10);
-  });
-
-  it('should get prices', () => {
-    component.price.buy_price = '1';
-    component.price.sell_price = '1';
-    component.initQuoteGroup();
-    component.quoteGroup.patchValue({
-      amount: 1,
-      asset: TestConstants.BTC_ASSET
-    });
-
-    expect(component.display.asset).toEqual(1);
-    expect(component.display.counter_asset).toEqual(1);
-
-    component.input = 'counter_asset';
-    component.getPrice();
-    expect(component.display.asset).toEqual(100000000);
-
-    /*
-     * If the input is 'counter_asset' the base value returned from the asset pipe will
-     * be of type 'string' to disable scientific notation for api calls
-     * */
-    expect(component.display.counter_asset).toEqual('100000000');
-
-    component.side = 'sell';
-    component.input = 'asset';
-    component.getPrice();
-    expect(component.display.asset).toEqual(1);
-    expect(component.display.counter_asset).toEqual(1);
-
-    component.input = 'counter_asset';
-    component.getPrice();
-    expect(component.display.asset).toEqual(100000000);
-    expect(component.display.counter_asset).toEqual('100000000');
-
-    MockPricesService.listPrices.and.returnValue(error$);
-    component.getPrice();
-    expect(MockEventService.handleEvent).toHaveBeenCalled();
-    expect(MockErrorService.handleError).toHaveBeenCalled();
-  });
-
-  it('should refresh data', fakeAsync(() => {
-    const getPriceSpy = spyOn(component, 'getPrice');
-    component.ngOnInit();
     tick(TestConstants.CONFIG.refreshInterval);
-    expect(getPriceSpy).toHaveBeenCalledTimes(2);
-    expect(MockEventService.handleEvent).toHaveBeenCalled();
+
+    // Price list is fetched on component init, and again every refresh interval
+    expect(priceList$Spy).toHaveBeenCalledTimes(2);
+
     discardPeriodicTasks();
   }));
 
-  it('should switch the input between asset and counter_asset', () => {
-    const getPriceSpy = spyOn(component, 'getPrice');
-    component.ngOnInit();
-    expect(component.input).toEqual('asset'); // Default value
-    component.onSwitchInput();
-    expect(component.input).toEqual('counter_asset');
-    expect(getPriceSpy).toHaveBeenCalled();
-    component.onSwitchInput();
-    expect(component.input).toEqual('asset');
-    expect(getPriceSpy).toHaveBeenCalled();
+  it('should initialize the trade form with routing params', () => {
+    component['route'].queryParams = of({ code: 'BTC' });
+    fixture.detectChanges();
+
+    const controls = component.tradeFormGroup.controls;
+
+    expect(component.tradeFormGroup).toBeDefined();
+    expect(controls.tradingAccount.value).toEqual(
+      TestConstants.ACCOUNT_BANK_MODEL_BTC
+    );
+    expect(controls.fiatAccount.value).toEqual(
+      TestConstants.ACCOUNT_BANK_MODEL_USD
+    );
+    expect(component.tradeFormGroup.controls.amount.value).toBeNull();
   });
 
-  it('should switch sides', () => {
-    const getPriceSpy = spyOn(component, 'getPrice');
-    component.ngOnInit();
-    expect(component.side).toEqual('buy'); // Default value
-    component.onSwitchSide(1);
-    expect(component.side).toEqual('sell');
-    expect(getPriceSpy).toHaveBeenCalled();
-    component.onSwitchSide(-1);
+  it('should initialize the trade form group with a default', () => {
+    fixture.detectChanges();
+
+    const controls = component.tradeFormGroup.controls;
+
+    // Find first account in list
+    const selectedAccount =
+      TestConstants.ACCOUNT_LIST_BANK_MODEL.objects.filter(
+        (accounts) => accounts.type == 'trading'
+      )[0];
+
+    expect(component.tradeFormGroup).toBeDefined();
+    expect(controls.tradingAccount.value).toEqual(selectedAccount);
+    expect(controls.fiatAccount.value).toEqual(
+      TestConstants.ACCOUNT_BANK_MODEL_USD
+    );
+    expect(component.tradeFormGroup.controls.amount.value).toBeNull();
+  });
+
+  it('should evaluate the price for side: "buy", input: "trading"', () => {
+    component.filterPrices = () =>
+      TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY[0];
+
+    fixture.detectChanges();
+
+    component.tradeFormGroup.controls.amount.setValue(1);
+    const price$Spy = spyOn(component.price$, 'next');
+
+    component.evaluatePrice();
+
+    component.price$.subscribe(() => {
+      expect(price$Spy).toHaveBeenCalledWith({
+        base: 2129700,
+        asset: 1,
+        counterAsset: 2129700
+      });
+    });
+  });
+
+  it('should evaluate the price for side: "buy", input: "fiat"', () => {
+    component.filterPrices = () =>
+      TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY[0];
+
+    fixture.detectChanges();
+
+    component.input = 'fiat';
+    component.tradeFormGroup.controls.amount.setValue(1);
+    const price$Spy = spyOn(component.price$, 'next');
+
+    component.evaluatePrice();
+
+    component.price$.subscribe(() => {
+      expect(price$Spy).toHaveBeenCalledWith({
+        base: 2129800,
+        asset: 0.000046952765517889,
+        counterAsset: 100
+      });
+    });
+  });
+
+  it('should evaluate the price for side: "sell", input: "trading"', () => {
+    component.filterPrices = () =>
+      TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY[0];
+
+    fixture.detectChanges();
+
+    component.side = 'sell';
+    component.tradeFormGroup.controls.amount.setValue(1);
+    const price$Spy = spyOn(component.price$, 'next');
+
+    component.evaluatePrice();
+
+    component.price$.subscribe(() => {
+      expect(price$Spy).toHaveBeenCalledWith({
+        base: 2129800,
+        asset: 1,
+        counterAsset: 2129800
+      });
+    });
+  });
+
+  it('should evaluate the price for side: "sell", input: "fiat"', () => {
+    component.filterPrices = () =>
+      TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY[0];
+
+    fixture.detectChanges();
+
+    component.side = 'sell';
+    component.input = 'fiat';
+    component.tradeFormGroup.controls.amount.setValue(1);
+    const price$Spy = spyOn(component.price$, 'next');
+
+    component.evaluatePrice();
+
+    component.price$.subscribe(() => {
+      expect(price$Spy).toHaveBeenCalledWith({
+        base: 2129700,
+        asset: 0.000046954970183593935,
+        counterAsset: 100
+      });
+    });
+  });
+
+  it('should mask the amount control if input = "trading" and the number is a decimal', fakeAsync(() => {
+    fixture.detectChanges();
+
+    component.input = 'fiat';
+    component.tradeFormGroup.controls.amount.setValue(123.4567);
+
+    tick();
+
+    expect(component.tradeFormGroup.controls.amount.value).toEqual(123.45);
+
+    discardPeriodicTasks();
+  }));
+
+  it('should invalidate the trade form if side: "buy"', () => {
+    fixture.detectChanges();
+
+    const setErrorSpy = spyOn(
+      component.tradeFormGroup.controls.amount,
+      'setErrors'
+    );
+    const fiatPlatformAvailable = Number(
+      component.tradeFormGroup.controls.fiatAccount.value?.platform_available
+    );
+
+    const tradingPlatformAvailable = component.getTradingPlatformAvailable(
+      TestConstants.CONFIG
+    );
+
+    // Set price values to be greater than balances (+1)
+    const price: Price = {
+      base: 1,
+      asset: tradingPlatformAvailable + 1,
+      counterAsset: fiatPlatformAvailable + 1
+    };
+
+    component.price$.next(price);
+    expect(setErrorSpy).toHaveBeenCalledOnceWith({ insufficientFunds: true });
+  });
+
+  it('should invalidate the trade form if side:"sell"', () => {
+    fixture.detectChanges();
+
+    const setErrorSpy = spyOn(
+      component.tradeFormGroup.controls.amount,
+      'setErrors'
+    );
+    const fiatPlatformAvailable = Number(
+      component.tradeFormGroup.controls.fiatAccount.value?.platform_available
+    );
+
+    const tradingPlatformAvailable = component.getTradingPlatformAvailable(
+      TestConstants.CONFIG
+    );
+
+    // Set price values to be greater than balances (+1)
+    const price: Price = {
+      base: 1,
+      asset: tradingPlatformAvailable + 1,
+      counterAsset: fiatPlatformAvailable + 1
+    };
+
+    // Set side to 'sell'
+    component.side = 'sell';
+
+    component.price$.next(price);
+    expect(setErrorSpy).toHaveBeenCalledOnceWith({ insufficientFunds: true });
+  });
+
+  it('should get the tradingPlatformAvailable', () => {
+    fixture.detectChanges();
+
+    // Default environment: 'demo'
+    expect(component.getTradingPlatformAvailable(TestConstants.CONFIG)).toEqual(
+      4997.7367924308
+    );
+
+    // Set environment: 'production'
+    let productionConfig = { ...TestConstants.CONFIG };
+    productionConfig.environment = 'production';
+
+    expect(component.getTradingPlatformAvailable(productionConfig)).toEqual(0);
+  });
+
+  it('should switch input', () => {
+    fixture.detectChanges();
+
+    const updateValueAndValiditySpy = spyOn(
+      component.tradeFormGroup,
+      'updateValueAndValidity'
+    );
+
+    // Default
+    expect(component.input).toEqual('trading');
+
+    // Switch to input: 'fiat'
+    component.onSwitchInput();
+    expect(component.input).toEqual('fiat');
+
+    // Switch to input: 'trading'
+    component.onSwitchInput();
+    expect(component.input).toEqual('trading');
+
+    expect(updateValueAndValiditySpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('should switch side', () => {
+    fixture.detectChanges();
+
+    const updateValueAndValiditySpy = spyOn(
+      component.tradeFormGroup,
+      'updateValueAndValidity'
+    );
+
+    // Default
     expect(component.side).toEqual('buy');
-    expect(getPriceSpy).toHaveBeenCalled();
+
+    // Switch to side: 'sell'
+    component.onSwitchSide();
+    expect(component.side).toEqual('sell');
+
+    // Switch to side: 'buy'
+    component.onSwitchSide();
+    expect(component.side).toEqual('buy');
+
+    expect(updateValueAndValiditySpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('should check if max amount is disabled', () => {
+    // Default side: 'buy'
+    expect(component.isMaxDisabled()).toBeTrue();
+
+    // Set side: 'sell'
+    component.side = 'sell';
+    expect(component.isMaxDisabled()).toBeFalse();
+  });
+
+  it('should set the max amount', () => {
+    fixture.detectChanges();
+
+    const amountControlSpy = spyOn(
+      component.tradeFormGroup.controls.amount,
+      'setValue'
+    );
+
+    // Default side: 'buy'
+    component.onSetMax();
+    expect(amountControlSpy).toHaveBeenCalled();
+
+    // Set side: 'sell'
+    component.side = 'sell';
+    component.onSetMax();
+    expect(amountControlSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should call the quote service and build quote onTrade()', () => {
-    component.ngOnInit();
+    fixture.detectChanges();
+
     component.onTrade();
     expect(MockQuoteService.getQuote).toHaveBeenCalled();
   });
 
-  it('should open the trade confirm component and pass it a PostQuoteBankModel onTrade()', () => {
-    component.ngOnInit();
+  it('should open the TradeConfirmComponent onTrade()', () => {
+    fixture.detectChanges();
+
     component.onTrade();
-    expect(MockDialogService.open).toHaveBeenCalledWith(TradeConfirmComponent, {
-      data: {
-        model: TestConstants.POST_QUOTE,
-        asset: component.asset,
-        counter_asset: component.counterAsset
-      }
-    });
+    expect(MockDialogService.open).toHaveBeenCalled();
   });
 });

@@ -11,7 +11,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { HttpLoaderFactory } from '../../modules/library.module';
+import { HttpLoaderFactory } from '../../../modules/library.module';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 
@@ -32,7 +32,7 @@ import { AccountListComponent } from '@components';
 // Utility
 import { AssetPipe } from '@pipes';
 import { Constants, TestConstants } from '@constants';
-import { SharedModule } from '../../../shared/modules/shared.module';
+import { SharedModule } from '../../../../shared/modules/shared.module';
 
 describe('AccountListComponent', () => {
   let component: AccountListComponent;

@@ -9,6 +9,7 @@ import { ActivatedRoute, NavigationExtras } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { MatDialog } from '@angular/material/dialog';
 
 import {
   BehaviorSubject,
@@ -41,11 +42,12 @@ import {
   RoutingService
 } from '@services';
 
+// Components
+import { TradeSummaryComponent } from '@components';
+
 // Utility
 import { Constants } from '@constants';
 import { symbolBuild } from '@utility';
-import { TradeSummaryComponent } from '../trade-summary/trade-summary.component';
-import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-account-details',

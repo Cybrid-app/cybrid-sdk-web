@@ -20,10 +20,18 @@ import {
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
-import { AssetService, Asset, ConfigService } from '@services';
+import {
+  AssetService,
+  Asset,
+  ConfigService,
+  LEVEL,
+  CODE,
+  EventService,
+  ErrorService
+} from '@services';
 
 // Utility
-import { symbolSplit } from '@utility';
+import { filterPrices, symbolSplit } from '@utility';
 import { AssetPipe } from '@pipes';
 
 export interface Account {
@@ -44,9 +52,14 @@ export interface AccountOverview {
   providedIn: 'root'
 })
 export class AccountService implements OnDestroy {
+  symbolSplit = symbolSplit;
+  filterPrices = filterPrices;
+
   private unsubscribe$ = new Subject();
 
   constructor(
+    private eventService: EventService,
+    private errorService: ErrorService,
     private accountsService: AccountsService,
     private pricesService: PricesService,
     private assetService: AssetService,
@@ -70,19 +83,20 @@ export class AccountService implements OnDestroy {
           config.customer
         );
       }),
-      map((accounts) => accounts.objects)
-    );
-  }
+      map((accounts) => accounts.objects),
+      catchError((err) => {
+        this.eventService.handleEvent(
+          LEVEL.ERROR,
+          CODE.DATA_ERROR,
+          'There was an error fetching accounts'
+        );
 
-  // Filter for specific asset price
-  filterPrices(
-    prices: SymbolPriceBankModel[],
-    accountModel: AccountBankModel
-  ): SymbolPriceBankModel | undefined {
-    return prices.find((price) => {
-      const [asset] = symbolSplit(price.symbol!);
-      return asset == accountModel.asset;
-    });
+        this.errorService.handleError(
+          new Error('There was an error fetching accounts')
+        );
+        return of(err);
+      })
+    );
   }
 
   // Returns asset and counter asset models
@@ -186,7 +200,7 @@ export class AccountService implements OnDestroy {
           (account: AccountBankModel) =>
             account.type == AccountBankModel.TypeEnum.Trading
         );
-        const fiatAccount = accounts.find(
+        const fiatAccount: AccountBankModel = accounts.find(
           (account: AccountBankModel) =>
             account.type == AccountBankModel.TypeEnum.Fiat
         );
@@ -195,12 +209,10 @@ export class AccountService implements OnDestroy {
         let tradingAccounts: Account[] = [];
 
         cryptoAccounts.forEach((accountModel: AccountBankModel) => {
-          const priceModel = this.filterPrices(prices, accountModel);
-
-          const [assetCode, counterAssetCode] = symbolSplit(prices[0].symbol!);
+          const priceModel = this.filterPrices(prices, accountModel.asset!);
           const [assetModel, counterAssetModel] = this.getAccountAssets([
             accountModel.asset!,
-            counterAssetCode
+            fiatAccount.asset!
           ]);
 
           const accountValue = this.getAccountValue(

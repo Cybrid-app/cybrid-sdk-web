@@ -20,7 +20,6 @@ import {
 
 // Utility
 import { TranslatePipe } from '@ngx-translate/core';
-import { Router } from '@angular/router';
 
 interface DialogData {
   model: TradeBankModel;
@@ -33,7 +32,7 @@ interface DialogData {
   templateUrl: './trade-summary.component.html',
   styleUrls: [
     './trade-summary.component.scss',
-    '../../../shared/styles/global.scss'
+    '../../../../shared/styles/global.scss'
   ]
 })
 export class TradeSummaryComponent implements OnInit {

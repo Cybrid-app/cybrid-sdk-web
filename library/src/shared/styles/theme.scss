@@ -356,6 +356,10 @@ $light-theme: mat.define-light-theme(
     align-items: center;
   }
 
+  .mat-select-value {
+    overflow: visible;
+  }
+
   mat-paginator {
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;

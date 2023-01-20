@@ -18,6 +18,11 @@ interface NumberSeparator {
   char: string;
 }
 
+//TODO: Convert all usage of this pipe to the new AssetFormatPipe
+
+/**
+ * @Deprecated Use the pipe AssetFormatPipe instead
+ * */
 @Pipe({
   name: 'asset'
 })

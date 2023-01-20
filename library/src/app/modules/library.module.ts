@@ -20,12 +20,14 @@ import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 // Modules
 import { MaterialModule } from '@modules';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ApiModule, Configuration } from '@cybrid/cybrid-api-bank-angular';
+import { MatPaginatorIntl } from '@angular/material/paginator';
 import {
   TranslateModule,
   TranslateLoader,
   TranslatePipe
 } from '@ngx-translate/core';
+
+import { ApiModule, Configuration } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
 import {
@@ -38,7 +40,8 @@ import {
   RoutingService,
   AccountService,
   IdentityVerificationService,
-  BankAccountService
+  BankAccountService,
+  PriceService
 } from '@services';
 
 // Interceptors
@@ -54,6 +57,7 @@ import {
   TradeSummaryComponent,
   AccountListComponent,
   AccountDetailsComponent,
+  AccountBalanceComponent,
   NavigationComponent,
   IdentityVerificationComponent,
   IdentityContentComponent,
@@ -67,8 +71,12 @@ import {
 
 // Utility
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { AssetPipe, TruncatePipe } from '@pipes';
-import { MatPaginatorIntl } from '@angular/material/paginator';
+import {
+  AssetPipe,
+  AssetIconPipe,
+  TruncatePipe,
+  AssetFormatPipe
+} from '@pipes';
 import { CustomPaginatorIntl } from '@utility';
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -80,8 +88,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppComponent,
     PriceListComponent,
     TradeComponent,
+    TradeComponent,
     TradeConfirmComponent,
     TradeSummaryComponent,
+    AccountBalanceComponent,
     AccountListComponent,
     AccountDetailsComponent,
     LoadingComponent,
@@ -95,7 +105,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     TransferConfirmComponent,
     TransferDetailsComponent,
     AssetPipe,
-    TruncatePipe
+    AssetFormatPipe,
+    TruncatePipe,
+    AssetIconPipe,
+    AssetFormatPipe
   ],
   imports: [
     BrowserModule,
@@ -132,10 +145,13 @@ export function HttpLoaderFactory(http: HttpClient) {
     QuoteService,
     EventService,
     AssetService,
+    PriceService,
     AccountService,
     AssetPipe,
+    AssetIconPipe,
     IdentityVerificationService,
     BankAccountService,
+    AssetFormatPipe,
     TruncatePipe,
     TranslatePipe,
     { provide: APP_BASE_HREF, useValue: '' },

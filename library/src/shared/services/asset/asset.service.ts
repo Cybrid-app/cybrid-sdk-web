@@ -30,6 +30,9 @@ export interface Asset extends AssetBankModel {
   providedIn: 'root'
 })
 export class AssetService {
+  assets$: ReplaySubject<AssetBankModel[]> = new ReplaySubject<
+    AssetBankModel[]
+  >(1);
   assetList$ = new ReplaySubject<Asset[]>(1);
   assetList: Asset[] = [];
 
@@ -48,6 +51,7 @@ export class AssetService {
       .pipe(
         switchMap(() => this.assetsService.listAssets()),
         map((list: AssetListBankModel) => {
+          this.assets$.next(list.objects);
           const assetList: Asset[] = list.objects.map(
             (asset: AssetBankModel) => {
               return {

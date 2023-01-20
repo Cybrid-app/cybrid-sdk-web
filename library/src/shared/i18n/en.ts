@@ -95,6 +95,12 @@ export default {
     }
   },
 
+  // Account balance component
+  accountBalance: {
+    pending: 'Pending',
+    settled: 'No trades pending'
+  },
+
   // Account trade component
   accountTrade: {
     side: {
