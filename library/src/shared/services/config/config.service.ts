@@ -180,6 +180,9 @@ export class ConfigService implements OnDestroy {
           // Angular Material typography styles
           container.classList.add('mat-typography');
 
+          // Global styles
+          container.classList.add('cybrid-global');
+
           // Selected theme styles
           if (config!.theme === 'DARK') {
             container.classList.remove('cybrid-light-theme');

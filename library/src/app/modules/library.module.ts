@@ -64,6 +64,7 @@ import {
   CustomerContentComponent,
   CybridLogoComponent,
   BankAccountConnectComponent,
+  BankAccountConfirmComponent,
   TransferComponent,
   TransferConfirmComponent,
   TransferDetailsComponent
@@ -101,6 +102,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     CustomerContentComponent,
     CybridLogoComponent,
     BankAccountConnectComponent,
+    BankAccountConfirmComponent,
     TransferComponent,
     TransferConfirmComponent,
     TransferDetailsComponent,
