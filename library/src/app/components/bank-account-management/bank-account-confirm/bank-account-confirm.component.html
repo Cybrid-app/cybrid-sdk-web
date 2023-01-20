@@ -1,13 +1,7 @@
 <ng-container *ngIf="(isLoading$ | async) !== true; else loading">
-  <h1>Bank account currency</h1>
-  <p>
-    Please confirm the currency of your selected bank account from the options
-    below.
-  </p>
-  <p>
-    If you do not see your accounts currency listed, we are unable to add your
-    bank account.
-  </p>
+  <h1>{{ 'bankAccountConnect.confirm.title' | translate }}</h1>
+  <p>{{ 'bankAccountConnect.confirm.subtitle' | translate }}</p>
+  <p>{{ 'bankAccountConnect.confirm.note' | translate }}</p>
   <ng-container [formGroup]="assetGroup">
     <div class="cybrid-input-wrapper">
       <label class="mat-hint cybrid-h5">Currency</label>
@@ -20,9 +14,16 @@
       </mat-form-field>
     </div>
     <div class="cybrid-actions">
-      <button mat-flat-button [mat-dialog-close]>CANCEL</button>
-      <button mat-flat-button color="primary" (click)="onConfirm()">
-        CONFIRM
+      <button id="'cancel" mat-flat-button [mat-dialog-close]>
+        {{ 'cancel' | translate }}
+      </button>
+      <button
+        id="confirm"
+        mat-flat-button
+        color="primary"
+        (click)="onConfirm()"
+      >
+        {{ 'confirm' | translate }}
       </button>
     </div>
   </ng-container>

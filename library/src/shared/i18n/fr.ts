@@ -155,6 +155,13 @@ export default {
       warning: 'Temporairement indisponible sur mobile.',
       explanation:
         "Veuillez connecter votre compte bancaire à l'aide d'un navigateur de bureau."
+    },
+
+    // Confirm dialog
+    confirm: {
+      title: 'Confirmer le code de devise',
+      subtitle: 'Veuillez confirmer la devise de votre compte bancaire sélectionné parmi les options ci-dessous.',
+      note: 'Si vous ne voyez pas la devise de votre compte dans la liste, nous ne pouvons pas ajouter votre compte bancaire.'
     }
   },
 
