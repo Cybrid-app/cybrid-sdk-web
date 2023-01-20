@@ -114,7 +114,10 @@ export class AssetFormatPipe implements PipeTransform, OnDestroy {
          * resulting in scientific notation being returned if the integer or decimal length is > 24
          * */
         case 'formatted': {
-          const tradeUnit = new Big(value).div(divisor).toFixed(assetDecimals);
+          const tradeUnit =
+            asset.type == 'fiat'
+              ? new Big(value).div(divisor).toFixed(assetDecimals)
+              : new Big(value).div(divisor).toFixed();
 
           if (tradeUnit.toString().includes('.')) {
             let separator = this.separator.find((separator) => {
@@ -126,21 +129,22 @@ export class AssetFormatPipe implements PipeTransform, OnDestroy {
             const formatted =
               formatNumber(new Big(integer).toNumber(), this.locale) +
               separator!.char +
-              decimal.slice(0, assetDecimals);
+              decimal;
 
             return asset.type == 'fiat' ? asset.symbol + formatted : formatted;
           } else {
-            const digitsInfo =
-              Constants.MIN_INTEGER_DIGITS.toString() +
+            const tradingDigitsInfo =
+              Constants.TRADING_MIN_INTEGER_DIGITS +
               '.' +
-              Constants.MIN_FRACTION_DIGITS.toString() +
+              Constants.TRADING_MIN_FRACTION_DIGITS +
               '-' +
               asset.decimals.toString();
 
-            return asset.type == 'fiat'
-              ? asset.symbol +
-                  formatNumber(Number(tradeUnit), this.locale, digitsInfo)
-              : formatNumber(Number(tradeUnit), this.locale, digitsInfo);
+            return formatNumber(
+              Number(tradeUnit),
+              this.locale,
+              tradingDigitsInfo
+            );
           }
         }
       }
