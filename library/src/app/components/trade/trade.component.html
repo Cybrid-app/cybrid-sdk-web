@@ -30,7 +30,7 @@
                       src="{{ tradingAccount.value.asset | assetIcon }}"
                     />
                     <span class="cybrid-trigger-name">{{
-                      tradingAccount.value.name
+                      tradingAccount.value.name | truncate : 24
                     }}</span>
                   </div>
                 </mat-select-trigger>
@@ -44,7 +44,7 @@
                       alt="Crypto currency icon"
                       src="{{ account.asset | assetIcon }}"
                     />
-                    <span>{{ account.name }}</span>
+                    <span>{{ account.name | truncate : 24 }}</span>
                   </div>
                 </mat-option>
               </mat-select>

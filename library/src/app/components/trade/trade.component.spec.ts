@@ -36,7 +36,12 @@ import {
 import { Price, TradeComponent } from '@components';
 
 // Utility
-import { AssetFormatPipe, MockAssetFormatPipe, AssetIconPipe } from '@pipes';
+import {
+  AssetFormatPipe,
+  MockAssetFormatPipe,
+  AssetIconPipe,
+  TruncatePipe
+} from '@pipes';
 import { TestConstants } from '@constants';
 
 describe('TradeComponent', () => {
@@ -65,7 +70,12 @@ describe('TradeComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [TradeComponent, MockAssetFormatPipe, AssetIconPipe],
+      declarations: [
+        TradeComponent,
+        MockAssetFormatPipe,
+        AssetIconPipe,
+        TruncatePipe
+      ],
       imports: [
         BrowserAnimationsModule,
         HttpClientTestingModule,

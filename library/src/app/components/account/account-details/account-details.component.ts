@@ -47,7 +47,6 @@ import { TradeSummaryComponent } from '@components';
 
 // Utility
 import { Constants } from '@constants';
-import { symbolBuild } from '@utility';
 
 @Component({
   selector: 'app-account-details',
@@ -266,8 +265,7 @@ export class AccountDetailsComponent
   onTrade(): void {
     const extras: NavigationExtras = {
       queryParams: {
-        asset: JSON.stringify(this.asset),
-        symbol_pair: symbolBuild(this.asset.code, this.counterAssetCode)
+        code: this.asset.code
       }
     };
     this.routingService.handleRoute({

@@ -6,12 +6,12 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class TruncatePipe implements PipeTransform {
   constructor() {}
 
-  transform(value: string, char?: number) {
+  transform(value: string | undefined, char?: number) {
     if (char === undefined) {
       return value;
     }
 
-    if (value.length > char) {
+    if (value && value.length > char) {
       return value.substring(0, char) + '...';
     } else {
       return value;

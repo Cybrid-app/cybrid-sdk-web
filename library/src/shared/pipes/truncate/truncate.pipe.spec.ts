@@ -12,7 +12,7 @@ describe('AssetPipe', () => {
     expect(test).toEqual('test');
   });
 
-  it('should truncate the value by the number of characters set if the value.length is greater', () => {
+  it('should truncateString the value by the number of characters set if the value.length is greater', () => {
     const pipe = new TruncatePipe();
     const test = pipe.transform('test', 2);
     expect(test).toEqual('te...');
