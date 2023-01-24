@@ -1,10 +1,11 @@
 <ng-container *ngIf="(isLoading$ | async) !== true; else loading">
   <h1>{{ 'bankAccountConnect.confirm.title' | translate }}</h1>
   <p>{{ 'bankAccountConnect.confirm.subtitle' | translate }}</p>
-  <p>{{ 'bankAccountConnect.confirm.note' | translate }}</p>
   <ng-container [formGroup]="assetGroup">
     <div class="cybrid-input-wrapper">
-      <label class="mat-hint cybrid-h5">Currency</label>
+      <label class="mat-hint cybrid-h5">{{
+        'bankAccountConnect.confirm.label' | translate
+      }}</label>
       <mat-form-field appearance="outline">
         <mat-select #asset formControlName="asset">
           <mat-option *ngFor="let asset of assets" [value]="asset">

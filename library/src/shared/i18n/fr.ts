@@ -159,10 +159,10 @@ export default {
 
     // Confirm dialog
     confirm: {
-      title: 'Confirmer le code de devise',
+      title: 'Sélectionnez la devise',
       subtitle:
-        'Veuillez confirmer la devise de votre compte bancaire sélectionné parmi les options ci-dessous.',
-      note: 'Si vous ne voyez pas la devise de votre compte dans la liste, nous ne pouvons pas ajouter votre compte bancaire.'
+        'Nous ne sommes pas en mesure de déterminer la devise de votre compte. Veuillez sélectionner la bonne devise parmi les options ci-dessous.',
+      label: 'Devise'
     }
   },
 

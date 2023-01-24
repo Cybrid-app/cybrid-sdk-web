@@ -157,10 +157,10 @@ export default {
 
     // Confirm dialog
     confirm: {
-      title: 'Confirm currency code',
+      title: 'Select Currency',
       subtitle:
-        'Please confirm the currency of your selected bank account from the options below.',
-      note: 'If you do not see your accounts currency listed, we are unable to add your bank account.'
+        'We are unable to determine the currency of your account. Please select the correct currency from the options below.',
+      label: 'Currency'
     }
   },
 
