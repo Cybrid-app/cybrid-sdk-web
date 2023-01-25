@@ -13,7 +13,7 @@ import { HttpClient } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import { of, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 
 // Services
 import {
@@ -26,6 +26,7 @@ import {
 } from '@services';
 import {
   AccountsService,
+  ExternalBankAccountListBankModel,
   QuotesService
 } from '@cybrid/cybrid-api-bank-angular';
 
@@ -190,6 +191,49 @@ describe('TransferComponent', () => {
 
     component.onSwitchSide(1);
     expect(component.side).toEqual('withdrawal');
+  });
+
+  it('should page through external bank accounts', () => {
+    let externalBankAccountList = {
+      ...TestConstants.EXTERNAL_BANK_ACCOUNT_LIST_BANK_MODEL
+    };
+    externalBankAccountList.objects = [];
+
+    // Fill objects with amount per page
+    for (let i = 0; i < component.externalBankAccountsPerPage; i++) {
+      externalBankAccountList.objects.push(
+        TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL
+      );
+    }
+
+    MockBankAccountService.listExternalBankAccounts.and.returnValue(
+      of(externalBankAccountList)
+    );
+
+    component.listAccounts();
+    expect(
+      component.pageExternalAccounts(
+        component.externalBankAccountsPerPage,
+        externalBankAccountList
+      )
+    ).toBeInstanceOf(Observable<ExternalBankAccountListBankModel>);
+
+    // Reset
+    MockBankAccountService.listExternalBankAccounts.and.returnValue(
+      of(TestConstants.EXTERNAL_BANK_ACCOUNT_LIST_BANK_MODEL)
+    );
+  });
+
+  it('should accumulate external accounts', () => {
+    expect(
+      component.accumulateExternalAccounts(
+        [{ ...TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL }],
+        [{ ...TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL }]
+      )
+    ).toEqual([
+      ...[{ ...TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL }],
+      ...[{ ...TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL }]
+    ]);
   });
 
   it('should handle an error on listExternalBankAccounts()', () => {
