@@ -22,6 +22,7 @@ import {
 
 // Services
 import {
+  BankBankModel,
   CustomersService,
   PostWorkflowBankModel,
   WorkflowsService,
@@ -31,7 +32,6 @@ import {
 import {
   BankAccountService,
   CODE,
-  ComponentConfig,
   ConfigService,
   ErrorService,
   EventService,
@@ -44,6 +44,8 @@ import {
 import { Constants } from '@constants';
 import { Poll, PollConfig } from '../../../../shared/utility/poll/poll';
 import { getLanguageFromLocale } from '../../../../shared/utility/locale-language';
+import { MatDialog } from '@angular/material/dialog';
+import { BankAccountConfirmComponent } from '../bank-account-confirm/bank-account-confirm.component';
 
 @Component({
   selector: 'app-bank-account-connect',
@@ -76,8 +78,6 @@ export class BankAccountConnectComponent implements OnInit {
 
   plaidScriptSrc = Constants.PLAID_SCRIPT_SRC;
 
-  config!: ComponentConfig;
-
   constructor(
     @Inject(DOCUMENT) public _document: Document,
     public configService: ConfigService,
@@ -88,7 +88,8 @@ export class BankAccountConnectComponent implements OnInit {
     private customersService: CustomersService,
     private router: RoutingService,
     private _renderer2: Renderer2,
-    private platform: Platform
+    private platform: Platform,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -99,19 +100,35 @@ export class BankAccountConnectComponent implements OnInit {
     );
     if (this.isMobile()) {
       this.mobile$.next(true);
-    } else this.onAddAccount();
-
-    this.configService
-      .getConfig$()
-      .pipe(
-        take(1),
-        map((config) => (this.config = config))
-      )
-      .subscribe();
+    } else this.checkSupportedFiatAssets();
   }
 
   isMobile(): boolean {
     return this.platform.IOS || this.platform.ANDROID;
+  }
+
+  checkSupportedFiatAssets(): void {
+    this.configService
+      .getBank$()
+      .pipe(
+        take(1),
+        map((bank) => {
+          if (bank.supported_fiat_account_assets!.length == 0) {
+            this.error$.next(true);
+            this.eventService.handleEvent(
+              LEVEL.WARNING,
+              CODE.BANK_FEATURES_INCOMPLETE,
+              'Bank has no configured supported_fiat_account_assets'
+            );
+            this.errorService.handleError(
+              new Error('Bank has no configured supported_fiat_account_assets')
+            );
+          } else {
+            this.onAddAccount();
+          }
+        })
+      )
+      .subscribe();
   }
 
   onAddAccount(): void {
@@ -137,6 +154,15 @@ export class BankAccountConnectComponent implements OnInit {
       .subscribe();
   }
 
+  getCurrencyCode(bank: BankBankModel): Observable<string | undefined> {
+    return this.dialog
+      .open(BankAccountConfirmComponent, {
+        data: bank
+      })
+      .afterClosed()
+      .pipe(take(1));
+  }
+
   createWorkflow(
     kind: PostWorkflowBankModel.KindEnum
   ): Observable<WorkflowWithDetailsBankModel> {
@@ -153,10 +179,35 @@ export class BankAccountConnectComponent implements OnInit {
     );
   }
 
+  createExternalBankAccount(
+    account: any,
+    public_token: string,
+    code: string
+  ): void {
+    this.bankAccountService
+      .createExternalBankAccount(account.name, public_token, account.id, code)
+      .pipe(
+        map(() => this.isLoading$.next(false)),
+        catchError((err: any) => {
+          this.error$.next(true);
+          this.eventService.handleEvent(
+            LEVEL.ERROR,
+            CODE.DATA_ERROR,
+            'There was an error creating a bank account'
+          );
+          this.errorService.handleError(
+            new Error('There was an error creating a bank account')
+          );
+          return of(err);
+        })
+      )
+      .subscribe();
+  }
+
   bootstrapPlaid(linkToken: string): void {
     combineLatest([
       this.bankAccountService.getPlaidClient(),
-      this.configService.getConfig$()
+      this.configService.getConfig$().pipe(take(1))
     ])
       .pipe(
         take(1),
@@ -198,7 +249,7 @@ export class BankAccountConnectComponent implements OnInit {
   }
 
   plaidCreate(linkToken: string, language: string) {
-    //@ts-ignore
+    // @ts-ignore
     const client = Plaid.create({
       token: linkToken,
       language: language,
@@ -212,29 +263,30 @@ export class BankAccountConnectComponent implements OnInit {
     });
   }
 
-  plaidOnSuccess(public_token: string, metadata?: any): void {
+  plaidOnSuccess(public_token: string, metadata?: any) {
     if (metadata.accounts.length == 1) {
-      const account = metadata.accounts[0];
+      let account = metadata.accounts[0];
 
       this.configService
         .getBank$()
         .pipe(
           take(1),
           switchMap((bank) => {
-            if (
-              bank.supported_fiat_account_assets!.includes(
+            if (account.iso_currency_code) {
+              return bank.supported_fiat_account_assets!.includes(
                 account.iso_currency_code
-              ) ||
-              account.iso_currency_code == undefined
-            ) {
-              return this.bankAccountService.createExternalBankAccount(
-                account.name,
-                public_token,
-                account.id,
-                account.iso_currency_code
-              );
+              )
+                ? of(account.iso_currency_code)
+                : throwError(() => new Error('Unsupported asset'));
             } else {
-              return throwError(() => new Error('Unsupported asset'));
+              return this.getCurrencyCode(bank);
+            }
+          }),
+          map((code) => {
+            if (code) {
+              this.createExternalBankAccount(account, public_token, code);
+            } else {
+              this.stepper.next();
             }
           }),
           catchError((err: any) => {
@@ -244,14 +296,13 @@ export class BankAccountConnectComponent implements OnInit {
               CODE.DATA_ERROR,
               err.message
             );
-
             this.errorService.handleError(
               new Error('There was an error creating a bank account')
             );
             return of(err);
           })
         )
-        .subscribe(() => this.isLoading$.next(false));
+        .subscribe();
     } else {
       this.error$.next(true);
       this.eventService.handleEvent(

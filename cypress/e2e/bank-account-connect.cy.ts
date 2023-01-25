@@ -92,7 +92,7 @@ describe('bank-account-connect test', () => {
     app().should('not.exist');
   });
 
-  it('should handle success from Plaid', () => {
+  it('should handle success from Plaid with defined iso_currency_code', () => {
     // Indicates Plaid app is open
     cy.intercept('POST', '/link/heartbeat').as('heartbeat');
 
@@ -111,6 +111,81 @@ describe('bank-account-connect test', () => {
     cy.wait('@heartbeat').then(() => {
       plaid().find('button').last().click();
     });
+
+    app()
+      .find('strong')
+      .should('contain.text', text.bankAccountConnect.success);
+
+    // Navigate
+    app().find('button').contains(text.done).click();
+    app().should('not.exist');
+  });
+
+  it('should open confirm dialog on success from Plaid with undefined iso_currency_code', () => {
+    // Indicates Plaid app is open
+    cy.intercept('POST', '/link/heartbeat').as('heartbeat');
+
+    // Set mock Plaid iso_currency_code to undefined
+    let mockPlaidSuccess = { ...Plaid };
+    // @ts-ignore
+    mockPlaidSuccess.PLAID_NEXT_ON_SUCCESS.next_pane.sink.result.metadata.accounts[0][
+      'iso_currency_code'
+    ] = undefined;
+
+    cy.intercept('POST', '/link/workflow/next', (req) => {
+      req.reply(mockPlaidSuccess.PLAID_NEXT_ON_SUCCESS);
+    });
+
+    // Stop creation of external bank account
+    cy.intercept('POST', '/api/external_bank_accounts', (req) => {
+      req.reply({});
+    });
+
+    bankAccountConnectSetup();
+
+    // Continue
+    cy.wait('@heartbeat').then(() => {
+      plaid().find('button').last().click();
+    });
+
+    cy.get('h1').should('contain.text', text.bankAccountConnect.confirm.title);
+    cy.get('p')
+      .first()
+      .should('contain.text', text.bankAccountConnect.confirm.subtitle);
+
+    // Cancel
+    cy.get('mat-dialog-container').contains(text.cancel).click();
+  });
+
+  it('should add external bank account on confirm in the confirm dialog', () => {
+    // Indicates Plaid app is open
+    cy.intercept('POST', '/link/heartbeat').as('heartbeat');
+
+    // Set mock Plaid iso_currency_code to undefined
+    let mockPlaidSuccess = { ...Plaid };
+    // @ts-ignore
+    mockPlaidSuccess.PLAID_NEXT_ON_SUCCESS.next_pane.sink.result.metadata.accounts[0][
+      'iso_currency_code'
+    ] = undefined;
+
+    cy.intercept('POST', '/link/workflow/next', (req) => {
+      req.reply(mockPlaidSuccess.PLAID_NEXT_ON_SUCCESS);
+    });
+
+    // Stop creation of external bank account
+    cy.intercept('POST', '/api/external_bank_accounts', (req) => {
+      req.reply({});
+    });
+
+    bankAccountConnectSetup();
+
+    // Continue
+    cy.wait('@heartbeat').then(() => {
+      plaid().find('button').last().click();
+    });
+
+    // Confirm
+    cy.get('mat-dialog-container').contains(text.confirm).click();
 
     app()
       .find('strong')

@@ -5,14 +5,17 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import {
   BehaviorSubject,
-  combineLatest,
   catchError,
+  combineLatest,
+  EMPTY,
+  expand,
   map,
   of,
-  switchMap,
-  takeUntil,
+  reduce,
   Subject,
-  take
+  switchMap,
+  take,
+  takeUntil
 } from 'rxjs';
 
 // Services
@@ -42,6 +45,7 @@ import { ExternalBankAccountBankModel } from '@cybrid/cybrid-api-bank-angular/mo
 import {
   AccountBankModel,
   AccountsService,
+  ExternalBankAccountListBankModel,
   PostQuoteBankModel,
   QuoteBankModel,
   QuotesService,
@@ -81,6 +85,8 @@ export class TransferComponent implements OnInit, OnDestroy {
     route: 'account-list',
     origin: 'transfer'
   };
+
+  externalBankAccountsPerPage = 10;
 
   constructor(
     public configService: ConfigService,
@@ -159,20 +165,53 @@ export class TransferComponent implements OnInit, OnDestroy {
     this.transferGroup.controls.amount.updateValueAndValidity();
   }
 
+  // Expand function to page through external accounts
+  pageExternalAccounts(
+    perPage: number,
+    list: ExternalBankAccountListBankModel
+  ) {
+    return list.objects.length == perPage
+      ? this.bankAccountService.listExternalBankAccounts(
+          (Number(list.page) + 1).toString(),
+          perPage.toString()
+        )
+      : EMPTY;
+  }
+
+  accumulateExternalAccounts(
+    acc: ExternalBankAccountBankModel[],
+    value: ExternalBankAccountBankModel[]
+  ) {
+    return [...acc, ...value];
+  }
+
   listAccounts(): void {
     this.configService
       .getCustomer$()
       .pipe(
         switchMap((customer) =>
           combineLatest([
-            this.bankAccountService.listExternalBankAccounts().pipe(
-              map((list) => {
-                return list.objects.filter(
-                  (account) => account.state === 'completed'
-                );
-              }),
-              catchError((err) => of(err))
-            ),
+            this.bankAccountService
+              .listExternalBankAccounts(
+                undefined,
+                this.externalBankAccountsPerPage.toString()
+              )
+              .pipe(
+                expand((list) =>
+                  this.pageExternalAccounts(
+                    this.externalBankAccountsPerPage,
+                    list
+                  )
+                ),
+                map((list) => list.objects),
+                reduce((acc, value) =>
+                  this.accumulateExternalAccounts(acc, value)
+                ),
+                map((accounts) =>
+                  accounts.filter((account) => account.state === 'completed')
+                ),
+                catchError((err) => of(err))
+              ),
             this.accountsService
               .listAccounts(
                 undefined,

@@ -153,6 +153,14 @@ export default {
     mobile: {
       warning: 'Temporarily unavailable on mobile.',
       explanation: 'Please connect your bank account using a desktop browser.'
+    },
+
+    // Confirm dialog
+    confirm: {
+      title: 'Select Currency',
+      subtitle:
+        'We are unable to determine the currency of your account. Please select the correct currency from the options below.',
+      label: 'Currency'
     }
   },
 

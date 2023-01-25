@@ -23,6 +23,9 @@ import { BankAccountConnectComponent } from '@components';
 
 // Utility
 import { TestConstants } from '@constants';
+import { MatDialog } from '@angular/material/dialog';
+import { PostWorkflowBankModel } from '@cybrid/cybrid-api-bank-angular';
+import { MatStepper } from '@angular/material/stepper';
 
 describe('BankAccountConnectComponent', () => {
   let component: BankAccountConnectComponent;
@@ -51,6 +54,7 @@ describe('BankAccountConnectComponent', () => {
     'setPlaidClient',
     'createExternalBankAccount'
   ]);
+  let MockDialog = jasmine.createSpyObj('Dialog', ['open']);
   const error$ = throwError(() => {
     new Error('Error');
   });
@@ -77,6 +81,7 @@ describe('BankAccountConnectComponent', () => {
         { provide: ConfigService, useValue: MockConfigService },
         { provide: RoutingService, useValue: MockRoutingService },
         { provide: BankAccountService, useValue: MockBankAccountService },
+        { provide: MatDialog, useValue: MockDialog },
         Renderer2
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -92,13 +97,28 @@ describe('BankAccountConnectComponent', () => {
     MockBankAccountService.getWorkflow.and.returnValue(
       of(TestConstants.WORKFLOW_BANK_MODEL_WITH_DETAILS)
     );
+    MockBankAccountService.createExternalBankAccount.and.returnValue(
+      of(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL)
+    );
     MockBankAccountService.getPlaidClient.and.returnValue(of(false));
+    MockDialog = TestBed.inject(MatDialog);
+    MockDialog.open.and.returnValue({
+      afterClosed: () => of('USD')
+    });
 
     fixture = TestBed.createComponent(BankAccountConnectComponent);
     component = fixture.componentInstance;
     component.plaidScriptSrc = '/assets/plaidTestScript.js';
+  });
 
-    fixture.detectChanges();
+  afterEach(() => {
+    MockEventService.handleEvent.calls.reset();
+    MockErrorService.handleError.calls.reset();
+    MockConfigService.getConfig$.calls.reset();
+    MockConfigService.getBank$.calls.reset();
+    MockConfigService.getCustomer$.calls.reset();
+    MockRoutingService.handleRoute.calls.reset();
+    MockBankAccountService.createWorkflow.calls.reset();
   });
 
   it('should create', () => {
@@ -106,11 +126,53 @@ describe('BankAccountConnectComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should be disabled on mobile', () => {
+    const mobileSpy = spyOn(component.mobile$, 'next');
+
+    // Emulate mobile
+    component.isMobile = () => true;
+
+    component.ngOnInit();
+    expect(mobileSpy).toHaveBeenCalledWith(true);
+  });
+
+  it('should check for supported fiat assets if not on mobile', () => {
+    const checkSupportedFiatAssetsSpy = spyOn(
+      component,
+      'checkSupportedFiatAssets'
+    );
+
+    component.ngOnInit();
+    expect(checkSupportedFiatAssetsSpy).toHaveBeenCalled();
+  });
+
+  it('should check for supported fiat assets', () => {
+    const onAddAccountSpy = spyOn(component, 'onAddAccount');
+
+    component.checkSupportedFiatAssets();
+    expect(MockConfigService.getBank$).toHaveBeenCalled();
+    expect(onAddAccountSpy).toHaveBeenCalled();
+  });
+
+  it('should handle no supported fiat assets', () => {
+    let bank = { ...TestConstants.BANK_BANK_MODEL };
+    bank.supported_fiat_account_assets = [];
+    MockConfigService.getBank$.and.returnValue(of(bank));
+
+    component.checkSupportedFiatAssets();
+    expect(MockEventService.handleEvent).toHaveBeenCalled();
+    expect(MockErrorService.handleError).toHaveBeenCalled();
+
+    // Reset
+    MockConfigService.getBank$.and.returnValue(
+      of(TestConstants.BANK_BANK_MODEL)
+    );
+  });
+
   it('should add account', () => {
     component.bootstrapPlaid = () => undefined;
-    component.onAddAccount();
 
-    expect(MockConfigService.getConfig$).toHaveBeenCalled();
+    component.onAddAccount();
     expect(MockBankAccountService.createWorkflow).toHaveBeenCalled();
   });
 
@@ -119,15 +181,59 @@ describe('BankAccountConnectComponent', () => {
     MockBankAccountService.createWorkflow.and.returnValue(error$);
 
     component.onAddAccount();
-
     expect(MockErrorService.handleError).toHaveBeenCalled();
     expect(MockEventService.handleEvent).toHaveBeenCalled();
+
+    // Reset
+    MockBankAccountService.createWorkflow.and.returnValue(
+      of(TestConstants.WORKFLOW_BANK_MODEL)
+    );
+  });
+
+  it('should get the currency code', (done) => {
+    component
+      .getCurrencyCode(TestConstants.BANK_BANK_MODEL)
+      .subscribe((res) => {
+        expect(res).toEqual('USD');
+        done();
+      });
+  });
+
+  it('should create a workflow', (done) => {
+    component
+      .createWorkflow(PostWorkflowBankModel.KindEnum.Create)
+      .subscribe((workflow) => {
+        expect(workflow).toEqual(
+          TestConstants.WORKFLOW_BANK_MODEL_WITH_DETAILS
+        );
+        done();
+      });
+  });
+
+  it('should create an external bank account', () => {
+    const isLoadingSpy = spyOn(component.isLoading$, 'next');
+
+    component.createExternalBankAccount({ name: '', id: '' }, '', '');
+    expect(MockBankAccountService.createExternalBankAccount).toHaveBeenCalled();
+    expect(isLoadingSpy).toHaveBeenCalledWith(false);
+  });
+
+  it('should handle errors when creating an external bank account', () => {
+    const errorSpy = spyOn(component.error$, 'next');
+    MockBankAccountService.createExternalBankAccount.and.returnValue(error$);
+
+    component.createExternalBankAccount({ name: '', id: '' }, '', '');
+    expect(errorSpy).toHaveBeenCalledWith(true);
+    expect(MockErrorService.handleError).toHaveBeenCalled();
+    expect(MockEventService.handleEvent).toHaveBeenCalled();
+
+    // Reset
+    MockBankAccountService.createExternalBankAccount.and.returnValue(
+      of(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL)
+    );
   });
 
   it('should bootstrap the Plaid sdk', () => {
-    // Reset call count
-    MockBankAccountService.setPlaidClient.calls.reset();
-
     // Default
     component.bootstrapPlaid('');
 
@@ -139,6 +245,9 @@ describe('BankAccountConnectComponent', () => {
     expect(MockBankAccountService.setPlaidClient).toHaveBeenCalledOnceWith(
       true
     );
+
+    // Reset
+    MockBankAccountService.getPlaidClient.and.returnValue(of(false));
   });
 
   it('should handle errors when bootstrapping plaid', () => {
@@ -148,77 +257,82 @@ describe('BankAccountConnectComponent', () => {
 
     expect(MockErrorService.handleError).toHaveBeenCalled();
     expect(MockEventService.handleEvent).toHaveBeenCalled();
-  });
-
-  it('should handle plaidOnSuccess()', () => {
-    const testPlaidMetadata = {
-      accounts: [{ name: 'test', id: 'test', iso_currency_code: 'USD' }]
-    };
-
-    component.plaidOnSuccess('', testPlaidMetadata);
-
-    expect(MockBankAccountService.createExternalBankAccount).toHaveBeenCalled();
-  });
-
-  it('should handle an undefined asset', () => {
-    const testPlaidMetadata = {
-      accounts: [{ name: 'test', id: 'test', iso_currency_code: undefined }]
-    };
-
-    component.plaidOnSuccess('', testPlaidMetadata);
-
-    expect(MockBankAccountService.createExternalBankAccount).toHaveBeenCalled();
-  });
-
-  it('should handle an invalid asset', () => {
-    const errorSpy = spyOn(component.error$, 'next');
-    const testPlaidMetadata = {
-      accounts: [{ name: 'test', id: 'test', iso_currency_code: 'USD' }]
-    };
-
-    MockBankAccountService.createExternalBankAccount.calls.reset();
-
-    let bankBankModel = { ...TestConstants.BANK_BANK_MODEL };
-    bankBankModel.supported_fiat_account_assets = [];
-    MockConfigService.getBank$.and.returnValue(of(bankBankModel));
-
-    component.plaidOnSuccess('', testPlaidMetadata);
-
-    expect(errorSpy).toHaveBeenCalled();
-    expect(
-      MockBankAccountService.createExternalBankAccount
-    ).toHaveBeenCalledTimes(0);
 
     // Reset
-    MockConfigService.getBank$.and.returnValue(
-      of(TestConstants.BANK_BANK_MODEL)
-    );
+    MockBankAccountService.getPlaidClient.and.returnValue(error$);
   });
 
-  it('should handle an unsupported asset', () => {
+  it('should handle plaidOnSuccess() with multiple accounts selected', () => {
     const errorSpy = spyOn(component.error$, 'next');
 
-    // The comparing bank supported asset here is 'USD'
-    const testPlaidMetadata = {
-      accounts: [{ name: 'test', id: 'test', iso_currency_code: 'CAD' }]
-    };
-
-    component.plaidOnSuccess('', testPlaidMetadata);
-
-    expect(errorSpy).toHaveBeenCalled();
+    component.plaidOnSuccess('', {
+      accounts: [
+        { name: '', id: '', iso_currency_code: '' },
+        { name: '', id: '', iso_currency_code: '' }
+      ]
+    });
+    expect(errorSpy).toHaveBeenCalledWith(true);
+    expect(MockErrorService.handleError).toHaveBeenCalled();
+    expect(MockEventService.handleEvent).toHaveBeenCalled();
   });
 
-  it('should handle plaidOnExit()', () => {
-    component.ngOnInit();
+  it('should handle plaidOnSuccess() with a supported currency code', () => {
+    component.plaidOnSuccess('', {
+      accounts: [{ name: '', id: '', iso_currency_code: 'USD' }]
+    });
+    expect(MockBankAccountService.createExternalBankAccount).toHaveBeenCalled();
+  });
 
+  it('should handle plaidOnSuccess() with an unsupported currency code', () => {
+    const errorSpy = spyOn(component.error$, 'next');
+
+    component.plaidOnSuccess('', {
+      accounts: [{ name: '', id: '', iso_currency_code: 'CAD' }]
+    });
+    expect(errorSpy).toHaveBeenCalledWith(true);
+    expect(MockErrorService.handleError).toHaveBeenCalled();
+    expect(MockEventService.handleEvent).toHaveBeenCalled();
+  });
+
+  it('should handle plaidOnSuccess() with an undefined iso_currency_code', () => {
+    const getCurrencyCodeSpy = spyOn(component, 'getCurrencyCode');
+
+    component.plaidOnSuccess('', {
+      accounts: [{ name: '', id: '', iso_currency_code: undefined }]
+    });
+    expect(getCurrencyCodeSpy).toHaveBeenCalled();
+  });
+
+  it('should handle getCurrencyCode() returning undefined', () => {
+    // Ensure stepper is defined
+    component.stepper = { next: () => {} } as MatStepper;
     const stepperSpy = spyOn(component.stepper, 'next');
 
-    // Default exit
-    component.plaidOnExit('');
+    MockDialog.open.and.returnValue({
+      afterClosed: () => of(undefined)
+    });
 
+    component.plaidOnSuccess('', {
+      accounts: [{ name: '', id: '', iso_currency_code: undefined }]
+    });
     expect(stepperSpy).toHaveBeenCalled();
 
-    // Exit on error
+    // Reset
+    MockDialog.open.and.returnValue({
+      afterClosed: () => of('USD')
+    });
+  });
+
+  it('should handle a successful plaidOnExit()', () => {
+    // Ensure stepper is defined
+    component.stepper = { next: () => {} } as MatStepper;
+    const stepperSpy = spyOn(component.stepper, 'next');
+
+    component.plaidOnExit('');
+    expect(stepperSpy).toHaveBeenCalled();
+  });
+
+  it('should handle plaidOnExit() with an error', () => {
     component.plaidOnExit('error');
 
     expect(MockErrorService.handleError).toHaveBeenCalled();
@@ -228,17 +342,5 @@ describe('BankAccountConnectComponent', () => {
   it('should navigate onComplete()', () => {
     component.onComplete();
     expect(MockRoutingService.handleRoute).toHaveBeenCalled();
-  });
-
-  it('should be disabled on mobile', () => {
-    const mobileSpy = spyOn(component.mobile$, 'next');
-
-    // Emulate mobile
-    component.isMobile = () => true;
-
-    // Re-initialize component
-    component.ngOnInit();
-
-    expect(mobileSpy).toHaveBeenCalledWith(true);
   });
 });
