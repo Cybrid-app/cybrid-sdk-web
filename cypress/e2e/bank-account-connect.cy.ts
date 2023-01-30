@@ -67,7 +67,7 @@ describe('bank-account-connect test', () => {
     });
   });
 
-  xit('should allow resume on Plaid exit', () => {
+  it('should allow resume on Plaid exit', () => {
     // Indicates Plaid app is open
     cy.intercept('POST', '/link/heartbeat').as('heartbeat');
 
@@ -85,7 +85,7 @@ describe('bank-account-connect test', () => {
     app().get('app-bank-account-connect').find('app-loading').should('exist');
   });
 
-  xit('should cancel on Plaid exit', () => {
+  it('should cancel on Plaid exit', () => {
     // Indicates Plaid app is open
     cy.intercept('POST', '/link/heartbeat').as('heartbeat');
 
@@ -103,7 +103,7 @@ describe('bank-account-connect test', () => {
     app().should('not.exist');
   });
 
-  xit('should handle success from Plaid with defined iso_currency_code', () => {
+  it('should handle success from Plaid with defined iso_currency_code', () => {
     // Indicates Plaid app is open
     cy.intercept('POST', '/link/heartbeat').as('heartbeat');
 
@@ -132,7 +132,7 @@ describe('bank-account-connect test', () => {
     app().should('not.exist');
   });
 
-  xit('should open confirm dialog on success from Plaid with undefined iso_currency_code', () => {
+  it('should open confirm dialog on success from Plaid with undefined iso_currency_code', () => {
     // Indicates Plaid app is open
     cy.intercept('POST', '/link/heartbeat').as('heartbeat');
 
@@ -168,7 +168,7 @@ describe('bank-account-connect test', () => {
     cy.get('mat-dialog-container').contains(text.cancel).click();
   });
 
-  xit('should add external bank account on confirm in the confirm dialog', () => {
+  it('should add external bank account on confirm in the confirm dialog', () => {
     // Indicates Plaid app is open
     cy.intercept('POST', '/link/heartbeat').as('heartbeat');
 
