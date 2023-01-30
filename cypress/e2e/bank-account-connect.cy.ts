@@ -1,5 +1,6 @@
 import * as translations from 'library/src/shared/i18n/en';
 import { Plaid } from '../support/plaid';
+import { TestConstants } from '@constants';
 
 const text = translations.default;
 
@@ -44,6 +45,16 @@ describe('bank-account-connect test', () => {
   });
 
   it('should handle error loading Plaid script', () => {
+    // Mock POST Workflow
+    cy.intercept('POST', '/api/workflows', (req) => {
+      req.reply(TestConstants.WORKFLOW_BANK_MODEL);
+    }).as('postWorkflow');
+
+    // Mock GET Workflow
+    cy.intercept('GET', '/api/workflows/*', (req) => {
+      req.reply(TestConstants.WORKFLOW_BANK_MODEL_WITH_DETAILS);
+    }).as('getWorkflow');
+
     // Force loading Plaid script to error
     cy.intercept('GET', '/link/v2/stable/*', (req) => {
       req.reply({ forceNetworkError: true });
