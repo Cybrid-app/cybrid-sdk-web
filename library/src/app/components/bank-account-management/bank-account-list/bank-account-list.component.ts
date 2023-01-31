@@ -10,14 +10,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 
-import {
-  BehaviorSubject,
-  catchError,
-  map,
-  of,
-  Subject,
-  take
-} from 'rxjs';
+import { BehaviorSubject, catchError, map, of, Subject, take } from 'rxjs';
 
 // Services
 import {
@@ -125,7 +118,7 @@ export class BankAccountListComponent
       .pipe(
         take(1),
         map((accounts) => {
-          // console.log(accounts);
+          console.log(accounts);
 
           this.dataSource.data = accounts.objects;
           this.totalRows = Number(accounts.total);

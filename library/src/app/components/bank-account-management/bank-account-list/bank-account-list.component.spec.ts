@@ -142,7 +142,6 @@ describe('BankAccountListComponent', () => {
     expect(defaultSort).toEqual('');
   });
 
-
   it('should navigate to bank-connect onAddAccount()', () => {
     component.onAddAccount();
     expect(MockRoutingService.handleRoute).toHaveBeenCalled();

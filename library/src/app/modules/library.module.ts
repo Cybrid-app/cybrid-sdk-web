@@ -67,7 +67,8 @@ import {
   BankAccountConfirmComponent,
   TransferComponent,
   TransferConfirmComponent,
-  TransferDetailsComponent, BankAccountListComponent
+  TransferDetailsComponent,
+  BankAccountListComponent
 } from '@components';
 
 // Utility
