@@ -479,6 +479,66 @@ export class TestConstants {
           plaid_institution_id: null,
           plaid_account_mask: null,
           plaid_account_name: null
+        },
+        {
+          guid: '598bbcc4da21f23nd8daf64c1076217b',
+          name: 'USD',
+          asset: 'USD',
+          account_kind: 'plaid',
+          environment: 'sandbox',
+          created_at: '2022-12-02T16:45:29.087Z',
+          customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+          bank_guid: 'b36cf9028e2356de7732e4c505c84fbc',
+          state: 'failed',
+          failure_code: null,
+          plaid_institution_id: null,
+          plaid_account_mask: null,
+          plaid_account_name: null
+        },
+        {
+          guid: '598bbc22ke21f23nd8daf64c1076217b',
+          name: 'USD',
+          asset: 'USD',
+          account_kind: 'plaid',
+          environment: 'sandbox',
+          created_at: '2022-12-02T16:45:29.087Z',
+          customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+          bank_guid: 'b36cf9028e2356de7732e4c505c84fbc',
+          state: 'refresh_required',
+          failure_code: null,
+          plaid_institution_id: null,
+          plaid_account_mask: null,
+          plaid_account_name: null
+        },
+        {
+          guid: '598bbc22kd21f23nd8daf64c1076217b',
+          name: 'USD',
+          asset: 'USD',
+          account_kind: 'plaid',
+          environment: 'sandbox',
+          created_at: '2022-12-02T16:45:29.087Z',
+          customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+          bank_guid: 'b36cf9028e2356de7732e4c505c84fbc',
+          state: 'deleting',
+          failure_code: null,
+          plaid_institution_id: null,
+          plaid_account_mask: null,
+          plaid_account_name: null
+        },
+        {
+          guid: '883bbc22kd21f23nd8daf64c1076217b',
+          name: 'USD',
+          asset: 'USD',
+          account_kind: 'plaid',
+          environment: 'sandbox',
+          created_at: '2022-12-02T16:45:29.087Z',
+          customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
+          bank_guid: 'b36cf9028e2356de7732e4c505c84fbc',
+          state: 'deleted',
+          failure_code: null,
+          plaid_institution_id: null,
+          plaid_account_mask: null,
+          plaid_account_name: null
         }
       ]
     };
