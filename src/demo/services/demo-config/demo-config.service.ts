@@ -21,6 +21,9 @@ export class DemoConfigService {
       case 'demo': {
         return environment.idpAuthUrl.demo;
       }
+      case 'local': {
+        return environment.idpAuthUrl.local;
+      }
       case 'staging': {
         return environment.idpAuthUrl.staging;
       }

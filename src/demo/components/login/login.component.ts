@@ -25,7 +25,7 @@ export interface DemoCredentials {
   token: string;
   customer: string;
   isPublic: boolean;
-  environment: 'demo' | 'staging' | 'sandbox' | 'production';
+  environment: 'demo' | 'local' | 'staging' | 'sandbox' | 'production';
 }
 
 @Component({
@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
   @Output() credentials = new EventEmitter<DemoCredentials>();
 
   bearer = false;
-  environment = ['demo', 'staging', 'sandbox', 'production'];
+  environment = ['demo', 'local', 'staging', 'sandbox', 'production'];
   demoCredentials: DemoCredentials = {
     token: '',
     customer: '',
@@ -89,6 +89,9 @@ export class LoginComponent implements OnInit {
     switch (env) {
       case 'demo': {
         return environment.bankApiCustomerBasePath.demo;
+      }
+      case 'local': {
+        return environment.bankApiCustomerBasePath.local;
       }
       case 'staging': {
         return environment.bankApiCustomerBasePath.staging;

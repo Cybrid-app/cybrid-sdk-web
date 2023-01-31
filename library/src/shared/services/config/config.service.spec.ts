@@ -141,8 +141,16 @@ describe('ConfigService', () => {
       environment.demoBankApiBasePath
     );
 
-    // 'staging'
+    // 'local'
     let testConfig = { ...TestConstants.CONFIG };
+    testConfig.environment = 'local';
+
+    service.setEnvironment(testConfig);
+    expect(service['configuration'].basePath).toEqual(
+      environment.localBankApiBasePath
+    );
+
+    // 'staging'
     testConfig.environment = 'staging';
 
     service.setEnvironment(testConfig);
