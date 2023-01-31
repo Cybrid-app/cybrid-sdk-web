@@ -32,9 +32,6 @@ import {
   RoutingService
 } from '@services';
 
-// Components
-import { BankAccountDetailsComponent } from '@components';
-
 // Models
 import { ExternalBankAccountBankModel } from '@cybrid/cybrid-api-bank-angular/model/externalBankAccount';
 import { TestConstants } from '@constants';
@@ -157,13 +154,7 @@ export class BankAccountListComponent
       .subscribe();
   }
 
-  onAccountSelect(account: ExternalBankAccountBankModel): void {
-    const dialog = this.dialog.open(BankAccountDetailsComponent, {
-      disableClose: false,
-      data: account
-    });
-    dialog.afterClosed().subscribe(() => this.getExternalBankAccounts());
-  }
+  onAccountSelect(account: ExternalBankAccountBankModel): void {}
 
   onAddAccount(): void {
     this.router.handleRoute({
