@@ -16,7 +16,6 @@ import {
   map,
   of,
   Subject,
-  switchMap,
   take
 } from 'rxjs';
 
@@ -34,7 +33,6 @@ import {
 
 // Models
 import { ExternalBankAccountBankModel } from '@cybrid/cybrid-api-bank-angular/model/externalBankAccount';
-import { TestConstants } from '@constants';
 
 @Component({
   selector: 'app-bank-account-list',
@@ -126,10 +124,9 @@ export class BankAccountListComponent
       )
       .pipe(
         take(1),
-        switchMap(() =>
-          of(TestConstants.EXTERNAL_BANK_ACCOUNT_LIST_BANK_MODEL)
-        ),
         map((accounts) => {
+          // console.log(accounts);
+
           this.dataSource.data = accounts.objects;
           this.totalRows = Number(accounts.total);
 
