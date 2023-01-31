@@ -14,7 +14,7 @@
         (matSortChange)="sortChange()"
         [dataSource]="dataSource"
         class="mat-button-toggle-group-appearance-standard"
-        [ngClass]="{ 'cybrid-paginator': dataSource.data.length > 0 }"
+        [ngClass]="{ 'cybrid-paginator': totalRows > 5 }"
       >
         <!-- Account -->
         <ng-container matColumnDef="account">
@@ -41,17 +41,31 @@
 
         <!-- Status -->
         <ng-container matColumnDef="status">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            mat-sort-header=""
-            arrowPosition="before"
-          >
+          <th mat-header-cell *matHeaderCellDef>
             <div class="cybrid-sort-header">Status</div>
           </th>
           <td id="status" mat-cell *matCellDef="let account">
             <div class="cybrid-status-cell">
-              <mat-icon color="primary"> check_circle</mat-icon>
+              <ng-container [ngSwitch]="account.state">
+                <mat-icon *ngSwitchCase="'storing'" color="primary"
+                  >check_circle</mat-icon
+                >
+                <mat-icon *ngSwitchCase="'completed'" color="primary"
+                  >check_circle</mat-icon
+                >
+                <mat-icon *ngSwitchCase="'failed'" color="warn"
+                  >cancel</mat-icon
+                >
+                <mat-icon *ngSwitchCase="'refresh_required'" color="warn"
+                  >refresh</mat-icon
+                >
+                <mat-icon *ngSwitchCase="'deleting'" color="warn"
+                  >auto_delete</mat-icon
+                >
+                <mat-icon *ngSwitchCase="'deleted'" color="warn"
+                  >delete</mat-icon
+                >
+              </ng-container>
             </div>
           </td>
         </ng-container>
@@ -78,7 +92,7 @@
     [pageSizeOptions]="pageSizeOptions"
     (page)="pageChange($event)"
     class="mat-button-toggle-group-appearance-standard"
-    [ngClass]="{ 'cybrid-hide': dataSource.data.length === 0 }"
+    [ngClass]="{ 'cybrid-hide': totalRows <= 5 }"
     aria-label="bank accounts"
   >
   </mat-paginator>

@@ -10,10 +10,19 @@ import { MatSort } from '@angular/material/sort';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 
-import { BehaviorSubject, catchError, map, of, Subject, switchMap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  map,
+  of,
+  Subject,
+  switchMap,
+  take
+} from 'rxjs';
 
 // Services
 import {
+  BankAccountService,
   CODE,
   ConfigService,
   ErrorService,
@@ -22,13 +31,13 @@ import {
   RoutingData,
   RoutingService
 } from '@services';
-import { ExternalBankAccountsService } from '@cybrid/cybrid-api-bank-angular';
 
 // Components
 import { BankAccountDetailsComponent } from '@components';
 
 // Models
 import { ExternalBankAccountBankModel } from '@cybrid/cybrid-api-bank-angular/model/externalBankAccount';
+import { TestConstants } from '@constants';
 
 @Component({
   selector: 'app-bank-account-list',
@@ -67,13 +76,13 @@ export class BankAccountListComponent
     public configService: ConfigService,
     private errorService: ErrorService,
     private eventService: EventService,
-    private bankAccountService: ExternalBankAccountsService,
+    private bankAccountService: BankAccountService,
     public dialog: MatDialog,
     private router: RoutingService
   ) {}
 
   ngOnInit(): void {
-    this.listBankAccounts();
+    this.getExternalBankAccounts();
   }
 
   ngAfterContentInit() {
@@ -107,30 +116,27 @@ export class BankAccountListComponent
     this.pageSize = event.pageSize;
     this.currentPage = event.pageIndex;
 
-    this.listBankAccounts();
+    this.getExternalBankAccounts();
   }
 
-  listBankAccounts(): void {
+  getExternalBankAccounts(): void {
     this.isLoadingResults = true;
 
-    this.configService
-      .getConfig$()
+    this.bankAccountService
+      .listExternalBankAccounts(
+        this.currentPage.toString(),
+        this.pageSize.toString()
+      )
       .pipe(
-        switchMap((config) =>
-          this.bankAccountService.listExternalBankAccounts(
-            this.currentPage.toString(),
-            this.pageSize.toString(),
-            undefined,
-            undefined,
-            config.customer
-          )
+        take(1),
+        switchMap(() =>
+          of(TestConstants.EXTERNAL_BANK_ACCOUNT_LIST_BANK_MODEL)
         ),
         map((accounts) => {
-          this.isLoading$.next(false);
-
           this.dataSource.data = accounts.objects;
           this.totalRows = Number(accounts.total);
 
+          this.isLoading$.next(false);
           this.isLoadingResults = false;
         }),
         catchError((err) => {
@@ -152,10 +158,11 @@ export class BankAccountListComponent
   }
 
   onAccountSelect(account: ExternalBankAccountBankModel): void {
-    this.dialog.open(BankAccountDetailsComponent, {
+    const dialog = this.dialog.open(BankAccountDetailsComponent, {
       disableClose: false,
       data: account
     });
+    dialog.afterClosed().subscribe(() => this.getExternalBankAccounts());
   }
 
   onAddAccount(): void {
