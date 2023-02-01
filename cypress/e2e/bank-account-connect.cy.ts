@@ -79,7 +79,7 @@ describe('bank-account-connect test', () => {
     });
 
     // Resume
-    app().get('strong').should('contain.text', text.bankAccountConnect.resume);
+    app().get('strong').should('contain.text', text.bankAccountConnect.resumeAdding);
     app().get('button').contains(text.resume).click();
 
     app().get('app-bank-account-connect').find('app-loading').should('exist');
@@ -97,7 +97,7 @@ describe('bank-account-connect test', () => {
     });
 
     // Cancel
-    app().get('strong').should('contain.text', text.bankAccountConnect.resume);
+    app().get('strong').should('contain.text', text.bankAccountConnect.resumeAdding);
     app().get('button').contains(text.cancel).click();
 
     app().should('not.exist');
@@ -125,7 +125,7 @@ describe('bank-account-connect test', () => {
 
     app()
       .find('strong')
-      .should('contain.text', text.bankAccountConnect.success);
+      .should('contain.text', text.bankAccountConnect.successAdded);
 
     // Navigate
     app().find('button').contains(text.done).click();
@@ -200,7 +200,7 @@ describe('bank-account-connect test', () => {
 
     app()
       .find('strong')
-      .should('contain.text', text.bankAccountConnect.success);
+      .should('contain.text', text.bankAccountConnect.successAdded);
 
     // Navigate
     app().find('button').contains(text.done).click();

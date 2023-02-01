@@ -46,6 +46,7 @@ import { Poll, PollConfig } from '../../../../shared/utility/poll/poll';
 import { getLanguageFromLocale } from '../../../../shared/utility/locale-language';
 import { MatDialog } from '@angular/material/dialog';
 import { BankAccountConfirmComponent } from '../bank-account-confirm/bank-account-confirm.component';
+import { ActivatedRoute, NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'app-bank-account-connect',
@@ -72,6 +73,8 @@ export class BankAccountConnectComponent implements OnInit {
     route: 'price-list'
   };
 
+  params: NavigationExtras | undefined;
+
   mobile$: BehaviorSubject<boolean | null> = new BehaviorSubject<
     boolean | null
   >(null);
@@ -87,6 +90,7 @@ export class BankAccountConnectComponent implements OnInit {
     private workflowService: WorkflowsService,
     private customersService: CustomersService,
     private router: RoutingService,
+    private route: ActivatedRoute,
     private _renderer2: Renderer2,
     private platform: Platform,
     private dialog: MatDialog
@@ -132,22 +136,25 @@ export class BankAccountConnectComponent implements OnInit {
   }
 
   onAddAccount(): void {
-    this.createWorkflow(PostWorkflowBankModel.KindEnum.Create)
+    this.route.queryParams
       .pipe(
+        take(1),
+        switchMap((params) => {
+          const externalAccountGuid = params['externalAccountGuid'];
+          this.params = externalAccountGuid;
+
+          return externalAccountGuid
+            ? this.createWorkflow(
+                PostWorkflowBankModel.KindEnum.Update,
+                externalAccountGuid
+              )
+            : this.createWorkflow(PostWorkflowBankModel.KindEnum.Create);
+        }),
         map((workflow) => {
           this.bootstrapPlaid(workflow.plaid_link_token!);
         }),
         catchError((err: any) => {
           this.error$.next(true);
-          this.eventService.handleEvent(
-            LEVEL.ERROR,
-            CODE.DATA_ERROR,
-            'There was an error creating a bank account'
-          );
-
-          this.errorService.handleError(
-            new Error('There was an error creating a bank account')
-          );
           return of(err);
         })
       )
@@ -164,19 +171,22 @@ export class BankAccountConnectComponent implements OnInit {
   }
 
   createWorkflow(
-    kind: PostWorkflowBankModel.KindEnum
+    kind: PostWorkflowBankModel.KindEnum,
+    externalAccountGuid?: string
   ): Observable<WorkflowWithDetailsBankModel> {
     const poll = new Poll(this.pollConfig);
     let workflow_guid: string;
 
-    return this.bankAccountService.createWorkflow(kind).pipe(
-      map((workflow) => (workflow_guid = workflow.guid!)),
-      switchMap(() => poll.start()),
-      takeUntil(merge(poll.session$, this.unsubscribe$)),
-      switchMap(() => this.bankAccountService.getWorkflow(workflow_guid)),
-      skipWhile((workflow) => !workflow.plaid_link_token),
-      tap(() => poll.stop())
-    );
+    return this.bankAccountService
+      .createWorkflow(kind, externalAccountGuid)
+      .pipe(
+        map((workflow) => (workflow_guid = workflow.guid!)),
+        switchMap(() => poll.start()),
+        takeUntil(merge(poll.session$, this.unsubscribe$)),
+        switchMap(() => this.bankAccountService.getWorkflow(workflow_guid)),
+        skipWhile((workflow) => !workflow.plaid_link_token),
+        tap(() => poll.stop())
+      );
   }
 
   createExternalBankAccount(
@@ -190,14 +200,6 @@ export class BankAccountConnectComponent implements OnInit {
         map(() => this.isLoading$.next(false)),
         catchError((err: any) => {
           this.error$.next(true);
-          this.eventService.handleEvent(
-            LEVEL.ERROR,
-            CODE.DATA_ERROR,
-            'There was an error creating a bank account'
-          );
-          this.errorService.handleError(
-            new Error('There was an error creating a bank account')
-          );
           return of(err);
         })
       )
@@ -264,7 +266,19 @@ export class BankAccountConnectComponent implements OnInit {
   }
 
   plaidOnSuccess(public_token: string, metadata?: any) {
-    if (metadata.accounts.length == 1) {
+    if (this.params) {
+      this.isLoading$.next(false);
+    } else if (!this.params && metadata.accounts.length > 1) {
+      this.error$.next(true);
+      this.eventService.handleEvent(
+        LEVEL.ERROR,
+        CODE.DATA_ERROR,
+        'Multiple accounts unsupported, select only one account'
+      );
+      this.errorService.handleError(
+        new Error('Multiple accounts unsupported, select only one account')
+      );
+    } else if (!this.params && metadata.accounts.length == 1) {
       let account = metadata.accounts[0];
 
       this.configService
@@ -291,28 +305,10 @@ export class BankAccountConnectComponent implements OnInit {
           }),
           catchError((err: any) => {
             this.error$.next(true);
-            this.eventService.handleEvent(
-              LEVEL.ERROR,
-              CODE.DATA_ERROR,
-              err.message
-            );
-            this.errorService.handleError(
-              new Error('There was an error creating a bank account')
-            );
             return of(err);
           })
         )
         .subscribe();
-    } else {
-      this.error$.next(true);
-      this.eventService.handleEvent(
-        LEVEL.ERROR,
-        CODE.DATA_ERROR,
-        'Multiple accounts unsupported, select only one account'
-      );
-      this.errorService.handleError(
-        new Error('Multiple accounts unsupported, select only one account')
-      );
     }
   }
 

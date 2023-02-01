@@ -148,8 +148,11 @@ export default {
   // Bank account connect component
   bankAccountConnect: {
     addAccount: 'Adding account...',
-    success: 'Account successfully added.',
-    resume: 'Resume adding account.',
+    reconnectAccount: 'Reconnecting account...',
+    successAdded: 'Account successfully added.',
+    successReconnect: 'Account successfully reconnected.',
+    resumeAdding: 'Resume adding account.',
+    resumeConnect: 'Resume reconnecting account',
     mobile: {
       warning: 'Temporarily unavailable on mobile.',
       explanation: 'Please connect your bank account using a desktop browser.'
@@ -162,6 +165,13 @@ export default {
         'We are unable to determine the currency of your account. Please select the correct currency from the options below.',
       label: 'Currency'
     }
+  },
+
+  // Bank account list component
+  bankAccountList: {
+    account: 'Account',
+    status: 'Status',
+    addAccount: 'ADD ACCOUNT'
   },
 
   // Transfer component

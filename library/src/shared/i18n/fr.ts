@@ -149,8 +149,11 @@ export default {
   // Bank account connect component
   bankAccountConnect: {
     addAccount: 'Ajout de compte...',
-    success: 'Compte ajouté avec succès.',
-    resume: "Reprendre l'ajout du compte.",
+    reconnectAccount: 'Reconnexion du compte...',
+    successAdded: 'Compte ajouté avec succès.',
+    successReconnect: 'Compte reconnecté avec succès.',
+    resumeAdding: "Reprendre l'ajout du compte.",
+    resumeConnect: 'Reprendre la reconnexion du compte',
     mobile: {
       warning: 'Temporairement indisponible sur mobile.',
       explanation:
@@ -164,6 +167,13 @@ export default {
         'Nous ne sommes pas en mesure de déterminer la devise de votre compte. Veuillez sélectionner la bonne devise parmi les options ci-dessous.',
       label: 'Devise'
     }
+  },
+
+  // Bank account list component
+  bankAccountList: {
+    account: 'Compte',
+    status: 'Statut',
+    addAccount: 'AJOUTER UN COMPTE'
   },
 
   // Transfer component

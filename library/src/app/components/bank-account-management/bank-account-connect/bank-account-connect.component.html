@@ -27,13 +27,17 @@
                 <ng-container *ngIf="isLoading$ | async; else success">
                   <app-loading [diameter]="16"></app-loading>
                   <strong>{{
-                    'bankAccountConnect.addAccount' | translate
+                    params
+                      ? ('bankAccountConnect.reconnectAccount' | translate)
+                      : ('bankAccountConnect.addAccount' | translate)
                   }}</strong></ng-container
                 >
                 <ng-template #success>
                   <mat-icon color="primary">check_circle</mat-icon>
                   <strong>{{
-                    'bankAccountConnect.success' | translate
+                    params
+                      ? ('bankAccountConnect.successReconnect' | translate)
+                      : ('bankAccountConnect.successAdded' | translate)
                   }}</strong>
                 </ng-template>
               </div>
@@ -56,7 +60,11 @@
             <div class="connect-content">
               <div>
                 <mat-icon color="primary">play_circle</mat-icon>
-                <strong>{{ 'bankAccountConnect.resume' | translate }}</strong>
+                <strong>{{
+                  params
+                    ? ('bankAccountConnect.resumeReconnecting' | translate)
+                    : ('bankAccountConnect.resumeAdding' | translate)
+                }}</strong>
               </div>
             </div>
             <div class="cybrid-actions">

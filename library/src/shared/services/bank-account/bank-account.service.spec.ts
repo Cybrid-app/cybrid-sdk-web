@@ -4,9 +4,14 @@ import { TestBed } from '@angular/core/testing';
 
 import { HttpLoaderFactory } from '../../../app/modules/library.module';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
-import { BankAccountService, ConfigService } from '@services';
+import {
+  BankAccountService,
+  ConfigService,
+  ErrorService,
+  EventService
+} from '@services';
 import { TestConstants } from '@constants';
 import {
   ExternalBankAccountsService,
@@ -16,6 +21,14 @@ import {
 
 describe('BankAccountManagementService', () => {
   let service: BankAccountService;
+  let MockEventService = jasmine.createSpyObj('EventService', [
+    'getEvent',
+    'handleEvent'
+  ]);
+  let MockErrorService = jasmine.createSpyObj('ErrorService', [
+    'getError',
+    'handleError'
+  ]);
   let MockConfigService = jasmine.createSpyObj('ConfigService', {
     getConfig$: of(TestConstants.CONFIG)
   });
@@ -27,6 +40,9 @@ describe('BankAccountManagementService', () => {
     'createWorkflow',
     'getWorkflow'
   ]);
+  const error$ = throwError(() => {
+    new Error('Error');
+  });
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -41,6 +57,8 @@ describe('BankAccountManagementService', () => {
         })
       ],
       providers: [
+        { provide: EventService, useValue: MockEventService },
+        { provide: ErrorService, useValue: MockErrorService },
         { provide: ConfigService, useValue: MockConfigService },
         {
           provide: ExternalBankAccountsService,
@@ -50,6 +68,8 @@ describe('BankAccountManagementService', () => {
       ]
     });
     service = TestBed.inject(BankAccountService);
+    MockEventService = TestBed.inject(EventService);
+    MockErrorService = TestBed.inject(ErrorService);
     MockConfigService = TestBed.inject(ConfigService);
     MockExternalBankAccountService = TestBed.inject(
       ExternalBankAccountsService
@@ -129,7 +149,7 @@ describe('BankAccountManagementService', () => {
       );
   });
 
-  it('should create a workflow', () => {
+  it('should create a link_token_create workflow', () => {
     const kind: PostWorkflowBankModel.KindEnum = 'link_token_create';
 
     service
@@ -139,6 +159,71 @@ describe('BankAccountManagementService', () => {
           service.postWorkflowBankModel
         )
       );
+  });
+
+  it('should create a link_token_update workflow', () => {
+    const kind: PostWorkflowBankModel.KindEnum = 'link_token_update';
+    const externalBankAccountGuid = '';
+
+    const postWorkflowBankModel: PostWorkflowBankModel = {
+      type: 'plaid',
+      kind: kind,
+      customer_guid: '',
+      external_bank_account_guid: externalBankAccountGuid,
+      link_customization_name: 'default',
+      language: 'en'
+    };
+
+    service
+      .createWorkflow(kind, externalBankAccountGuid)
+      .subscribe(() =>
+        expect(MockWorkflowService.createWorkflow).toHaveBeenCalledWith(
+          postWorkflowBankModel
+        )
+      );
+  });
+
+  it('should catch any errors on createExternalBankAccount', () => {
+    MockExternalBankAccountService.createExternalBankAccount.and.returnValue(
+      error$
+    );
+
+    service.createExternalBankAccount('', '', '', '').subscribe();
+    expect(MockEventService.handleEvent).toHaveBeenCalled();
+    expect(MockErrorService.handleError).toHaveBeenCalled();
+
+    // Reset
+    MockExternalBankAccountService.createExternalBankAccount.and.returnValue(
+      of(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL)
+    );
+  });
+
+  it('should catch any errors on creating a link_token_create workflow', () => {
+    MockWorkflowService.createWorkflow.and.returnValue(error$);
+
+    service.createWorkflow(PostWorkflowBankModel.KindEnum.Create).subscribe();
+    expect(MockEventService.handleEvent).toHaveBeenCalled();
+    expect(MockErrorService.handleError).toHaveBeenCalled();
+
+    // Reset
+    MockWorkflowService.createWorkflow.and.returnValue(
+      of(TestConstants.WORKFLOW_BANK_MODEL)
+    );
+  });
+
+  it('should catch any errors on creating a link_token_update workflow', () => {
+    MockWorkflowService.createWorkflow.and.returnValue(error$);
+
+    service
+      .createWorkflow(PostWorkflowBankModel.KindEnum.Create, '')
+      .subscribe();
+    expect(MockEventService.handleEvent).toHaveBeenCalled();
+    expect(MockErrorService.handleError).toHaveBeenCalled();
+
+    // Reset
+    MockWorkflowService.createWorkflow.and.returnValue(
+      of(TestConstants.WORKFLOW_BANK_MODEL)
+    );
   });
 
   it('should get a workflow', () => {

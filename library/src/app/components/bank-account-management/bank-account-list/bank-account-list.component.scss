@@ -1,0 +1,62 @@
+table {
+  mat-row:last-of-type {
+    border-bottom: none;
+  }
+}
+
+.cybrid-table {
+  position: relative;
+}
+
+mat-progress-bar {
+  position: absolute;
+  top: 3.5rem;
+}
+
+.cybrid-sort-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.cybrid-account-cell {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+
+  div {
+    display: flex;
+    gap: 0.25rem;
+  }
+}
+
+.mat-column-status {
+  justify-content: flex-end;
+}
+
+.cybrid-status-cell {
+  text-align: end;
+
+  mat-icon {
+    padding-right: 1rem;
+  }
+
+  button {
+    margin-right: 0.5rem;
+    mat-icon {
+      padding-right: 0;
+    }
+  }
+}
+
+td.mat-cell:last-of-type {
+  padding-right: 12px;
+}
+
+.cybrid-hide {
+  display: none;
+}
+
+@media screen and (max-width: 599px) {
+}
