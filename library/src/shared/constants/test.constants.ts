@@ -2,6 +2,7 @@
 import {
   AccountBankModel,
   AccountListBankModel,
+  AssetListBankModel,
   BankBankModel,
   CustomerBankModel,
   ExternalBankAccountBankModel,
@@ -40,6 +41,42 @@ export class TestConstants {
     customer: '378c691c1b5ba3b938e17c1726202fe4',
     fiat: 'USD',
     environment: 'demo'
+  };
+
+  static ASSET_LIST_BANK_MODEL: AssetListBankModel = {
+    total: '4',
+    page: '0',
+    per_page: '10',
+    objects: [
+      {
+        type: 'fiat',
+        code: 'CAD',
+        name: 'Canadian Dollar',
+        symbol: '$',
+        decimals: '2'
+      },
+      {
+        type: 'fiat',
+        code: 'USD',
+        name: 'United States Dollar',
+        symbol: '$',
+        decimals: '2'
+      },
+      {
+        type: 'crypto',
+        code: 'BTC',
+        name: 'Bitcoin',
+        symbol: '₿',
+        decimals: '8'
+      },
+      {
+        type: 'crypto',
+        code: 'ETH',
+        name: 'Ethereum',
+        symbol: 'Ξ',
+        decimals: '18'
+      }
+    ]
   };
 
   // Extension of AssetBankModel to include urls
@@ -446,7 +483,7 @@ export class TestConstants {
 
   static EXTERNAL_BANK_ACCOUNT_LIST_BANK_MODEL: ExternalBankAccountListBankModel =
     {
-      total: '2',
+      total: '6',
       page: '0',
       per_page: '10',
       objects: [
@@ -496,19 +533,19 @@ export class TestConstants {
           plaid_account_name: null
         },
         {
-          guid: '598bbc22ke21f23nd8daf64c1076217b',
+          guid: 'b2ff9d80c763d206757cd011ab42345d',
           name: 'USD',
           asset: 'USD',
           account_kind: 'plaid',
           environment: 'sandbox',
-          created_at: '2022-12-02T16:45:29.087Z',
+          created_at: '2023-01-11T18:09:15.550Z',
           customer_guid: '378c691c1b5ba3b938e17c1726202fe4',
           bank_guid: 'b36cf9028e2356de7732e4c505c84fbc',
           state: 'refresh_required',
           failure_code: null,
-          plaid_institution_id: null,
-          plaid_account_mask: null,
-          plaid_account_name: null
+          plaid_institution_id: 'ins_115614',
+          plaid_account_mask: '1111',
+          plaid_account_name: 'Plaid Saving'
         },
         {
           guid: '598bbc22kd21f23nd8daf64c1076217b',

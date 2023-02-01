@@ -10,7 +10,14 @@ import { MatSort } from '@angular/material/sort';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 
-import { BehaviorSubject, catchError, map, of, Subject, take } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  map,
+  of,
+  Subject,
+  take
+} from 'rxjs';
 
 // Services
 import {
@@ -53,10 +60,8 @@ export class BankAccountListComponent
   error$ = new BehaviorSubject(false);
   unsubscribe$ = new Subject();
 
-  addingAccount$ = new BehaviorSubject(false);
-
   routingData: RoutingData = {
-    route: 'account-list',
+    route: 'bank-account-connect',
     origin: 'bank-account-management'
   };
 
@@ -118,8 +123,6 @@ export class BankAccountListComponent
       .pipe(
         take(1),
         map((accounts) => {
-          console.log(accounts);
-
           this.dataSource.data = accounts.objects;
           this.totalRows = Number(accounts.total);
 
@@ -144,12 +147,28 @@ export class BankAccountListComponent
       .subscribe();
   }
 
-  onAccountSelect(account: ExternalBankAccountBankModel): void {}
+  onAccountRefresh(account: ExternalBankAccountBankModel): void {
+    this.configService
+      .getConfig$()
+      .pipe(
+        take(1),
+        map((config) => {
+          if (config.routing) {
+            let routingData = { ...this.routingData };
+            routingData.extras = {
+              queryParams: {
+                externalAccountGuid: account.guid
+              }
+            };
+
+            this.router.handleRoute(routingData);
+          }
+        })
+      )
+      .subscribe();
+  }
 
   onAddAccount(): void {
-    this.router.handleRoute({
-      route: 'bank-account-connect',
-      origin: 'bank-account-management'
-    });
+    this.router.handleRoute(this.routingData);
   }
 }

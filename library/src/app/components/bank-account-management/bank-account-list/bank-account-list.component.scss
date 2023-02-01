@@ -37,10 +37,26 @@ mat-progress-bar {
 
 .cybrid-status-cell {
   text-align: end;
+
+  mat-icon {
+    padding-right: 1rem;
+  }
+
+  button {
+    margin-right: 0.5rem;
+    mat-icon {
+      padding-right: 0;
+    }
+  }
+}
+
+td.mat-cell:last-of-type {
+  padding-right: 12px;
 }
 
 .cybrid-hide {
   display: none;
 }
 
-@media screen and (max-width: 599px) {}
+@media screen and (max-width: 599px) {
+}

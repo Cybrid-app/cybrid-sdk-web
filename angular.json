@@ -225,8 +225,7 @@
               "library/src/shared/pipes/asset/mock-asset.pipe.ts",
               "library/src/shared/pipes/assetFormat/mock-asset-format.pipe.ts",
               "library/src/app/components/identity-verification/*.ts",
-              "library/src/app/components/bank-account-management/bank-account-connect/*.ts",
-              "library/src/app/components/bank-account-management/bank-account-list/*.ts"
+              "library/src/app/components/bank-account-management/bank-account-connect/*.ts"
             ],
             "inlineStyleLanguage": "scss",
             "styles": ["library/src/shared/styles/theme.scss"],

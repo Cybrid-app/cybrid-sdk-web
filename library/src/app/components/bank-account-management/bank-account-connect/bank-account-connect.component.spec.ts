@@ -177,12 +177,12 @@ describe('BankAccountConnectComponent', () => {
   });
 
   it('should handle errors on addAccount', () => {
+    const error$Spy = spyOn(component.error$, 'next');
     component.bootstrapPlaid = () => undefined;
     MockBankAccountService.createWorkflow.and.returnValue(error$);
 
     component.onAddAccount();
-    expect(MockErrorService.handleError).toHaveBeenCalled();
-    expect(MockEventService.handleEvent).toHaveBeenCalled();
+    expect(error$Spy).toHaveBeenCalledWith(true);
 
     // Reset
     MockBankAccountService.createWorkflow.and.returnValue(
@@ -224,8 +224,6 @@ describe('BankAccountConnectComponent', () => {
 
     component.createExternalBankAccount({ name: '', id: '' }, '', '');
     expect(errorSpy).toHaveBeenCalledWith(true);
-    expect(MockErrorService.handleError).toHaveBeenCalled();
-    expect(MockEventService.handleEvent).toHaveBeenCalled();
 
     // Reset
     MockBankAccountService.createExternalBankAccount.and.returnValue(
@@ -290,8 +288,6 @@ describe('BankAccountConnectComponent', () => {
       accounts: [{ name: '', id: '', iso_currency_code: 'CAD' }]
     });
     expect(errorSpy).toHaveBeenCalledWith(true);
-    expect(MockErrorService.handleError).toHaveBeenCalled();
-    expect(MockEventService.handleEvent).toHaveBeenCalled();
   });
 
   it('should handle plaidOnSuccess() with an undefined iso_currency_code', () => {

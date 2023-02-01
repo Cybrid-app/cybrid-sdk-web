@@ -126,7 +126,7 @@ describe('BankAccountListComponent', () => {
     expect(listBankAccountsSpy).toHaveBeenCalled();
   });
 
-  xit('should sort the datasource', () => {
+  it('should sort the datasource', () => {
     component.sortChange();
     expect(component.dataSource.sort).toEqual(component.sort);
 
@@ -135,7 +135,7 @@ describe('BankAccountListComponent', () => {
 
     // Sort by account
     let accountSort = component.sortingDataAccessor(account, 'account');
-    expect(accountSort).toEqual(account.guid!);
+    expect(accountSort).toEqual(account.plaid_account_name!);
 
     // Default
     let defaultSort = component.sortingDataAccessor(account, '');
@@ -145,5 +145,19 @@ describe('BankAccountListComponent', () => {
   it('should navigate to bank-connect onAddAccount()', () => {
     component.onAddAccount();
     expect(MockRoutingService.handleRoute).toHaveBeenCalled();
+  });
+
+  it('should navigate to bank-connect with the account guid onAccountRefresh()', () => {
+    let mockRoutingData = { ...component.routingData };
+    mockRoutingData.extras = {
+      queryParams: {
+        externalAccountGuid: TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL.guid
+      }
+    };
+
+    component.onAccountRefresh(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL);
+    expect(MockRoutingService.handleRoute).toHaveBeenCalledWith(
+      mockRoutingData
+    );
   });
 });

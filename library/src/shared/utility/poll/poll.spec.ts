@@ -22,7 +22,7 @@ describe('Poll', () => {
     tick(poll.pollConfig.duration);
 
     // The count should equal the number of times the timer fires in the set duration
-    expect(count).toEqual(5);
+    expect(count).toEqual(Constants.POLL_DURATION / Constants.POLL_INTERVAL);
 
     discardPeriodicTasks();
   }));

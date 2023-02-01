@@ -1,6 +1,14 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
-import { BehaviorSubject, map, Observable, Subject, takeUntil } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  map,
+  Observable,
+  of,
+  Subject,
+  takeUntil
+} from 'rxjs';
 
 import {
   ExternalBankAccountListBankModel,
@@ -13,7 +21,13 @@ import {
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
-import { ConfigService } from '@services';
+import {
+  CODE,
+  ConfigService,
+  ErrorService,
+  EventService,
+  LEVEL
+} from '@services';
 
 // Utility
 import { getLanguageFromLocale } from '../../utility/locale-language';
@@ -34,8 +48,9 @@ export class BankAccountService implements OnDestroy {
 
   postWorkflowBankModel: PostWorkflowBankModel = {
     type: 'plaid',
-    kind: 'link_token_create',
+    kind: PostWorkflowBankModel.KindEnum.Create,
     customer_guid: '',
+    external_bank_account_guid: undefined,
     link_customization_name: 'default'
   };
 
@@ -46,7 +61,9 @@ export class BankAccountService implements OnDestroy {
   constructor(
     private configService: ConfigService,
     private externalBankAccountService: ExternalBankAccountsService,
-    private workflowService: WorkflowsService
+    private workflowService: WorkflowsService,
+    private eventService: EventService,
+    private errorService: ErrorService
   ) {
     this.setModels();
   }
@@ -99,17 +116,36 @@ export class BankAccountService implements OnDestroy {
     postExternalBankAccount.plaid_account_id = plaid_account_id;
     postExternalBankAccount.asset = asset;
 
-    return this.externalBankAccountService.createExternalBankAccount(
-      postExternalBankAccount
-    );
+    return this.externalBankAccountService
+      .createExternalBankAccount(postExternalBankAccount)
+      .pipe(
+        catchError((err: any) => {
+          let message = 'There was an error creating a bank account';
+          this.eventService.handleEvent(LEVEL.ERROR, CODE.DATA_ERROR, message);
+          this.errorService.handleError(new Error(message));
+          return of(err);
+        })
+      );
   }
 
   createWorkflow(
-    kind: PostWorkflowBankModel.KindEnum
+    kind: PostWorkflowBankModel.KindEnum,
+    externalAccountGuid?: string
   ): Observable<WorkflowBankModel> {
     const postWorkflowBankModel = { ...this.postWorkflowBankModel };
     postWorkflowBankModel.kind = kind;
-    return this.workflowService.createWorkflow(postWorkflowBankModel);
+    postWorkflowBankModel.external_bank_account_guid = externalAccountGuid;
+    return this.workflowService.createWorkflow(postWorkflowBankModel).pipe(
+      catchError((err: any) => {
+        let message =
+          externalAccountGuid == undefined
+            ? 'There was an error reconnecting a bank account'
+            : 'There was an error creating a bank account';
+        this.eventService.handleEvent(LEVEL.ERROR, CODE.DATA_ERROR, message);
+        this.errorService.handleError(new Error(message));
+        return of(err);
+      })
+    );
   }
 
   getWorkflow(guid: string): Observable<WorkflowWithDetailsBankModel> {
