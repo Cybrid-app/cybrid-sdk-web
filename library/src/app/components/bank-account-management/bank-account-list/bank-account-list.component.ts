@@ -10,14 +10,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 
-import {
-  BehaviorSubject,
-  catchError,
-  map,
-  of,
-  Subject,
-  take
-} from 'rxjs';
+import { BehaviorSubject, catchError, map, of, Subject, take } from 'rxjs';
 
 // Services
 import {
