@@ -296,7 +296,7 @@ export class TestConstants {
       url: 'https://images.cybrid.xyz/sdk/assets/svg/color/usd.svg'
     },
     price: {
-      symbol: 'BTC',
+      symbol: 'BTC-USD',
       buy_price: '2129800',
       sell_price: '2129700',
       buy_price_last_updated_at: '2022-07-27T13:28:13.322Z',
