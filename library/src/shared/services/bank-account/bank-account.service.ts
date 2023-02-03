@@ -7,10 +7,14 @@ import {
   Observable,
   of,
   Subject,
-  takeUntil
+  switchMap,
+  takeUntil,
+  tap,
+  throwError
 } from 'rxjs';
 
 import {
+  ExternalBankAccountBankModel,
   ExternalBankAccountListBankModel,
   ExternalBankAccountsService,
   PostExternalBankAccountBankModel,
@@ -31,6 +35,7 @@ import {
 
 // Utility
 import { getLanguageFromLocale } from '../../utility/locale-language';
+import { TestConstants } from '@constants';
 
 @Injectable({
   providedIn: 'root'
@@ -121,6 +126,23 @@ export class BankAccountService implements OnDestroy {
       .pipe(
         catchError((err: any) => {
           let message = 'There was an error creating a bank account';
+          this.eventService.handleEvent(LEVEL.ERROR, CODE.DATA_ERROR, message);
+          this.errorService.handleError(new Error(message));
+          return of(err);
+        })
+      );
+  }
+
+  deleteExternalBankAccount(
+    externalAccountGuid: string
+  ): Observable<ExternalBankAccountBankModel> {
+    return this.externalBankAccountService
+      .deleteExternalBankAccount(externalAccountGuid)
+      .pipe(
+        // return of(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL).pipe(
+        //   switchMap(() => throwError(() => new Error('error'))),
+        catchError((err: any) => {
+          let message = 'There was an error deleting a bank account';
           this.eventService.handleEvent(LEVEL.ERROR, CODE.DATA_ERROR, message);
           this.errorService.handleError(new Error(message));
           return of(err);

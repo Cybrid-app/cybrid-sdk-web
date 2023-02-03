@@ -1,0 +1,26 @@
+.cybrid-list-item {
+  height: 3rem;
+  display: flex;
+  flex-grow: 1;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+
+  div {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+//@media screen and (max-width: 599px) {
+//  mat-dialog-actions {
+//    flex-direction: column-reverse;
+//    align-items: stretch;
+//    gap: 0.5rem;
+//  }
+//
+//  .mat-dialog-actions .mat-button-base + .mat-button-base {
+//    margin: 0;
+//  }
+//}

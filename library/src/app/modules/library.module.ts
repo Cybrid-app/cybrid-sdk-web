@@ -68,7 +68,8 @@ import {
   TransferComponent,
   TransferConfirmComponent,
   TransferDetailsComponent,
-  BankAccountListComponent
+  BankAccountListComponent,
+  BankAccountDisconnectComponent
 } from '@components';
 
 // Utility
@@ -80,6 +81,7 @@ import {
   AssetFormatPipe
 } from '@pipes';
 import { CustomPaginatorIntl } from '@utility';
+import { BankAccountDetailsComponent } from '../components/bank-account-management/bank-account-details/bank-account-details.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -105,6 +107,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     BankAccountConnectComponent,
     BankAccountConfirmComponent,
     BankAccountListComponent,
+    BankAccountDetailsComponent,
+    BankAccountDisconnectComponent,
     TransferComponent,
     TransferConfirmComponent,
     TransferDetailsComponent,

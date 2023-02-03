@@ -173,7 +173,15 @@ export default {
   bankAccountList: {
     account: 'Compte',
     status: 'Statut',
-    addAccount: 'AJOUTER UN COMPTE'
+    addAccount: 'AJOUTER UN COMPTE',
+    state: {
+      storing: 'En attente',
+      completed: 'Connecté',
+      failed: 'Échoué',
+      refresh_required: 'Actualisation requise',
+      deleting: 'Déconnexion...',
+      deleted: 'Déconnecté'
+    }
   },
 
   // Transfer component

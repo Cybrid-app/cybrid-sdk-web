@@ -171,7 +171,15 @@ export default {
   bankAccountList: {
     account: 'Account',
     status: 'Status',
-    addAccount: 'ADD ACCOUNT'
+    addAccount: 'ADD ACCOUNT',
+    state: {
+      storing: 'Pending',
+      completed: 'Connected',
+      failed: 'Failed',
+      refresh_required: 'Refresh required',
+      deleting: 'Disconnecting...',
+      deleted: 'Disconnected'
+    }
   },
 
   // Transfer component

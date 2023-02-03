@@ -10,12 +10,23 @@ import { MatSort } from '@angular/material/sort';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 
-import { BehaviorSubject, catchError, map, of, Subject, take } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  map,
+  of,
+  Subject,
+  switchMap,
+  take,
+  takeUntil,
+  timer
+} from 'rxjs';
 
 // Services
 import {
   BankAccountService,
   CODE,
+  ComponentConfig,
   ConfigService,
   ErrorService,
   EventService,
@@ -26,6 +37,10 @@ import {
 
 // Models
 import { ExternalBankAccountBankModel } from '@cybrid/cybrid-api-bank-angular/model/externalBankAccount';
+import { BankAccountDetailsComponent } from '../bank-account-details/bank-account-details.component';
+
+// Utility
+import { TestConstants } from '@constants';
 
 @Component({
   selector: 'app-bank-account-list',
@@ -69,6 +84,7 @@ export class BankAccountListComponent
 
   ngOnInit(): void {
     this.getExternalBankAccounts();
+    this.refreshData();
   }
 
   ngAfterContentInit() {
@@ -89,6 +105,8 @@ export class BankAccountListComponent
     switch (columnDef) {
       case 'account':
         return bankAccount.plaid_account_name!;
+      case 'status':
+        return bankAccount.state!;
       default:
         return '';
     }
@@ -106,6 +124,7 @@ export class BankAccountListComponent
   }
 
   getExternalBankAccounts(): void {
+    console.log('getExternalBankAccounts()');
     this.isLoadingResults = true;
 
     this.bankAccountService
@@ -115,6 +134,9 @@ export class BankAccountListComponent
       )
       .pipe(
         take(1),
+        // switchMap(() =>
+        //   of(TestConstants.EXTERNAL_BANK_ACCOUNT_LIST_BANK_MODEL)
+        // ),
         map((accounts) => {
           this.dataSource.data = accounts.objects;
           this.totalRows = Number(accounts.total);
@@ -140,22 +162,36 @@ export class BankAccountListComponent
       .subscribe();
   }
 
-  onAccountRefresh(account: ExternalBankAccountBankModel): void {
+  refreshData(): void {
     this.configService
       .getConfig$()
       .pipe(
-        take(1),
-        map((config) => {
-          if (config.routing) {
-            let routingData = { ...this.routingData };
-            routingData.extras = {
-              queryParams: {
-                externalAccountGuid: account.guid
-              }
-            };
+        switchMap((cfg: ComponentConfig) => {
+          return timer(cfg.refreshInterval, cfg.refreshInterval);
+        }),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe({
+        next: () => {
+          this.eventService.handleEvent(
+            LEVEL.INFO,
+            CODE.DATA_FETCHING,
+            'Refreshing accounts...'
+          );
+          this.getExternalBankAccounts();
+        }
+      });
+  }
 
-            this.router.handleRoute(routingData);
-          }
+  onAccountSelect(account: ExternalBankAccountBankModel): void {
+    this.dialog
+      .open(BankAccountDetailsComponent, { data: account })
+      .afterClosed()
+      .pipe(
+        take(1),
+        map((res) => {
+          console.log('successful disconnect');
+          if (res) this.getExternalBankAccounts();
         })
       )
       .subscribe();

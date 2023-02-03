@@ -24,6 +24,7 @@ import {
 import {
   BankBankModel,
   CustomersService,
+  ExternalBankAccountBankModel,
   PostWorkflowBankModel,
   WorkflowsService,
   WorkflowWithDetailsBankModel
@@ -140,13 +141,13 @@ export class BankAccountConnectComponent implements OnInit {
       .pipe(
         take(1),
         switchMap((params) => {
-          const externalAccountGuid = params['externalAccountGuid'];
-          this.params = externalAccountGuid;
+          const externalBankAccountGuid = params['externalBankAccountGuid'];
+          this.params = externalBankAccountGuid;
 
-          return externalAccountGuid
+          return externalBankAccountGuid
             ? this.createWorkflow(
                 PostWorkflowBankModel.KindEnum.Update,
-                externalAccountGuid
+                externalBankAccountGuid
               )
             : this.createWorkflow(PostWorkflowBankModel.KindEnum.Create);
         }),

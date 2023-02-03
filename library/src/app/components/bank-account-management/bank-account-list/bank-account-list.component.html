@@ -18,12 +18,7 @@
       >
         <!-- Account -->
         <ng-container matColumnDef="account">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            mat-sort-header=""
-            arrowPosition="after"
-          >
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="">
             <div class="cybrid-sort-header">
               {{ 'bankAccountList.account' | translate }}
             </div>
@@ -32,7 +27,7 @@
             <div class="cybrid-account-cell">
               <mat-icon>savings</mat-icon>
               <div class="bank-account-name">
-                <span>{{ account.name }}</span>
+                <span>{{ account.name + ' - ' + account.asset + ' ' }}</span>
                 <span class="mat-hint">{{
                   '(***' + account.plaid_account_mask + ')'
                 }}</span>
@@ -43,44 +38,32 @@
 
         <!-- Status -->
         <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef>
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header=""
+            arrowPosition="before"
+          >
             <div class="cybrid-sort-header">
               {{ 'bankAccountList.status' | translate }}
             </div>
           </th>
           <td id="status" mat-cell *matCellDef="let account">
             <div class="cybrid-status-cell">
-              <ng-container [ngSwitch]="account.state">
-                <mat-icon *ngSwitchCase="'storing'" color="primary"
-                  >check_circle</mat-icon
-                >
-                <mat-icon *ngSwitchCase="'completed'" color="primary"
-                  >check_circle</mat-icon
-                >
-                <mat-icon *ngSwitchCase="'failed'" color="warn"
-                  >cancel</mat-icon
-                >
-                <button
-                  id="refresh"
-                  *ngSwitchCase="'refresh_required'"
-                  mat-icon-button
-                  (click)="onAccountRefresh(account)"
-                >
-                  <mat-icon color="warn">refresh</mat-icon>
-                </button>
-                <mat-icon *ngSwitchCase="'deleting'" color="warn"
-                  >auto_delete</mat-icon
-                >
-                <mat-icon *ngSwitchCase="'deleted'" color="warn"
-                  >delete</mat-icon
-                >
-              </ng-container>
+              <span>{{
+                'bankAccountList.state.' + account.state | translate
+              }}</span>
             </div>
           </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          class="cybrid-pointer"
+          (click)="onAccountSelect(row)"
+        ></tr>
         <tr class="mat-row" *matNoDataRow>
           <td id="warning" class="mat-cell cybrid-no-data" colspan="2">
             No bank accounts connected.
@@ -101,7 +84,12 @@
   >
   </mat-paginator>
   <div *ngIf="(isLoading$ | async) !== true" class="cybrid-actions">
-    <button id="add-account" mat-flat-button color="primary" (click)="onAddAccount()">
+    <button
+      id="add-account"
+      mat-flat-button
+      color="primary"
+      (click)="onAddAccount()"
+    >
       {{ 'bankAccountList.addAccount' | translate }}
     </button>
   </div>
