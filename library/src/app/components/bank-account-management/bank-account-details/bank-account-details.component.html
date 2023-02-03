@@ -1,29 +1,29 @@
 <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
-  <h2 mat-dialog-title>Account Details</h2>
+  <h2 mat-dialog-title>{{ 'bankAccountList.details.title' | translate }}</h2>
   <mat-dialog-content>
     <div class="cybrid-list-item">
-      <span>Name</span>
+      <span>{{ 'bankAccountList.details.name' | translate }}</span>
       <span>{{ account.name }}</span>
     </div>
     <mat-divider></mat-divider>
     <div class="cybrid-list-item">
-      <span>Asset</span>
+      <span>{{ 'bankAccountList.details.asset' | translate }}</span>
       <span>{{ account.asset }}</span>
     </div>
     <mat-divider></mat-divider>
     <div class="cybrid-list-item">
-      <span>Number</span>
+      <span>{{ 'bankAccountList.details.number' | translate }}</span>
       <span>{{ '(***' + account.plaid_account_mask + ')' }}</span>
     </div>
     <mat-divider></mat-divider>
     <div class="cybrid-list-item">
-      <span>Status</span>
+      <span>{{ 'bankAccountList.details.status' | translate }}</span>
       <span>{{ 'bankAccountList.state.' + account.state | translate }}</span>
     </div>
     <mat-divider></mat-divider>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
-    <button id="done" mat-stroked-button [mat-dialog-close]="true">
+    <button id="done" mat-stroked-button [mat-dialog-close]="false">
       {{ 'cancel' | translate }}
     </button>
     <button
@@ -37,7 +37,7 @@
       mat-flat-button
       (click)="onDisconnect(account)"
     >
-      DISCONNECT
+      {{ 'disconnect' | translate }}
     </button>
     <button
       *ngIf="account.state === 'refresh_required'"
@@ -46,7 +46,7 @@
       mat-flat-button
       (click)="onReconnect(account)"
     >
-      RECONNECT
+      {{ 'reconnect' | translate }}
     </button>
   </mat-dialog-actions>
 </ng-container>

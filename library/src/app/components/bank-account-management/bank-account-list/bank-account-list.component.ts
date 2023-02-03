@@ -1,43 +1,44 @@
-import {
-  AfterContentInit,
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewChild
-} from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 
 import {
   BehaviorSubject,
   catchError,
+  EMPTY,
+  expand,
   map,
+  Observable,
   of,
+  reduce,
   Subject,
+  Subscription,
   switchMap,
-  take,
   takeUntil,
+  tap,
+  throwError,
   timer
 } from 'rxjs';
 
 // Services
 import {
   BankAccountService,
-  CODE,
   ComponentConfig,
   ConfigService,
   ErrorService,
   EventService,
-  LEVEL,
   RoutingData,
   RoutingService
 } from '@services';
 
+// Components
+import { BankAccountDetailsComponent } from '../bank-account-details/bank-account-details.component';
+
 // Models
 import { ExternalBankAccountBankModel } from '@cybrid/cybrid-api-bank-angular/model/externalBankAccount';
-import { BankAccountDetailsComponent } from '../bank-account-details/bank-account-details.component';
+import { ExternalBankAccountListBankModel } from '@cybrid/cybrid-api-bank-angular';
 
 // Utility
 import { TestConstants } from '@constants';
@@ -47,24 +48,38 @@ import { TestConstants } from '@constants';
   templateUrl: './bank-account-list.component.html',
   styleUrls: ['./bank-account-list.component.scss']
 })
-export class BankAccountListComponent
-  implements OnInit, AfterContentInit, OnDestroy
-{
-  @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort!: MatSort;
+export class BankAccountListComponent implements OnInit, OnDestroy {
+  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
+
+  @ViewChild(MatSort) set matSort(sort: MatSort) {
+    this.sort = sort;
+    this.dataSource.sortingDataAccessor = this.sortingDataAccessor;
+
+    this.sort.sort({ id: '', start: 'desc', disableClear: true });
+    this.sort.sort({ id: 'status', start: 'asc', disableClear: true });
+    this.sort.sortChange.emit(this.sort);
+  }
+
+  sort!: MatSort;
+  paginator!: MatPaginator;
 
   dataSource = new MatTableDataSource<ExternalBankAccountBankModel>();
   displayedColumns: string[] = ['account', 'status'];
 
-  totalRows = 0;
   pageSize = 5;
-  currentPage = 0;
   pageSizeOptions: number[] = [5, 10, 25, 100];
 
-  isLoadingResults = true;
+  externalBankAccountsPerPage = 10;
 
   isLoading$ = new BehaviorSubject(true);
+  isLoadingResults$ = new BehaviorSubject(true);
   isRecoverable$ = new BehaviorSubject(true);
+  listExternalBankAccountsError = false;
+
+  refreshDataSub!: Subscription;
+
   error$ = new BehaviorSubject(false);
   unsubscribe$ = new Subject();
 
@@ -78,24 +93,22 @@ export class BankAccountListComponent
     private errorService: ErrorService,
     private eventService: EventService,
     private bankAccountService: BankAccountService,
-    public dialog: MatDialog,
-    private router: RoutingService
+    private router: RoutingService,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
-    this.getExternalBankAccounts();
+    this.listExternalBankAccounts();
     this.refreshData();
-  }
-
-  ngAfterContentInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sortingDataAccessor = this.sortingDataAccessor;
-    this.dataSource.sort = this.sort;
   }
 
   ngOnDestroy() {
     this.unsubscribe$.next('');
     this.unsubscribe$.complete();
+  }
+
+  sortChange(): void {
+    this.dataSource.sort = this.sort;
   }
 
   sortingDataAccessor(
@@ -112,75 +125,68 @@ export class BankAccountListComponent
     }
   }
 
-  sortChange(): void {
-    this.dataSource.sort = this.sort;
+  pageExternalAccounts(
+    list: ExternalBankAccountListBankModel
+  ): Observable<ExternalBankAccountListBankModel> | Observable<never> {
+    const perPage = Number(list.per_page);
+    const nextPage = (perPage + 1).toString();
+
+    return list.objects.length == perPage
+      ? this.bankAccountService.listExternalBankAccounts(nextPage)
+      : EMPTY;
   }
 
-  pageChange(event: PageEvent): void {
-    this.pageSize = event.pageSize;
-    this.currentPage = event.pageIndex;
-
-    this.getExternalBankAccounts();
+  accumulateExternalAccounts(
+    acc: ExternalBankAccountBankModel[],
+    value: ExternalBankAccountBankModel[]
+  ): ExternalBankAccountBankModel[] {
+    return [...acc, ...value];
   }
 
-  getExternalBankAccounts(): void {
-    console.log('getExternalBankAccounts()');
-    this.isLoadingResults = true;
+  listExternalBankAccounts(): void {
+    this.isLoadingResults$.next(true);
 
     this.bankAccountService
-      .listExternalBankAccounts(
-        this.currentPage.toString(),
-        this.pageSize.toString()
-      )
+      .listExternalBankAccounts()
       .pipe(
-        take(1),
-        // switchMap(() =>
-        //   of(TestConstants.EXTERNAL_BANK_ACCOUNT_LIST_BANK_MODEL)
-        // ),
-        map((accounts) => {
-          this.dataSource.data = accounts.objects;
-          this.totalRows = Number(accounts.total);
-
-          this.isLoading$.next(false);
-          this.isLoadingResults = false;
-        }),
+        expand((list) => this.pageExternalAccounts(list)),
+        map((list) => list.objects),
+        reduce((acc, value) => this.accumulateExternalAccounts(acc, value)),
+        map((accounts) =>
+          accounts.filter(
+            (account) =>
+              account.state == 'storing' ||
+              account.state == 'completed' ||
+              account.state == 'refresh_required'
+          )
+        ),
+        switchMap(() => throwError(() => new Error('error me harder'))),
+        map((accounts) => (this.dataSource.data = accounts)),
         catchError((err) => {
-          this.eventService.handleEvent(
-            LEVEL.ERROR,
-            CODE.DATA_ERROR,
-            'There was an error fetching bank account details'
-          );
-
-          this.errorService.handleError(
-            new Error('There was an error fetching bank account details')
-          );
-
+          this.refreshDataSub.unsubscribe();
+          this.listExternalBankAccountsError = true;
           this.dataSource.data = [];
+          this.isLoading$.next(false);
           return of(err);
         })
       )
-      .subscribe();
+      .subscribe(() => {
+        this.isLoading$.next(false);
+        this.isLoadingResults$.next(false);
+      });
   }
 
   refreshData(): void {
-    this.configService
+    this.refreshDataSub = this.configService
       .getConfig$()
       .pipe(
         switchMap((cfg: ComponentConfig) => {
           return timer(cfg.refreshInterval, cfg.refreshInterval);
         }),
-        takeUntil(this.unsubscribe$)
+        takeUntil(this.unsubscribe$),
+        tap(() => this.listExternalBankAccounts())
       )
-      .subscribe({
-        next: () => {
-          this.eventService.handleEvent(
-            LEVEL.INFO,
-            CODE.DATA_FETCHING,
-            'Refreshing accounts...'
-          );
-          this.getExternalBankAccounts();
-        }
-      });
+      .subscribe();
   }
 
   onAccountSelect(account: ExternalBankAccountBankModel): void {
@@ -188,10 +194,8 @@ export class BankAccountListComponent
       .open(BankAccountDetailsComponent, { data: account })
       .afterClosed()
       .pipe(
-        take(1),
         map((res) => {
-          console.log('successful disconnect');
-          if (res) this.getExternalBankAccounts();
+          if (res) this.listExternalBankAccounts();
         })
       )
       .subscribe();

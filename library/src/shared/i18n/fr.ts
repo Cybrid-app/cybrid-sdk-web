@@ -5,6 +5,8 @@ export default {
   done: 'FAIT',
   begin: 'COMMENCER',
   resume: 'RECOMMENCER',
+  disconnect: 'DÉCONNECTER',
+  reconnect: 'RECONNECTER',
   back: 'Retourner',
   date: 'Date',
   to: 'À',
@@ -174,6 +176,8 @@ export default {
     account: 'Compte',
     status: 'Statut',
     addAccount: 'AJOUTER UN COMPTE',
+    empty: 'Aucun compte bancaire connecté.',
+    error: 'Erreur lors de la récupération des comptes bancaires.',
     state: {
       storing: 'En attente',
       completed: 'Connecté',
@@ -181,6 +185,15 @@ export default {
       refresh_required: 'Actualisation requise',
       deleting: 'Déconnexion...',
       deleted: 'Déconnecté'
+    },
+
+    // Details dialog
+    details: {
+      title: 'Détails du compte',
+      name: 'Nom',
+      asset: 'Actif',
+      number: 'Numéro',
+      status: 'Statut'
     }
   },
 

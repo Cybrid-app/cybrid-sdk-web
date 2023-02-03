@@ -79,10 +79,10 @@ export class BankAccountDetailsComponent {
           // Runtime check for model/error
           if (Object.keys(res).includes('guid')) {
             this.dialogRef.close(true);
-            openSnackbar(this.snackBar, 'Disconnecting: ');
+            openSnackbar(this.snackBar, 'Disconnected bank account: ');
           } else {
             this.dialogRef.close(false);
-            openSnackbar(this.snackBar, 'Error disconnecting: ');
+            openSnackbar(this.snackBar, 'Error disconnecting bank account: ');
           }
         })
       )

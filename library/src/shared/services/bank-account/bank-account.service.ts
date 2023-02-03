@@ -100,13 +100,22 @@ export class BankAccountService implements OnDestroy {
     page?: string,
     perPage?: string
   ): Observable<ExternalBankAccountListBankModel> {
-    return this.externalBankAccountService.listExternalBankAccounts(
-      page,
-      perPage,
-      undefined,
-      undefined,
-      this.customerGuid
-    );
+    return this.externalBankAccountService
+      .listExternalBankAccounts(
+        page,
+        perPage,
+        undefined,
+        undefined,
+        this.customerGuid
+      )
+      .pipe(
+        catchError((err) => {
+          const message = 'There was an error fetching bank account details';
+          this.eventService.handleEvent(LEVEL.ERROR, CODE.DATA_ERROR, message);
+          this.errorService.handleError(new Error(message));
+          return of(err);
+        })
+      );
   }
 
   createExternalBankAccount(
@@ -125,7 +134,7 @@ export class BankAccountService implements OnDestroy {
       .createExternalBankAccount(postExternalBankAccount)
       .pipe(
         catchError((err: any) => {
-          let message = 'There was an error creating a bank account';
+          const message = 'There was an error creating a bank account';
           this.eventService.handleEvent(LEVEL.ERROR, CODE.DATA_ERROR, message);
           this.errorService.handleError(new Error(message));
           return of(err);

@@ -5,6 +5,8 @@ export default {
   done: 'DONE',
   begin: 'BEGIN',
   resume: 'RESUME',
+  disconnect: 'DISCONNECT',
+  reconnect: 'RECONNECT',
   back: 'Back',
   date: 'Date',
   to: 'To',
@@ -172,6 +174,8 @@ export default {
     account: 'Account',
     status: 'Status',
     addAccount: 'ADD ACCOUNT',
+    empty: 'No bank accounts connected.',
+    error: 'Error fetching bank accounts.',
     state: {
       storing: 'Pending',
       completed: 'Connected',
@@ -179,6 +183,15 @@ export default {
       refresh_required: 'Refresh required',
       deleting: 'Disconnecting...',
       deleted: 'Disconnected'
+    },
+
+    // Details dialog
+    details: {
+      title: 'Account Details',
+      name: 'Name',
+      asset: 'Asset',
+      number: 'Number',
+      status: 'Status'
     }
   },
 

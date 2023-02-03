@@ -3,22 +3,24 @@
   <ng-container *ngIf="(isLoading$ | async) !== true; else loading">
     <div class="cybrid-table">
       <mat-progress-bar
-        *ngIf="isLoadingResults"
+        *ngIf="isLoadingResults$ | async"
         mode="indeterminate"
       ></mat-progress-bar>
       <table
         id="bank-account-list"
+        class="mat-button-toggle-group-appearance-standard"
+        [ngClass]="{ 'cybrid-paginator': dataSource.data.length > 5 }"
         mat-table
         matSort
         matSortDisableClear
-        (matSortChange)="sortChange()"
         [dataSource]="dataSource"
-        class="mat-button-toggle-group-appearance-standard"
-        [ngClass]="{ 'cybrid-paginator': totalRows > 5 }"
+        matSortActive="status"
+        matSortDirection="asc"
+        (matSortChange)="sortChange()"
       >
         <!-- Account -->
         <ng-container matColumnDef="account">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header="">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="account">
             <div class="cybrid-sort-header">
               {{ 'bankAccountList.account' | translate }}
             </div>
@@ -41,7 +43,7 @@
           <th
             mat-header-cell
             *matHeaderCellDef
-            mat-sort-header=""
+            mat-sort-header="status"
             arrowPosition="before"
           >
             <div class="cybrid-sort-header">
@@ -66,21 +68,23 @@
         ></tr>
         <tr class="mat-row" *matNoDataRow>
           <td id="warning" class="mat-cell cybrid-no-data" colspan="2">
-            No bank accounts connected.
+            {{
+              !listExternalBankAccountsError
+                ? ('bankAccountList.empty' | translate)
+                : ('bankAccountList.error' | translate)
+            }}
           </td>
         </tr>
       </table>
     </div>
   </ng-container>
   <mat-paginator
-    [pageSize]="pageSize"
-    [pageIndex]="currentPage"
-    [length]="totalRows"
-    [pageSizeOptions]="pageSizeOptions"
-    (page)="pageChange($event)"
+    aria-label="bank accounts paginator"
     class="mat-button-toggle-group-appearance-standard"
-    [ngClass]="{ 'cybrid-hide': totalRows <= 5 }"
-    aria-label="bank accounts"
+    [ngClass]="{ 'cybrid-hide': dataSource.data.length <= 5 }"
+    [length]="dataSource.data.length"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="pageSizeOptions"
   >
   </mat-paginator>
   <div *ngIf="(isLoading$ | async) !== true" class="cybrid-actions">
