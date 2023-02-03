@@ -31,7 +31,7 @@ import {
 } from '@services';
 
 // Utility
-import { filterPrices, symbolSplit } from '@utility';
+import { filterPrices, symbolBuild, symbolSplit } from '@utility';
 import { AssetPipe } from '@pipes';
 
 export interface Account {
@@ -149,11 +149,16 @@ export class AccountService implements OnDestroy {
           pricesModel: SymbolPriceBankModel[]
         ] = combined;
 
-        const priceModel = pricesModel.find((price) => {
-          return (price.symbol = accountModel.asset);
-        });
         const assetModel = this.assetService.getAsset(accountModel.asset!);
         const counterAssetModel = this.assetService.getAsset(counterAsset);
+        const symbol = symbolBuild(
+          accountModel.asset!,
+          counterAssetModel.code!
+        );
+
+        const priceModel = pricesModel.find((price) => {
+          return price.symbol == symbol;
+        });
 
         const accountValue = this.getAccountValue(
           {
