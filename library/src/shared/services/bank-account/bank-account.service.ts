@@ -7,12 +7,19 @@ import {
   Observable,
   of,
   Subject,
-  switchMap,
-  takeUntil,
-  tap,
-  throwError
+  takeUntil
 } from 'rxjs';
 
+// Services
+import {
+  CODE,
+  ConfigService,
+  ErrorService,
+  EventService,
+  LEVEL
+} from '@services';
+
+// Models
 import {
   ExternalBankAccountBankModel,
   ExternalBankAccountListBankModel,
@@ -24,18 +31,8 @@ import {
   WorkflowWithDetailsBankModel
 } from '@cybrid/cybrid-api-bank-angular';
 
-// Services
-import {
-  CODE,
-  ConfigService,
-  ErrorService,
-  EventService,
-  LEVEL
-} from '@services';
-
 // Utility
 import { getLanguageFromLocale } from '../../utility/locale-language';
-import { TestConstants } from '@constants';
 
 @Injectable({
   providedIn: 'root'
@@ -148,8 +145,6 @@ export class BankAccountService implements OnDestroy {
     return this.externalBankAccountService
       .deleteExternalBankAccount(externalAccountGuid)
       .pipe(
-        // return of(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL).pipe(
-        //   switchMap(() => throwError(() => new Error('error'))),
         catchError((err: any) => {
           let message = 'There was an error deleting a bank account';
           this.eventService.handleEvent(LEVEL.ERROR, CODE.DATA_ERROR, message);
@@ -168,8 +163,8 @@ export class BankAccountService implements OnDestroy {
     postWorkflowBankModel.external_bank_account_guid = externalAccountGuid;
     return this.workflowService.createWorkflow(postWorkflowBankModel).pipe(
       catchError((err: any) => {
-        let message =
-          externalAccountGuid == undefined
+        const message =
+          externalAccountGuid !== undefined
             ? 'There was an error reconnecting a bank account'
             : 'There was an error creating a bank account';
         this.eventService.handleEvent(LEVEL.ERROR, CODE.DATA_ERROR, message);

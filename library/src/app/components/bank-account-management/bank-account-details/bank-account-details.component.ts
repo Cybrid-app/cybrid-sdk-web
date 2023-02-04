@@ -4,20 +4,9 @@ import {
   MatDialog,
   MatDialogRef
 } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
-import {
-  BehaviorSubject,
-  catchError,
-  EMPTY,
-  map,
-  NEVER,
-  Observable,
-  of,
-  switchMap,
-  take,
-  takeUntil,
-  tap
-} from 'rxjs';
+import { BehaviorSubject, map, of, switchMap, take } from 'rxjs';
 
 // Services
 import {
@@ -32,7 +21,6 @@ import { BankAccountDisconnectComponent } from '@components';
 
 // Models
 import { ExternalBankAccountBankModel } from '@cybrid/cybrid-api-bank-angular/model/externalBankAccount';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface ExternalBankAccountModel extends ExternalBankAccountBankModel {}
 
@@ -76,13 +64,12 @@ export class BankAccountDetailsComponent {
             snackBar.open(message + account.name, 'OK', { duration: 5000 });
           }
 
-          // Runtime check for model/error
           if (Object.keys(res).includes('guid')) {
             this.dialogRef.close(true);
-            openSnackbar(this.snackBar, 'Disconnected bank account: ');
+            openSnackbar(this.snackBar, 'Disconnected ');
           } else {
             this.dialogRef.close(false);
-            openSnackbar(this.snackBar, 'Error disconnecting bank account: ');
+            openSnackbar(this.snackBar, 'Error disconnecting ');
           }
         })
       )

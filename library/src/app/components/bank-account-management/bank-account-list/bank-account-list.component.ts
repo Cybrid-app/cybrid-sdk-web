@@ -18,7 +18,6 @@ import {
   switchMap,
   takeUntil,
   tap,
-  throwError,
   timer
 } from 'rxjs';
 
@@ -39,9 +38,6 @@ import { BankAccountDetailsComponent } from '../bank-account-details/bank-accoun
 // Models
 import { ExternalBankAccountBankModel } from '@cybrid/cybrid-api-bank-angular/model/externalBankAccount';
 import { ExternalBankAccountListBankModel } from '@cybrid/cybrid-api-bank-angular';
-
-// Utility
-import { TestConstants } from '@constants';
 
 @Component({
   selector: 'app-bank-account-list',
@@ -70,8 +66,6 @@ export class BankAccountListComponent implements OnInit, OnDestroy {
 
   pageSize = 5;
   pageSizeOptions: number[] = [5, 10, 25, 100];
-
-  externalBankAccountsPerPage = 10;
 
   isLoading$ = new BehaviorSubject(true);
   isLoadingResults$ = new BehaviorSubject(true);
@@ -128,11 +122,10 @@ export class BankAccountListComponent implements OnInit, OnDestroy {
   pageExternalAccounts(
     list: ExternalBankAccountListBankModel
   ): Observable<ExternalBankAccountListBankModel> | Observable<never> {
-    const perPage = Number(list.per_page);
-    const nextPage = (perPage + 1).toString();
-
-    return list.objects.length == perPage
-      ? this.bankAccountService.listExternalBankAccounts(nextPage)
+    return list.objects.length == Number(list.per_page)
+      ? this.bankAccountService.listExternalBankAccounts(
+          Number(list.page + 1).toString()
+        )
       : EMPTY;
   }
 
@@ -160,7 +153,6 @@ export class BankAccountListComponent implements OnInit, OnDestroy {
               account.state == 'refresh_required'
           )
         ),
-        switchMap(() => throwError(() => new Error('error me harder'))),
         map((accounts) => (this.dataSource.data = accounts)),
         catchError((err) => {
           this.refreshDataSub.unsubscribe();
