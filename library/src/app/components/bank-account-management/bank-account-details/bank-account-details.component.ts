@@ -9,12 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, map, of, switchMap, take } from 'rxjs';
 
 // Services
-import {
-  BankAccountService,
-  ConfigService,
-  RoutingData,
-  RoutingService
-} from '@services';
+import { BankAccountService, RoutingData, RoutingService } from '@services';
 
 // Components
 import { BankAccountDisconnectComponent } from '@components';
@@ -34,12 +29,11 @@ export class BankAccountDetailsComponent {
   isRecoverable$ = new BehaviorSubject(true);
 
   constructor(
-    public configService: ConfigService,
     @Inject(MAT_DIALOG_DATA) public data: ExternalBankAccountModel,
     public dialogRef: MatDialogRef<BankAccountDetailsComponent>,
     public dialog: MatDialog,
     private router: RoutingService,
-    private bankAccountsService: BankAccountService,
+    private bankAccountService: BankAccountService,
     private snackBar: MatSnackBar
   ) {
     this.account = data;
@@ -56,7 +50,7 @@ export class BankAccountDetailsComponent {
         take(1),
         switchMap((res: boolean) => {
           return res
-            ? this.bankAccountsService.deleteExternalBankAccount(account.guid!)
+            ? this.bankAccountService.deleteExternalBankAccount(account.guid!)
             : of(res);
         }),
         map((res: boolean | ExternalBankAccountBankModel) => {
