@@ -34,7 +34,11 @@ describe('BankAccountManagementService', () => {
   });
   let MockExternalBankAccountService = jasmine.createSpyObj(
     'ExternalBankAccountsService',
-    ['listExternalBankAccounts', 'createExternalBankAccount']
+    [
+      'listExternalBankAccounts',
+      'createExternalBankAccount',
+      'deleteExternalBankAccount'
+    ]
   );
   let MockWorkflowService = jasmine.createSpyObj('WorkflowsService', [
     'createWorkflow',
@@ -80,7 +84,28 @@ describe('BankAccountManagementService', () => {
     MockExternalBankAccountService.createExternalBankAccount.and.returnValue(
       of(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL)
     );
+    MockExternalBankAccountService.deleteExternalBankAccount.and.returnValue(
+      of(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL)
+    );
     MockWorkflowService = TestBed.inject(WorkflowsService);
+    MockWorkflowService.createWorkflow.and.returnValue(
+      of(TestConstants.WORKFLOW_BANK_MODEL)
+    );
+    MockWorkflowService.getWorkflow.and.returnValue(
+      of(TestConstants.WORKFLOW_BANK_MODEL_WITH_DETAILS)
+    );
+  });
+
+  afterEach(() => {
+    MockExternalBankAccountService.listExternalBankAccounts.and.returnValue(
+      of(TestConstants.EXTERNAL_BANK_ACCOUNT_LIST_BANK_MODEL)
+    );
+    MockExternalBankAccountService.createExternalBankAccount.and.returnValue(
+      of(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL)
+    );
+    MockExternalBankAccountService.deleteExternalBankAccount.and.returnValue(
+      of(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL)
+    );
     MockWorkflowService.createWorkflow.and.returnValue(
       of(TestConstants.WORKFLOW_BANK_MODEL)
     );
@@ -149,6 +174,23 @@ describe('BankAccountManagementService', () => {
       );
   });
 
+  it('should delete an external bank account', () => {
+    service.deleteExternalBankAccount('').subscribe();
+    expect(
+      MockExternalBankAccountService.deleteExternalBankAccount
+    ).toHaveBeenCalled();
+  });
+
+  it('should catch any errors on deleteExternalBankAccount()', () => {
+    MockExternalBankAccountService.deleteExternalBankAccount.and.returnValue(
+      error$
+    );
+
+    service.deleteExternalBankAccount('').subscribe();
+    expect(MockErrorService.handleError).toHaveBeenCalled();
+    expect(MockEventService.handleEvent).toHaveBeenCalled();
+  });
+
   it('should create a link_token_create workflow', () => {
     const kind: PostWorkflowBankModel.KindEnum = 'link_token_create';
 
@@ -183,7 +225,7 @@ describe('BankAccountManagementService', () => {
       );
   });
 
-  it('should catch any errors on createExternalBankAccount', () => {
+  it('should catch any errors on createExternalBankAccount()', () => {
     MockExternalBankAccountService.createExternalBankAccount.and.returnValue(
       error$
     );
@@ -191,11 +233,6 @@ describe('BankAccountManagementService', () => {
     service.createExternalBankAccount('', '', '', '').subscribe();
     expect(MockEventService.handleEvent).toHaveBeenCalled();
     expect(MockErrorService.handleError).toHaveBeenCalled();
-
-    // Reset
-    MockExternalBankAccountService.createExternalBankAccount.and.returnValue(
-      of(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL)
-    );
   });
 
   it('should catch any errors on creating a link_token_create workflow', () => {
@@ -204,11 +241,6 @@ describe('BankAccountManagementService', () => {
     service.createWorkflow(PostWorkflowBankModel.KindEnum.Create).subscribe();
     expect(MockEventService.handleEvent).toHaveBeenCalled();
     expect(MockErrorService.handleError).toHaveBeenCalled();
-
-    // Reset
-    MockWorkflowService.createWorkflow.and.returnValue(
-      of(TestConstants.WORKFLOW_BANK_MODEL)
-    );
   });
 
   it('should catch any errors on creating a link_token_update workflow', () => {
@@ -219,11 +251,6 @@ describe('BankAccountManagementService', () => {
       .subscribe();
     expect(MockEventService.handleEvent).toHaveBeenCalled();
     expect(MockErrorService.handleError).toHaveBeenCalled();
-
-    // Reset
-    MockWorkflowService.createWorkflow.and.returnValue(
-      of(TestConstants.WORKFLOW_BANK_MODEL)
-    );
   });
 
   it('should get a workflow', () => {

@@ -6,7 +6,8 @@ import {
 } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { BehaviorSubject, map, of, switchMap, take } from 'rxjs';
+import { BehaviorSubject, EMPTY, map, switchMap, take } from 'rxjs';
+import { TranslatePipe } from '@ngx-translate/core';
 
 // Services
 import { BankAccountService, RoutingData, RoutingService } from '@services';
@@ -34,37 +35,47 @@ export class BankAccountDetailsComponent {
     public dialog: MatDialog,
     private router: RoutingService,
     private bankAccountService: BankAccountService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private translate: TranslatePipe
   ) {
     this.account = data;
   }
 
-  onDisconnect(account: ExternalBankAccountModel): void {
-    const dialog = this.dialog.open(BankAccountDisconnectComponent, {
-      data: account.name
-    });
+  // Validates the external bank account bank model contains a guid
+  validateExternalBankAccount(
+    res: boolean | ExternalBankAccountBankModel
+  ): res is ExternalBankAccountBankModel {
+    return (res as ExternalBankAccountBankModel).guid !== undefined;
+  }
 
-    dialog
+  onDisconnect(account: ExternalBankAccountModel): void {
+    this.dialog
+      .open(BankAccountDisconnectComponent, {
+        data: account.name
+      })
       .afterClosed()
       .pipe(
         take(1),
-        switchMap((res: boolean) => {
+        switchMap((res) => {
           return res
             ? this.bankAccountService.deleteExternalBankAccount(account.guid!)
-            : of(res);
+            : EMPTY;
         }),
-        map((res: boolean | ExternalBankAccountBankModel) => {
-          function openSnackbar(snackBar: MatSnackBar, message: string) {
-            snackBar.open(message + account.name, 'OK', { duration: 5000 });
-          }
+        map((account) => {
+          const isValid = this.validateExternalBankAccount(account);
 
-          if (Object.keys(res).includes('guid')) {
-            this.dialogRef.close(true);
-            openSnackbar(this.snackBar, 'Disconnected ');
-          } else {
-            this.dialogRef.close(false);
-            openSnackbar(this.snackBar, 'Error disconnecting ');
-          }
+          const message =
+            (isValid
+              ? this.translate.transform('bankAccountList.details.success') +
+                ' '
+              : this.translate.transform('bankAccountList.details.error') +
+                ' ') + this.account.name;
+
+          this.snackBar.open(message, 'OK', {
+            duration: 5000
+          });
+
+          this.dialogRef.close(isValid);
         })
       )
       .subscribe();

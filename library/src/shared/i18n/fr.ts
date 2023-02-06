@@ -193,7 +193,16 @@ export default {
       name: 'Nom',
       asset: 'Actif',
       number: 'Numéro',
-      status: 'Statut'
+      status: 'Statut',
+      success: 'Déconnecté',
+      error: 'Erreur lors de la déconnexion'
+    },
+
+    // Disconnect dialog
+    disconnect: {
+      title: 'Confirmer la déconnexion',
+      confirm: 'Veuillez confirmer la suppression de',
+      warning: 'Les dépôts ne seront plus possibles à partir de ce compte'
     }
   },
 

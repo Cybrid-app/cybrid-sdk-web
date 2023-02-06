@@ -191,7 +191,16 @@ export default {
       name: 'Name',
       asset: 'Asset',
       number: 'Number',
-      status: 'Status'
+      status: 'Status',
+      success: 'Disconnected',
+      error: 'Error disconnecting'
+    },
+
+    // Disconnect dialog
+    disconnect: {
+      title: 'Confirm Disconnect',
+      confirm: 'Please confirm removal of',
+      warning: 'Deposits will no longer be possible from this account'
     }
   },
 

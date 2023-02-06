@@ -17,7 +17,6 @@ import {
   Subscription,
   switchMap,
   takeUntil,
-  tap,
   timer
 } from 'rxjs';
 
@@ -176,7 +175,7 @@ export class BankAccountListComponent implements OnInit, OnDestroy {
           return timer(cfg.refreshInterval, cfg.refreshInterval);
         }),
         takeUntil(this.unsubscribe$),
-        tap(() => this.listExternalBankAccounts())
+        map(() => this.listExternalBankAccounts())
       )
       .subscribe();
   }
