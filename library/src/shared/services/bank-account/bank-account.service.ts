@@ -109,7 +109,7 @@ export class BankAccountService implements OnDestroy {
         catchError((err) => {
           const message = 'There was an error fetching bank account details';
           this.eventService.handleEvent(LEVEL.ERROR, CODE.DATA_ERROR, message);
-          this.errorService.handleError(new Error(message));
+          this.errorService.handleError(err);
           return of(err);
         })
       );
@@ -133,7 +133,7 @@ export class BankAccountService implements OnDestroy {
         catchError((err: any) => {
           const message = 'There was an error creating a bank account';
           this.eventService.handleEvent(LEVEL.ERROR, CODE.DATA_ERROR, message);
-          this.errorService.handleError(new Error(message));
+          this.errorService.handleError(err);
           return of(err);
         })
       );
@@ -148,7 +148,7 @@ export class BankAccountService implements OnDestroy {
         catchError((err: any) => {
           let message = 'There was an error deleting a bank account';
           this.eventService.handleEvent(LEVEL.ERROR, CODE.DATA_ERROR, message);
-          this.errorService.handleError(new Error(message));
+          this.errorService.handleError(err);
           return of(err);
         })
       );
@@ -168,7 +168,7 @@ export class BankAccountService implements OnDestroy {
             ? 'There was an error reconnecting a bank account'
             : 'There was an error creating a bank account';
         this.eventService.handleEvent(LEVEL.ERROR, CODE.DATA_ERROR, message);
-        this.errorService.handleError(new Error(message));
+        this.errorService.handleError(err);
         return of(err);
       })
     );
