@@ -10,16 +10,6 @@ import {
   takeUntil
 } from 'rxjs';
 
-import {
-  ExternalBankAccountListBankModel,
-  ExternalBankAccountsService,
-  PostExternalBankAccountBankModel,
-  PostWorkflowBankModel,
-  WorkflowBankModel,
-  WorkflowsService,
-  WorkflowWithDetailsBankModel
-} from '@cybrid/cybrid-api-bank-angular';
-
 // Services
 import {
   CODE,
@@ -28,6 +18,18 @@ import {
   EventService,
   LEVEL
 } from '@services';
+
+// Models
+import {
+  ExternalBankAccountBankModel,
+  ExternalBankAccountListBankModel,
+  ExternalBankAccountsService,
+  PostExternalBankAccountBankModel,
+  PostWorkflowBankModel,
+  WorkflowBankModel,
+  WorkflowsService,
+  WorkflowWithDetailsBankModel
+} from '@cybrid/cybrid-api-bank-angular';
 
 // Utility
 import { getLanguageFromLocale } from '../../utility/locale-language';
@@ -95,13 +97,22 @@ export class BankAccountService implements OnDestroy {
     page?: string,
     perPage?: string
   ): Observable<ExternalBankAccountListBankModel> {
-    return this.externalBankAccountService.listExternalBankAccounts(
-      page,
-      perPage,
-      undefined,
-      undefined,
-      this.customerGuid
-    );
+    return this.externalBankAccountService
+      .listExternalBankAccounts(
+        page,
+        perPage,
+        undefined,
+        undefined,
+        this.customerGuid
+      )
+      .pipe(
+        catchError((err) => {
+          const message = 'There was an error fetching bank account details';
+          this.eventService.handleEvent(LEVEL.ERROR, CODE.DATA_ERROR, message);
+          this.errorService.handleError(err);
+          return of(err);
+        })
+      );
   }
 
   createExternalBankAccount(
@@ -120,9 +131,24 @@ export class BankAccountService implements OnDestroy {
       .createExternalBankAccount(postExternalBankAccount)
       .pipe(
         catchError((err: any) => {
-          let message = 'There was an error creating a bank account';
+          const message = 'There was an error creating a bank account';
           this.eventService.handleEvent(LEVEL.ERROR, CODE.DATA_ERROR, message);
-          this.errorService.handleError(new Error(message));
+          this.errorService.handleError(err);
+          return of(err);
+        })
+      );
+  }
+
+  deleteExternalBankAccount(
+    externalAccountGuid: string
+  ): Observable<ExternalBankAccountBankModel> {
+    return this.externalBankAccountService
+      .deleteExternalBankAccount(externalAccountGuid)
+      .pipe(
+        catchError((err: any) => {
+          let message = 'There was an error deleting a bank account';
+          this.eventService.handleEvent(LEVEL.ERROR, CODE.DATA_ERROR, message);
+          this.errorService.handleError(err);
           return of(err);
         })
       );
@@ -137,12 +163,12 @@ export class BankAccountService implements OnDestroy {
     postWorkflowBankModel.external_bank_account_guid = externalAccountGuid;
     return this.workflowService.createWorkflow(postWorkflowBankModel).pipe(
       catchError((err: any) => {
-        let message =
-          externalAccountGuid == undefined
+        const message =
+          externalAccountGuid !== undefined
             ? 'There was an error reconnecting a bank account'
             : 'There was an error creating a bank account';
         this.eventService.handleEvent(LEVEL.ERROR, CODE.DATA_ERROR, message);
-        this.errorService.handleError(new Error(message));
+        this.errorService.handleError(err);
         return of(err);
       })
     );

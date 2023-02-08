@@ -5,6 +5,8 @@ export default {
   done: 'DONE',
   begin: 'BEGIN',
   resume: 'RESUME',
+  disconnect: 'DISCONNECT',
+  reconnect: 'RECONNECT',
   back: 'Back',
   date: 'Date',
   to: 'To',
@@ -171,7 +173,35 @@ export default {
   bankAccountList: {
     account: 'Account',
     status: 'Status',
-    addAccount: 'ADD ACCOUNT'
+    addAccount: 'ADD ACCOUNT',
+    empty: 'No bank accounts connected.',
+    error: 'Error fetching bank accounts.',
+    state: {
+      storing: 'Pending',
+      completed: 'Connected',
+      failed: 'Failed',
+      refresh_required: 'Refresh required',
+      deleting: 'Disconnecting...',
+      deleted: 'Disconnected'
+    },
+
+    // Details dialog
+    details: {
+      title: 'Account Details',
+      name: 'Name',
+      asset: 'Asset',
+      number: 'Number',
+      status: 'Status',
+      success: 'Disconnected',
+      error: 'Error disconnecting'
+    },
+
+    // Disconnect dialog
+    disconnect: {
+      title: 'Confirm Disconnect',
+      confirm: 'Please confirm removal of',
+      warning: 'Deposits will no longer be possible from this account'
+    }
   },
 
   // Transfer component

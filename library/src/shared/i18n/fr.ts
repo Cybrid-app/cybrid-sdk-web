@@ -5,6 +5,8 @@ export default {
   done: 'FAIT',
   begin: 'COMMENCER',
   resume: 'RECOMMENCER',
+  disconnect: 'DÉCONNECTER',
+  reconnect: 'RECONNECTER',
   back: 'Retourner',
   date: 'Date',
   to: 'À',
@@ -173,7 +175,35 @@ export default {
   bankAccountList: {
     account: 'Compte',
     status: 'Statut',
-    addAccount: 'AJOUTER UN COMPTE'
+    addAccount: 'AJOUTER UN COMPTE',
+    empty: 'Aucun compte bancaire connecté.',
+    error: 'Erreur lors de la récupération des comptes bancaires.',
+    state: {
+      storing: 'En attente',
+      completed: 'Connecté',
+      failed: 'Échoué',
+      refresh_required: 'Actualisation requise',
+      deleting: 'Déconnexion...',
+      deleted: 'Déconnecté'
+    },
+
+    // Details dialog
+    details: {
+      title: 'Détails du compte',
+      name: 'Nom',
+      asset: 'Actif',
+      number: 'Numéro',
+      status: 'Statut',
+      success: 'Déconnecté',
+      error: 'Erreur lors de la déconnexion'
+    },
+
+    // Disconnect dialog
+    disconnect: {
+      title: 'Confirmer la déconnexion',
+      confirm: 'Veuillez confirmer la suppression de',
+      warning: 'Les dépôts ne seront plus possibles à partir de ce compte'
+    }
   },
 
   // Transfer component

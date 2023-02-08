@@ -1,0 +1,61 @@
+<ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
+  <h2 mat-dialog-title>{{ 'bankAccountList.details.title' | translate }}</h2>
+  <mat-dialog-content>
+    <div class="cybrid-list-item">
+      <span>{{ 'bankAccountList.details.name' | translate }}</span>
+      <span>{{ account.name }}</span>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="cybrid-list-item">
+      <span>{{ 'bankAccountList.details.asset' | translate }}</span>
+      <span>{{ account.asset }}</span>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="cybrid-list-item">
+      <span>{{ 'bankAccountList.details.number' | translate }}</span>
+      <span>{{ '(***' + account.plaid_account_mask + ')' }}</span>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="cybrid-list-item">
+      <span>{{ 'bankAccountList.details.status' | translate }}</span>
+      <span>{{ 'bankAccountList.state.' + account.state | translate }}</span>
+    </div>
+    <mat-divider></mat-divider>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button id="cancel" mat-stroked-button [mat-dialog-close]="false">
+      {{ 'cancel' | translate }}
+    </button>
+    <button
+      *ngIf="
+        account.state === 'completed' ||
+        account.state === 'refresh_required' ||
+        account.state === 'failed'
+      "
+      id="disconnect"
+      color="primary"
+      mat-flat-button
+      (click)="onDisconnect(account)"
+    >
+      {{ 'disconnect' | translate }}
+    </button>
+    <button
+      *ngIf="account.state === 'refresh_required'"
+      id="reconnect"
+      color="primary"
+      mat-flat-button
+      (click)="onReconnect(account)"
+    >
+      {{ 'reconnect' | translate }}
+    </button>
+  </mat-dialog-actions>
+</ng-container>
+<ng-template #error>
+  <mat-card>
+    <mat-card-content>
+      <div class="fatal">
+        <p>{{ 'fatal' | translate }}</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</ng-template>

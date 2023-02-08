@@ -1,0 +1,22 @@
+<h2 mat-dialog-title>{{ 'bankAccountList.disconnect.title' | translate }}</h2>
+<mat-dialog-content>
+  <p>
+    {{
+      ('bankAccountList.disconnect.confirm' | translate) +
+        ' ' +
+        accountName +
+        '.'
+    }}
+  </p>
+  <p class="mat-body-strong">
+    {{ ('bankAccountList.disconnect.warning' | translate) + '.' }}
+  </p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button id="cancel" mat-stroked-button [mat-dialog-close]="false">
+    {{ 'cancel' | translate }}
+  </button>
+  <button id="disconnect" mat-flat-button color="warn" [mat-dialog-close]="true">
+    {{ 'confirm' | translate }}
+  </button>
+</mat-dialog-actions>
