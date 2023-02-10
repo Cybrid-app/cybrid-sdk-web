@@ -18,5 +18,5 @@ export default defineConfig({
   e2e: {
     baseUrl: 'http://localhost:4200',
     excludeSpecPattern: 'cypress/e2e/trade.cy.ts'
-  },
+  }
 });

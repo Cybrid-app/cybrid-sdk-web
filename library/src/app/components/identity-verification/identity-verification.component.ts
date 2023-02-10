@@ -47,6 +47,8 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
     new BehaviorSubject<IdentityVerificationWithDetailsBankModel | null>(null);
   customer$ = new BehaviorSubject<CustomerBankModel | null>(null);
 
+  identityVerificationGuid: string | undefined;
+
   isVerifying: boolean = false;
   isCanceled: boolean = false;
   isLoading$ = new BehaviorSubject(true);
@@ -139,11 +141,15 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
     this.isLoading$.next(true);
     const poll = new Poll(this.pollConfig);
 
-    poll
-      .start()
+    this.identityVerificationService
+      .createIdentityVerification()
       .pipe(
+        map((identity) => (this.identityVerificationGuid = identity.guid)),
+        switchMap(() => poll.start()),
         switchMap(() =>
-          this.identityVerificationService.getIdentityVerification()
+          this.identityVerificationService.getIdentityVerification(
+            <string>this.identityVerificationGuid
+          )
         ),
         takeUntil(merge(poll.session$, this.unsubscribe$)),
         skipWhile((identity) => identity.state == 'storing'),
@@ -162,6 +168,27 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
             new Error('There was an error fetching identity verification')
           );
           return of(err);
+        })
+      )
+      .subscribe();
+  }
+
+  checkIdentity(): void {
+    const poll = new Poll(this.pollConfig);
+
+    poll
+      .start()
+      .pipe(
+        switchMap(() =>
+          this.identityVerificationService.getIdentityVerification(
+            <string>this.identityVerificationGuid
+          )
+        ),
+        takeUntil(merge(poll.session$, this.unsubscribe$)),
+        skipWhile((identity) => !identity.outcome),
+        map((identity) => {
+          poll.stop();
+          this.handleIdentityVerificationState(identity);
         })
       )
       .subscribe();
@@ -219,7 +246,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   }
 
   personaOnComplete(): void {
-    this.verifyIdentity();
+    this.checkIdentity();
   }
 
   personaOnCancel(client: any): void {

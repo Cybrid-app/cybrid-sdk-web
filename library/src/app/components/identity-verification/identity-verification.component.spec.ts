@@ -43,6 +43,7 @@ describe('IdentityVerificationComponent', () => {
     'IdentityVerificationService',
     [
       'getCustomer',
+      'createIdentityVerification',
       'getIdentityVerification',
       'getPersonaClient',
       'setPersonaClient'
@@ -91,6 +92,9 @@ describe('IdentityVerificationComponent', () => {
     );
     MockIdentityVerificationService.getCustomer.and.returnValue(
       of(TestConstants.CUSTOMER_BANK_MODEL)
+    );
+    MockIdentityVerificationService.createIdentityVerification.and.returnValue(
+      of(TestConstants.IDENTITY_VERIFICATION_BANK_MODEL)
     );
     MockIdentityVerificationService.getIdentityVerification.and.returnValue(
       of(TestConstants.IDENTITY_VERIFICATION_BANK_MODEL)
@@ -144,6 +148,36 @@ describe('IdentityVerificationComponent', () => {
     discardPeriodicTasks();
   }));
 
+  it('should check identity', fakeAsync(() => {
+    let mockIdentityWithOutcome = {
+      ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
+    };
+    mockIdentityWithOutcome.outcome = 'passed';
+    MockIdentityVerificationService.getIdentityVerification.and.returnValue(
+      of(mockIdentityWithOutcome)
+    );
+
+    const handleIdentityVerificationStateSpy = spyOn(
+      component,
+      'handleIdentityVerificationState'
+    );
+
+    component.checkIdentity();
+
+    tick();
+    expect(
+      MockIdentityVerificationService.getIdentityVerification
+    ).toHaveBeenCalled();
+    expect(handleIdentityVerificationStateSpy).toHaveBeenCalled();
+
+    discardPeriodicTasks();
+
+    // Reset
+    MockIdentityVerificationService.getIdentityVerification.and.returnValue(
+      of(TestConstants.IDENTITY_VERIFICATION_BANK_MODEL)
+    );
+  }));
+
   it('should timeout after polling', fakeAsync(() => {
     const identitySpy = spyOn(component.identity$, 'next');
     let identity = { ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL };
@@ -186,7 +220,7 @@ describe('IdentityVerificationComponent', () => {
   }));
 
   it('should handle errors when calling verifyIdentity()', fakeAsync(() => {
-    MockIdentityVerificationService.getIdentityVerification.and.returnValue(
+    MockIdentityVerificationService.createIdentityVerification.and.returnValue(
       error$
     );
 
