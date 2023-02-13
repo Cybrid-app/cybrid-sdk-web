@@ -4,9 +4,14 @@ import { TestBed } from '@angular/core/testing';
 
 import { HttpLoaderFactory } from '../../../app/modules/library.module';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
-import { ConfigService, IdentityVerificationService } from '@services';
+import {
+  ConfigService,
+  ErrorService,
+  EventService,
+  IdentityVerificationService
+} from '@services';
 import { TestConstants } from '@constants';
 import {
   CustomersService,
@@ -18,23 +23,24 @@ describe('IdentityVerificationService', () => {
   let MockConfigService = jasmine.createSpyObj('ConfigService', {
     getConfig$: of(TestConstants.CONFIG)
   });
+  let MockEventService = jasmine.createSpyObj('EventService', [
+    'getEvent',
+    'handleEvent'
+  ]);
+  let MockErrorService = jasmine.createSpyObj('ErrorService', [
+    'getError',
+    'handleError'
+  ]);
   let MockCustomersService = jasmine.createSpyObj('CustomersService', {
     getCustomer: of(TestConstants.CUSTOMER_BANK_MODEL)
   });
   let MockIdentityVerificationsService = jasmine.createSpyObj(
     'IdentityVerificationsService',
-    {
-      createIdentityVerification: of(
-        TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
-      ),
-      listIdentityVerifications: of(
-        TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL
-      ),
-      getIdentityVerification: of(
-        TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
-      )
-    }
+    ['createIdentityVerification', 'getIdentityVerification']
   );
+  const error$ = throwError(() => {
+    new Error('Error');
+  });
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -49,6 +55,8 @@ describe('IdentityVerificationService', () => {
         })
       ],
       providers: [
+        { provide: EventService, useValue: MockEventService },
+        { provide: ErrorService, useValue: MockErrorService },
         { provide: ConfigService, useValue: MockConfigService },
         { provide: CustomersService, useValue: MockCustomersService },
         {
@@ -59,7 +67,15 @@ describe('IdentityVerificationService', () => {
     });
     service = TestBed.inject(IdentityVerificationService);
     MockConfigService = TestBed.inject(ConfigService);
+    MockEventService = TestBed.inject(EventService);
+    MockErrorService = TestBed.inject(ErrorService);
     MockCustomersService = TestBed.inject(CustomersService);
+    MockIdentityVerificationsService.createIdentityVerification.and.returnValue(
+      of(TestConstants.IDENTITY_VERIFICATION_BANK_MODEL)
+    );
+    MockIdentityVerificationsService.getIdentityVerification.and.returnValue(
+      of(TestConstants.IDENTITY_VERIFICATION_BANK_MODEL)
+    );
     MockIdentityVerificationsService = TestBed.inject(
       IdentityVerificationsService
     );
@@ -83,90 +99,51 @@ describe('IdentityVerificationService', () => {
   });
 
   it('should create an identity verification', () => {
-    service.createIdentityVerification();
+    service
+      .createIdentityVerification()
+      .subscribe((res) =>
+        expect(res).toEqual(TestConstants.IDENTITY_VERIFICATION_BANK_MODEL)
+      );
+  });
 
-    expect(
-      MockIdentityVerificationsService.createIdentityVerification
-    ).toHaveBeenCalledWith(service.postIdentityVerificationBankModel);
+  it('should handle errors on creating an identity verification', () => {
+    MockIdentityVerificationsService.createIdentityVerification.and.returnValue(
+      error$
+    );
+
+    service.createIdentityVerification().subscribe();
+
+    expect(MockErrorService.handleError).toHaveBeenCalled();
+    expect(MockEventService.handleEvent).toHaveBeenCalled();
+
+    // Reset
+    MockIdentityVerificationsService.createIdentityVerification.and.returnValue(
+      of(TestConstants.IDENTITY_VERIFICATION_BANK_MODEL)
+    );
   });
 
   it('should get an identity verification', () => {
     // Default with existing identity verification
-    service.getIdentityVerification().subscribe();
+    service.getIdentityVerification('').subscribe();
 
     expect(
-      MockIdentityVerificationsService.listIdentityVerifications
-    ).toHaveBeenCalled();
-
-    // No existing identity verification
-    let emptyList = { ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL };
-    emptyList.objects = [];
-    MockIdentityVerificationsService.listIdentityVerifications.and.returnValue(
-      of(emptyList)
-    );
-
-    service.getIdentityVerification().subscribe();
-
-    expect(
-      MockIdentityVerificationsService.listIdentityVerifications
+      MockIdentityVerificationsService.getIdentityVerification
     ).toHaveBeenCalled();
   });
 
-  it('should handle an identity verification', () => {
-    // Valid identity and Persona state
-    let identity = service.handleIdentityVerificationState(
+  it('should handle error on getIdentityVerification()', () => {
+    MockIdentityVerificationsService.getIdentityVerification.and.returnValue(
+      error$
+    );
+
+    service.getIdentityVerification('').subscribe();
+
+    expect(MockErrorService.handleError).toHaveBeenCalled();
+    expect(MockEventService.handleEvent).toHaveBeenCalled();
+
+    // Reset
+    MockIdentityVerificationsService.getIdentityVerification.and.returnValue(
       TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
     );
-
-    identity.subscribe((res) => {
-      expect(res).toEqual(TestConstants.IDENTITY_VERIFICATION_BANK_MODEL);
-    });
-
-    // Expired identity state
-    let expiredIdentity = {
-      ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
-    };
-    expiredIdentity.state = 'expired';
-    MockIdentityVerificationsService.getIdentityVerification.and.returnValue(
-      of(expiredIdentity)
-    );
-
-    service.handleIdentityVerificationState(expiredIdentity).subscribe(() => {
-      expect(
-        MockIdentityVerificationsService.getIdentityVerification
-      ).toHaveBeenCalled();
-    });
-
-    // Expired Persona state
-    let expiredPersona = { ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL };
-    expiredPersona.persona_state = 'expired';
-    MockIdentityVerificationsService.getIdentityVerification.and.returnValue(
-      of(expiredIdentity)
-    );
-
-    service
-      .handleIdentityVerificationState(expiredIdentity)
-      .subscribe(() =>
-        expect(
-          MockIdentityVerificationsService.getIdentityVerification
-        ).toHaveBeenCalled()
-      );
-  });
-
-  it('should set the Persona client', () => {
-    const setPersonaSpy = spyOn(service.personaClient, 'next');
-
-    service.setPersonaClient('test');
-
-    expect(setPersonaSpy).toHaveBeenCalledWith('test');
-  });
-
-  it('should get the Persona client', () => {
-    // Set Persona client
-    service.setPersonaClient('test');
-
-    service.getPersonaClient().subscribe((res) => {
-      expect(res).toEqual('test');
-    });
   });
 });

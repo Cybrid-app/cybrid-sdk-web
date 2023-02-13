@@ -3,11 +3,11 @@ import { HttpClient } from '@angular/common/http';
 
 import {
   BehaviorSubject,
+  catchError,
   map,
   Observable,
   of,
   Subject,
-  switchMap,
   takeUntil
 } from 'rxjs';
 
@@ -15,14 +15,15 @@ import {
 import {
   CustomerBankModel,
   CustomersService,
-  IdentityVerificationBankModel,
-  PostIdentityVerificationBankModel,
   IdentityVerificationsService,
-  IdentityVerificationWithDetailsBankModel
+  IdentityVerificationWithDetailsBankModel,
+  PostIdentityVerificationBankModel
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
 import { ConfigService } from '../config/config.service';
+import { CODE, EventService, LEVEL } from '../event/event.service';
+import { ErrorService } from '../error/error.service';
 
 @Injectable({
   providedIn: 'root'
@@ -43,7 +44,9 @@ export class IdentityVerificationService implements OnDestroy {
     private http: HttpClient,
     private identityVerificationService: IdentityVerificationsService,
     private customerService: CustomersService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private eventService: EventService,
+    private errorService: ErrorService
   ) {
     this.getCustomerGuid();
   }
@@ -71,53 +74,37 @@ export class IdentityVerificationService implements OnDestroy {
     return this.customerService.getCustomer(this.customerGuid);
   }
 
-  createIdentityVerification(): Observable<IdentityVerificationBankModel> {
-    return this.identityVerificationService.createIdentityVerification(
-      this.postIdentityVerificationBankModel
-    );
-  }
-
-  getIdentityVerification(): Observable<IdentityVerificationWithDetailsBankModel> {
+  createIdentityVerification(): Observable<IdentityVerificationWithDetailsBankModel> {
     return this.identityVerificationService
-      .listIdentityVerifications(
-        '0',
-        '1',
-        undefined,
-        undefined,
-        this.customerGuid
-      )
+      .createIdentityVerification(this.postIdentityVerificationBankModel)
       .pipe(
-        switchMap((list) => {
-          const identity = list.objects[0];
-          return identity
-            ? this.handleIdentityVerificationState(identity)
-            : this.createIdentityVerification();
+        catchError((err) => {
+          this.eventService.handleEvent(
+            LEVEL.ERROR,
+            CODE.DATA_ERROR,
+            'There was an error creating an identity verification',
+            err
+          );
+          this.errorService.handleError(err);
+          return of(err);
         })
       );
   }
 
-  handleIdentityVerificationState(
-    identity: IdentityVerificationBankModel
+  getIdentityVerification(
+    guid: string
   ): Observable<IdentityVerificationWithDetailsBankModel> {
-    return this.identityVerificationService
-      .getIdentityVerification(identity.guid!)
-      .pipe(
-        switchMap((identity) => {
-          if (
-            identity.state == 'expired' ||
-            identity.persona_state == 'expired'
-          ) {
-            return this.createIdentityVerification();
-          } else return of(identity);
-        })
-      );
-  }
-
-  setPersonaClient(client: any): void {
-    this.personaClient.next(client);
-  }
-
-  getPersonaClient(): Observable<any> {
-    return this.personaClient.asObservable();
+    return this.identityVerificationService.getIdentityVerification(guid).pipe(
+      catchError((err) => {
+        this.eventService.handleEvent(
+          LEVEL.ERROR,
+          CODE.DATA_ERROR,
+          'There was an error fetching the identity verification',
+          err
+        );
+        this.errorService.handleError(err);
+        return of(err);
+      })
+    );
   }
 }

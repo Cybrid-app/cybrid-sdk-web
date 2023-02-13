@@ -12,7 +12,8 @@ import {
   Subject,
   switchMap,
   take,
-  takeUntil
+  takeUntil,
+  tap
 } from 'rxjs';
 
 // Services
@@ -46,6 +47,9 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   identity$ =
     new BehaviorSubject<IdentityVerificationWithDetailsBankModel | null>(null);
   customer$ = new BehaviorSubject<CustomerBankModel | null>(null);
+  personaClient: BehaviorSubject<any | null> = new BehaviorSubject(null);
+
+  identityVerificationGuid: string | undefined;
 
   isVerifying: boolean = false;
   isCanceled: boolean = false;
@@ -86,6 +90,12 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
+  /**
+   * Gets the customer and polls on the customer status
+   *
+   * Skips customer with a state of storing
+   * Handles customer that returns a non-storing state, else returns an error
+   **/
   getCustomerStatus(): void {
     const poll = new Poll(this.pollConfig);
 
@@ -96,8 +106,8 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
         takeUntil(merge(poll.session$, this.unsubscribe$)),
         skipWhile((customer) => customer.state === 'storing'),
         map((customer) => {
-          this.isVerifying = true;
           poll.stop();
+          this.isVerifying = true;
           this.handleCustomerState(customer);
         }),
         catchError((err) => {
@@ -135,15 +145,28 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Creates an identity verification and polls on the status
+   *
+   * Skips IDV with a state of storing
+   * Handles IDV that returns a non-storing state, else returns an error
+   **/
   verifyIdentity(): void {
     this.isLoading$.next(true);
+
     const poll = new Poll(this.pollConfig);
 
-    poll
-      .start()
+    this.identityVerificationService
+      .createIdentityVerification()
       .pipe(
+        switchMap((identity) => {
+          this.identityVerificationGuid = identity.guid;
+          return poll.start();
+        }),
         switchMap(() =>
-          this.identityVerificationService.getIdentityVerification()
+          this.identityVerificationService.getIdentityVerification(
+            this.identityVerificationGuid!
+          )
         ),
         takeUntil(merge(poll.session$, this.unsubscribe$)),
         skipWhile((identity) => identity.state == 'storing'),
@@ -181,6 +204,47 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Checks identity status by polling on GET identity_verifications
+   *
+   * Skips an IDV with an outcome of null for the duration of the polling period
+   * Sets and IDV with a non-null outcome, or after the polling duration
+   *
+   **/
+  checkIdentity(): void {
+    let currentIdentity: IdentityVerificationWithDetailsBankModel;
+
+    const poll = new Poll({
+      timeout: new BehaviorSubject<boolean>(false),
+      duration: Constants.POLL_DURATION,
+      interval: Constants.POLL_INTERVAL
+    });
+
+    poll
+      .start()
+      .pipe(
+        switchMap(() => {
+          return this.identityVerificationService.getIdentityVerification(
+            this.identityVerificationGuid!
+          );
+        }),
+        tap((identity) => (currentIdentity = identity)),
+        takeUntil(
+          merge(poll.session$, this.unsubscribe$).pipe(
+            map(() => {
+              this.handleIdentityVerificationState(currentIdentity);
+            })
+          )
+        ),
+        skipWhile((identity) => !identity.outcome),
+        map((identity) => {
+          poll.stop();
+          this.handleIdentityVerificationState(identity);
+        })
+      )
+      .subscribe();
+  }
+
   handlePersonaState(identity: IdentityVerificationWithDetailsBankModel): void {
     switch (identity.persona_state) {
       case 'waiting':
@@ -214,18 +278,21 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   }
 
   personaOnReady(client: any) {
-    this.identityVerificationService.setPersonaClient(client);
+    this.personaClient.next(client);
     client.open();
   }
 
   personaOnComplete(): void {
-    this.verifyIdentity();
+    this.checkIdentity();
   }
 
   personaOnCancel(client: any): void {
+    // Reset in memory client
+    client.options.inquiryId = null;
+    this.personaClient.next(client);
+
     this.isCanceled = true;
     this.isLoading$.next(false);
-    this.identityVerificationService.setPersonaClient(client);
   }
 
   personaOnError(error: any) {
@@ -240,12 +307,8 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   }
 
   bootstrapPersona(inquiryId: string): void {
-    this.identityVerificationService
-      .getPersonaClient()
+    combineLatest([this.personaClient, this.configService.getConfig$()])
       .pipe(
-        switchMap((personaClient) =>
-          combineLatest([of(personaClient), this.configService.getConfig$()])
-        ),
         take(1),
         map((obj) => {
           const [personaClient, config] = obj;
@@ -269,6 +332,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
             });
           } else {
             // Re-initialize local references and open client
+            personaClient.options.inquiryId = inquiryId;
             personaClient.options.language = this.getPersonaLanguageAlias(
               config.locale
             );
