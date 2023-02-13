@@ -23,7 +23,7 @@ import {
 } from '@services';
 
 import { IdentityVerificationComponent } from '@components';
-import { Constants, TestConstants } from '@constants';
+import { TestConstants } from '@constants';
 import { SharedModule } from '../../../shared/modules/shared.module';
 
 describe('IdentityVerificationComponent', () => {
@@ -41,13 +41,7 @@ describe('IdentityVerificationComponent', () => {
   let MockConfigService = jasmine.createSpyObj('ConfigService', ['getConfig$']);
   let MockIdentityVerificationService = jasmine.createSpyObj(
     'IdentityVerificationService',
-    [
-      'getCustomer',
-      'createIdentityVerification',
-      'getIdentityVerification',
-      'getPersonaClient',
-      'setPersonaClient'
-    ]
+    ['getCustomer', 'createIdentityVerification', 'getIdentityVerification']
   );
   let MockRoutingService = jasmine.createSpyObj('RoutingService', [
     'handleRoute'
@@ -291,23 +285,19 @@ describe('IdentityVerificationComponent', () => {
 
   it('should handle Persona callbacks', () => {
     const isLoading$Spy = spyOn(component.isLoading$, 'next');
+    const personaClientSpy = spyOn(component.personaClient, 'next');
 
     // Define Persona client with open method
     let client = {
-      open: () => undefined
+      options: { inquiryId: '' },
+      open: () => {}
     };
 
     component.personaOnReady(client);
-
-    expect(
-      MockIdentityVerificationService.setPersonaClient
-    ).toHaveBeenCalledWith(client);
+    expect(personaClientSpy).toHaveBeenCalled();
 
     component.personaOnCancel(client);
-
-    expect(
-      MockIdentityVerificationService.setPersonaClient
-    ).toHaveBeenCalledWith(client);
+    expect(personaClientSpy).toHaveBeenCalled();
     expect(isLoading$Spy).toHaveBeenCalled();
 
     component.personaOnError(new Error('error'));
@@ -316,33 +306,16 @@ describe('IdentityVerificationComponent', () => {
     expect(MockEventService.handleEvent).toHaveBeenCalled();
   });
 
-  it('should bootstrap the persona client', fakeAsync(() => {
-    MockIdentityVerificationService.getPersonaClient.and.returnValue(of(false));
-    component.personaScriptSrc = Constants.PERSONA_SCRIPT_SRC;
-
+  it('should bootstrap the persona client', () => {
     component.bootstrapPersona(
       TestConstants.IDENTITY_VERIFICATION_BANK_MODEL.persona_inquiry_id!
     );
 
-    tick();
     expect(MockConfigService.getConfig$).toHaveBeenCalled();
-    expect(MockIdentityVerificationService.getPersonaClient).toHaveBeenCalled();
-
-    MockIdentityVerificationService.getPersonaClient.and.returnValue(of(true));
-
-    component.bootstrapPersona(
-      TestConstants.IDENTITY_VERIFICATION_BANK_MODEL.persona_inquiry_id!
-    );
-
-    tick();
-    expect(MockConfigService.getConfig$).toHaveBeenCalled();
-    expect(MockIdentityVerificationService.getPersonaClient).toHaveBeenCalled();
-
-    discardPeriodicTasks();
-  }));
+  });
 
   it('should handle errors when calling bootstrapPersona()', () => {
-    MockIdentityVerificationService.getPersonaClient.and.returnValue(error$);
+    component.personaClient.next(error$);
 
     component.bootstrapPersona(
       TestConstants.IDENTITY_VERIFICATION_BANK_MODEL.persona_inquiry_id!
@@ -351,7 +324,7 @@ describe('IdentityVerificationComponent', () => {
     expect(MockErrorService.handleError).toHaveBeenCalled();
     expect(MockEventService.handleEvent).toHaveBeenCalled();
 
-    MockIdentityVerificationService.getPersonaClient.and.returnValue(of(null));
+    component.personaClient.next({});
     MockConfigService.getConfig$.and.returnValue(error$);
 
     component.bootstrapPersona(

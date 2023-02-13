@@ -107,12 +107,4 @@ export class IdentityVerificationService implements OnDestroy {
       })
     );
   }
-
-  setPersonaClient(client: any): void {
-    this.personaClient.next(client);
-  }
-
-  getPersonaClient(): Observable<any> {
-    return this.personaClient.asObservable();
-  }
 }

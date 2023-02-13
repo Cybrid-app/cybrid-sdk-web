@@ -146,21 +146,4 @@ describe('IdentityVerificationService', () => {
       TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
     );
   });
-
-  it('should set the Persona client', () => {
-    const setPersonaSpy = spyOn(service.personaClient, 'next');
-
-    service.setPersonaClient('test');
-
-    expect(setPersonaSpy).toHaveBeenCalledWith('test');
-  });
-
-  it('should get the Persona client', () => {
-    // Set Persona client
-    service.setPersonaClient('test');
-
-    service.getPersonaClient().subscribe((res) => {
-      expect(res).toEqual('test');
-    });
-  });
 });
