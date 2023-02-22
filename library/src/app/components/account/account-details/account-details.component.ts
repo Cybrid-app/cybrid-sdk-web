@@ -131,12 +131,10 @@ export class AccountDetailsComponent
       .subscribe();
 
     this.configService
-      .getConfig$()
+      .getBank$()
       .pipe(
-        map((config) => {
-          this.counterAssetCode = config.fiat;
-          return config.fiat;
-        }),
+        take(1),
+        map((bank) => bank.supported_fiat_account_assets![0]),
         switchMap((counterAsset) => {
           return this.accountService
             .getAccountDetails(this.accountGuid, counterAsset)
@@ -232,6 +230,7 @@ export class AccountDetailsComponent
     this.configService
       .getConfig$()
       .pipe(
+        take(1),
         switchMap((cfg: ComponentConfig) => {
           return timer(cfg.refreshInterval, cfg.refreshInterval);
         }),

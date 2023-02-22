@@ -52,7 +52,7 @@ export class Constants {
     theme: Constants.THEME,
     routing: Constants.ROUTING,
     customer: '',
-    fiat: 'USD',
+    fiat: '',
     environment: 'demo'
   };
   static DEFAULT_COMPONENT = 'price-list';
