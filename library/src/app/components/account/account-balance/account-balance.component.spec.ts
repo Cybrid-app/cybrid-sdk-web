@@ -60,7 +60,7 @@ describe('AccountBalanceComponent', () => {
     expect(component.isSandboxTradingAccount()).toBeFalse();
 
     // Set environment: 'sandbox'
-    component.environment = 'sandbox'
+    component.environment = 'sandbox';
 
     // Trading account
     component.account = TestConstants.ACCOUNT_BANK_MODEL_BTC;
