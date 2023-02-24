@@ -19,21 +19,21 @@ export class AccountBalanceComponent {
       .subscribe();
   }
 
-  isDemoTradingAccount(): boolean {
+  isSandboxTradingAccount(): boolean {
     return (
-      this.environment == 'demo' &&
+      (this.environment == 'staging' || this.environment == 'sandbox') &&
       this.account?.type == AccountBankModel.TypeEnum.Trading
     );
   }
 
   get Balance(): string | undefined {
-    return this.isDemoTradingAccount()
+    return this.isSandboxTradingAccount()
       ? this.account?.platform_balance
       : this.account?.platform_available;
   }
 
   get Pending(): number | undefined {
-    return this.isDemoTradingAccount()
+    return this.isSandboxTradingAccount()
       ? 0
       : Number(this.account?.platform_balance) -
           Number(this.account?.platform_available);

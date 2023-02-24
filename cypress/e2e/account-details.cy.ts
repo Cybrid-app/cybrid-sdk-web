@@ -56,11 +56,11 @@ describe('account-details test', () => {
       .find('tr')
       .should('contain.text', 'Buy')
       .should('contain.text', 'BTC')
-      .should('contain.text', 'Aug 9, 2022')
-      .should('contain.text', '123')
-      .should('contain.text', '1')
-      .should('contain.text', '$2,845,277.82')
-      .should('contain.text', '$23,092.68');
+      .should('contain.text', 'Feb 24, 2023')
+      .should('contain.text', '0.00004298')
+      .should('contain.text', '$1.00')
+      .should('contain.text', '0.00004297')
+      .should('contain.text', '$1.00');
   });
 
   it('should display trade summary', () => {
@@ -69,19 +69,19 @@ describe('account-details test', () => {
 
     cy.get('.cybrid-subtitle').should(
       'contain.text',
-      '$2,845,277.82 USD in BTC'
+      '$1.00 USD in BTC'
     );
     cy.get('.cybrid-subheader-item')
-      .should('contain.text', '718902509...')
-      .should('contain.text', 'Aug 9, 2022');
+      .should('contain.text', '0989a082d...')
+      .should('contain.text', 'Feb 24, 2023');
     cy.get('.cybrid-list-item')
       .should('contain.text', 'Status')
       .should('contain.text', 'Settling')
       .should('contain.text', 'Purchased amount')
-      .should('contain.text', '$2,845,277.82')
+      .should('contain.text', '$1.00')
       .should('contain.text', 'USD')
       .should('contain.text', 'Purchased quantity')
-      .should('contain.text', '123 BTC')
+      .should('contain.text', '0.00004298 BTC')
       .should('contain.text', 'Transaction fee')
       .should('contain.text', '$0.00');
     cy.get('app-trade-summary').find('button').click();

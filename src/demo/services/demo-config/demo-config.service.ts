@@ -18,9 +18,6 @@ export class DemoConfigService {
 
   getAuthUrl(env: string): string {
     switch (env) {
-      case 'demo': {
-        return environment.idpAuthUrl.demo;
-      }
       case 'local': {
         return environment.idpAuthUrl.local;
       }
@@ -34,7 +31,7 @@ export class DemoConfigService {
         return environment.idpAuthUrl.production;
       }
       default:
-        return environment.idpAuthUrl.demo;
+        return environment.idpAuthUrl.sandbox;
     }
   }
 

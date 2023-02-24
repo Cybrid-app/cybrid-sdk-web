@@ -11,7 +11,7 @@ import {
 
 // Utility
 import { TranslateService } from '@ngx-translate/core';
-import { TestConstants } from '@constants';
+import { Constants, TestConstants } from '@constants';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {
@@ -70,7 +70,7 @@ describe('ConfigService', () => {
   });
 
   it('should initialize the defaultConfig', () => {
-    expect(service.config).toEqual(TestConstants.CONFIG);
+    expect(service.config).toEqual(Constants.DEFAULT_CONFIG);
   });
 
   it('should set config$ with a host config when setConfig() is called', fakeAsync(() => {
@@ -134,11 +134,11 @@ describe('ConfigService', () => {
   });
 
   it('should set environment', () => {
-    // 'demo'
+    // 'default'
     service.setEnvironment(TestConstants.CONFIG);
 
     expect(service['configuration'].basePath).toEqual(
-      environment.demoBankApiBasePath
+      environment.stagingBankApiBasePath
     );
 
     // 'local'

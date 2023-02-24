@@ -18,14 +18,14 @@ interface LoginForm {
   clientSecret: FormControl<string>;
   bearerToken: FormControl<string>;
   customerGuid: FormControl<string>;
-  environment: FormControl<'demo' | 'staging' | 'sandbox' | 'production'>;
+  environment: FormControl<'staging' | 'sandbox' | 'production'>;
 }
 
 export interface DemoCredentials {
   token: string;
   customer: string;
   isPublic: boolean;
-  environment: 'demo' | 'local' | 'staging' | 'sandbox' | 'production';
+  environment: 'local' | 'staging' | 'sandbox' | 'production';
 }
 
 @Component({
@@ -37,12 +37,12 @@ export class LoginComponent implements OnInit {
   @Output() credentials = new EventEmitter<DemoCredentials>();
 
   bearer = false;
-  environment = ['demo', 'local', 'staging', 'sandbox', 'production'];
+  environment = ['local', 'staging', 'sandbox', 'production'];
   demoCredentials: DemoCredentials = {
     token: '',
     customer: '',
     isPublic: false,
-    environment: 'demo'
+    environment: 'sandbox'
   };
 
   // PUBLIC CREDENTIALS FOR NO-LOGIN DEMO
@@ -79,7 +79,7 @@ export class LoginComponent implements OnInit {
         validators: [Validators.required, Validators.minLength(32)],
         nonNullable: true
       }),
-      environment: new FormControl('demo', { nonNullable: true })
+      environment: new FormControl('sandbox', { nonNullable: true })
     });
 
     if (this.loginForm.valid) this.login();
@@ -87,9 +87,6 @@ export class LoginComponent implements OnInit {
 
   getBankApiBasePath(env: string): string {
     switch (env) {
-      case 'demo': {
-        return environment.bankApiCustomerBasePath.demo;
-      }
       case 'local': {
         return environment.bankApiCustomerBasePath.local;
       }
@@ -103,7 +100,7 @@ export class LoginComponent implements OnInit {
         return environment.bankApiCustomerBasePath.production;
       }
       default:
-        return environment.bankApiCustomerBasePath.demo;
+        return environment.bankApiCustomerBasePath.sandbox;
     }
   }
 
@@ -227,7 +224,7 @@ export class LoginComponent implements OnInit {
           this.demoCredentials.customer = customer.guid;
 
           this.demoCredentials.environment = publicUser
-            ? 'demo'
+            ? 'sandbox'
             : this.loginForm.controls.environment.value;
 
           publicUser

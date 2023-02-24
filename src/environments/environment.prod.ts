@@ -7,14 +7,12 @@ import ci from './environment.ci.json';
 export const environment = {
   production: true,
   idpAuthUrl: {
-    demo: 'https://id.demo.cybrid.app/oauth/token',
     local: 'http://api-idp.local.cybrid.com:3000/oauth/token',
     staging: 'https://id.staging.cybrid.app/oauth/token',
     sandbox: 'https://id.sandbox.cybrid.app/oauth/token',
     production: 'https://id.production.cybrid.app/oauth/token'
   },
   bankApiCustomerBasePath: {
-    demo: 'https://bank.demo.cybrid.app/api/customers/',
     local: 'http://api-platform-bank.local.cybrid.com:3002/api/customers/',
     staging: 'https://bank.staging.cybrid.app/api/customers/',
     sandbox: 'https://bank.sandbox.cybrid.app/api/customers/',
