@@ -42,7 +42,7 @@ import {
   AssetIconPipe,
   TruncatePipe
 } from '@pipes';
-import { TestConstants } from '@constants';
+import { Constants, TestConstants } from '@constants';
 
 describe('TradeComponent', () => {
   let component: TradeComponent;
@@ -371,7 +371,12 @@ describe('TradeComponent', () => {
   it('should get the tradingPlatformAvailable', () => {
     fixture.detectChanges();
 
-    // Default environment: 'demo'
+    // Default environment: 'sandbox'
+    expect(
+      component.getTradingPlatformAvailable(Constants.DEFAULT_CONFIG)
+    ).toEqual(4997.7367924308);
+
+    // Test environment: 'staging'
     expect(component.getTradingPlatformAvailable(TestConstants.CONFIG)).toEqual(
       4997.7367924308
     );

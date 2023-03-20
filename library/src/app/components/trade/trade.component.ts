@@ -305,9 +305,9 @@ export class TradeComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  // Check environment to bypass 'demo' platform_available always being '0'
+  // Check environment to bypass 'staging and sandbox' platform_available always being '0'
   getTradingPlatformAvailable(config: ComponentConfig): number {
-    return config.environment == 'demo'
+    return config.environment == 'sandbox' || config.environment == 'staging'
       ? (this.assetFormatPipe.transform(
           this.tradeFormGroup.controls.tradingAccount.value?.platform_balance,
           <string>this.tradeFormGroup.controls.tradingAccount.value?.asset,

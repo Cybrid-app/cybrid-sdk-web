@@ -49,13 +49,26 @@ describe('AccountBalanceComponent', () => {
   });
 
   it('should check the environment and asset type', () => {
+    // Default 'staging' environment
+
     // Trading account
     component.account = TestConstants.ACCOUNT_BANK_MODEL_BTC;
-    expect(component.isDemoTradingAccount()).toBeTrue();
+    expect(component.isSandboxTradingAccount()).toBeTrue();
 
     // Fiat account
     component.account = TestConstants.ACCOUNT_BANK_MODEL_USD;
-    expect(component.isDemoTradingAccount()).toBeFalse();
+    expect(component.isSandboxTradingAccount()).toBeFalse();
+
+    // Set environment: 'sandbox'
+    component.environment = 'sandbox';
+
+    // Trading account
+    component.account = TestConstants.ACCOUNT_BANK_MODEL_BTC;
+    expect(component.isSandboxTradingAccount()).toBeTrue();
+
+    // Fiat account
+    component.account = TestConstants.ACCOUNT_BANK_MODEL_USD;
+    expect(component.isSandboxTradingAccount()).toBeFalse();
   });
 
   it('should get the balance', () => {

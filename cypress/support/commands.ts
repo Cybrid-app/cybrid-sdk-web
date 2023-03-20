@@ -38,6 +38,8 @@ Cypress.Commands.add('login', (backstopped?: 'backstopped') => {
       .type(Cypress.env(client_id));
     cy.get('#clientSecret').type(Cypress.env(client_secret));
     cy.get('#customerGuid').type(Cypress.env(customer_guid));
+    cy.get('mat-select').click();
+    cy.get('mat-option').contains('Staging').click();
     cy.get('#login').click();
   }
 
