@@ -183,6 +183,7 @@ workflows:
 
       - publish:
           requires:
+            - test
             - e2e chromium@101.0.4951.64
             - e2e chromium@102.0.5005.61
             - e2e chrome@latest
