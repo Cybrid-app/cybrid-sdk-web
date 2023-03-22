@@ -13,7 +13,7 @@ function customCommand(param: any): void {
   console.warn(param);
 }
 
-before(() => {
+beforeEach(() => {
   cy.intercept(
     'GET',
     'https://api.github.com/repos/Cybrid-app/cybrid-sdk-web/releases/latest',
