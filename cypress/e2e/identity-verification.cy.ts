@@ -40,6 +40,7 @@ describe('identity-verification test', () => {
     // Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'storing';
+
     cy.intercept('GET', 'api/customers/*', (req) => {
       delete req.headers['if-none-match'];
       req.reply(customer);
@@ -61,6 +62,7 @@ describe('identity-verification test', () => {
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'verified';
+
     cy.intercept('GET', 'api/customers/*', (req) => {
       delete req.headers['if-none-match'];
       req.reply(customer);
@@ -83,6 +85,7 @@ describe('identity-verification test', () => {
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'rejected';
+
     cy.intercept('GET', 'api/customers/*', (req) => {
       delete req.headers['if-none-match'];
       req.reply(customer);
@@ -105,6 +108,7 @@ describe('identity-verification test', () => {
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'unverified';
+
     cy.intercept('GET', 'api/customers/*', (req) => {
       delete req.headers['if-none-match'];
       req.reply(customer);
@@ -153,12 +157,6 @@ describe('identity-verification test', () => {
     identityVerification.state = 'completed';
     identityVerification.persona_state = 'reviewing';
 
-    //Mock list identity
-    const identityList = {
-      ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL
-    };
-    identityList.objects[0].state = 'completed';
-
     cy.intercept('POST', 'api/identity_verifications*', (req) => {
       req.reply(identityVerification);
     });
@@ -185,21 +183,22 @@ describe('identity-verification test', () => {
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'unverified';
+
     cy.intercept('GET', 'api/customers/*', (req) => {
       req.reply(customer);
     }).as('getCustomer');
 
     //Mock identity verification
-    const identity = { ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL };
-    identity.state = 'waiting';
-    identity.persona_state = 'processing';
+    const identityVerification = { ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL };
+    identityVerification.state = 'waiting';
+    identityVerification.persona_state = 'processing';
 
     cy.intercept('POST', 'api/identity_verifications*', (req) => {
-      req.reply(identity);
+      req.reply(identityVerification);
     });
 
     cy.intercept('GET', 'api/identity_verifications/*', (req) => {
-      req.reply(identity);
+      req.reply(identityVerification);
     });
 
     cy.wait('@getCustomer').then(() => {
@@ -232,13 +231,6 @@ describe('identity-verification test', () => {
     identityVerification.state = 'completed';
     identityVerification.outcome = 'passed';
 
-    //Mock list identity
-    const identityList = {
-      ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL
-    };
-    identityList.objects[0].state = 'completed';
-    identityList.objects[0].outcome = 'passed';
-
     cy.intercept('POST', 'api/identity_verifications*', (req) => {
       req.reply(identityVerification);
     });
@@ -265,6 +257,7 @@ describe('identity-verification test', () => {
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'unverified';
+
     cy.intercept('GET', 'api/customers/*', (req) => {
       req.reply(customer);
     }).as('getCustomer');
@@ -275,13 +268,6 @@ describe('identity-verification test', () => {
     };
     identityVerification.state = 'completed';
     identityVerification.outcome = 'failed';
-
-    //Mock list identity
-    const identityList = {
-      ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL
-    };
-    identityList.objects[0].state = 'completed';
-    identityList.objects[0].outcome = 'failed';
 
     cy.intercept('POST', 'api/identity_verifications*', (req) => {
       req.reply(identityVerification);
