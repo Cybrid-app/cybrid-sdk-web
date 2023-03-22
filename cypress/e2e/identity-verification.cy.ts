@@ -17,10 +17,15 @@ function identityVerificationSetup() {
 
 describe('identity-verification test', () => {
   beforeEach(() => {
+    cy.intercept('GET', 'api/prices*', (req) => {
+      req.reply(TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY);
+    }).as('listPrices');
+    cy.intercept('GET', 'api/assets', (req) => {
+      req.reply(TestConstants.ASSET_LIST_BANK_MODEL);
+    }).as('listAssets');
     cy.intercept('GET', 'api/customers/*', (req) => {
       req.reply(TestConstants.CUSTOMER_BANK_MODEL);
     }).as('getCustomer');
-
     cy.intercept('GET', 'api/banks/*', (req) => {
       req.reply(TestConstants.BANK_BANK_MODEL);
     }).as('getBank');
@@ -105,22 +110,18 @@ describe('identity-verification test', () => {
       req.reply(customer);
     }).as('getCustomer');
 
-    //Mock identity list
-    const identityList = {
-      ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL
+    //Mock identity verification
+    const identityVerification = {
+      ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
     };
-    identityList.objects[0].state = 'storing';
+    identityVerification.state = 'storing'
 
-    cy.intercept('GET', 'api/identity_verifications*', (req) => {
-      req.reply(identityList);
-    }).as('getIdentity');
-
-    //Mock identity
-    const identity = { ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL };
-    identity.persona_state = 'reviewing';
+    cy.intercept('POST', 'api/identity_verifications*', (req) => {
+      req.reply(identityVerification);
+    });
 
     cy.intercept('GET', 'api/identity_verifications/*', (req) => {
-      req.reply(identity);
+      req.reply(identityVerification);
     });
 
     cy.wait('@getCustomer').then(() => {
@@ -140,9 +141,17 @@ describe('identity-verification test', () => {
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'unverified';
+
     cy.intercept('GET', 'api/customers/*', (req) => {
       req.reply(customer);
     }).as('getCustomer');
+
+    //Mock identity verification
+    const identityVerification = {
+      ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
+    };
+    identityVerification.state = 'completed';
+    identityVerification.persona_state = 'reviewing';
 
     //Mock list identity
     const identityList = {
@@ -150,16 +159,12 @@ describe('identity-verification test', () => {
     };
     identityList.objects[0].state = 'completed';
 
-    //Mock identity
-    const identity = { ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL };
-    identity.persona_state = 'reviewing';
-
-    cy.intercept('GET', 'api/identity_verifications*', (req) => {
-      req.reply(identityList);
+    cy.intercept('POST', 'api/identity_verifications*', (req) => {
+      req.reply(identityVerification);
     });
 
     cy.intercept('GET', 'api/identity_verifications/*', (req) => {
-      req.reply(identity);
+      req.reply(identityVerification);
     });
 
     cy.wait('@getCustomer').then(() => {
@@ -184,18 +189,13 @@ describe('identity-verification test', () => {
       req.reply(customer);
     }).as('getCustomer');
 
-    //Mock list identity
-    const identityList = {
-      ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL
-    };
-    identityList.objects[0].state = 'waiting';
-
-    //Mock identity
+    //Mock identity verification
     const identity = { ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL };
+    identity.state = 'waiting';
     identity.persona_state = 'processing';
 
-    cy.intercept('GET', 'api/identity_verifications*', (req) => {
-      req.reply(identityList);
+    cy.intercept('POST', 'api/identity_verifications*', (req) => {
+      req.reply(identity);
     });
 
     cy.intercept('GET', 'api/identity_verifications/*', (req) => {
@@ -220,21 +220,31 @@ describe('identity-verification test', () => {
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'unverified';
+
     cy.intercept('GET', 'api/customers/*', (req) => {
       req.reply(customer);
     }).as('getCustomer');
 
-    //Mock list identity
-    const identity = { ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL };
-    identity.objects[0].state = 'completed';
-    identity.objects[0].outcome = 'passed';
+    //Mock identity verification
+    const identityVerification = {
+      ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
+    };
+    identityVerification.state = 'completed';
+    identityVerification.outcome = 'passed';
 
-    cy.intercept('GET', 'api/identity_verifications*', (req) => {
-      req.reply(identity);
-    }).as('getIdentity');
+    //Mock list identity
+    const identityList = {
+      ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL
+    };
+    identityList.objects[0].state = 'completed';
+    identityList.objects[0].outcome = 'passed';
+
+    cy.intercept('POST', 'api/identity_verifications*', (req) => {
+      req.reply(identityVerification);
+    });
 
     cy.intercept('GET', 'api/identity_verifications/*', (req) => {
-      req.reply(identity.objects[0]);
+      req.reply(identityVerification);
     });
 
     cy.wait('@getCustomer').then(() => {
@@ -259,6 +269,13 @@ describe('identity-verification test', () => {
       req.reply(customer);
     }).as('getCustomer');
 
+    //Mock identity verification
+    const identityVerification = {
+      ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
+    };
+    identityVerification.state = 'completed';
+    identityVerification.outcome = 'failed';
+
     //Mock list identity
     const identityList = {
       ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL
@@ -266,16 +283,12 @@ describe('identity-verification test', () => {
     identityList.objects[0].state = 'completed';
     identityList.objects[0].outcome = 'failed';
 
-    cy.intercept('GET', 'api/identity_verifications*', (req) => {
-      req.reply(identityList);
-    }).as('getIdentity');
-
-    // Mock identity
-    const identity = { ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL };
-    identity.persona_state = 'completed';
+    cy.intercept('POST', 'api/identity_verifications*', (req) => {
+      req.reply(identityVerification);
+    });
 
     cy.intercept('GET', 'api/identity_verifications/*', (req) => {
-      req.reply(identity);
+      req.reply(identityVerification);
     });
 
     cy.wait('@getCustomer').then(() => {
