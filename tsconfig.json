@@ -17,9 +17,9 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "importHelpers": true,
-    "module": "es2020",
-    "lib": ["ES2021"],
     "target": "ES2021",
+    "module": "es2020",
+    "lib": ["ES2021", "dom"],
     "allowSyntheticDefaultImports": true,
     "paths": {
       "@environment": ["library/src/environments/index"],
