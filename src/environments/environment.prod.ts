@@ -21,5 +21,5 @@ export const environment = {
   grant_type: 'client_credentials',
   credentials: ci.environment.credentials,
   scope:
-    'banks:read banks:write accounts:read accounts:execute customers:read customers:write customers:execute prices:read quotes:execute trades:execute trades:read external_bank_accounts:read external_bank_accounts:execute workflows:read workflows:execute transfers:read transfers:execute'
+    'banks:read banks:write accounts:read accounts:execute customers:read customers:write customers:execute prices:read quotes:execute trades:execute trades:read external_bank_accounts:read external_bank_accounts:execute external_bank_accounts:write workflows:read workflows:execute transfers:read transfers:execute'
 };

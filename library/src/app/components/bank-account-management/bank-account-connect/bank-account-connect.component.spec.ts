@@ -52,7 +52,8 @@ describe('BankAccountConnectComponent', () => {
     'getWorkflow',
     'getPlaidClient',
     'setPlaidClient',
-    'createExternalBankAccount'
+    'createExternalBankAccount',
+    'patchExternalBankAccount'
   ]);
   let MockDialog = jasmine.createSpyObj('Dialog', ['open']);
   const error$ = throwError(() => {
@@ -96,6 +97,9 @@ describe('BankAccountConnectComponent', () => {
     );
     MockBankAccountService.getWorkflow.and.returnValue(
       of(TestConstants.WORKFLOW_BANK_MODEL_WITH_DETAILS)
+    );
+    MockBankAccountService.patchExternalBankAccount.and.returnValue(
+      of(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL)
     );
     MockBankAccountService.createExternalBankAccount.and.returnValue(
       of(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL)
@@ -297,6 +301,18 @@ describe('BankAccountConnectComponent', () => {
       accounts: [{ name: '', id: '', iso_currency_code: undefined }]
     });
     expect(getCurrencyCodeSpy).toHaveBeenCalled();
+  });
+
+  it('should handle plaidOnSuccess() in update mode', () => {
+    // Define an external account guid to trigger update mode
+    // @ts-ignore
+    component.params = '';
+
+    component.plaidOnSuccess('', {
+      accounts: [{ name: '', id: '', iso_currency_code: 'USD' }]
+    });
+
+    expect(MockBankAccountService.patchExternalBankAccount).toHaveBeenCalled();
   });
 
   it('should handle getCurrencyCode() returning undefined', () => {

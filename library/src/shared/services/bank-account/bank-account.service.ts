@@ -24,6 +24,7 @@ import {
   ExternalBankAccountBankModel,
   ExternalBankAccountListBankModel,
   ExternalBankAccountsService,
+  PatchExternalBankAccountBankModel,
   PostExternalBankAccountBankModel,
   PostWorkflowBankModel,
   WorkflowBankModel,
@@ -134,6 +135,31 @@ export class BankAccountService implements OnDestroy {
           const message = 'There was an error creating a bank account';
           this.eventService.handleEvent(LEVEL.ERROR, CODE.DATA_ERROR, message);
           this.errorService.handleError(err);
+          return of(err);
+        })
+      );
+  }
+
+  patchExternalBankAccount(
+    externalAccountGuid: string
+  ): Observable<ExternalBankAccountBankModel> {
+    const patchExternalBankAccountModel: PatchExternalBankAccountBankModel = {
+      state: PatchExternalBankAccountBankModel.StateEnum.Completed
+    };
+
+    return this.externalBankAccountService
+      .patchExternalBankAccount(
+        externalAccountGuid,
+        patchExternalBankAccountModel
+      )
+      .pipe(
+        catchError((err) => {
+          this.eventService.handleEvent(
+            LEVEL.ERROR,
+            CODE.DATA_ERROR,
+            'Unable to update account'
+          );
+          this.errorService.handleError(new Error('Unable to update account'));
           return of(err);
         })
       );
