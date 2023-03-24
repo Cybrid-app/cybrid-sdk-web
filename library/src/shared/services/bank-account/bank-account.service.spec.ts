@@ -37,6 +37,7 @@ describe('BankAccountManagementService', () => {
     [
       'listExternalBankAccounts',
       'createExternalBankAccount',
+      'patchExternalBankAccount',
       'deleteExternalBankAccount'
     ]
   );
@@ -84,6 +85,9 @@ describe('BankAccountManagementService', () => {
     MockExternalBankAccountService.createExternalBankAccount.and.returnValue(
       of(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL)
     );
+    MockExternalBankAccountService.patchExternalBankAccount.and.returnValue(
+      of(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL)
+    );
     MockExternalBankAccountService.deleteExternalBankAccount.and.returnValue(
       of(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL)
     );
@@ -101,6 +105,9 @@ describe('BankAccountManagementService', () => {
       of(TestConstants.EXTERNAL_BANK_ACCOUNT_LIST_BANK_MODEL)
     );
     MockExternalBankAccountService.createExternalBankAccount.and.returnValue(
+      of(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL)
+    );
+    MockExternalBankAccountService.patchExternalBankAccount.and.returnValue(
       of(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL)
     );
     MockExternalBankAccountService.deleteExternalBankAccount.and.returnValue(
@@ -172,6 +179,23 @@ describe('BankAccountManagementService', () => {
           MockExternalBankAccountService.createExternalBankAccount
         ).toHaveBeenCalledWith(postExternalBankAccountModel)
       );
+  });
+
+  it('should patch an external bank account', () => {
+    service.patchExternalBankAccount('').subscribe();
+    expect(
+      MockExternalBankAccountService.patchExternalBankAccount
+    ).toHaveBeenCalled();
+  });
+
+  it('should catch any errors on patchExternalBankAccount()', () => {
+    MockExternalBankAccountService.patchExternalBankAccount.and.returnValue(
+      error$
+    );
+
+    service.patchExternalBankAccount('').subscribe();
+    expect(MockErrorService.handleError).toHaveBeenCalled();
+    expect(MockEventService.handleEvent).toHaveBeenCalled();
   });
 
   it('should delete an external bank account', () => {

@@ -24,7 +24,6 @@ import {
 import {
   BankBankModel,
   CustomersService,
-  ExternalBankAccountBankModel,
   PostWorkflowBankModel,
   WorkflowsService,
   WorkflowWithDetailsBankModel
@@ -267,8 +266,17 @@ export class BankAccountConnectComponent implements OnInit {
   }
 
   plaidOnSuccess(public_token: string, metadata?: any) {
-    if (this.params) {
-      this.isLoading$.next(false);
+    if (this.params != null) {
+      this.bankAccountService
+        .patchExternalBankAccount(<string>this.params)
+        .pipe(
+          map(() => this.isLoading$.next(false)),
+          catchError((err) => {
+            this.error$.next(true);
+            return of(err);
+          })
+        )
+        .subscribe();
     } else if (!this.params && metadata.accounts.length > 1) {
       this.error$.next(true);
       this.eventService.handleEvent(
