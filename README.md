@@ -38,7 +38,7 @@ The following setup should be preformed prior to using the Web Demo application.
 1. Create your customer using the `POST /api/customers` API
 2. Create a `type=fiat` account with `asset=USD` using `POST /api/accounts` API for your customer
 3. Create a `type=trading` account with `asset=BTC` using the `POST /api/accounts` (this is required to trade Bitcoin)
-4. Create a `type=trading` account with `asset=ETH` using the `POST /api/accounts` API (this is required to trade Ether)
+4. Create a `type=trading` account with `asset=ETH` using the `POST /api/accounts` API (this is required to trade Ethereum)
 
 ## Demo Setup
 
