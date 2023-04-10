@@ -22,19 +22,19 @@ import {
 
 // Services
 import {
-  AuthService,
   AssetService,
-  RoutingService,
-  ConfigService,
-  ComponentConfig,
-  ErrorService,
-  ErrorLog,
-  EventService,
-  EventLog,
+  AuthService,
   CODE,
+  ComponentConfig,
+  ConfigService,
+  ErrorLog,
+  ErrorService,
+  EventLog,
+  EventService,
   LEVEL
 } from '@services';
 import { Configuration } from '@cybrid/cybrid-api-bank-angular';
+import { Constants } from '@constants';
 
 @Component({
   selector: 'app-app',
@@ -69,8 +69,7 @@ export class AppComponent implements OnInit {
     private assetService: AssetService,
     private eventService: EventService,
     private errorService: ErrorService,
-    public configService: ConfigService,
-    private routingService: RoutingService
+    public configService: ConfigService
   ) {}
 
   ngOnInit(): void {
@@ -159,10 +158,33 @@ export class AppComponent implements OnInit {
       .pipe(
         takeUntil(this.unsubscribe$),
         map((component) => {
-          this.routingService.handleRoute({
-            route: component,
-            origin: 'cybrid-app'
-          });
+          this.eventService.handleEvent(
+            LEVEL.INFO,
+            CODE.ROUTING_START,
+            `Routing to: ${component}`
+          );
+
+          Constants.COMPONENTS.includes(component)
+            ? this.router.navigate([`app/${component}`]).then((res) => {
+                if (res) {
+                  this.eventService.handleEvent(
+                    LEVEL.INFO,
+                    CODE.ROUTING_END,
+                    `Successfully routed to: ${component}`
+                  );
+                } else {
+                  let message = `There was an error routing to: ${component}`;
+                  this.eventService.handleEvent(
+                    LEVEL.ERROR,
+                    CODE.ROUTING_ERROR,
+                    message
+                  );
+                  this.errorService.handleError(message);
+                }
+              })
+            : this.errorService.handleError(
+                `Error routing to ${component}: component not found`
+              );
         })
       )
       .subscribe();
