@@ -75,14 +75,4 @@ export class Constants {
     'account-details',
     'identity-verification'
   ];
-  static COMPONENTS = [
-    'price-list',
-    'trade',
-    'account-list',
-    'account-details',
-    'identity-verification',
-    'bank-account-connect',
-    'bank-account-list',
-    'transfer'
-  ];
 }

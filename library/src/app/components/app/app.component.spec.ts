@@ -21,7 +21,8 @@ import {
   LEVEL,
   ErrorService,
   ErrorLog,
-  ConfigService
+  ConfigService,
+  RoutingService
 } from '@services';
 import { Configuration } from '@cybrid/cybrid-api-bank-angular';
 
@@ -56,6 +57,9 @@ describe('AppComponent', () => {
     'getBank$',
     'setComponent'
   ]);
+  let MockRoutingService = jasmine.createSpyObj('RoutingService', [
+    'handleRoute'
+  ]);
   let MockRouter = jasmine.createSpyObj('Router', ['navigate']);
 
   class MockConfiguration extends Configuration {
@@ -80,6 +84,7 @@ describe('AppComponent', () => {
         { provide: ErrorService, useValue: MockErrorService },
         { provide: ConfigService, useValue: MockConfigService },
         { provide: Configuration, useClass: MockConfiguration },
+        { provide: RoutingService, useValue: MockRoutingService },
         { provide: Router, useValue: MockRouter }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -126,49 +131,15 @@ describe('AppComponent', () => {
     expect(MockConfigService.setConfig).toHaveBeenCalledWith(testConfig);
   }));
 
-  it('should navigate if a component exists', () => {
+  it('should set the current component', fakeAsync(() => {
     const fixture = TestBed.createComponent(AppComponent);
     const component = fixture.componentInstance;
-
-    component.initNavigation();
-    component.component = Constants.DEFAULT_COMPONENT;
-
-    expect(MockRouter.navigate).toHaveBeenCalled();
-  });
-
-  it('should return an error if component does not exist', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const component = fixture.componentInstance;
-
-    component.initNavigation();
-    component.component = 'not-a-component';
-
-    expect(MockErrorService.handleError).toHaveBeenCalled();
-  });
-
-  it('should log an event if successfully routed to component', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const component = fixture.componentInstance;
-
-    component.initNavigation();
-    component.component = Constants.DEFAULT_COMPONENT;
-
-    expect(MockRouter.navigate).toHaveBeenCalled();
-    expect(MockEventService.handleEvent).toHaveBeenCalled();
-  });
-
-  it('should handle errors on component navigation', fakeAsync(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const component = fixture.componentInstance;
-
-    MockRouter.navigate.and.returnValue(Promise.resolve(false));
 
     component.initNavigation();
     component.component = Constants.DEFAULT_COMPONENT;
     tick();
 
-    expect(MockEventService.handleEvent).toHaveBeenCalled();
-    expect(MockErrorService.handleError).toHaveBeenCalled();
+    expect(MockRoutingService.handleRoute).toHaveBeenCalled();
   }));
 
   it('should call init functions in ngOnInit()', () => {
