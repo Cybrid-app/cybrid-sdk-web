@@ -162,14 +162,7 @@ export class DemoComponent implements OnDestroy {
     this.componentRef.instance.eventLog
       .pipe(
         takeUntil(this.unsubscribe$),
-        filter((event: EventLog) => {
-          return (
-            event.code == CODE.ROUTING_END ||
-            event.code == CODE.ROUTING_START ||
-            event.code == CODE.ROUTING_REQUEST ||
-            event.code == CODE.ROUTING_DENIED
-          );
-        }),
+        filter((event: EventLog) => event.code == CODE.ROUTING_END),
         map((event) => {
           this.componentGroup.get('component')?.patchValue(event.data.default, {
             emitEvent: false,

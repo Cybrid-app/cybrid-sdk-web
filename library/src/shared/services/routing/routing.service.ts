@@ -28,7 +28,7 @@ export class RoutingService {
         map((config: ComponentConfig) => {
           const path = 'app/' + routingData.route;
 
-          if (config.routing) {
+          if (config.routing || routingData.origin == 'cybrid-app') {
             this.eventService.handleEvent(
               LEVEL.INFO,
               CODE.ROUTING_START,

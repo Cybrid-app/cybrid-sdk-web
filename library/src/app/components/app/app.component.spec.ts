@@ -101,8 +101,8 @@ describe('AppComponent', () => {
     MockConfigService.getBank$.and.returnValue(
       of(TestConstants.BANK_BANK_MODEL)
     );
-    MockRoutingService = TestBed.inject(RoutingService);
     MockRouter = TestBed.inject(Router);
+    MockRouter.navigate.and.returnValue(Promise.resolve(true));
   });
 
   it('should create', () => {
