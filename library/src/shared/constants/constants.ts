@@ -53,6 +53,7 @@ export class Constants {
     routing: Constants.ROUTING,
     customer: '',
     fiat: '',
+    features: [],
     environment: 'sandbox'
   };
   static DEFAULT_COMPONENT = 'price-list';
@@ -74,5 +75,24 @@ export class Constants {
     'account-list',
     'account-details',
     'identity-verification'
+  ];
+  static COMPONENTS_ATTESTATION = [
+    'price-list',
+    'trade',
+    'account-list',
+    'account-details',
+    'bank-account-connect',
+    'bank-account-list',
+    'transfer'
+  ];
+  static COMPONENTS_KYC = [
+    'price-list',
+    'trade',
+    'account-list',
+    'account-details',
+    'identity-verification',
+    'bank-account-connect',
+    'bank-account-list',
+    'transfer'
   ];
 }

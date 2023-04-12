@@ -131,10 +131,10 @@ export class AccountDetailsComponent
       .subscribe();
 
     this.configService
-      .getBank$()
+      .getConfig$()
       .pipe(
         take(1),
-        map((bank) => bank.supported_fiat_account_assets![0]),
+        map((config) => config.fiat),
         switchMap((counterAsset) => {
           return this.accountService
             .getAccountDetails(this.accountGuid, counterAsset)

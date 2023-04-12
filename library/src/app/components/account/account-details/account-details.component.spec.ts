@@ -45,7 +45,6 @@ describe('AccountDetailComponent', () => {
   let MockConfigService = jasmine.createSpyObj('ConfigService', [
     'setConfig',
     'getConfig$',
-    'getBank$',
     'getComponent$'
   ]);
   let MockQueryParams = of({
@@ -101,9 +100,6 @@ describe('AccountDetailComponent', () => {
     MockErrorService = TestBed.inject(ErrorService);
     MockConfigService = TestBed.inject(ConfigService);
     MockConfigService.getConfig$.and.returnValue(of(TestConstants.CONFIG));
-    MockConfigService.getBank$.and.returnValue(
-      of(TestConstants.BANK_BANK_MODEL)
-    );
     MockAssetService = TestBed.inject(AssetService);
     MockAssetService.getAsset.and.returnValue(TestConstants.USD_ASSET);
     MockTradesService = TestBed.inject(TradesService);

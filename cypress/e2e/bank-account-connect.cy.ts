@@ -162,7 +162,7 @@ describe('bank-account-connect test', () => {
     cy.get('h1').should('contain.text', text.bankAccountConnect.confirm.title);
     cy.get('p')
       .first()
-      .should('contain.text', text.bankAccountConnect.confirm.subtitle);
+      .should('contain.text', text.bankAccountConnect.confirm.message);
 
     // Cancel
     cy.get('mat-dialog-container').contains(text.cancel).click();

@@ -3,7 +3,6 @@ import {
   AccountBankModel,
   AccountListBankModel,
   AssetListBankModel,
-  BankBankModel,
   CustomerBankModel,
   ExternalBankAccountBankModel,
   ExternalBankAccountListBankModel,
@@ -39,7 +38,8 @@ export class TestConstants {
     theme: 'LIGHT',
     routing: true,
     customer: '`b283116f9f94742dcd1feda21cc0a8cb',
-    fiat: '',
+    fiat: 'USD',
+    features: ['attestation_identity_records', 'backstopped_funding_source'],
     environment: 'staging'
   };
 
@@ -603,20 +603,6 @@ export class TestConstants {
     type: 'plaid',
     created_at: '2022-11-10T21:05:13.932Z',
     plaid_link_token: 'link-sandbox-b46225aa-ec75-4de9-b8a7-7ed4c8630401'
-  };
-
-  // Bank models
-
-  static BANK_BANK_MODEL: BankBankModel = {
-    guid: 'b36cf9028e2356de7732e4c505c84fbc',
-    organization_guid: '62342aeb3c733f62a54fcd185f8a9253',
-    name: 'dustin',
-    supported_trading_symbols: ['BTC-USD', 'ETH-USD'],
-    supported_fiat_account_assets: ['USD'],
-    supported_country_codes: ['US'],
-    type: 'sandbox',
-    features: ['attestation_identity_records', 'backstopped_funding_source'],
-    created_at: '2022-04-30T03:40:54.629Z'
   };
 
   // Transfer models

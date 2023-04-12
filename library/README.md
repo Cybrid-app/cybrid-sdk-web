@@ -37,7 +37,11 @@ The script registers `cybrid-app` as a web-component in your window.
     <script type="module" src="cybrid-sdk-ui.min.js"></script>
   </head>
   <body>
-    <cybrid-app [auth]="token" [config]="config" [component]="component" ></cybrid-app>
+    <cybrid-app
+      [auth]="token"
+      [config]="config"
+      [component]="component"
+    ></cybrid-app>
   </body>
 </html>
 ```
@@ -109,12 +113,17 @@ interface ComponentConfig {
 
   // The current customer GUID
   customer: string;
-  
+
   // The current fiat currency (counter asset for all value calculation)
   // Supports: 'USD | CAD'
   // Default: 'USD'
   fiat: string;
-  
+
+  // The banks features
+  // Supports: 'attestation_identity_records' | 'kyc_identity_verifications' | 'backstopped_funding_source' | 'plaid_funding_source'
+  // Default: []
+  features: Array<string>;
+
   // The environment that you are authenticated against
   // Supports: 'sandbox' | 'production'
   environment: string;
@@ -133,6 +142,7 @@ your_config = {
   theme: 'DARK',
   customer: '969c744a02b11ed', //example GUID,
   fiat: 'USD',
+  features: ['attestation_identity_records', 'backstopped_funding_source'],
   environment: 'sandbox'
 };
 ```

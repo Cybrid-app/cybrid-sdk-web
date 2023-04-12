@@ -15,7 +15,6 @@ import { Constants, TestConstants } from '@constants';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {
-  BankBankModel,
   BanksService,
   Configuration,
   CustomerBankModel,
@@ -62,7 +61,6 @@ describe('ConfigService', () => {
       of(TestConstants.CUSTOMER_BANK_MODEL)
     );
     MockBanksService = TestBed.inject(BanksService);
-    MockBanksService.getBank.and.returnValue(of(TestConstants.BANK_BANK_MODEL));
   });
 
   it('should be created', () => {
@@ -186,14 +184,5 @@ describe('ConfigService', () => {
       .subscribe((customer) =>
         expect(customer).toEqual(TestConstants.CUSTOMER_BANK_MODEL)
       );
-  });
-
-  it('should fetch bank data', () => {
-    expect(service.getBank$()).toBeInstanceOf(Observable<BankBankModel>);
-
-    service
-      .getBank$()
-      .pipe(take(1))
-      .subscribe((bank) => expect(bank).toEqual(TestConstants.BANK_BANK_MODEL));
   });
 });

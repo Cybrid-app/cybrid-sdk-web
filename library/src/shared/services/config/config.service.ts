@@ -12,14 +12,12 @@ import {
   Subject,
   switchMap,
   takeUntil,
-  tap,
   timer
 } from 'rxjs';
 
 // Services
 import { ErrorService, CODE, EventService, LEVEL } from '@services';
 import {
-  BankBankModel,
   BanksService,
   Configuration,
   CustomerBankModel,
@@ -37,6 +35,7 @@ export interface ComponentConfig {
   routing: boolean;
   customer: string; // Temporary solution until the JWT embeds a customer GUID
   fiat: string;
+  features: Array<string>;
   environment: 'local' | 'staging' | 'sandbox' | 'production';
 }
 
@@ -50,7 +49,6 @@ export class ConfigService implements OnDestroy {
   component$ = new ReplaySubject<string>(1);
 
   customer$ = new ReplaySubject<CustomerBankModel>(1);
-  bank$ = new ReplaySubject<BankBankModel>(1);
 
   private unsubscribe$ = new Subject();
 
@@ -205,14 +203,8 @@ export class ConfigService implements OnDestroy {
         switchMap((config) => {
           return this.customersService.getCustomer(config.customer);
         }),
-        tap((customer: CustomerBankModel) => {
+        map((customer: CustomerBankModel) => {
           this.customer$.next(customer);
-        }),
-        switchMap((customer: CustomerBankModel) =>
-          this.banksService.getBank(customer.bank_guid!)
-        ),
-        tap((bank) => {
-          this.bank$.next(bank);
         })
       )
       .subscribe();
@@ -220,9 +212,5 @@ export class ConfigService implements OnDestroy {
 
   getCustomer$(): Observable<CustomerBankModel> {
     return this.customer$.asObservable();
-  }
-
-  getBank$(): Observable<BankBankModel> {
-    return this.bank$.asObservable();
   }
 }
