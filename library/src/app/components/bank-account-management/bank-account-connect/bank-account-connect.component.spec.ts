@@ -41,7 +41,6 @@ describe('BankAccountConnectComponent', () => {
   ]);
   let MockConfigService = jasmine.createSpyObj('ConfigService', {
     getConfig$: of(TestConstants.CONFIG),
-    getBank$: of(TestConstants.BANK_BANK_MODEL),
     getCustomer$: of(TestConstants.CUSTOMER_BANK_MODEL)
   });
   let MockRoutingService = jasmine.createSpyObj('RoutingService', [
@@ -119,7 +118,6 @@ describe('BankAccountConnectComponent', () => {
     MockEventService.handleEvent.calls.reset();
     MockErrorService.handleError.calls.reset();
     MockConfigService.getConfig$.calls.reset();
-    MockConfigService.getBank$.calls.reset();
     MockConfigService.getCustomer$.calls.reset();
     MockRoutingService.handleRoute.calls.reset();
     MockBankAccountService.createWorkflow.calls.reset();
@@ -154,23 +152,22 @@ describe('BankAccountConnectComponent', () => {
     const onAddAccountSpy = spyOn(component, 'onAddAccount');
 
     component.checkSupportedFiatAssets();
-    expect(MockConfigService.getBank$).toHaveBeenCalled();
+
+    expect(MockConfigService.getConfig$).toHaveBeenCalled();
     expect(onAddAccountSpy).toHaveBeenCalled();
   });
 
   it('should handle no supported fiat assets', () => {
-    let bank = { ...TestConstants.BANK_BANK_MODEL };
-    bank.supported_fiat_account_assets = [];
-    MockConfigService.getBank$.and.returnValue(of(bank));
+    let config = { ...TestConstants.CONFIG };
+    config.fiat = '';
+    MockConfigService.getConfig$.and.returnValue(of(config));
 
     component.checkSupportedFiatAssets();
     expect(MockEventService.handleEvent).toHaveBeenCalled();
     expect(MockErrorService.handleError).toHaveBeenCalled();
 
     // Reset
-    MockConfigService.getBank$.and.returnValue(
-      of(TestConstants.BANK_BANK_MODEL)
-    );
+    MockConfigService.getConfig$.and.returnValue(of(TestConstants.CONFIG));
   });
 
   it('should add account', () => {
@@ -195,12 +192,10 @@ describe('BankAccountConnectComponent', () => {
   });
 
   it('should get the currency code', (done) => {
-    component
-      .getCurrencyCode(TestConstants.BANK_BANK_MODEL)
-      .subscribe((res) => {
-        expect(res).toEqual('USD');
-        done();
-      });
+    component.getCurrencyCode(TestConstants.CONFIG.fiat).subscribe((res) => {
+      expect(res).toEqual('USD');
+      done();
+    });
   });
 
   it('should create a workflow', (done) => {

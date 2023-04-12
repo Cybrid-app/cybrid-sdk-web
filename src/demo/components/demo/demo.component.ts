@@ -7,14 +7,14 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 
-import { BehaviorSubject, filter, map, Subject, take, takeUntil } from 'rxjs';
+import { BehaviorSubject, filter, map, Subject, takeUntil } from 'rxjs';
 
 import { DemoConfigService } from '../../services/demo-config/demo-config.service';
 import { DemoErrorService } from '../../services/demo-error/demo-error.service';
 
 // Library
 import { AppComponent } from '@components';
-import { CODE, ConfigService, EventLog } from '@services';
+import { CODE, EventLog } from '@services';
 import { Constants } from '@constants';
 
 // Components
@@ -35,7 +35,6 @@ export class DemoComponent implements OnDestroy {
   componentList = Constants.COMPONENTS_PLAID;
 
   languages = ['en-US', 'fr-CA'];
-  bank$ = new BehaviorSubject<BankBankModel | null>(null);
 
   componentRef!: ComponentRef<AppComponent>;
   componentGroup: FormGroup = new FormGroup({
@@ -53,8 +52,7 @@ export class DemoComponent implements OnDestroy {
 
   constructor(
     public demoConfigService: DemoConfigService,
-    private demoErrorService: DemoErrorService,
-    private configService: ConfigService
+    private demoErrorService: DemoErrorService
   ) {}
 
   ngOnDestroy() {
@@ -62,21 +60,8 @@ export class DemoComponent implements OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  initBank() {
-    this.configService
-      .getBank$()
-      .pipe(
-        take(1),
-        map((bank) => {
-          this.bank$.next(bank);
-          this.isLoading$.next(false);
-        })
-      )
-      .subscribe();
-  }
-
   isBackstopped(): boolean {
-    return this.bank$
+    return this.demoConfigService.config$
       .getValue()!
       .features.includes(BankBankModel.FeaturesEnum.BackstoppedFundingSource);
   }
@@ -137,6 +122,7 @@ export class DemoComponent implements OnDestroy {
     let config = { ...Constants.DEFAULT_CONFIG };
     config.customer = credentials.customer;
     config.environment = credentials.environment;
+    config.fiat = 'USD';
 
     this.languageGroup.patchValue({ language: config.locale });
     this.demoConfigService.config$.next(config);
@@ -178,8 +164,9 @@ export class DemoComponent implements OnDestroy {
       console.log(error);
     });
 
-    this.initBank();
     this.initComponentGroup();
     this.initLanguageGroup();
+
+    this.isLoading$.next(false);
   }
 }

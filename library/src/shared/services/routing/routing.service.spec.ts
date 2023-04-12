@@ -16,7 +16,6 @@ import { Configuration } from '@cybrid/cybrid-api-bank-angular';
 
 // Utility
 import { TranslateService } from '@ngx-translate/core';
-import { TestConstants } from '@constants';
 
 describe('RoutingService', () => {
   let service: RoutingService;
@@ -25,7 +24,6 @@ describe('RoutingService', () => {
 
   let MockConfigService = jasmine.createSpyObj('ConfigService', [
     'getConfig$',
-    'getBank$',
     'setComponent'
   ]);
 
@@ -52,9 +50,6 @@ describe('RoutingService', () => {
     MockTranslateService = TestBed.inject(TranslateService);
     MockEventService = TestBed.inject(EventService);
     MockConfigService = TestBed.inject(ConfigService);
-    MockConfigService.getBank$.and.returnValue(
-      of(TestConstants.BANK_BANK_MODEL)
-    );
     MockRouter = TestBed.inject(Router);
     MockRouter.navigate.and.returnValue(Promise.resolve(true));
   });

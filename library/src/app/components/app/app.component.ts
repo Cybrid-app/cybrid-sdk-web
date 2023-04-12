@@ -81,7 +81,6 @@ export class AppComponent implements OnInit {
     combineLatest([
       this.configService.getConfig$(),
       this.configService.getCustomer$(),
-      this.configService.getBank$(),
       this.assetService.getAssets$()
     ])
       .pipe(

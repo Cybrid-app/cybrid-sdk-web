@@ -22,7 +22,6 @@ import {
 
 // Services
 import {
-  BankBankModel,
   CustomersService,
   PostWorkflowBankModel,
   WorkflowsService,
@@ -113,20 +112,19 @@ export class BankAccountConnectComponent implements OnInit {
 
   checkSupportedFiatAssets(): void {
     this.configService
-      .getBank$()
+      .getConfig$()
       .pipe(
         take(1),
-        map((bank) => {
-          if (bank.supported_fiat_account_assets!.length == 0) {
+        map((config) => {
+          if (config.fiat!.length == 0) {
             this.error$.next(true);
+            const message = 'Fiat currency code is missing';
             this.eventService.handleEvent(
-              LEVEL.WARNING,
-              CODE.BANK_FEATURES_INCOMPLETE,
-              'Bank has no configured supported_fiat_account_assets'
+              LEVEL.ERROR,
+              CODE.CONFIG_ERROR,
+              message
             );
-            this.errorService.handleError(
-              new Error('Bank has no configured supported_fiat_account_assets')
-            );
+            this.errorService.handleError(new Error(message));
           } else {
             this.onAddAccount();
           }
@@ -161,10 +159,10 @@ export class BankAccountConnectComponent implements OnInit {
       .subscribe();
   }
 
-  getCurrencyCode(bank: BankBankModel): Observable<string | undefined> {
+  getCurrencyCode(code: string): Observable<string | undefined> {
     return this.dialog
       .open(BankAccountConfirmComponent, {
-        data: bank
+        data: code
       })
       .afterClosed()
       .pipe(take(1));
@@ -291,18 +289,16 @@ export class BankAccountConnectComponent implements OnInit {
       let account = metadata.accounts[0];
 
       this.configService
-        .getBank$()
+        .getConfig$()
         .pipe(
           take(1),
-          switchMap((bank) => {
+          switchMap((config) => {
             if (account.iso_currency_code) {
-              return bank.supported_fiat_account_assets!.includes(
-                account.iso_currency_code
-              )
+              return config.fiat.includes(account.iso_currency_code)
                 ? of(account.iso_currency_code)
                 : throwError(() => new Error('Unsupported asset'));
             } else {
-              return this.getCurrencyCode(bank);
+              return this.getCurrencyCode(config.fiat);
             }
           }),
           map((code) => {

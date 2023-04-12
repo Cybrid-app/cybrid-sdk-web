@@ -21,17 +21,16 @@ export class ComponentGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> {
-    return this.configService.getBank$().pipe(
-      map((bank) => {
-        const isBackstopped = bank.features.includes(
-          BankBankModel.FeaturesEnum.BackstoppedFundingSource
-        );
-        const isAllowedForBackstopped =
-          Constants.COMPONENTS_BACKSTOPPED.includes(
+    return this.configService.getConfig$().pipe(
+      map((config) => {
+        if (
+          config.features.includes(
+            BankBankModel.FeaturesEnum.BackstoppedFundingSource
+          ) &&
+          !Constants.COMPONENTS_BACKSTOPPED.includes(
             <string>route.routeConfig?.path
-          );
-
-        if (isBackstopped && !isAllowedForBackstopped) {
+          )
+        ) {
           this.eventService.handleEvent(
             LEVEL.INFO,
             CODE.ROUTING_DENIED,
@@ -40,7 +39,25 @@ export class ComponentGuard implements CanActivate {
               ' is unavailable to backstopped banks'
           );
           return false;
-        } else return true;
+        } else if (
+          config.features.includes(
+            BankBankModel.FeaturesEnum.AttestationIdentityRecords
+          ) &&
+          !Constants.COMPONENTS_ATTESTATION.includes(
+            <string>route.routeConfig?.path
+          )
+        ) {
+          this.eventService.handleEvent(
+            LEVEL.INFO,
+            CODE.ROUTING_DENIED,
+            'Component: ' +
+              route.routeConfig?.path +
+              ' is unavailable to attestation banks'
+          );
+          return false;
+        } else {
+          return true;
+        }
       })
     );
   }

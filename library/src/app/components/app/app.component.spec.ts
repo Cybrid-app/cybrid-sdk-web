@@ -54,7 +54,6 @@ describe('AppComponent', () => {
     'setConfig',
     'getConfig$',
     'getCustomer$',
-    'getBank$',
     'setComponent'
   ]);
   let MockRoutingService = jasmine.createSpyObj('RoutingService', [
@@ -97,9 +96,6 @@ describe('AppComponent', () => {
     MockConfigService = TestBed.inject(ConfigService);
     MockConfigService.getCustomer$.and.returnValue(
       of(TestConstants.CUSTOMER_BANK_MODEL)
-    );
-    MockConfigService.getBank$.and.returnValue(
-      of(TestConstants.BANK_BANK_MODEL)
     );
     MockRouter = TestBed.inject(Router);
     MockRouter.navigate.and.returnValue(Promise.resolve(true));

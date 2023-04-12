@@ -162,10 +162,8 @@ export default {
 
     // Confirm dialog
     confirm: {
-      title: 'Select Currency',
-      subtitle:
-        'We are unable to determine the currency of your account. Please select the correct currency from the options below.',
-      label: 'Currency'
+      title: 'Confirm Currency',
+      message: 'This account is in '
     }
   },
 

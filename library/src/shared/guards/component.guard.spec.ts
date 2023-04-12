@@ -27,7 +27,7 @@ describe('ComponentGuard', () => {
     'getEvent',
     'handleEvent'
   ]);
-  let MockConfigService = jasmine.createSpyObj('ConfigService', ['getBank$']);
+  let MockConfigService = jasmine.createSpyObj('ConfigService', ['getConfig$']);
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -52,9 +52,7 @@ describe('ComponentGuard', () => {
     guard = TestBed.inject(ComponentGuard);
     MockEventService = TestBed.inject(EventService);
     MockConfigService = TestBed.inject(ConfigService);
-    MockConfigService.getBank$.and.returnValue(
-      of(TestConstants.BANK_BANK_MODEL)
-    );
+    MockConfigService.getConfig$.and.returnValue(of(TestConstants.CONFIG));
   });
 
   it('should be created', () => {
@@ -68,6 +66,10 @@ describe('ComponentGuard', () => {
 
     const mockRouterStateSnapshot: RouterStateSnapshot =
       {} as RouterStateSnapshot;
+
+    let config = TestConstants.CONFIG;
+    config.features = ['backstopped_funding_source'];
+    MockConfigService.getConfig$.and.returnValue(of(config));
 
     guard
       .canActivate(mockActivatedRouteSnapshot, mockRouterStateSnapshot)
@@ -83,6 +85,48 @@ describe('ComponentGuard', () => {
 
     const mockRouterStateSnapshot: RouterStateSnapshot =
       {} as RouterStateSnapshot;
+
+    let config = TestConstants.CONFIG;
+    config.features = ['backstopped_funding_source'];
+    MockConfigService.getConfig$.and.returnValue(of(config));
+
+    guard
+      .canActivate(mockActivatedRouteSnapshot, mockRouterStateSnapshot)
+      .subscribe((res) => {
+        expect(res).toBeFalse();
+      });
+  });
+
+  it('should pass allowed components in an attestation bank', () => {
+    const mockActivatedRouteSnapshot: ActivatedRouteSnapshot = {
+      routeConfig: { path: 'price-list' }
+    } as unknown as ActivatedRouteSnapshot;
+
+    const mockRouterStateSnapshot: RouterStateSnapshot =
+      {} as RouterStateSnapshot;
+
+    let config = TestConstants.CONFIG;
+    config.features = ['attestation_identity_records'];
+    MockConfigService.getConfig$.and.returnValue(of(config));
+
+    guard
+      .canActivate(mockActivatedRouteSnapshot, mockRouterStateSnapshot)
+      .subscribe((res) => {
+        expect(res).toBeTrue();
+      });
+  });
+
+  it('should fail unavailable components in a attestation bank', () => {
+    const mockActivatedRouteSnapshot: ActivatedRouteSnapshot = {
+      routeConfig: { path: 'identity-verification' }
+    } as unknown as ActivatedRouteSnapshot;
+
+    const mockRouterStateSnapshot: RouterStateSnapshot =
+      {} as RouterStateSnapshot;
+
+    let config = TestConstants.CONFIG;
+    config.features = ['attestation_identity_records'];
+    MockConfigService.getConfig$.and.returnValue(of(config));
 
     guard
       .canActivate(mockActivatedRouteSnapshot, mockRouterStateSnapshot)
