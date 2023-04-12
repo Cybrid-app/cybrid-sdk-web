@@ -94,5 +94,5 @@ export class Constants {
     'bank-account-connect',
     'bank-account-list',
     'transfer'
-  ]
+  ];
 }
