@@ -76,7 +76,7 @@ workflows:
       - check-versions
       - node/test:
           name: test
-          version: 16.14.2-browsers
+          version: 16.20.0-browsers
           cache-version: v2
           setup:
             - browser-tools/install-chrome
