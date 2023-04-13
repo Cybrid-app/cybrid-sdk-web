@@ -69,7 +69,7 @@ export class BankAccountConnectComponent implements OnInit {
 
   routingData: RoutingData = {
     origin: 'bank-account-connect',
-    route: 'price-list'
+    route: 'bank-account-list'
   };
 
   params: NavigationExtras | undefined;

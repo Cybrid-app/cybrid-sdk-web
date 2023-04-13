@@ -78,7 +78,7 @@ export class BankAccountListComponent implements OnInit, OnDestroy {
 
   routingData: RoutingData = {
     route: 'bank-account-connect',
-    origin: 'bank-account-management'
+    origin: 'cybrid-app'
   };
 
   constructor(
