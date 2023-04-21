@@ -2,6 +2,7 @@ import {
   Component,
   ComponentRef,
   OnDestroy,
+  OnInit,
   ViewChild,
   ViewContainerRef
 } from '@angular/core';
@@ -9,34 +10,39 @@ import { FormControl, FormGroup } from '@angular/forms';
 
 import { BehaviorSubject, filter, map, Subject, takeUntil } from 'rxjs';
 
-import { DemoConfigService } from '../../services/demo-config/demo-config.service';
-import { DemoErrorService } from '../../services/demo-error/demo-error.service';
+// Services
+import { ConfigService } from '../../services/config/config.service';
+import { AuthService } from '../../services/auth/auth.service';
+import { LocalStorageService } from '../../services/local-storage/local-storage.service';
+
+// Api
+import { BankBankModel } from '@cybrid/cybrid-api-bank-angular';
 
 // Library
-import { AppComponent } from '@components';
-import { CODE, EventLog } from '@services';
 import { Constants } from '@constants';
+import { CODE, ComponentConfig, EventLog } from '@services';
+import { AppComponent } from '@components';
 
-// Components
-import { DemoCredentials } from '../login/login.component';
-import { BankBankModel } from '@cybrid/cybrid-api-bank-angular';
+// Utility
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-demo',
   templateUrl: './demo.component.html',
   styleUrls: ['./demo.component.scss']
 })
-export class DemoComponent implements OnDestroy {
+export class DemoComponent implements OnInit, OnDestroy {
   @ViewChild('viewContainer', { static: true, read: ViewContainerRef })
   public viewContainer!: ViewContainerRef;
+  public componentRef!: ComponentRef<AppComponent>;
 
-  isPublic: boolean = false;
-
-  componentList = Constants.COMPONENTS_PLAID;
+  config: ComponentConfig = this.configService.config$.getValue();
+  component = Constants.DEFAULT_COMPONENT;
+  auth = <string>this.localStorageService.get('customer');
 
   languages = ['en-US', 'fr-CA'];
+  componentList = Constants.COMPONENTS_PLAID;
 
-  componentRef!: ComponentRef<AppComponent>;
   componentGroup: FormGroup = new FormGroup({
     component: new FormControl(Constants.DEFAULT_COMPONENT)
   });
@@ -45,15 +51,20 @@ export class DemoComponent implements OnDestroy {
     language: new FormControl(Constants.DEFAULT_CONFIG.locale)
   });
 
-  login$ = new BehaviorSubject(false);
-  isLoading$ = new BehaviorSubject(true);
+  message = '';
 
-  private unsubscribe$ = new Subject();
+  isLoading$ = new BehaviorSubject(true);
+  unsubscribe$ = new Subject();
 
   constructor(
-    public demoConfigService: DemoConfigService,
-    private demoErrorService: DemoErrorService
+    public configService: ConfigService,
+    public authService: AuthService,
+    private localStorageService: LocalStorageService
   ) {}
+
+  ngOnInit() {
+    this.initDemo();
+  }
 
   ngOnDestroy() {
     this.unsubscribe$.next('');
@@ -61,7 +72,7 @@ export class DemoComponent implements OnDestroy {
   }
 
   isBackstopped(): boolean {
-    return this.demoConfigService.config$
+    return this.configService.config$
       .getValue()!
       .features.includes(BankBankModel.FeaturesEnum.BackstoppedFundingSource);
   }
@@ -69,8 +80,11 @@ export class DemoComponent implements OnDestroy {
   getTooltip(component: string): string {
     if (component == 'account-details')
       return 'Disabled: Navigate via account-list';
-    else if (this.isPublic && component == 'identity-verification')
-      return 'Disabled: Sign in as a private use to access';
+    else if (
+      this.authService.customer == environment.credentials.publicCustomerGuid &&
+      component == 'identity-verification'
+    )
+      return 'Disabled: Sign in as a private user to access';
     else {
       if (this.isBackstopped() && this.isDisabled(component)) {
         return 'Component is unavailable to backstopped banks';
@@ -80,7 +94,11 @@ export class DemoComponent implements OnDestroy {
 
   isDisabled(component: string): boolean {
     if (component == 'account-details') return true;
-    else if (this.isPublic && component == 'identity-verification') return true;
+    else if (
+      this.authService.customer == environment.credentials.publicCustomerGuid &&
+      component == 'identity-verification'
+    )
+      return true;
     else {
       if (this.isBackstopped()) {
         return !Constants.COMPONENTS_BACKSTOPPED.includes(component);
@@ -88,63 +106,15 @@ export class DemoComponent implements OnDestroy {
     }
   }
 
-  // Set component on changes
   initComponentGroup() {
     this.componentGroup
       .get('component')
       ?.valueChanges.pipe(
         takeUntil(this.unsubscribe$),
-        map((component) => {
-          this.componentRef.instance.component = component;
-        })
+        map((component) => (this.componentRef.instance.component = component))
       )
       .subscribe();
-  }
 
-  // Set language on changes
-  initLanguageGroup() {
-    this.languageGroup
-      .get('language')
-      ?.valueChanges.pipe(
-        takeUntil(this.unsubscribe$),
-        map((language) => {
-          let config = this.demoConfigService.config$.value;
-          config.locale = language;
-          this.demoConfigService.config$.next(config);
-        })
-      )
-      .subscribe();
-  }
-
-  initDemo(credentials: DemoCredentials) {
-    this.login$.next(true);
-
-    let config = { ...Constants.DEFAULT_CONFIG };
-    config.customer = credentials.customer;
-    config.environment = credentials.environment;
-    config.fiat = 'USD';
-
-    this.languageGroup.patchValue({ language: config.locale });
-    this.demoConfigService.config$.next(config);
-
-    // Create main app
-    this.componentRef = this.viewContainer.createComponent(AppComponent);
-
-    this.componentRef.instance.config = config;
-    this.componentRef.instance.auth = credentials.token;
-    this.componentRef.instance.component = Constants.DEFAULT_COMPONENT;
-
-    // Set Public/Private
-    this.isPublic = credentials.isPublic;
-
-    // Subscribe to component configuration changes
-    this.demoConfigService.config$
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((config) => {
-        this.componentRef.instance.config = config;
-      });
-
-    // Subscribe to routing events and set component selector value
     this.componentRef.instance.eventLog
       .pipe(
         takeUntil(this.unsubscribe$),
@@ -157,16 +127,45 @@ export class DemoComponent implements OnDestroy {
         })
       )
       .subscribe();
+  }
 
-    // Subscribe to errors
-    this.componentRef.instance.errorLog.subscribe((error) => {
-      this.demoErrorService.handleError(error);
-      console.log(error);
-    });
+  initLanguageGroup() {
+    this.languageGroup
+      .get('language')
+      ?.valueChanges.pipe(
+        takeUntil(this.unsubscribe$),
+        map((lang) => {
+          let config = this.configService.config$.getValue();
+          config.locale = lang;
 
-    this.initComponentGroup();
-    this.initLanguageGroup();
+          this.configService.setConfig(config);
+        })
+      )
+      .subscribe();
+  }
 
-    this.isLoading$.next(false);
+  initDemo() {
+    this.configService
+      .getConfig()
+      .pipe(
+        map((config) => {
+          this.componentRef = this.viewContainer.createComponent(AppComponent);
+
+          this.componentRef.instance.config = config;
+          this.componentRef.instance.auth = this.auth;
+          this.componentRef.instance.component = this.component;
+        }),
+        map(() => {
+          this.initComponentGroup();
+          this.initLanguageGroup();
+        })
+      )
+      .subscribe(() => this.isLoading$.next(false));
+
+    this.configService.config$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((config) => {
+        this.componentRef.instance.config = config;
+      });
   }
 }

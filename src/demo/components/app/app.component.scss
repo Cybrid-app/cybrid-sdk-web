@@ -19,9 +19,9 @@ mat-drawer-container {
 
 mat-drawer-content {
   max-width: 700px;
+  height: calc(100% - 64px);
   margin: auto;
   padding: 2rem;
-  height: auto;
 }
 
 .wrapper {

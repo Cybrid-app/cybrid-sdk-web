@@ -1,4 +1,4 @@
-<div class="cybrid-login cybrid-global">
+<div class="cybrid-login">
   <mat-card>
     <div class="cybrid-header">
       <img
@@ -94,9 +94,11 @@
         <mat-form-field appearance="outline">
           <mat-label>Environment</mat-label>
           <mat-select formControlName="environment">
-            <mat-option *ngFor="let env of environment" [value]="env">{{
-              env | titlecase
-            }}</mat-option>
+            <mat-option
+              *ngFor="let environment of env.environments"
+              [value]="environment"
+              >{{ environment | titlecase }}</mat-option
+            >
           </mat-select>
         </mat-form-field>
       </ng-container>
@@ -121,9 +123,18 @@
       </button>
     </mat-card-actions>
     <mat-card-footer>
-      <a class="mat-hint" href="https://id.demo.cybrid.app/" target="_blank"
+      <a class="mat-hint" [href]="forgotPasswordLink" target="_blank"
         >forgot credentials?</a
       >
     </mat-card-footer>
   </mat-card>
 </div>
+
+<ng-template #loading>
+  <mat-dialog-actions align="center">
+    <mat-spinner [diameter]="24"></mat-spinner>
+  </mat-dialog-actions>
+  <mat-dialog-actions align="center">
+    <p>{{ message }}</p>
+  </mat-dialog-actions>
+</ng-template>

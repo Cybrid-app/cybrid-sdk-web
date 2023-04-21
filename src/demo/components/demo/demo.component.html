@@ -1,18 +1,5 @@
-<ng-template #login>
-  <div class="cybrid-login-wrapper">
-    <app-login (credentials)="initDemo($event)"></app-login>
-  </div>
-</ng-template>
-
-<ng-container *ngIf="login$ | async; else login">
-  <ng-template #loading>
-    <app-loading></app-loading>
-  </ng-template>
-
-  <ng-container
-    *ngIf="(isLoading$ | async) === false; else loading"
-    [formGroup]="componentGroup"
-  >
+<ng-container *ngIf="(isLoading$ | async) === false; else loading">
+  <ng-container [formGroup]="componentGroup">
     <mat-form-field appearance="outline">
       <mat-label>Component</mat-label>
       <mat-select id="component" formControlName="component">
@@ -29,10 +16,7 @@
       </mat-select>
     </mat-form-field>
   </ng-container>
-  <ng-container
-    *ngIf="(isLoading$ | async) === false"
-    [formGroup]="languageGroup"
-  >
+  <ng-container [formGroup]="languageGroup">
     <mat-form-field appearance="outline">
       <mat-label>Language</mat-label>
       <mat-select formControlName="language">
@@ -44,5 +28,8 @@
   </ng-container>
 </ng-container>
 
-<!--Main App-->
+<ng-template #loading>
+  <app-loading></app-loading>
+</ng-template>
+
 <ng-template #viewContainer></ng-template>

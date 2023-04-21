@@ -8,31 +8,32 @@ function transferSetup() {
 }
 
 describe('transfer test', () => {
-  before(() => {
-    cy.intercept('GET', '/api/banks/*', (req) => {
-      const plaidBank = { ...TestConstants.BANK_BANK_MODEL };
-      plaidBank.features = [
-        'attestation_identity_records',
-        'plaid_funding_source'
-      ];
-      req.reply(plaidBank);
-    }).as('getBank');
+  beforeEach(() => {
+    //@ts-ignore
+    cy.authenticate();
+    cy.visit('/');
 
     cy.intercept('GET', '/api/customers/*', (req) => {
       req.reply(TestConstants.CUSTOMER_BANK_MODEL);
     }).as('getCustomer');
-
     cy.intercept('POST', '/api/quotes', (req) => {
       req.reply(TestConstants.QUOTE_BANK_MODEL_TRANSFER);
     }).as('createQuote');
-
     cy.visit('/');
-    //@ts-ignore
-    cy.login();
+    cy.intercept('GET', '/api/external_bank_accounts*', (req) => {
+      req.reply(TestConstants.EXTERNAL_BANK_ACCOUNT_LIST_BANK_MODEL);
+    }).as('getExternalBankAccounts');
+    cy.intercept('GET', '/api/accounts*', (req) => {
+      req.reply(TestConstants.ACCOUNT_LIST_BANK_MODEL);
+    });
+    cy.intercept('POST', '/api/transfers', (req) => {
+      req.reply(TestConstants.TRANSFER_BANK_MODEL);
+    }).as('createTransfer');
+
+    transferSetup();
   });
 
   it('should render the transfer component', () => {
-    transferSetup();
     app().should('exist');
   });
 
@@ -43,16 +44,6 @@ describe('transfer test', () => {
   });
 
   it('should display available to trade', () => {
-    cy.intercept('GET', '/api/external_bank_accounts*', (req) => {
-      req.reply(TestConstants.EXTERNAL_BANK_ACCOUNT_LIST_BANK_MODEL);
-    }).as('getExternalBankAccounts');
-
-    cy.intercept('GET', '/api/accounts*', (req) => {
-      req.reply(TestConstants.ACCOUNT_LIST_BANK_MODEL);
-    });
-
-    transferSetup();
-
     app().find('.cybrid-balance').should('include.text', '$1.00');
   });
 
@@ -80,6 +71,7 @@ describe('transfer test', () => {
 
   it('should invalidate the amount input on withdraw > platform_available', () => {
     // Set 'side' to 'withdraw' and compare to platform_available = $1.00
+    app().find('input').type('2.00');
     app().find('.mat-tab-labels').contains('WITHDRAW').click();
     app().find('mat-error').should('exist');
   });
@@ -89,11 +81,7 @@ describe('transfer test', () => {
   });
 
   it('should open the confirm dialog', () => {
-    // Mock the silent quote refresh
-    cy.intercept('POST', '/api/quotes', (req) => {
-      req.reply(TestConstants.QUOTE_BANK_MODEL_TRANSFER);
-    }).as('createQuote');
-
+    app().find('input').type('2.00');
     app().find('.mat-tab-labels').contains('DEPOSIT').click();
     app().find('#action').click();
 
@@ -106,20 +94,16 @@ describe('transfer test', () => {
   });
 
   it('should cancel the confirm dialog', () => {
+    app().find('input').type('2.00');
+    app().find('.mat-tab-labels').contains('DEPOSIT').click();
+    app().find('#action').click();
+
     app().get('app-transfer-confirm').find('button').contains('CANCEL').click();
     app().get('app-transfer-confirm').should('not.exist');
   });
 
   it('should open the details dialog', () => {
-    // Mock the silent quote refresh
-    cy.intercept('POST', '/api/quotes', (req) => {
-      req.reply(TestConstants.QUOTE_BANK_MODEL_TRANSFER);
-    }).as('createQuote');
-
-    cy.intercept('POST', '/api/transfers', (req) => {
-      req.reply(TestConstants.TRANSFER_BANK_MODEL);
-    }).as('createTransfer');
-
+    app().find('input').type('2.00');
     app().find('#action').click();
     app()
       .get('app-transfer-confirm')
@@ -137,6 +121,14 @@ describe('transfer test', () => {
   });
 
   it('should navigate to the account-list after transfer', () => {
+    app().find('input').type('2.00');
+    app().find('#action').click();
+    app()
+      .get('app-transfer-confirm')
+      .find('button')
+      .contains('CONFIRM')
+      .click();
+
     app().get('app-transfer-details').find('button').contains('DONE').click();
     app().get('app-transfer-details').should('not.exist');
     cy.get('app-account-list').should('exist');

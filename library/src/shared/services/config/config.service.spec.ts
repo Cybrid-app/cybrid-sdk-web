@@ -1,4 +1,9 @@
-import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import {
+  discardPeriodicTasks,
+  fakeAsync,
+  TestBed,
+  tick
+} from '@angular/core/testing';
 import { Observable, of, take } from 'rxjs';
 
 // Services
@@ -15,7 +20,6 @@ import { Constants, TestConstants } from '@constants';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {
-  BanksService,
   Configuration,
   CustomerBankModel,
   CustomersService
@@ -31,8 +35,9 @@ describe('ConfigService', () => {
     'setDefaultLang',
     'use'
   ]);
-  let MockCustomersService = jasmine.createSpyObj(['getCustomer']);
-  let MockBanksService = jasmine.createSpyObj(['getBank']);
+  let MockCustomersService = jasmine.createSpyObj('CustomersService', [
+    'getCustomer'
+  ]);
   class MockConfiguration extends Configuration {
     override basePath = environment.sandboxBankApiBasePath;
   }
@@ -48,8 +53,7 @@ describe('ConfigService', () => {
         { provide: EventService, useValue: MockEventService },
         { provide: TranslateService, useValue: MockTranslateService },
         { provide: Configuration, useClass: MockConfiguration },
-        { provide: CustomersService, useValue: MockCustomersService },
-        { provide: BanksService, useValue: MockBanksService }
+        { provide: CustomersService, useValue: MockCustomersService }
       ]
     });
     service = TestBed.inject(ConfigService);
@@ -60,7 +64,6 @@ describe('ConfigService', () => {
     MockCustomersService.getCustomer.and.returnValue(
       of(TestConstants.CUSTOMER_BANK_MODEL)
     );
-    MockBanksService = TestBed.inject(BanksService);
   });
 
   it('should be created', () => {
@@ -172,6 +175,16 @@ describe('ConfigService', () => {
       environment.productionBankApiBasePath
     );
   });
+
+  it('should init platform data', fakeAsync(() => {
+    service.setConfig(Constants.DEFAULT_CONFIG);
+    service.initPlatformData();
+
+    tick(Constants.PLATFORM_REFRESH_INTERVAL);
+    discardPeriodicTasks();
+
+    expect(MockCustomersService.getCustomer).toHaveBeenCalled();
+  }));
 
   it('should fetch customer data', () => {
     expect(service.getCustomer$()).toBeInstanceOf(

@@ -24,6 +24,34 @@ beforeEach(() => {
 });
 
 // @ts-ignore
+Cypress.Commands.add('authenticate', () => {
+  const app = () => cy.get('app-login');
+  cy.session(
+    'auth',
+    () => {
+      cy.visit('/');
+      app()
+        .should('exist')
+        .get('#clientId')
+        .type(Cypress.env('CLIENT_ID_PLAID'));
+      app().get('#clientSecret').type(Cypress.env('CLIENT_SECRET_PLAID'));
+      app().get('#customerGuid').type(Cypress.env('CUSTOMER_GUID_PLAID'));
+      cy.get('mat-select').click();
+      cy.get('mat-option').contains('Staging').click();
+      app().get('#login').click();
+      app()
+        .should('not.exist')
+        .then(() => {
+          cy.window().getAllLocalStorage().should('not.eq', {});
+        });
+    },
+    {
+      cacheAcrossSpecs: true
+    }
+  );
+});
+
+// @ts-ignore
 Cypress.Commands.add('login', (backstopped?: 'backstopped') => {
   cy.visit('/');
 
