@@ -17,6 +17,10 @@ function identityVerificationSetup() {
 
 describe('identity-verification test', () => {
   beforeEach(() => {
+    //@ts-ignore
+    cy.authenticate();
+    cy.visit('/');
+
     cy.intercept('GET', 'api/prices*', (req) => {
       req.reply(TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY);
     }).as('listPrices');
@@ -26,17 +30,11 @@ describe('identity-verification test', () => {
     cy.intercept('GET', 'api/customers/*', (req) => {
       req.reply(TestConstants.CUSTOMER_BANK_MODEL);
     }).as('getCustomer');
-    cy.intercept('GET', 'api/banks/*', (req) => {
-      req.reply(TestConstants.BANK_BANK_MODEL);
-    }).as('getBank');
 
-    //@ts-ignore
-    cy.login();
+    identityVerificationSetup();
   });
 
   it('should poll on customer status', () => {
-    identityVerificationSetup();
-
     // Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'storing';
@@ -57,8 +55,6 @@ describe('identity-verification test', () => {
   });
 
   it('should display verified customer status', () => {
-    identityVerificationSetup();
-
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'verified';
@@ -80,8 +76,6 @@ describe('identity-verification test', () => {
   });
 
   it('should display rejected customer status', () => {
-    identityVerificationSetup();
-
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'rejected';
@@ -103,8 +97,6 @@ describe('identity-verification test', () => {
   });
 
   it('should poll on identity status', () => {
-    identityVerificationSetup();
-
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'unverified';
@@ -118,7 +110,7 @@ describe('identity-verification test', () => {
     const identityVerification = {
       ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
     };
-    identityVerification.state = 'storing'
+    identityVerification.state = 'storing';
 
     cy.intercept('POST', 'api/identity_verifications*', (req) => {
       req.reply(identityVerification);
@@ -140,8 +132,6 @@ describe('identity-verification test', () => {
   });
 
   it('should display reviewing identity status', () => {
-    identityVerificationSetup();
-
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
     customer.state = 'unverified';
@@ -189,7 +179,9 @@ describe('identity-verification test', () => {
     }).as('getCustomer');
 
     //Mock identity verification
-    const identityVerification = { ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL };
+    const identityVerification = {
+      ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
+    };
     identityVerification.state = 'waiting';
     identityVerification.persona_state = 'processing';
 

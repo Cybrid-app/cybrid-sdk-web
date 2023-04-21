@@ -8,7 +8,6 @@ import {
   map,
   Observable,
   ReplaySubject,
-  startWith,
   Subject,
   switchMap,
   takeUntil,
@@ -28,6 +27,8 @@ import {
 import { Constants } from '@constants';
 import { environment } from '@environment';
 
+export type Environment = 'local' | 'staging' | 'sandbox' | 'production';
+
 export interface ComponentConfig {
   refreshInterval: number;
   locale: string;
@@ -36,7 +37,7 @@ export interface ComponentConfig {
   customer: string; // Temporary solution until the JWT embeds a customer GUID
   fiat: string;
   features: Array<string>;
-  environment: 'local' | 'staging' | 'sandbox' | 'production';
+  environment: Environment;
 }
 
 @Injectable({
@@ -197,7 +198,6 @@ export class ConfigService implements OnDestroy {
   initPlatformData(): void {
     timer(0, Constants.PLATFORM_REFRESH_INTERVAL)
       .pipe(
-        startWith(0),
         takeUntil(this.unsubscribe$),
         switchMap(() => this.config$),
         switchMap((config) => {

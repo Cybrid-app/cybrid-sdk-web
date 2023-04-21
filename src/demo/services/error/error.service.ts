@@ -5,7 +5,7 @@ import { CODE, ErrorLog } from '@services';
 @Injectable({
   providedIn: 'root'
 })
-export class DemoErrorService {
+export class ErrorService {
   constructor(private snackbar: MatSnackBar) {}
 
   handleError(error: ErrorLog): void {

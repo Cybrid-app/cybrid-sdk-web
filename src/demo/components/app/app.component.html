@@ -1,4 +1,4 @@
-<ng-container *ngIf="demoConfigService.config$ | async as config">
+<ng-container *ngIf="configService.config$ | async as config">
   <div
     class="wrapper mat-body"
     [ngClass]="
@@ -13,15 +13,34 @@
         href="https://www.npmjs.com/package/@cybrid/cybrid-sdk-ui-js"
         >{{ 'cybrid-sdk-ui-js@ ' + (version | async) }}</a
       >
-      <button mat-icon-button>
-        <mat-icon (click)="toggleTheme()">{{
+      <button mat-icon-button (click)="toggleTheme()">
+        <mat-icon>{{
           config.theme === 'LIGHT' ? 'light_mode' : 'dark_mode'
         }}</mat-icon>
       </button>
+      <button
+        mat-icon-button
+        [mat-menu-trigger-for]="menu"
+        aria-label="App menu"
+        *ngIf="authService.isAuthenticated | async"
+      >
+        <mat-icon>settings</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
     </mat-toolbar>
     <mat-drawer-container class="mat-app-background">
       <mat-drawer-content>
-        <app-demo></app-demo>
+        <app-demo
+          *ngIf="authService.isAuthenticated | async; else login"
+        ></app-demo>
+        <ng-template #login>
+          <app-login></app-login>
+        </ng-template>
       </mat-drawer-content>
     </mat-drawer-container>
   </div>

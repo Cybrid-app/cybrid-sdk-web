@@ -14,13 +14,11 @@ function accountDetailsSetup() {
 }
 
 describe('account-details test', () => {
-  before(() => {
-    cy.visit('/');
-    // @ts-ignore
-    cy.login();
-  });
-
   beforeEach(() => {
+    //@ts-ignore
+    cy.authenticate();
+    cy.visit('/');
+
     // Mock prices
     cy.intercept('GET', 'api/prices*', (req) => {
       req.reply(TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY);
@@ -28,15 +26,19 @@ describe('account-details test', () => {
     // Mock accounts
     cy.intercept('GET', 'api/accounts*', (req) => {
       req.reply(TestConstants.ACCOUNT_LIST_BANK_MODEL);
-    }).as('listAccount');
+    }).as('listAccounts');
     // Mock trades
     cy.intercept('GET', 'api/trades*', (req) => {
       req.reply(TestConstants.TRADE_LIST_BANK_MODEL);
     }).as('listTrades');
+    cy.intercept('GET', 'api/trades/*', (req) => {
+      req.reply(TestConstants.TRADE_LIST_BANK_MODEL.objects[0]);
+    }).as('getTrade');
+
+    accountDetailsSetup();
   });
 
   it('should render account details', () => {
-    accountDetailsSetup();
     app().should('exist');
   });
 
@@ -65,34 +67,30 @@ describe('account-details test', () => {
 
   it('should display trade summary', () => {
     // Select first trade in the table
-    cy.get('.mat-row').first().click();
+    app().find('tr').contains('BTC').first().click();
 
-    cy.get('.cybrid-subtitle').should(
-      'contain.text',
-      '$1.00 USD in BTC'
-    );
-    cy.get('.cybrid-subheader-item')
-      .should('contain.text', '0989a082d...')
-      .should('contain.text', 'Feb 24, 2023');
-    cy.get('.cybrid-list-item')
-      .should('contain.text', 'Status')
-      .should('contain.text', 'Settling')
-      .should('contain.text', 'Purchased amount')
-      .should('contain.text', '$1.00')
-      .should('contain.text', 'USD')
-      .should('contain.text', 'Purchased quantity')
-      .should('contain.text', '0.00004298 BTC')
-      .should('contain.text', 'Transaction fee')
-      .should('contain.text', '$0.00');
-    cy.get('app-trade-summary').find('button').click();
+    cy.wait('@getTrade').then(() => {
+      cy.get('.cybrid-subtitle').should('contain.text', '$1.00 USD in BTC');
+      cy.get('.cybrid-subheader-item')
+        .should('contain.text', '0989a082d...')
+        .should('contain.text', 'Feb 24, 2023');
+      cy.get('.cybrid-list-item')
+        .should('contain.text', 'Status')
+        .should('contain.text', 'Settling')
+        .should('contain.text', 'Purchased amount')
+        .should('contain.text', '$1.00')
+        .should('contain.text', 'USD')
+        .should('contain.text', 'Purchased quantity')
+        .should('contain.text', '0.00004298 BTC')
+        .should('contain.text', 'Transaction fee')
+        .should('contain.text', '$0.00');
+      cy.get('app-trade-summary').find('button').click();
+    });
   });
 
   it('should navigate back', () => {
     app().find('app-navigation').find('button').click();
     app().should('not.exist');
-
-    // Reset to account-details component
-    accountDetailsSetup();
   });
 
   it('should refresh the account list and paginate', () => {
@@ -102,14 +100,14 @@ describe('account-details test', () => {
     });
     cy.intercept('GET', 'api/accounts*', (req) => {
       req.continue();
-    }).as('listAccount');
+    }).as('listAccounts');
     cy.intercept('GET', 'api/trades*', (req) => {
       req.continue();
     }).as('listTrades');
 
     // Intercept listAccounts response
     let account;
-    cy.wait('@listAccount').then((interception) => {
+    cy.wait('@listAccounts').then((interception) => {
       // @ts-ignore
       account = interception.response.body;
     });
@@ -121,7 +119,7 @@ describe('account-details test', () => {
     });
 
     // Check for new data
-    cy.wait('@listAccount').its('response.body').should('not.eq', account);
+    cy.wait('@listAccounts').its('response.body').should('not.eq', account);
     cy.wait('@listTrades').its('response.body').should('not.eq', trades);
 
     // Paginate: next

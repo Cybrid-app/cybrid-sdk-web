@@ -143,6 +143,10 @@ describe('ComponentGuard', () => {
     const mockRouterStateSnapshot: RouterStateSnapshot =
       {} as RouterStateSnapshot;
 
+    let config = TestConstants.CONFIG;
+    config.features = ['backstopped_funding_source'];
+    MockConfigService.getConfig$.and.returnValue(of(config));
+
     guard
       .canActivate(mockActivatedRouteSnapshot, mockRouterStateSnapshot)
       .subscribe();

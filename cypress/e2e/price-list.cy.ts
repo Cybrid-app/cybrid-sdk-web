@@ -1,15 +1,13 @@
 // @ts-ignore
-import { beforeEach } from 'mocha';
-
 function app() {
   return cy.get('app-price-list');
 }
 
 describe('price-list test', () => {
-  before(() => {
+  beforeEach(() => {
+    //@ts-ignore
+    cy.authenticate();
     cy.visit('/');
-    // @ts-ignore
-    cy.login();
   });
 
   it('should render the price list', () => {

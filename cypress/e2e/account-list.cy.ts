@@ -13,29 +13,28 @@ function accountListSetup() {
 }
 
 describe('account-list test', () => {
-  before(() => {
+  beforeEach(() => {
+    //@ts-ignore
+    cy.authenticate();
+    cy.visit('/');
+
     cy.intercept('GET', 'api/prices*', (req) => {
       req.reply(TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY);
     }).as('listPrices');
     cy.intercept('GET', 'api/accounts*', (req) => {
       req.reply(TestConstants.ACCOUNT_LIST_BANK_MODEL);
-    }).as('listAccount');
+    }).as('listAccounts');
     cy.intercept('GET', 'api/trades*', (req) => {
       req.reply(TestConstants.TRADE_LIST_BANK_MODEL);
     }).as('listTrades');
-    cy.intercept('GET', '/api/banks/*', (req) => {
-      req.reply(TestConstants.BANK_BANK_MODEL);
-    }).as('getBank');
     cy.intercept('GET', '/api/customers/*', (req) => {
       req.reply(TestConstants.CUSTOMER_BANK_MODEL);
     }).as('getCustomer');
 
-    cy.visit('/');
-    // @ts-ignore
-    cy.login();
-  });
-  it('should render the account list', () => {
     accountListSetup();
+  });
+
+  it('should render the account list', () => {
     app().should('exist');
   });
 
@@ -70,15 +69,11 @@ describe('account-list test', () => {
   it('should navigate back', () => {
     app().find('app-navigation').find('button').click();
     app().should('not.exist');
-
-    // Reset to account-list component
-    accountListSetup();
   });
 
   it('should refresh the account list', () => {
     // Intercept listAccounts response
     let accounts;
-    cy.intercept('api/accounts*').as('listAccounts');
     cy.wait('@listAccounts').then((interception) => {
       // @ts-ignore
       accounts = interception.response.body;

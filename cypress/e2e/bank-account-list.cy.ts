@@ -16,24 +16,14 @@ function bankAccountListSetup() {
 }
 
 describe('bank-account-list-test', () => {
-  before(() => {
-    cy.visit('/');
-    //@ts-ignore
-    cy.login();
-  });
-
   beforeEach(() => {
-    let mockBank = { ...TestConstants.BANK_BANK_MODEL };
-    mockBank.features = [];
-    mockBank.features.push('plaid_funding_source');
-    mockBank.features.push('kyc_identity_verifications');
+    //@ts-ignore
+    cy.authenticate();
+    cy.visit('/');
 
     cy.intercept('GET', 'api/assets', (req) => {
       req.reply(TestConstants.ASSET_LIST_BANK_MODEL);
     }).as('listAssets');
-    cy.intercept('GET', '/api/banks/*', (req) => {
-      req.reply(mockBank);
-    }).as('getBank');
     cy.intercept('GET', '/api/customers/*', (req) => {
       req.reply(TestConstants.CUSTOMER_BANK_MODEL);
     }).as('getCustomer');
@@ -43,10 +33,17 @@ describe('bank-account-list-test', () => {
     cy.intercept('GET', '/api/external_bank_accounts/*', (req) => {
       req.reply({ forceNetworkError: true });
     }).as('getExternalBankAccount');
+    cy.intercept('DELETE', '/api/external_bank_accounts/*', (req) => {
+      req.reply(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL);
+    });
+    cy.intercept('POST', '/api/workflows*', (req) => {
+      req.reply({});
+    }).as('postWorkflow');
+
+    bankAccountListSetup();
   });
 
   it('should list external bank accounts', () => {
-    bankAccountListSetup();
     cy.wait('@listExternalBankAccounts').then(() => {
       app().find('table').should('exist');
     });
@@ -68,9 +65,7 @@ describe('bank-account-list-test', () => {
   });
 
   it('should disconnect a bank account', () => {
-    cy.intercept('DELETE', '/api/external_bank_accounts/*', (req) => {
-      req.reply(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL);
-    });
+    app().find('tbody').find('tr').first().click();
     cy.get('app-bank-account-details').find('#disconnect').click();
     cy.get('app-bank-account-disconnect').find('#disconnect').click();
     cy.get('snack-bar-container').contains(
@@ -94,12 +89,6 @@ describe('bank-account-list-test', () => {
   });
 
   it('should add a bank account', () => {
-    // Mock POST workflow in bank-account-connect component
-    cy.intercept('POST', '/api/workflows*', (req) => {
-      req.reply({});
-    }).as('postWorkflow');
-
-    bankAccountListSetup();
     app().find('#add-account').should('exist').click();
     app().should('not.exist');
     cy.get('app-bank-account-connect').should('exist');
@@ -111,8 +100,6 @@ describe('bank-account-list-test', () => {
       accounts = req;
       req.continue();
     }).as('listExternalBankAccounts');
-
-    bankAccountListSetup();
 
     cy.wait('@listExternalBankAccounts').then((res) => {
       //@ts-ignore

@@ -6,17 +6,18 @@ import ci from './environment.ci.json';
 
 export const environment = {
   production: true,
-  idpAuthUrl: {
-    local: 'http://api-idp.local.cybrid.com:3000/oauth/token',
-    staging: 'https://id.staging.cybrid.app/oauth/token',
-    sandbox: 'https://id.sandbox.cybrid.app/oauth/token',
-    production: 'https://id.production.cybrid.app/oauth/token'
+  environments: ['local', 'staging', 'sandbox', 'production'],
+  idpBaseUrl: {
+    local: 'http://api-idp.local.cybrid.com:3000',
+    staging: 'https://id.staging.cybrid.app',
+    sandbox: 'https://id.sandbox.cybrid.app',
+    production: 'https://id.production.cybrid.app'
   },
-  bankApiCustomerBasePath: {
-    local: 'http://api-platform-bank.local.cybrid.com:3002/api/customers/',
-    staging: 'https://bank.staging.cybrid.app/api/customers/',
-    sandbox: 'https://bank.sandbox.cybrid.app/api/customers/',
-    production: 'https://bank.production.cybrid.app/api/customers/'
+  bankBaseUrl: {
+    local: 'http://api-platform-bank.local.cybrid.com:3002',
+    staging: 'https://bank.staging.cybrid.app',
+    sandbox: 'https://bank.sandbox.cybrid.app',
+    production: 'https://bank.production.cybrid.app'
   },
   grant_type: 'client_credentials',
   credentials: ci.environment.credentials,

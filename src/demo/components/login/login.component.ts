@@ -1,31 +1,32 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {
+  AfterViewInit,
+  Component,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewChild
+} from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
-import { catchError, map, Observable, of, switchMap } from 'rxjs';
-
-// Client
-import { CustomerBankModel } from '@cybrid/cybrid-api-bank-angular';
+import { catchError, map, of, Subject, switchMap } from 'rxjs';
 
 // Services
-import { DemoConfigService } from '../../services/demo-config/demo-config.service';
+import { AuthService } from '../../services/auth/auth.service';
+import { Environment, ErrorService, EventService } from '@services';
 
 // Utility
 import { environment } from '../../../environments/environment';
+import { ConfigService } from '../../services/config/config.service';
 
 interface LoginForm {
-  clientId: FormControl<string>;
-  clientSecret: FormControl<string>;
-  bearerToken: FormControl<string>;
+  clientId: FormControl<string | null>;
+  clientSecret: FormControl<string | null>;
+  bearerToken: FormControl<string | null>;
   customerGuid: FormControl<string>;
-  environment: FormControl<'staging' | 'sandbox' | 'production'>;
-}
-
-export interface DemoCredentials {
-  token: string;
-  customer: string;
-  isPublic: boolean;
-  environment: 'local' | 'staging' | 'sandbox' | 'production';
+  environment: FormControl<Environment>;
 }
 
 @Component({
@@ -33,48 +34,103 @@ export interface DemoCredentials {
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
-  @Output() credentials = new EventEmitter<DemoCredentials>();
+export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('loading', { static: false }) loading!: TemplateRef<any>;
+
+  env = environment;
+  loginForm!: FormGroup<LoginForm>;
 
   bearer = false;
-  environment = ['local', 'staging', 'sandbox', 'production'];
-  demoCredentials: DemoCredentials = {
-    token: '',
-    customer: '',
-    isPublic: false,
-    environment: 'sandbox'
-  };
+  unsubscribe$ = new Subject();
 
-  // PUBLIC CREDENTIALS FOR NO-LOGIN DEMO
-  readonly publicClientId = environment.credentials.publicClientId;
-  readonly publicClientSecret = environment.credentials.publicClientSecret;
-  readonly publicCustomerGuid = environment.credentials.publicCustomerGuid;
-
-  loginForm!: FormGroup<LoginForm>;
+  message = '';
+  forgotPasswordLink = this.env.idpBaseUrl.staging;
 
   constructor(
     private http: HttpClient,
-    private configService: DemoConfigService
+    private router: Router,
+    public authService: AuthService,
+    private eventService: EventService,
+    private errorService: ErrorService,
+    private configService: ConfigService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
     this.initLoginForm();
   }
 
+  ngAfterViewInit() {
+    if (this.loginForm.valid) this.login();
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next('');
+    this.unsubscribe$.complete();
+  }
+
+  login(publicLogin?: boolean): void {
+    this.message = 'Authenticating bank...';
+
+    const loadingDialog = this.dialog.open(this.loading);
+    const controls = this.loginForm.controls;
+
+    const bankToken = () => {
+      if (publicLogin) {
+        return this.authService.createBankToken(
+          'sandbox',
+          environment.credentials.publicClientId,
+          environment.credentials.publicClientSecret
+        );
+      } else {
+        return controls.bearerToken.value
+          ? this.authService.setToken(controls.bearerToken.value)
+          : this.authService.createBankToken(
+              controls.environment.value,
+              <string>controls.clientId.value,
+              <string>controls.clientSecret.value
+            );
+      }
+    };
+
+    bankToken()
+      .pipe(
+        switchMap((token) => {
+          this.message = 'Creating customer token...';
+          return publicLogin
+            ? this.authService.createCustomerToken(
+                'sandbox',
+                environment.credentials.publicCustomerGuid,
+                token
+              )
+            : this.authService.createCustomerToken(
+                controls.environment.value,
+                controls.customerGuid.value,
+                token
+              );
+        }),
+        map(() => {
+          this.authService.isAuthenticated.next(true);
+          loadingDialog.close();
+        }),
+        catchError((err) => {
+          loadingDialog.close();
+          this.handleLoginFormErrors(err);
+          return of(err);
+        })
+      )
+      .subscribe();
+  }
+
   initLoginForm(): void {
-    // Preset with environment variables for simplified local testing
     this.loginForm = new FormGroup<LoginForm>({
       clientId: new FormControl(environment.credentials.clientId, {
-        validators: [Validators.required, Validators.minLength(43)],
-        nonNullable: true
+        validators: [Validators.required, Validators.minLength(43)]
       }),
       clientSecret: new FormControl(environment.credentials.clientSecret, {
-        validators: [Validators.required, Validators.minLength(43)],
-        nonNullable: true
+        validators: [Validators.required, Validators.minLength(43)]
       }),
-      bearerToken: new FormControl('', {
-        nonNullable: true
-      }),
+      bearerToken: new FormControl(),
       customerGuid: new FormControl(environment.credentials.customerGuid, {
         validators: [Validators.required, Validators.minLength(32)],
         nonNullable: true
@@ -82,26 +138,14 @@ export class LoginComponent implements OnInit {
       environment: new FormControl('sandbox', { nonNullable: true })
     });
 
-    if (this.loginForm.valid) this.login();
-  }
+    this.loginForm.controls.environment.valueChanges.subscribe(() => {
+      this.loginForm.controls.clientId.updateValueAndValidity();
+      this.loginForm.controls.clientSecret.updateValueAndValidity();
+      this.loginForm.controls.bearerToken.updateValueAndValidity();
 
-  getBankApiBasePath(env: string): string {
-    switch (env) {
-      case 'local': {
-        return environment.bankApiCustomerBasePath.local;
-      }
-      case 'staging': {
-        return environment.bankApiCustomerBasePath.staging;
-      }
-      case 'sandbox': {
-        return environment.bankApiCustomerBasePath.sandbox;
-      }
-      case 'production': {
-        return environment.bankApiCustomerBasePath.production;
-      }
-      default:
-        return environment.bankApiCustomerBasePath.sandbox;
-    }
+      this.forgotPasswordLink =
+        this.env.idpBaseUrl[this.loginForm.controls.environment.value];
+    });
   }
 
   // Handle input validation between api keys and bearer token
@@ -134,105 +178,39 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  login(publicUser?: boolean): void {
-    const token = (): Observable<string> => {
-      // Logs in public user
-      if (publicUser) {
-        return this.configService.createToken(
-          'demo',
-          this.publicClientId,
-          this.publicClientSecret
-        );
-      } else {
-        // Returns bearer token if input, or calls api with keys
-        return this.bearer
-          ? of(this.loginForm.controls.bearerToken.value)
-          : this.configService
-              .createToken(
-                this.loginForm.value.environment!,
-                this.loginForm.value.clientId,
-                this.loginForm.value.clientSecret
-              )
-              .pipe(
-                catchError((err) => {
-                  this.loginForm.controls.clientId.setErrors({
-                    unauthorized: true
-                  });
-                  return of(err);
-                })
-              );
+  handleLoginFormErrors(err: any): void {
+    switch (err.status) {
+      case 401: {
+        if (this.bearer) {
+          this.loginForm.controls.bearerToken.setErrors({
+            unauthorized: true
+          });
+        } else
+          this.loginForm.controls.clientId.setErrors({
+            unauthorized: true
+          });
+        break;
       }
-    };
-
-    // Validates customer and sets credentials
-    token()
-      .pipe(
-        map((token) => {
-          this.demoCredentials.token = token;
-          return token;
-        }),
-        switchMap((token) => {
-          const user = () =>
-            publicUser
-              ? this.publicCustomerGuid
-              : this.loginForm.value.customerGuid;
-
-          const url =
-            this.getBankApiBasePath(this.loginForm.controls.environment.value) +
-            user();
-          const httpOptions = {
-            headers: new HttpHeaders({
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`
-            })
-          };
-          return this.http.get(url, httpOptions);
-        }),
-        catchError((err) => {
-          switch (err.status) {
-            case 401: {
-              if (this.bearer) {
-                this.loginForm.controls.bearerToken.setErrors({
-                  unauthorized: true
-                });
-              } else
-                this.loginForm.controls.clientId.setErrors({
-                  unauthorized: true
-                });
-              break;
-            }
-            case 404: {
-              this.loginForm.controls.customerGuid.setErrors({
-                not_found: true
-              });
-              break;
-            }
-            case 500: {
-              this.loginForm.controls.bearerToken.setErrors({
-                unauthorized: true
-              });
-              break;
-            }
-            default:
-              this.loginForm.setErrors({});
-          }
-          return of(err);
-        })
-      )
-      .subscribe((customer: CustomerBankModel) => {
-        if (customer.guid) {
-          this.demoCredentials.customer = customer.guid;
-
-          this.demoCredentials.environment = publicUser
-            ? 'sandbox'
-            : this.loginForm.controls.environment.value;
-
-          publicUser
-            ? (this.demoCredentials.isPublic = publicUser)
-            : (this.demoCredentials.isPublic = false);
-
-          this.credentials.next(this.demoCredentials);
-        }
-      });
+      case 404: {
+        this.loginForm.controls.customerGuid.setErrors({
+          not_found: true
+        });
+        break;
+      }
+      case 422: {
+        this.loginForm.controls.customerGuid.setErrors({
+          not_found: true
+        });
+        break;
+      }
+      case 500: {
+        this.loginForm.controls.bearerToken.setErrors({
+          unauthorized: true
+        });
+        break;
+      }
+      default:
+        this.loginForm.setErrors({});
+    }
   }
 }
