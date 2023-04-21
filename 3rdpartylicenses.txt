@@ -72,6 +72,9 @@ MIT
 @cybrid/cybrid-api-bank-angular
 Apache-2.0
 
+@cybrid/cybrid-api-id-angular
+Apache-2.0
+
 @cybrid/cybrid-sdk-ui-js
 Apache-2.0
 
