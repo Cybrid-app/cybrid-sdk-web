@@ -25,12 +25,6 @@ To login you will need to have the following:
 - Customer GUID
 - Some prior setup for your bank/customer (see setup below)
 
-Most browsers will block Cybrid api requests due to Cross-Origin Resource Sharing (CORS) rules. You must disable CORS to properly view the demo. Here's a handy script (for Mac OSX) that opens a developer friendly instance of Google Chrome:
-
-```shell
-open -n -a /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --args --user-data-dir="/tmp/chrome_dev_test" --disable-web-security
-```
-
 ## API Setup
 
 The following setup should be preformed prior to using the Web Demo application.
@@ -74,6 +68,12 @@ Run `npm install` from the project root to install dependencies
 ## Run
 
 Run `ng serve` for a dev server
+
+While running the Demo locally most browsers will block Cybrid api requests due to Cross-Origin Resource Sharing (CORS) rules. You must disable CORS to properly view the demo. Here's a handy script (for Mac OSX) that opens a developer friendly instance of Google Chrome:
+
+```shell
+open -n -a /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --args --user-data-dir="/tmp/chrome_dev_test" --disable-web-security
+```
 
 Navigate to `http://localhost:4200/`
 
