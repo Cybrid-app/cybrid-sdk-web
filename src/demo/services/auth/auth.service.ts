@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import {
   BehaviorSubject,
@@ -34,6 +35,7 @@ import { Environment } from '@services';
 
 // Utility
 import { environment } from '../../../environments/environment';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root'
@@ -51,7 +53,9 @@ export class AuthService {
     private http: HttpClient,
     private router: Router,
     private localStorageService: LocalStorageService,
-    private eventService: EventService
+    private eventService: EventService,
+    private snackbar: MatSnackBar,
+    private translatePipe: TranslatePipe
   ) {}
 
   createCustomerToken(
@@ -139,14 +143,17 @@ export class AuthService {
 
   createSession(decodedToken: JwtPayload) {
     const key = Object(decodedToken)['sub_type'];
-    const expiresIn =
-      (<number>decodedToken.exp - <number>decodedToken.iat) * 1000;
+    const expiresIn = <number>decodedToken.exp * 1000 - Date.now();
 
     if (this.sessions[key]) this.sessions[key].unsubscribe();
 
-    this.sessions[key] = timer(expiresIn).subscribe(() =>
-      this.destroySession()
-    );
+    this.sessions[key] = timer(expiresIn).subscribe(() => {
+      this.destroySession();
+
+      this.snackbar.open(this.translatePipe.transform('auth.expired'), 'Ok', {
+        duration: 5000
+      });
+    });
   }
 
   restoreEnvironment(token: JwtPayload): string | null {
