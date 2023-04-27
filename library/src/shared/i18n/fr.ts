@@ -231,5 +231,10 @@ export default {
       details: 'Détails',
       state: 'État'
     }
+  },
+
+  // Auth service
+  auth: {
+    expired: 'La session utilisateur a expiré. Veuillez vous reconnecter.'
   }
 };

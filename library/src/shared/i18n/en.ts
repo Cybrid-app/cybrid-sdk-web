@@ -227,5 +227,10 @@ export default {
       details: 'Details',
       state: 'State'
     }
+  },
+
+  // Auth service
+  auth: {
+    expired: 'User session has expired. Please login again.'
   }
 };

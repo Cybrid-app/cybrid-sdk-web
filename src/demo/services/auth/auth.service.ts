@@ -35,6 +35,7 @@ import { Environment } from '@services';
 
 // Utility
 import { environment } from '../../../environments/environment';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root'
@@ -53,7 +54,8 @@ export class AuthService {
     private router: Router,
     private localStorageService: LocalStorageService,
     private eventService: EventService,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar,
+    private translatePipe: TranslatePipe
   ) {}
 
   createCustomerToken(
@@ -148,11 +150,9 @@ export class AuthService {
     this.sessions[key] = timer(expiresIn).subscribe(() => {
       this.destroySession();
 
-      this.snackbar.open(
-        'User session has expired. Please login again.',
-        'Ok',
-        { duration: 5000 }
-      );
+      this.snackbar.open(this.translatePipe.transform('auth.expired'), 'Ok', {
+        duration: 5000
+      });
     });
   }
 
