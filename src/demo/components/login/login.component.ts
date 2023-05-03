@@ -15,7 +15,7 @@ import { catchError, map, of, Subject, switchMap } from 'rxjs';
 
 // Services
 import { AuthService } from '../../services/auth/auth.service';
-import { Environment, ErrorService, EventService } from '@services';
+import { Environment, ErrorService } from '@services';
 
 // Utility
 import { environment } from '../../../environments/environment';
@@ -50,7 +50,6 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     private http: HttpClient,
     private router: Router,
     public authService: AuthService,
-    private eventService: EventService,
     private errorService: ErrorService,
     private configService: ConfigService,
     private dialog: MatDialog
@@ -116,6 +115,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
         catchError((err) => {
           loadingDialog.close();
           this.handleLoginFormErrors(err);
+          this.errorService.handleError(err);
           return of(err);
         })
       )

@@ -116,7 +116,7 @@ export class AuthService {
       this.localStorageService.set(key, access_token);
       this.tokens[key] = token;
       return of(access_token);
-    } else return throwError(() => new Error());
+    } else return throwError(() => new Error('Invalid access token'));
   }
 
   getToken(sub_type: string): {} | undefined {
