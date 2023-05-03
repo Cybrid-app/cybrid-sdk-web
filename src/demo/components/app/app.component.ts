@@ -45,6 +45,15 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.authService.restoreSession();
+    this.errorService
+      .getError()
+      .pipe(
+        map((err) => {
+          const error = err.data ? err.data : err;
+          console.log(error);
+        })
+      )
+      .subscribe();
   }
 
   toggleTheme(): void {

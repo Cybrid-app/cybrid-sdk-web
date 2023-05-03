@@ -110,7 +110,6 @@ export class ConfigService {
 
   validateBank(bank: BankBankModel): boolean {
     return (
-      bank.type !== BankBankModel.TypeEnum.Production &&
       bank.features.length !== 0 &&
       bank.supported_fiat_account_assets !== null &&
       bank.supported_fiat_account_assets !== undefined &&

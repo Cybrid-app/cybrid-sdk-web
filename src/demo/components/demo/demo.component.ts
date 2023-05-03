@@ -8,7 +8,15 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 
-import { BehaviorSubject, filter, map, Subject, takeUntil } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  filter,
+  map,
+  of,
+  Subject,
+  takeUntil
+} from 'rxjs';
 
 // Services
 import { ConfigService } from '../../services/config/config.service';
@@ -20,7 +28,7 @@ import { BankBankModel } from '@cybrid/cybrid-api-bank-angular';
 
 // Library
 import { Constants } from '@constants';
-import { CODE, ComponentConfig, EventLog } from '@services';
+import { CODE, ComponentConfig, ErrorService, EventLog } from '@services';
 import { AppComponent } from '@components';
 
 // Utility
@@ -59,7 +67,8 @@ export class DemoComponent implements OnInit, OnDestroy {
   constructor(
     public configService: ConfigService,
     public authService: AuthService,
-    private localStorageService: LocalStorageService
+    private localStorageService: LocalStorageService,
+    private errorService: ErrorService
   ) {}
 
   ngOnInit() {
@@ -139,6 +148,10 @@ export class DemoComponent implements OnInit, OnDestroy {
           config.locale = lang;
 
           this.configService.setConfig(config);
+        }),
+        catchError((err) => {
+          this.errorService.handleError(err);
+          return of(err);
         })
       )
       .subscribe();
@@ -158,6 +171,11 @@ export class DemoComponent implements OnInit, OnDestroy {
         map(() => {
           this.initComponentGroup();
           this.initLanguageGroup();
+        }),
+        catchError((err) => {
+          this.errorService.handleError(err);
+          this.authService.destroySession();
+          return of(err);
         })
       )
       .subscribe(() => this.isLoading$.next(false));
