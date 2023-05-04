@@ -7,7 +7,8 @@ import {
   catchError,
   of,
   switchMap,
-  combineLatest
+  combineLatest,
+  take
 } from 'rxjs';
 
 // Client
@@ -74,6 +75,7 @@ export class AccountService implements OnDestroy {
 
   getAccounts(): Observable<AccountBankModel[]> {
     return this.configService.getConfig$().pipe(
+      take(1),
       switchMap((config) => {
         return this.accountsService.listAccounts(
           '',

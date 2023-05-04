@@ -163,21 +163,21 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.refreshSub = this.configService
       .getConfig$()
       .pipe(
+        take(1),
         switchMap((cfg: ComponentConfig) => {
           return timer(cfg.refreshInterval, cfg.refreshInterval);
         }),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe({
-        next: () => {
+        map(() => {
           this.eventService.handleEvent(
             LEVEL.INFO,
             CODE.DATA_FETCHING,
             'Refreshing price list...'
           );
           this.getPrices();
-        }
-      });
+        }),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe();
   }
 
   onRowClick(code: string): void {

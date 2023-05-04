@@ -22,10 +22,10 @@ import {
   ConfigService,
   BankAccountService,
   AssetService,
-  RoutingService
+  RoutingService,
+  AccountService
 } from '@services';
 import {
-  AccountsService,
   ExternalBankAccountListBankModel,
   QuotesService
 } from '@cybrid/cybrid-api-bank-angular';
@@ -61,8 +61,8 @@ describe('TransferComponent', () => {
   let MockQuotesService = jasmine.createSpyObj('QuotesService', [
     'createQuote'
   ]);
-  let MockAccountsService = jasmine.createSpyObj('AccountsService', [
-    'listAccounts'
+  let MockAccountService = jasmine.createSpyObj('AccountService', [
+    'getAccounts'
   ]);
   let MockAssetService = jasmine.createSpyObj('AssetService', ['getAsset']);
   let MockRoutingService = jasmine.createSpyObj('RoutingService', [
@@ -98,7 +98,7 @@ describe('TransferComponent', () => {
         { provide: ConfigService, useValue: MockConfigService },
         { provide: BankAccountService, useValue: MockBankAccountService },
         { provide: QuotesService, useValue: MockQuotesService },
-        { provide: AccountsService, useValue: MockAccountsService },
+        { provide: AccountService, useValue: MockAccountService },
         { provide: AssetService, useValue: MockAssetService },
         { provide: RoutingService, useValue: MockRoutingService },
         { provide: MatDialog, useValue: MockDialog },
@@ -110,6 +110,7 @@ describe('TransferComponent', () => {
     MockEventService = TestBed.inject(EventService);
     MockErrorService = TestBed.inject(ErrorService);
     MockConfigService = TestBed.inject(ConfigService);
+    MockConfigService.getConfig$.and.returnValue(of(TestConstants.CONFIG));
     MockConfigService.getCustomer$.and.returnValue(
       of(TestConstants.CUSTOMER_BANK_MODEL)
     );
@@ -122,9 +123,9 @@ describe('TransferComponent', () => {
       of(TestConstants.QUOTE_BANK_MODEL_TRANSFER)
     );
     MockAssetService.getAsset.and.returnValue(TestConstants.USD_ASSET);
-    MockAccountsService = TestBed.inject(AccountsService);
-    MockAccountsService.listAccounts.and.returnValue(
-      of(TestConstants.ACCOUNT_LIST_BANK_MODEL)
+    MockAccountService = TestBed.inject(AccountService);
+    MockAccountService.getAccounts.and.returnValue(
+      of(TestConstants.ACCOUNT_LIST_BANK_MODEL.objects)
     );
     MockAssetService = TestBed.inject(AssetService);
     MockRoutingService = TestBed.inject(RoutingService);
@@ -245,7 +246,7 @@ describe('TransferComponent', () => {
   });
 
   it('should handle an error on listAccounts()', () => {
-    MockAccountsService.listAccounts.and.returnValue(error$);
+    MockAccountService.getAccounts.and.returnValue(error$);
 
     component.listAccounts();
     expect(MockErrorService.handleError).toHaveBeenCalled();
