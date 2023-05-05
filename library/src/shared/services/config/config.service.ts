@@ -153,12 +153,10 @@ export class ConfigService implements OnDestroy {
     this.translateService.setTranslation('en-US', en);
     this.translateService.setTranslation('fr-CA', fr);
     this.translateService.setDefaultLang(Constants.LOCALE);
-    this.config$
+    this.getConfig$()
       .pipe(
-        takeUntil(this.unsubscribe$),
-        map((config) => {
-          this.translateService.use(config!.locale);
-        })
+        map((config) => this.translateService.use(config.locale)),
+        takeUntil(this.unsubscribe$)
       )
       .subscribe();
   }
@@ -170,9 +168,8 @@ export class ConfigService implements OnDestroy {
     Toggles dark mode theme for Angular Material components that use overlays
     outside the scope of other component styles
     * */
-    this.config$
+    this.getConfig$()
       .pipe(
-        takeUntil(this.unsubscribe$),
         map((config) => {
           const container = this.overlay.getContainerElement();
 
@@ -190,7 +187,8 @@ export class ConfigService implements OnDestroy {
             container.classList.remove('cybrid-dark-theme');
             container.classList.add('cybrid-light-theme');
           }
-        })
+        }),
+        takeUntil(this.unsubscribe$)
       )
       .subscribe();
   }

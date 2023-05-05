@@ -132,7 +132,8 @@ export class TradeComponent implements OnInit, OnDestroy {
           });
 
           this.initTradeForm();
-        })
+        }),
+        takeUntil(this.unsubscribe$)
       )
       .subscribe();
   }
@@ -141,14 +142,15 @@ export class TradeComponent implements OnInit, OnDestroy {
     this.configService
       .getConfig$()
       .pipe(
-        takeUntil(this.unsubscribe$),
+        take(1),
         switchMap((config) => interval(config.refreshInterval)),
         startWith(0),
         switchMap(() => this.priceService.listPrices()),
         map((priceList) => {
           this.priceList$.next(priceList);
           this.evaluatePrice();
-        })
+        }),
+        takeUntil(this.unsubscribe$)
       )
       .subscribe();
   }

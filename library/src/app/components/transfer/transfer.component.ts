@@ -9,9 +9,11 @@ import {
   combineLatest,
   EMPTY,
   expand,
+  interval,
   map,
   of,
   reduce,
+  startWith,
   Subject,
   switchMap,
   take,
@@ -21,6 +23,7 @@ import {
 // Services
 import {
   AssetService,
+  AccountService,
   Asset,
   BankAccountService,
   CODE,
@@ -44,7 +47,6 @@ import {
 import { ExternalBankAccountBankModel } from '@cybrid/cybrid-api-bank-angular/model/externalBankAccount';
 import {
   AccountBankModel,
-  AccountsService,
   ExternalBankAccountListBankModel,
   PostQuoteBankModel,
   QuoteBankModel,
@@ -92,7 +94,7 @@ export class TransferComponent implements OnInit, OnDestroy {
     public configService: ConfigService,
     private bankAccountService: BankAccountService,
     private quotesService: QuotesService,
-    private accountsService: AccountsService,
+    private accountService: AccountService,
     public assetPipe: AssetPipe,
     private translatePipe: TranslatePipe,
     private assetService: AssetService,
@@ -129,6 +131,7 @@ export class TransferComponent implements OnInit, OnDestroy {
         const amountControl = this.transferGroup.controls.amount;
 
         if (value) {
+          // Todo: @Dustin Swap for AssetFormatPipe
           const platformAvailable = this.assetPipe.transform(
             this.fiatAccount$.getValue()?.platform_available!,
             this.fiatAsset,
@@ -187,9 +190,12 @@ export class TransferComponent implements OnInit, OnDestroy {
 
   listAccounts(): void {
     this.configService
-      .getCustomer$()
+      .getConfig$()
       .pipe(
-        switchMap((customer) =>
+        take(1),
+        switchMap((config) => interval(config.refreshInterval)),
+        startWith(0),
+        switchMap(() =>
           combineLatest([
             this.bankAccountService
               .listExternalBankAccounts(
@@ -212,22 +218,14 @@ export class TransferComponent implements OnInit, OnDestroy {
                 ),
                 catchError((err) => of(err))
               ),
-            this.accountsService
-              .listAccounts(
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                customer.guid
-              )
-              .pipe(
-                map((list) => {
-                  return list.objects.find(
-                    (account) => account.type == AccountBankModel.TypeEnum.Fiat
-                  );
-                }),
-                catchError((err) => of(err))
-              )
+            this.accountService.getAccounts().pipe(
+              map((accounts) => {
+                return accounts.find(
+                  (account) => account.type == AccountBankModel.TypeEnum.Fiat
+                );
+              }),
+              catchError((err) => of(err))
+            )
           ])
         ),
         map((combined) => {
@@ -246,6 +244,7 @@ export class TransferComponent implements OnInit, OnDestroy {
 
           this.isLoading$.next(false);
         }),
+        takeUntil(this.unsubscribe$),
         catchError((err) => {
           this.eventService.handleEvent(
             LEVEL.ERROR,

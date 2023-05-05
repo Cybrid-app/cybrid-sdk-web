@@ -132,6 +132,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
 
           this.isLoading$.next(false);
         }),
+        takeUntil(this.unsubscribe$),
         catchError((err) => {
           this.eventService.handleEvent(
             LEVEL.ERROR,
@@ -155,21 +156,21 @@ export class AccountListComponent implements OnInit, OnDestroy {
     this.configService
       .getConfig$()
       .pipe(
+        take(1),
         switchMap((cfg: ComponentConfig) => {
           return timer(cfg.refreshInterval, cfg.refreshInterval);
         }),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe({
-        next: () => {
+        map(() => {
           this.eventService.handleEvent(
             LEVEL.INFO,
             CODE.DATA_FETCHING,
             'Refreshing accounts...'
           );
           this.getAccounts();
-        }
-      });
+        }),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe();
   }
 
   onRowClick(accountGuid: string): void {
