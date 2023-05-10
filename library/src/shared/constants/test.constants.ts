@@ -256,7 +256,7 @@ export class TestConstants {
 
   static ACCOUNT_BANK_MODEL_BTC: AccountBankModel = {
     type: 'trading',
-    guid: '64584e7102b3e0d17fcd32c2df01231c',
+    guid: '61dbf15e631571018ff808fa51746b46',
     created_at: '2022-06-15T15:36:44.627Z',
     asset: 'BTC',
     name: 'Bitcoin',
@@ -305,7 +305,7 @@ export class TestConstants {
     value: 4944888.3490320295,
     account: {
       type: 'trading',
-      guid: '64584e7102b3e0d17fcd32c2df01231c',
+      guid: '61dbf15e631571018ff808fa51746b46',
       created_at: '2022-06-15T15:36:44.627Z',
       asset: 'BTC',
       name: 'Bitcoin',
@@ -632,7 +632,7 @@ export class TestConstants {
 
   static ACCOUNT_BANK_MODEL_USD: AccountBankModel = {
     type: 'fiat',
-    guid: '23e94568c47bbcd50e01ab18e525aaf3',
+    guid: '46d8965271d7da9c981c86ecb5667092',
     created_at: '2022-11-24T18:32:53.196Z',
     asset: 'USD',
     name: 'USD',
