@@ -18,13 +18,13 @@ import {
 import {
   Asset,
   AssetService,
-  AuthService,
+  ConfigService,
   EventService,
   ErrorService
 } from '@services';
 
 // Utility
-import { Constants } from '@constants';
+import { Constants, TestConstants } from '@constants';
 
 describe('AssetService', () => {
   let assetService: AssetService;
@@ -45,8 +45,8 @@ describe('AssetService', () => {
   let MockAssetsService = jasmine.createSpyObj('AssetsService', {
     listAssets: of(testAssetList)
   });
-  let MockAuthService = jasmine.createSpyObj('AuthService', {
-    getToken$: of(true)
+  let MockConfigService = jasmine.createSpyObj('ConfigService', {
+    getConfig$: of(TestConstants.CONFIG)
   });
   let MockEventService = jasmine.createSpyObj('EventService', ['handleEvent']);
   let MockErrorService = jasmine.createSpyObj('ErrorService', ['handleError']);
@@ -56,14 +56,14 @@ describe('AssetService', () => {
       imports: [HttpClientTestingModule],
       providers: [
         { provide: AssetsService, useValue: MockAssetsService },
-        { provide: AuthService, useValue: MockAuthService },
+        { provide: ConfigService, useValue: MockConfigService },
         { provide: EventService, useValue: MockEventService },
         { provide: ErrorService, useValue: MockErrorService }
       ]
     });
     assetService = TestBed.inject(AssetService);
     MockAssetsService = TestBed.inject(AssetsService);
-    MockAuthService = TestBed.inject(AuthService);
+    MockConfigService = TestBed.inject(ConfigService);
     MockEventService = TestBed.inject(EventService);
     MockErrorService = TestBed.inject(ErrorService);
   });
@@ -74,14 +74,14 @@ describe('AssetService', () => {
 
   it('should initialize assets', () => {
     assetService.initAssets();
-    expect(MockAuthService.getToken$).toHaveBeenCalled();
+    expect(MockConfigService.getConfig$).toHaveBeenCalled();
   });
 
   it('should log an event and error if initializing assets is unsuccessful', fakeAsync(() => {
     const error$ = throwError(() => {
       return new Error('Error');
     });
-    MockAuthService.getToken$.and.returnValue(error$);
+    MockConfigService.getConfig$.and.returnValue(error$);
     MockAssetsService.listAssets.and.returnValue([]);
     assetService.initAssets();
     tick(1000);
