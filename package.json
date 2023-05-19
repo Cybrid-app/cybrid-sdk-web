@@ -59,7 +59,7 @@
     "@types/node": "18.16.9",
     "@typescript-eslint/eslint-plugin": "^5.56.0",
     "@typescript-eslint/parser": "^5.56.0",
-    "css-loader": "6.7.3",
+    "css-loader": "6.7.4",
     "cypress": "12.13.0",
     "eslint": "8.41.0",
     "eslint-config-prettier": "8.8.0",
