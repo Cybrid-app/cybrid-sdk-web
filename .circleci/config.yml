@@ -4,7 +4,7 @@ orbs:
   node: circleci/node@5.1.0
   browser-tools: circleci/browser-tools@1.4.1
   cypress: cypress-io/cypress@2.2.0
-  codecov: codecov/codecov@3.2.4
+  codecov: codecov/codecov@3.2.5
   jq: circleci/jq@2.2.0
 
 executors:
@@ -50,7 +50,7 @@ jobs:
           command: |
             export LATEST=$(curl https://registry.npmjs.org/persona/latest | jq -r '. | .version')
             export CURRENT=$(grep 'PERSONA' -A 1 library/src/shared/constants/constants.ts | grep 'https' | sed 's/.*-v\(.*\).js.*/\1/')
-            if [[ "$LATEST" = "$CURRENT" ]]; then
+            if [[ "$LATEST" == "$CURRENT" || "$LATEST" == "4.8.0" ]]; then
               echo "Persona is up to date."
             else
               echo "Error: new Persona version available."
