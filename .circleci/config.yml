@@ -94,6 +94,8 @@ workflows:
             - run:
                 command: npm audit --audit-level=high
                 name: Audit
+            - run:
+                command: npm run package:library
 
       - cypress/run:
           name: e2e chromium@101.0.4951.64
@@ -114,7 +116,6 @@ workflows:
             - run:
                 name: Build library
                 command: |
-                  cd project
                   npm i
                   npm run package:library
           start: npm start
@@ -139,6 +140,11 @@ workflows:
                 command: |
                   wget -O chrome-linux.zip "https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2F992740%2Fchrome-linux.zip?generation=1649975445134595&alt=media"
                   unzip chrome-linux.zip
+            - run:
+                name: Build library
+                command: |
+                  npm i
+                  npm run package:library
           start: npm start
           command: npx cypress run --browser chrome-linux/chrome
           no-workspace: true
@@ -161,6 +167,11 @@ workflows:
                   apt update -y
                   dpkg --configure -a
                   dpkg -i google-chrome-stable_current_amd64.deb
+            - run:
+                name: Build library
+                command: |
+                  npm i
+                  npm run package:library
           start: npm start
           command: npx cypress run --browser chrome
           no-workspace: true
@@ -183,6 +194,11 @@ workflows:
                   add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
                   apt update -y
                   apt-get -f install -y microsoft-edge-stable
+            - run:
+                name: Build library
+                command: |
+                  npm i
+                  npm run package:library
           start: npm start
           command: npx cypress run --browser edge
           no-workspace: true
