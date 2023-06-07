@@ -114,6 +114,8 @@ workflows:
             - run:
                 name: Build library
                 command: |
+                  cd project
+                  npm i
                   npm run package:library
           start: npm start
           command: npx cypress run --browser chrome-linux/chrome
