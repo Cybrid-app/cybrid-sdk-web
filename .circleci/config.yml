@@ -111,6 +111,10 @@ workflows:
                 command: |
                   wget -O chrome-linux.zip "https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2F982481%2Fchrome-linux.zip?generation=1647559751806495&alt=media"
                   unzip chrome-linux.zip
+            - run:
+                name: Build library
+                command: |
+                  npm run package:library
           start: npm start
           command: npx cypress run --browser chrome-linux/chrome
           no-workspace: true

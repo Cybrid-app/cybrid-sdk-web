@@ -1,0 +1,37 @@
+<div class="wrapper mat-body mat-app-background">
+  <mat-toolbar color="primary">
+    <img [src]="CybridLogo" alt="Cybrid logo" />
+    <div class="spacer"></div>
+    <a
+      class="mat-body package"
+      href="https://www.npmjs.com/package/@cybrid/cybrid-sdk-ui-js"
+      >{{ 'cybrid-sdk-ui-js@ ' + (version | async) }}</a
+    >
+    <ng-container *ngIf="configService.config$ | async as config">
+      <button mat-icon-button (click)="toggleTheme(config)">
+        <mat-icon>{{
+          config.theme === 'LIGHT' ? 'light_mode' : 'dark_mode'
+        }}</mat-icon>
+      </button>
+    </ng-container>
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="menu"
+      aria-label="App menu"
+      *ngIf="authService.isAuthenticated | async"
+    >
+      <mat-icon>settings</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
+  </mat-toolbar>
+  <mat-drawer-container>
+    <mat-drawer-content>
+      <router-outlet></router-outlet>
+    </mat-drawer-content>
+  </mat-drawer-container>
+</div>

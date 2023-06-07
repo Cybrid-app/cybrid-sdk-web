@@ -11,15 +11,14 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
-import { catchError, of, Subject, switchMap, tap } from 'rxjs';
+import { catchError, map, of, Subject, switchMap } from 'rxjs';
 
 // Services
-import { AuthService } from '../../services/auth/auth.service';
-import { Environment, ErrorService } from '@services';
+import { AuthService, ConfigService } from '../../services';
+import { Environment, ErrorService } from 'library/src/shared/services';
 
 // Utility
-import { environment } from '../../../environments/environment';
-import { ConfigService } from '../../services/config/config.service';
+import { environment } from 'src/environments/environment';
 
 interface LoginForm {
   clientId: FormControl<string | null>;
@@ -53,18 +52,13 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     private errorService: ErrorService,
     private configService: ConfigService,
     private dialog: MatDialog
-  ) {
-    // Redirect if authenticated
-    if (this.authService.isAuthenticated.getValue())
-      this.router.navigate(['demo/price-list']);
-  }
+  ) {}
 
   ngOnInit() {
     this.initLoginForm();
   }
 
   ngAfterViewInit() {
-    // Auto-login from set environment variables
     if (this.loginForm.valid) this.login();
   }
 
@@ -113,9 +107,8 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
                 token
               );
         }),
-        tap(() => this.authService.isAuthenticated.next(true)),
-        switchMap(() => this.configService.getConfig()),
-        tap(() => {
+        map(() => {
+          this.authService.isAuthenticated.next(true);
           loadingDialog.close();
         }),
         catchError((err) => {
@@ -125,7 +118,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
           return of(err);
         })
       )
-      .subscribe(() => this.router.navigate(['demo/price-list']));
+      .subscribe();
   }
 
   initLoginForm(): void {
