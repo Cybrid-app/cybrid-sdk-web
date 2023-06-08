@@ -100,12 +100,12 @@ describe('account-list test', () => {
 
   it('should handle errors returned by prices api', () => {
     // Force prices error
-    cy.intercept('GET', '/api/prices', { forceNetworkError: true }).as(
+    cy.intercept('GET', '/api/prices*', { forceNetworkError: true }).as(
       'listPrices'
     );
-    cy.wait('@listPrices');
-
-    // Check for error row
-    app().find('#warning').should('exist');
+    cy.wait('@listPrices').then(() => {
+      // Check for error row
+      app().find('#warning').should('exist');
+    });
   });
 });
