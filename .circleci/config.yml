@@ -19,8 +19,6 @@ jobs:
     working_directory: ~/project
     steps:
       - checkout
-      - attach_workspace:
-          at: .
       - run:
           name: Update version tag
           command: |
@@ -92,6 +90,7 @@ workflows:
                 name: Audit
             - run:
                 command: npm run package:library
+                name: Build library
             - persist_to_workspace:
                 root: .
                 paths:
@@ -103,8 +102,6 @@ workflows:
             - test
           executor: cypress
           post-checkout:
-            - attach_workspace:
-                at: .
             - run:
                 name: Install wget/unzip
                 command: |
@@ -128,8 +125,6 @@ workflows:
             - test
           executor: cypress
           post-checkout:
-            - attach_workspace:
-                at: .
             - run:
                 name: Install wget/unzip
                 command: |
@@ -153,8 +148,6 @@ workflows:
             - test
           executor: cypress
           post-checkout:
-            - attach_workspace:
-                at: .
             - run:
                 name: Install libraries
                 command: |
@@ -178,8 +171,6 @@ workflows:
             - test
           executor: cypress
           post-checkout:
-            - attach_workspace:
-                at: .
             - run:
                 name: Install libraries
                 command: |
