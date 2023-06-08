@@ -18,9 +18,9 @@ jobs:
       - image: cimg/node:19.9.0
     working_directory: ~/project
     steps:
+      - checkout
       - attach_workspace:
           at: .
-      - checkout
       - run:
           name: Update version tag
           command: |
