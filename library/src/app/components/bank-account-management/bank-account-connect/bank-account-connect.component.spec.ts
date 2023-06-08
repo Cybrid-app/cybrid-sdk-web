@@ -335,12 +335,19 @@ describe('BankAccountConnectComponent', () => {
     component.stepper = { next: () => {} } as MatStepper;
     const stepperSpy = spyOn(component.stepper, 'next');
 
-    component.plaidOnExit('');
+    component.plaidOnExit('', {});
     expect(stepperSpy).toHaveBeenCalled();
   });
 
+  it('should handle plaidOnExit() with metadata', () => {
+    component.stepper = { next: () => {} } as MatStepper;
+    component.plaidOnExit('', {});
+
+    expect(MockEventService.handleEvent).toHaveBeenCalled();
+  });
+
   it('should handle plaidOnExit() with an error', () => {
-    component.plaidOnExit('error');
+    component.plaidOnExit('error', {});
 
     expect(MockErrorService.handleError).toHaveBeenCalled();
     expect(MockEventService.handleEvent).toHaveBeenCalled();

@@ -259,7 +259,7 @@ export class BankAccountConnectComponent implements OnInit {
       onLoad: () => {
         client.open();
       },
-      onExit: (err: any) => this.plaidOnExit(err)
+      onExit: (err: any, metadata: any) => this.plaidOnExit(err, metadata)
     });
   }
 
@@ -317,7 +317,14 @@ export class BankAccountConnectComponent implements OnInit {
     }
   }
 
-  plaidOnExit(err?: any): void {
+  plaidOnExit(err: any, metadata: any): void {
+    this.eventService.handleEvent(
+      LEVEL.WARNING,
+      CODE.PLAID_SDK_EXIT,
+      'User exited the Plaid SDK',
+      metadata
+    );
+
     if (err) {
       this.error$.next(true);
       this.eventService.handleEvent(
