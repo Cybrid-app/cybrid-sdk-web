@@ -19,6 +19,8 @@ jobs:
     working_directory: ~/project
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - run:
           name: Update version tag
           command: |
@@ -102,6 +104,8 @@ workflows:
             - test
           executor: cypress
           post-checkout:
+            - attach_workspace:
+                at: .
             - run:
                 name: Install wget/unzip
                 command: |
@@ -116,6 +120,7 @@ workflows:
                   unzip chrome-linux.zip
           start: npm start
           command: npx cypress run --browser chrome-linux/chrome
+          no-workspace: true
           wait-on: http://localhost:4200
           store_artifacts: true
 
@@ -125,6 +130,8 @@ workflows:
             - test
           executor: cypress
           post-checkout:
+            - attach_workspace:
+                at: .
             - run:
                 name: Install wget/unzip
                 command: |
@@ -139,6 +146,7 @@ workflows:
                   unzip chrome-linux.zip
           start: npm start
           command: npx cypress run --browser chrome-linux/chrome
+          no-workspace: true
           wait-on: http://localhost:4200
           store_artifacts: true
 
@@ -148,6 +156,8 @@ workflows:
             - test
           executor: cypress
           post-checkout:
+            - attach_workspace:
+                at: .
             - run:
                 name: Install libraries
                 command: |
@@ -171,6 +181,8 @@ workflows:
             - test
           executor: cypress
           post-checkout:
+            - attach_workspace:
+                at: .
             - run:
                 name: Install libraries
                 command: |
@@ -185,6 +197,7 @@ workflows:
                   apt-get -f install -y microsoft-edge-stable
           start: npm start
           command: npx cypress run --browser edge
+          no-workspace: true
           wait-on: http://localhost:4200
           store_artifacts: true
 
