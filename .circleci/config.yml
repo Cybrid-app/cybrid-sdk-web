@@ -17,10 +17,9 @@ jobs:
     docker:
       - image: cimg/node:19.9.0
     working_directory: ~/project
-    pre-steps:
+    steps:
       - attach_workspace:
           at: .
-    steps:
       - checkout
       - run:
           name: Update version tag
