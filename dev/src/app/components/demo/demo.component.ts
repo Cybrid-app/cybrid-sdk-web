@@ -19,9 +19,7 @@ import {
 } from 'rxjs';
 
 // Services
-import { ConfigService } from '../../services/config/config.service';
-import { AuthService } from '../../services/auth/auth.service';
-import { LocalStorageService } from '../../services/local-storage/local-storage.service';
+import { ConfigService, AuthService } from '../../services';
 
 // Api
 import { BankBankModel } from '@cybrid/cybrid-api-bank-angular';
@@ -32,7 +30,7 @@ import { CODE, ComponentConfig, ErrorService, EventLog } from '@services';
 import { AppComponent } from '@components';
 
 // Utility
-import { environment } from '../../../environments/environment';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-demo',
@@ -46,7 +44,7 @@ export class DemoComponent implements OnInit, OnDestroy {
 
   config: ComponentConfig = this.configService.config$.getValue();
   component = Constants.DEFAULT_COMPONENT;
-  auth = <string>this.localStorageService.get('customer');
+  auth = <string>window.localStorage.getItem('customer');
 
   languages = ['en-US', 'fr-CA'];
   componentList = Constants.COMPONENTS_PLAID;
@@ -67,7 +65,6 @@ export class DemoComponent implements OnInit, OnDestroy {
   constructor(
     public configService: ConfigService,
     public authService: AuthService,
-    private localStorageService: LocalStorageService,
     private errorService: ErrorService
   ) {}
 

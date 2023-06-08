@@ -30,7 +30,8 @@ export class ErrorService implements ErrorHandler {
     } else {
       this.error.next({
         code: 'Error',
-        message: 'Unknown error'
+        message: 'Unknown error',
+        data: err
       });
     }
   }

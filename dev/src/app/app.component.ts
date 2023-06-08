@@ -6,9 +6,7 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 import { Observable, map, pluck, take } from 'rxjs';
 
 // Services
-import { ConfigService } from '../../services/config/config.service';
-import { AuthService } from '../../services/auth/auth.service';
-import { LocalStorageService } from '../../services/local-storage/local-storage.service';
+import { ConfigService, AuthService } from './services';
 import { ErrorService, EventService } from '@services';
 
 // Utility
@@ -28,7 +26,6 @@ export class AppComponent implements OnInit {
   constructor(
     private http: HttpClient,
     public authService: AuthService,
-    private localStorageService: LocalStorageService,
     private router: Router,
     private eventService: EventService,
     private errorService: ErrorService,

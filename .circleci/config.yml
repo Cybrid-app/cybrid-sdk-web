@@ -19,12 +19,8 @@ jobs:
     working_directory: ~/project
     steps:
       - checkout
-      - run:
-          name: Install node modules
-          command: npm install
-      - run:
-          name: Package library
-          command: npm run package:library
+      - attach_workspace:
+          at: .
       - run:
           name: Update version tag
           command: |
@@ -94,11 +90,21 @@ workflows:
             - run:
                 command: npm audit --audit-level=high
                 name: Audit
+            - run:
+                command: npm run package:library
+            - persist_to_workspace:
+                root: .
+                paths:
+                  - dist/library
 
       - cypress/run:
           name: e2e chromium@101.0.4951.64
+          requires:
+            - test
           executor: cypress
           post-checkout:
+            - attach_workspace:
+                at: .
             - run:
                 name: Install wget/unzip
                 command: |
@@ -113,14 +119,17 @@ workflows:
                   unzip chrome-linux.zip
           start: npm start
           command: npx cypress run --browser chrome-linux/chrome
-          no-workspace: true
           wait-on: http://localhost:4200
           store_artifacts: true
 
       - cypress/run:
           name: e2e chromium@102.0.5005.61
+          requires:
+            - test
           executor: cypress
           post-checkout:
+            - attach_workspace:
+                at: .
             - run:
                 name: Install wget/unzip
                 command: |
@@ -135,14 +144,17 @@ workflows:
                   unzip chrome-linux.zip
           start: npm start
           command: npx cypress run --browser chrome-linux/chrome
-          no-workspace: true
           wait-on: http://localhost:4200
           store_artifacts: true
 
       - cypress/run:
           name: e2e chrome@latest
+          requires:
+            - test
           executor: cypress
           post-checkout:
+            - attach_workspace:
+                at: .
             - run:
                 name: Install libraries
                 command: |
@@ -157,14 +169,17 @@ workflows:
                   dpkg -i google-chrome-stable_current_amd64.deb
           start: npm start
           command: npx cypress run --browser chrome
-          no-workspace: true
           wait-on: http://localhost:4200
           store_artifacts: true
 
       - cypress/run:
           name: e2e edge@latest
+          requires:
+            - test
           executor: cypress
           post-checkout:
+            - attach_workspace:
+                at: .
             - run:
                 name: Install libraries
                 command: |
@@ -179,7 +194,6 @@ workflows:
                   apt-get -f install -y microsoft-edge-stable
           start: npm start
           command: npx cypress run --browser edge
-          no-workspace: true
           wait-on: http://localhost:4200
           store_artifacts: true
 

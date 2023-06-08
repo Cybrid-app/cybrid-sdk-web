@@ -51,7 +51,8 @@ describe('HttpErrorService', () => {
     service.getError().subscribe((error) => {
       expect(error).toEqual({
         code: 'Error',
-        message: 'Unknown error'
+        message: 'Unknown error',
+        data: testError
       });
     });
   }));

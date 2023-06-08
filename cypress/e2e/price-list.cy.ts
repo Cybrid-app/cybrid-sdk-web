@@ -3,11 +3,22 @@ function app() {
   return cy.get('app-price-list');
 }
 
+function priceListSetup() {
+  return cy
+    .get('#component')
+    .click()
+    .get('mat-option')
+    .contains('price-list')
+    .click();
+}
+
 describe('price-list test', () => {
   beforeEach(() => {
     //@ts-ignore
     cy.authenticate();
     cy.visit('/');
+
+    priceListSetup();
   });
 
   it('should render the price list', () => {

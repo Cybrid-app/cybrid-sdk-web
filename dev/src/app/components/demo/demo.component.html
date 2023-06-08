@@ -1,0 +1,37 @@
+<ng-container *ngIf="(isLoading$ | async) === false; else loading">
+  <div class="controls">
+    <ng-container [formGroup]="componentGroup">
+      <mat-form-field appearance="outline">
+        <mat-label>Component</mat-label>
+        <mat-select id="component" formControlName="component">
+          <mat-option
+            id="option"
+            *ngFor="let component of componentList"
+            [value]="component"
+            [disabled]="isDisabled(component)"
+            matTooltipPosition="before"
+            [matTooltip]="getTooltip(component)"
+          >
+            {{ component }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
+    <ng-container [formGroup]="languageGroup">
+      <mat-form-field appearance="outline">
+        <mat-label>Language</mat-label>
+        <mat-select formControlName="language">
+          <mat-option *ngFor="let language of languages" [value]="language">
+            {{ language }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
+  </div>
+</ng-container>
+
+<ng-template #loading>
+  <app-loading></app-loading>
+</ng-template>
+
+<ng-template #viewContainer></ng-template>

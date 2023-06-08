@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable, of, ReplaySubject, switchMap, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, of, switchMap, throwError } from 'rxjs';
 
 // Library
 import { ComponentConfig } from '@services';
@@ -9,7 +9,7 @@ import { Constants } from '@constants';
 
 // Services
 import { AuthService } from '../auth/auth.service';
-import { environment } from '../../../environments/environment';
+import { environment } from 'src/environments/environment';
 
 // Api
 import {
@@ -22,8 +22,7 @@ import {
   providedIn: 'root'
 })
 export class ConfigService {
-  config = new ReplaySubject<ComponentConfig>(1);
-  config$ = this.config.asObservable();
+  config$ = new BehaviorSubject<ComponentConfig>(Constants.DEFAULT_CONFIG);
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
@@ -63,7 +62,7 @@ export class ConfigService {
           config.features = bank.features;
           config.environment = this.authService.environment;
 
-          this.config.next(config);
+          this.config$.next(config);
           return of(config);
         } else return throwError(() => new Error('Invalid bank configuration'));
       })
@@ -72,7 +71,7 @@ export class ConfigService {
 
   setConfig(config: ComponentConfig): Observable<ComponentConfig> {
     if (this.validateConfig(config)) {
-      this.config.next(config);
+      this.config$.next(config);
       return of(config);
     } else return throwError(() => new Error('Invalid config'));
   }

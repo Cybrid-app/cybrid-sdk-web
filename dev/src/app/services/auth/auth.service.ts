@@ -23,14 +23,14 @@ import {
   PostCustomerTokenIdpModel
 } from '@cybrid/cybrid-api-id-angular';
 
-// Models
-import { BankTokenIdpModel } from '../../models/bankTokenIdpModel.model';
+// Services
+import { CODE, EventService, LEVEL, Environment } from '@services';
 
-// Library
-import { Environment } from '@services';
+// Models
+import { BankTokenIdpModel } from 'src/demo/models/bankTokenIdpModel.model';
 
 // Utility
-import { environment } from '../../../environments/environment';
+import { environment } from 'src/environments/environment';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Injectable({
@@ -48,6 +48,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
+    private eventService: EventService,
     private snackbar: MatSnackBar,
     private translatePipe: TranslatePipe
   ) {}
@@ -109,7 +110,6 @@ export class AuthService {
       this.createSession(decodedToken);
       window.localStorage.setItem(key, access_token);
       this.tokens[key] = token;
-
       return of(access_token);
     } else return throwError(() => new Error('Invalid access token'));
   }
@@ -173,7 +173,7 @@ export class AuthService {
     return null;
   }
 
-  restoreSession(): Observable<Boolean> {
+  restoreSession() {
     const bank = window.localStorage.getItem('bank');
     const customer = window.localStorage.getItem('customer');
 
@@ -193,15 +193,17 @@ export class AuthService {
         this.createSession(decodedBank);
         this.createSession(decodedCustomer);
 
-        console.log('Session restored');
+        this.eventService.handleEvent(
+          LEVEL.INFO,
+          CODE.AUTH_SET,
+          'Session restored'
+        );
 
         this.isAuthenticated.next(true);
       } else {
         window.localStorage.clear();
       }
     }
-
-    return this.isAuthenticated;
   }
 
   destroySession() {
@@ -213,7 +215,6 @@ export class AuthService {
     this.sessions = {};
 
     this.isAuthenticated.next(false);
-    this.router.navigate(['login']);
   }
 
   get environment(): Environment {
