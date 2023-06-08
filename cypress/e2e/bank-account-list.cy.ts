@@ -21,24 +21,16 @@ describe('bank-account-list-test', () => {
     cy.authenticate();
     cy.visit('/');
 
-    cy.intercept('GET', 'api/assets', (req) => {
-      req.reply(TestConstants.ASSET_LIST_BANK_MODEL);
-    }).as('listAssets');
-    cy.intercept('GET', '/api/customers/*', (req) => {
-      req.reply(TestConstants.CUSTOMER_BANK_MODEL);
-    }).as('getCustomer');
-    cy.intercept('GET', '/api/external_bank_accounts*', (req) => {
-      req.reply(TestConstants.EXTERNAL_BANK_ACCOUNT_LIST_BANK_MODEL);
-    }).as('listExternalBankAccounts');
-    cy.intercept('GET', '/api/external_bank_accounts/*', (req) => {
-      req.reply({ forceNetworkError: true });
-    }).as('getExternalBankAccount');
-    cy.intercept('DELETE', '/api/external_bank_accounts/*', (req) => {
-      req.reply(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL);
-    });
-    cy.intercept('POST', '/api/workflows*', (req) => {
-      req.reply({});
-    }).as('postWorkflow');
+    cy.intercept('GET', 'api/assets').as('listAssets');
+    cy.intercept('GET', '/api/customers/*').as('getCustomer');
+    cy.intercept('GET', '/api/external_bank_accounts*').as(
+      'listExternalBankAccounts'
+    );
+    cy.intercept('GET', '/api/external_bank_accounts/*').as(
+      'getExternalBankAccount'
+    );
+    cy.intercept('DELETE', '/api/external_bank_accounts/*');
+    cy.intercept('POST', '/api/workflows*').as('postWorkflow');
 
     bankAccountListSetup();
   });
@@ -65,6 +57,12 @@ describe('bank-account-list-test', () => {
   });
 
   it('should disconnect a bank account', () => {
+    cy.wait('@listExternalBankAccounts').then(() =>
+      cy.intercept('DELETE', '/api/external_bank_accounts/*', (req) => {
+        req.reply(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL);
+      })
+    );
+
     app().find('tbody').find('tr').first().click();
     cy.get('app-bank-account-details').find('#disconnect').click();
     cy.get('app-bank-account-disconnect').find('#disconnect').click();
@@ -76,16 +74,21 @@ describe('bank-account-list-test', () => {
 
   it('should handle an error on disconnecting a bank account', () => {
     // Ensure table exists in dom
-    cy.wait('@listExternalBankAccounts');
-    cy.intercept('DELETE', '/api/external_bank_accounts/*', (req) => {
-      req.reply({ forceNetworkError: true });
-    });
+    cy.wait('@listExternalBankAccounts').then(() =>
+      cy.intercept('DELETE', '/api/external_bank_accounts/*', (req) => {
+        req.reply({ forceNetworkError: true });
+      })
+    );
 
-    app().find('tbody').find('tr').first().click();
-    cy.get('app-bank-account-details').find('#disconnect').click();
-    cy.get('app-bank-account-disconnect').find('#disconnect').click();
-    cy.get('snack-bar-container').contains(text.bankAccountList.details.error);
-    cy.get('snack-bar-container').should('exist').find('button').click();
+    cy.wait('@listExternalBankAccounts').then(() => {
+      app().find('tbody').find('tr').first().click();
+      cy.get('app-bank-account-details').find('#disconnect').click();
+      cy.get('app-bank-account-disconnect').find('#disconnect').click();
+      cy.get('snack-bar-container').contains(
+        text.bankAccountList.details.error
+      );
+      cy.get('snack-bar-container').should('exist').find('button').click();
+    });
   });
 
   it('should add a bank account', () => {
