@@ -102,10 +102,9 @@ workflows:
           requires:
             - test
           executor: cypress
-          pre-steps:
+          post-checkout:
             - attach_workspace:
                 at: .
-          post-checkout:
             - run:
                 name: Install wget/unzip
                 command: |
@@ -129,10 +128,9 @@ workflows:
           requires:
             - test
           executor: cypress
-          pre-steps:
+          post-checkout:
             - attach_workspace:
                 at: .
-          post-checkout:
             - run:
                 name: Install wget/unzip
                 command: |
@@ -156,10 +154,9 @@ workflows:
           requires:
             - test
           executor: cypress
-          pre-steps:
+          post-checkout:
             - attach_workspace:
                 at: .
-          post-checkout:
             - run:
                 name: Install libraries
                 command: |
@@ -183,10 +180,9 @@ workflows:
           requires:
             - test
           executor: cypress
-          pre-steps:
+          post-checkout:
             - attach_workspace:
                 at: .
-          post-checkout:
             - run:
                 name: Install libraries
                 command: |
