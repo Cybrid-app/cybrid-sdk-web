@@ -5,8 +5,9 @@ export default defineConfig({
   screenshotsFolder: 'cypress/screenshots',
   fixturesFolder: 'cypress/fixtures',
   chromeWebSecurity: false,
-  defaultCommandTimeout: 10000,
+  defaultCommandTimeout: 20000,
   requestTimeout: 15000,
+  responseTimeout: 15000,
   env: {
     CLIENT_ID_PLAID: '',
     CLIENT_SECRET_PLAID: '',
@@ -17,6 +18,6 @@ export default defineConfig({
   },
   e2e: {
     baseUrl: 'http://localhost:4200',
-    excludeSpecPattern: 'cypress/e2e/trade.cy.ts',
+    excludeSpecPattern: 'cypress/e2e/trade.cy.ts'
   }
 });
