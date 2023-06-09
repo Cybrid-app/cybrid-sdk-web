@@ -29,6 +29,8 @@ Cypress.Commands.add('authenticate', () => {
   cy.session(
     'auth',
     () => {
+      cy.intercept('GET', 'api/customers/*').as('getCustomer');
+
       cy.visit('/');
       app()
         .should('exist')
@@ -43,6 +45,7 @@ Cypress.Commands.add('authenticate', () => {
         .should('not.exist')
         .then(() => {
           cy.window().getAllLocalStorage().should('not.eq', {});
+          cy.wait('@getCustomer');
         });
     },
     {
