@@ -18,12 +18,8 @@ import { ComponentGuard } from '@guards';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'app/price-list',
+    redirectTo: 'app',
     pathMatch: 'full'
-  },
-  {
-    path: 'app',
-    redirectTo: 'app/price-list'
   },
   {
     path: 'app',
@@ -72,7 +68,7 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'app/price-list'
+    redirectTo: 'app'
   }
 ];
 
