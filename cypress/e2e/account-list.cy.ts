@@ -72,23 +72,27 @@ describe('account-list test', () => {
     // Force accounts error
     cy.intercept('GET', '/api/accounts*').as('listAccounts');
 
-    cy.wait('@listAccounts').then(() => {
-      cy.intercept('GET', '/api/accounts*', { forceNetworkError: true });
-    });
+    cy.wait('@listAccounts').then(() =>
+      cy
+        .intercept('GET', '/api/accounts*', { forceNetworkError: true })
+        .as('listAccounts')
+    );
 
     // Check for error row
-    app().find('#warning').should('exist');
+    cy.wait('@listAccounts').then(() => app().find('#warning').should('exist'));
   });
 
   it('should handle errors returned by prices api', () => {
     // Force prices error
     cy.intercept('GET', '/api/prices*').as('listPrices');
 
-    cy.wait('@listPrices').then(() => {
-      cy.intercept('GET', '/api/prices*', { forceNetworkError: true });
-    });
+    cy.wait('@listPrices').then(() =>
+      cy
+        .intercept('GET', '/api/prices*', { forceNetworkError: true })
+        .as('listPrices')
+    );
 
     // Check for error row
-    app().find('#warning').should('exist');
+    cy.wait('@listPrices').then(() => app().find('#warning').should('exist'));
   });
 });

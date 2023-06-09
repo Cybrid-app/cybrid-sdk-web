@@ -92,6 +92,7 @@ workflows:
                 name: Audit
             - run:
                 command: npm run package:library
+                name: Build library
             - persist_to_workspace:
                 root: .
                 paths:
@@ -119,6 +120,7 @@ workflows:
                   unzip chrome-linux.zip
           start: npm start
           command: npx cypress run --browser chrome-linux/chrome
+          no-workspace: true
           wait-on: http://localhost:4200
           store_artifacts: true
 
@@ -144,6 +146,7 @@ workflows:
                   unzip chrome-linux.zip
           start: npm start
           command: npx cypress run --browser chrome-linux/chrome
+          no-workspace: true
           wait-on: http://localhost:4200
           store_artifacts: true
 
@@ -194,6 +197,7 @@ workflows:
                   apt-get -f install -y microsoft-edge-stable
           start: npm start
           command: npx cypress run --browser edge
+          no-workspace: true
           wait-on: http://localhost:4200
           store_artifacts: true
 
