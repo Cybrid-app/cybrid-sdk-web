@@ -32,9 +32,6 @@ MIT
 @angular/core
 MIT
 
-@angular/elements
-MIT
-
 @angular/forms
 MIT
 
