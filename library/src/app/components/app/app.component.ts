@@ -3,6 +3,7 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output
 } from '@angular/core';
@@ -42,7 +43,7 @@ import { Configuration } from '@cybrid/cybrid-api-bank-angular';
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   @Output() eventLog = new EventEmitter<EventLog>();
   @Output() errorLog = new EventEmitter<ErrorLog>();
 
@@ -108,6 +109,12 @@ export class AppComponent implements OnInit {
       .subscribe(() => {
         this.initNavigation();
       });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next('');
+    this.unsubscribe$.complete();
+    this.router.navigate(['/']);
   }
 
   initEventService(): void {
