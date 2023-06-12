@@ -19,7 +19,7 @@ import {
   WorkflowsService
 } from '@cybrid/cybrid-api-bank-angular';
 
-describe('BankAccountManagementService', () => {
+describe('BankAccountService', () => {
   let service: BankAccountService;
   let MockEventService = jasmine.createSpyObj('EventService', [
     'getEvent',
@@ -237,7 +237,8 @@ describe('BankAccountManagementService', () => {
       customer_guid: '',
       external_bank_account_guid: externalBankAccountGuid,
       link_customization_name: 'default',
-      language: 'en'
+      language: 'en',
+      redirect_uri: TestConstants.CONFIG.redirectUri
     };
 
     service

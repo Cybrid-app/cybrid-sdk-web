@@ -86,6 +86,7 @@ export class BankAccountService implements OnDestroy {
 
           this.postExternalBankAccountModel.customer_guid = config.customer;
           this.postWorkflowBankModel.customer_guid = config.customer;
+          this.postWorkflowBankModel.redirect_uri = config.redirectUri;
           this.postWorkflowBankModel.language = getLanguageFromLocale(
             config.locale
           ) as PostWorkflowBankModel.LanguageEnum;

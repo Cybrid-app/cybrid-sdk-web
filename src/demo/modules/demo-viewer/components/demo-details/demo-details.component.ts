@@ -61,17 +61,22 @@ export class DemoDetailsComponent implements AfterViewInit, OnDestroy {
           this._renderer2.setProperty(sdk, 'config', config);
           this._renderer2.setProperty(sdk, 'component', params['id']);
 
+          // Update routed component, and any query params
+          this.location.replaceState(`demo/${params['id'] + location.search}`);
+
           // Subscribe to logging
           this._renderer2.listen(sdk, 'eventLog', (event) => {
             console.log(event.detail);
 
-            // Update current url path as SDK component path on SDK routing events
+            // Update current url path
             const eventLog = event.detail as EventLog;
             if (eventLog.code === 'ROUTING_END') {
               const component = eventLog.data['default'];
 
               this.demoViewerService.updateRoute(component);
-              this.location.replaceState(`demo/${component}`);
+
+              // Update routed component, and any query params
+              this.location.replaceState(`demo/${component + location.search}`);
             }
           });
 

@@ -40,7 +40,8 @@ export class TestConstants {
     customer: 'e8dc9202e0e96a33b5b6a7b0cfb66c60',
     fiat: 'USD',
     features: ['attestation_identity_records', 'backstopped_funding_source'],
-    environment: 'staging'
+    environment: 'staging',
+    redirectUri: 'http://localhost:4200/demo/bank-account-connect'
   };
 
   static ASSET_LIST_BANK_MODEL: AssetListBankModel = {

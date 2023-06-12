@@ -162,6 +162,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AssetFormatPipe,
     TruncatePipe,
     TranslatePipe,
+    { provide: Window, useValue: window },
     { provide: APP_BASE_HREF, useValue: '' },
     { provide: HTTP_INTERCEPTORS, useClass: RetryInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
