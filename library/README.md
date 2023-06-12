@@ -20,7 +20,7 @@ Crypto currency icon assets: [https://images.cybrid.xyz/](https://images.cybrid.
 
 To use the application via html load it into your index.html as a script.
 
-The script registers `cybrid-app` as a web-component in your window. 
+The script registers `cybrid-app` as a web-component in your window.
 
 > NOTE: If you are embedding this library in an Angular application you will want to omit `cybrid-sdk-ui.polyfills.js` to avoid duplication of `zone.js`
 
@@ -127,6 +127,12 @@ interface ComponentConfig {
   // The environment that you are authenticated against
   // Supports: 'sandbox' | 'production'
   environment: string;
+
+  // The redirect Uri that the Plaid SDK uses to return from a mobile OAuth flow
+  // It must be registered with Cybrid so that we may add it to an internal Plaid allow-list
+  // If this is undefined and on web-mobile the bank-account-connect component will return an Error, and serve a message to the user that explains mobile access is unavailable
+  // The query parameter 'oauth_state_id' returned from Plaid must be present in the url when you re-render the bank-account-connect component after authentication
+  redirectUri?: string;
 }
 ```
 
@@ -153,7 +159,7 @@ your_config = {
 
 ### `component` (optional)
 
-The currently displayed component. By default the `price-list` component is rendered.
+The currently displayed component. By default, the `price-list` component is rendered.
 
 Components:
 
