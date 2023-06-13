@@ -1,7 +1,9 @@
 import { Component, Inject, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ActivatedRoute, NavigationExtras } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { Platform } from '@angular/cdk/platform';
 import { MatStepper } from '@angular/material/stepper';
+import { MatDialog } from '@angular/material/dialog';
 
 import {
   BehaviorSubject,
@@ -43,9 +45,7 @@ import {
 import { Constants } from '@constants';
 import { Poll, PollConfig } from '../../../../shared/utility/poll/poll';
 import { getLanguageFromLocale } from '../../../../shared/utility/locale-language';
-import { MatDialog } from '@angular/material/dialog';
 import { BankAccountConfirmComponent } from '../bank-account-confirm/bank-account-confirm.component';
-import { ActivatedRoute, NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'app-bank-account-connect',
@@ -90,6 +90,7 @@ export class BankAccountConnectComponent implements OnInit {
     private customersService: CustomersService,
     private router: RoutingService,
     private route: ActivatedRoute,
+    private window: Window,
     private _renderer2: Renderer2,
     private platform: Platform,
     private dialog: MatDialog
@@ -101,9 +102,36 @@ export class BankAccountConnectComponent implements OnInit {
       CODE.COMPONENT_INIT,
       'Initializing bank-account-connect component'
     );
-    if (this.isMobile()) {
-      this.mobile$.next(true);
-    } else this.checkSupportedFiatAssets();
+    this.configService
+      .getConfig$()
+      .pipe(
+        take(1),
+        tap((config) => {
+          // Handle if mobile and no redirect uri has been set
+
+          if (this.isMobile() && !config.redirectUri) {
+            const message =
+              'A redirect uri must be set to access bank-account-connect on mobile';
+            this.eventService.handleEvent(
+              LEVEL.ERROR,
+              CODE.COMPONENT_ERROR,
+              message
+            );
+            this.errorService.handleError(new Error(message));
+            this.mobile$.next(true);
+          } else {
+            const linkToken = this.window.localStorage.getItem('linkToken');
+            const oauth_state_id = new URLSearchParams(
+              this.window.location.search
+            ).get('oauth_state_id');
+
+            linkToken && oauth_state_id
+              ? this.bootstrapPlaid(linkToken, oauth_state_id)
+              : this.checkSupportedFiatAssets();
+          }
+        })
+      )
+      .subscribe();
   }
 
   isMobile(): boolean {
@@ -204,7 +232,9 @@ export class BankAccountConnectComponent implements OnInit {
       .subscribe();
   }
 
-  bootstrapPlaid(linkToken: string): void {
+  bootstrapPlaid(linkToken: string, receivedRedirectUri?: string): void {
+    this.window.localStorage.setItem('linkToken', linkToken);
+
     combineLatest([
       this.bankAccountService.getPlaidClient(),
       this.configService.getConfig$().pipe(take(1))
@@ -228,9 +258,9 @@ export class BankAccountConnectComponent implements OnInit {
             };
 
             script.addEventListener('load', () => {
-              this.plaidCreate(linkToken, language);
+              this.plaidCreate(linkToken, language, receivedRedirectUri);
             });
-          } else this.plaidCreate(linkToken, language);
+          } else this.plaidCreate(linkToken, language, receivedRedirectUri);
         }),
         catchError((err) => {
           this.error$.next(true);
@@ -248,11 +278,16 @@ export class BankAccountConnectComponent implements OnInit {
       .subscribe();
   }
 
-  plaidCreate(linkToken: string, language: string) {
+  plaidCreate(
+    linkToken: string,
+    language: string,
+    receivedRedirectUri?: string
+  ) {
     // @ts-ignore
     const client = Plaid.create({
       token: linkToken,
       language: language,
+      receivedRedirectUri: receivedRedirectUri,
       onSuccess: (public_token: string, metadata: any) => {
         this.plaidOnSuccess(public_token, metadata);
       },

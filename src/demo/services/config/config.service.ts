@@ -5,7 +5,7 @@ import { Observable, of, ReplaySubject, switchMap, throwError } from 'rxjs';
 
 // Library
 import { ComponentConfig } from '@services';
-import { Constants } from '@constants';
+import { Constants, TestConstants } from '@constants';
 
 // Services
 import { AuthService } from '../auth/auth.service';
@@ -62,6 +62,7 @@ export class ConfigService {
           config.customer = this.authService.customer;
           config.features = bank.features;
           config.environment = this.authService.environment;
+          config.redirectUri = TestConstants.CONFIG.redirectUri;
 
           this.config.next(config);
           return of(config);

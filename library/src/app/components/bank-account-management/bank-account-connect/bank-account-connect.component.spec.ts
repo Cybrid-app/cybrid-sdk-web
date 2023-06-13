@@ -59,6 +59,19 @@ describe('BankAccountConnectComponent', () => {
     new Error('Error');
   });
 
+  class MockWindow {
+    localStorage = {
+      getItem: function () {
+        return '';
+      },
+      setItem: function () {},
+      removeItem: function () {}
+    };
+    location = {
+      search: ''
+    };
+  }
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [BankAccountConnectComponent],
@@ -82,6 +95,7 @@ describe('BankAccountConnectComponent', () => {
         { provide: RoutingService, useValue: MockRoutingService },
         { provide: BankAccountService, useValue: MockBankAccountService },
         { provide: MatDialog, useValue: MockDialog },
+        { provide: Window, useClass: MockWindow },
         Renderer2
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -128,17 +142,24 @@ describe('BankAccountConnectComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should be disabled on mobile', () => {
+  it('should be disabled on mobile if no redirect uri is undefined', () => {
     const mobileSpy = spyOn(component.mobile$, 'next');
+    const config = {
+      ...TestConstants.CONFIG,
+      redirectUri: undefined
+    };
+    MockConfigService.getConfig$.and.returnValue(of(config));
 
     // Emulate mobile
     component.isMobile = () => true;
 
     component.ngOnInit();
     expect(mobileSpy).toHaveBeenCalledWith(true);
+    expect(MockEventService.handleEvent).toHaveBeenCalled();
+    expect(MockErrorService.handleError).toHaveBeenCalled();
   });
 
-  it('should check for supported fiat assets if not on mobile', () => {
+  it('should check for supported fiat assets if not a callback from Oauth', () => {
     const checkSupportedFiatAssetsSpy = spyOn(
       component,
       'checkSupportedFiatAssets'
@@ -146,6 +167,50 @@ describe('BankAccountConnectComponent', () => {
 
     component.ngOnInit();
     expect(checkSupportedFiatAssetsSpy).toHaveBeenCalled();
+  });
+
+  it('should check for supported fiat assets if linkToken is set and oauth_state_id is undefined', () => {
+    const checkSupportedFiatAssetsSpy = spyOn(
+      component,
+      'checkSupportedFiatAssets'
+    );
+
+    // Set linkToken
+    component['window'].localStorage.getItem = () => 'token';
+
+    component.ngOnInit();
+    expect(checkSupportedFiatAssetsSpy).toHaveBeenCalled();
+  });
+
+  it('should check for supported fiat assets if oauth_state_id is set and linkToken is undefined', () => {
+    const checkSupportedFiatAssetsSpy = spyOn(
+      component,
+      'checkSupportedFiatAssets'
+    );
+
+    // Set query param
+    // @ts-ignore
+    component['window'].location = {
+      search: '?oauth_state_id=4c5cbac5-7b53-46cc-81f2-48df452a5094'
+    };
+
+    component.ngOnInit();
+    expect(checkSupportedFiatAssetsSpy).toHaveBeenCalled();
+  });
+
+  it('should bootstrap Plaid if a callback from Oauth', () => {
+    const bootstrapPlaidSpy = spyOn(component, 'bootstrapPlaid');
+
+    // Set linkToken
+    component['window'].localStorage.getItem = () => 'token';
+    // Set query param
+    // @ts-ignore
+    component['window'].location = {
+      search: '?oauth_state_id=state'
+    };
+
+    component.ngOnInit();
+    expect(bootstrapPlaidSpy).toHaveBeenCalled();
   });
 
   it('should check for supported fiat assets', () => {

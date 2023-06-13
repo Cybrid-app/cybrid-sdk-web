@@ -38,6 +38,7 @@ export interface ComponentConfig {
   fiat: string;
   features: Array<string>;
   environment: Environment;
+  redirectUri?: string;
 }
 
 @Injectable({
