@@ -57,21 +57,3 @@
   padding: 0;
   min-width: 0;
 }
-
-@media screen and (min-width: 1535px) {
-  .cybrid-approx-wrapper {
-    margin-left: calc(50% + 0.5rem);
-    display: flex;
-    margin-bottom: 1rem;
-  }
-
-  .cybrid-input-wrapper {
-    flex-direction: row;
-    gap: 1rem;
-  }
-  .cybrid-input-flex {
-    display: flex;
-    flex-direction: column;
-    flex-basis: 50%;
-  }
-}

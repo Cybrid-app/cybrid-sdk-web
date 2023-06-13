@@ -51,11 +51,15 @@
                     >
                       <div class="cybrid-option">
                         <mat-icon>savings</mat-icon>
-                        <span>{{ account.plaid_institution_id }}</span>
-                        <span>{{ account.plaid_account_name }}</span>
-                        <span>{{
-                          '(' + account.plaid_account_mask + ')'
-                        }}</span>
+                        <div>
+                          <span>{{
+                            account.plaid_institution_id + ' - '
+                          }}</span>
+                          <span>{{ account.plaid_account_name + ' ' }}</span>
+                          <span>{{
+                            '(' + account.plaid_account_mask + ')'
+                          }}</span>
+                        </div>
                       </div>
                     </mat-option>
                   </mat-select>

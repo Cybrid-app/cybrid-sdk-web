@@ -2,7 +2,10 @@
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
+  mat-icon {
+    margin-right: 0;
+  }
 }
 
 .cybrid-prefix {
@@ -43,16 +46,4 @@
 
 .cybrid-no-accounts {
   align-items: center;
-}
-
-@media screen and (min-width: 1535px) {
-  .cybrid-input-wrapper {
-    flex-direction: row;
-    gap: 1rem;
-  }
-  .cybrid-input-flex {
-    display: flex;
-    flex-direction: column;
-    flex-basis: 50%;
-  }
 }
