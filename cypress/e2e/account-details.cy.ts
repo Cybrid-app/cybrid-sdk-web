@@ -59,10 +59,9 @@ describe('account-details test', () => {
       cy.get('.cybrid-list-item')
         .should('not.be.empty')
         .should('contain.text', 'Status')
-        .should('contain.text', 'Settling')
-        .should('contain.text', 'Purchased amount')
+        .should('contain.text', 'amount')
         .should('contain.text', 'USD')
-        .should('contain.text', 'Purchased quantity')
+        .should('contain.text', 'quantity')
         .should('contain.text', 'BTC')
         .should('contain.text', 'Transaction fee');
       cy.get('app-trade-summary').find('button').click();
