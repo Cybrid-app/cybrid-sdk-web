@@ -17,6 +17,7 @@ import {
   BanksService,
   Configuration
 } from '@cybrid/cybrid-api-bank-angular';
+import { Platform } from '@angular/cdk/platform';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,11 @@ export class ConfigService {
   config = new ReplaySubject<ComponentConfig>(1);
   config$ = this.config.asObservable();
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+    private platform: Platform
+  ) {}
 
   getBank(): Observable<BankBankModel> {
     const bankToken = window.localStorage.getItem('bank');
@@ -62,7 +67,9 @@ export class ConfigService {
           config.customer = this.authService.customer;
           config.features = bank.features;
           config.environment = this.authService.environment;
-          config.redirectUri = TestConstants.CONFIG.redirectUri;
+
+          if (this.platform.IOS || this.platform.ANDROID)
+            config.redirectUri = TestConstants.CONFIG.redirectUri;
 
           this.config.next(config);
           return of(config);
