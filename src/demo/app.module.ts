@@ -1,5 +1,9 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  CommonModule,
+  HashLocationStrategy,
+  LocationStrategy
+} from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -44,6 +48,7 @@ import {
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
     { provide: Window, useValue: window },
+    { provide: LocationStrategy, useClass: HashLocationStrategy },
     CustomerTokensService,
     TranslatePipe,
     ConfigService,

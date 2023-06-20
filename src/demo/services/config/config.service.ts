@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Platform } from '@angular/cdk/platform';
 
 import { Observable, of, ReplaySubject, switchMap, throwError } from 'rxjs';
 
@@ -17,7 +18,6 @@ import {
   BanksService,
   Configuration
 } from '@cybrid/cybrid-api-bank-angular';
-import { Platform } from '@angular/cdk/platform';
 
 @Injectable({
   providedIn: 'root'
