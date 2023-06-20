@@ -94,7 +94,8 @@ export class BankAccountConnectComponent implements OnInit {
     private route: ActivatedRoute,
     private _renderer2: Renderer2,
     private platform: Platform,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private window: Window
   ) {}
 
   ngOnInit() {
@@ -121,15 +122,15 @@ export class BankAccountConnectComponent implements OnInit {
             this.errorService.handleError(new Error(message));
             this.mobile$.next(true);
           } else {
-            const linkToken = window.localStorage.getItem('linkToken');
-            const urlParams = new URLSearchParams(window.location.search);
+            const linkToken = this.window.localStorage.getItem('linkToken');
+            const urlParams = new URLSearchParams(this.window.location.search);
 
             const queryOauthStateId = urlParams.get('oauth_state_id');
             const hashOauthStateId = (() => {
-              const queryStringIndex = window.location.hash.indexOf('?');
+              const queryStringIndex = this.window.location.hash.indexOf('?');
               if (queryStringIndex !== -1) {
                 const queryString =
-                  window.location.hash.substring(queryStringIndex);
+                  this.window.location.hash.substring(queryStringIndex);
                 const urlParams = new URLSearchParams(queryString);
                 return urlParams.get('oauth_state_id');
               }
@@ -246,7 +247,7 @@ export class BankAccountConnectComponent implements OnInit {
   }
 
   bootstrapPlaid(linkToken: string, receivedRedirectUri?: string): void {
-    window.localStorage.setItem('linkToken', linkToken);
+    this.window.localStorage.setItem('linkToken', linkToken);
 
     combineLatest([
       this.bankAccountService.getPlaidClient(),
