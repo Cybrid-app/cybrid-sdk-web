@@ -34,6 +34,7 @@ export class DemoViewerComponent implements OnInit {
   config = Constants.DEFAULT_CONFIG;
 
   unsubscribe$ = new Subject();
+
   constructor(
     private demoViewerService: DemoViewerService,
     private activatedRoute: ActivatedRoute,
@@ -99,10 +100,9 @@ export class DemoViewerComponent implements OnInit {
     this.demoViewerService.route$
       .pipe(
         tap((component) =>
-          this.componentGroup.get('component')?.patchValue(component, {
-            emitEvent: false,
-            onlySelf: true
-          })
+          this.componentGroup
+            .get('component')
+            ?.patchValue(component, { onlySelf: true })
         )
       )
       .subscribe();
