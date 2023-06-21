@@ -34,6 +34,7 @@ export class DemoViewerComponent implements OnInit {
   config = Constants.DEFAULT_CONFIG;
 
   unsubscribe$ = new Subject();
+
   constructor(
     private demoViewerService: DemoViewerService,
     private activatedRoute: ActivatedRoute,
@@ -92,7 +93,9 @@ export class DemoViewerComponent implements OnInit {
       .get('component')
       ?.valueChanges.pipe(
         takeUntil(this.unsubscribe$),
-        tap((component) => this.router.navigate([`demo/${component}`]))
+        tap((component) => {
+          this.router.navigateByUrl(`demo/${component}`);
+        })
       )
       .subscribe();
 

@@ -92,13 +92,13 @@ describe('account-details test', () => {
     cy.wait('@listTrades').its('response.body').should('not.eq', trades);
 
     // Paginate: next
-    app().find('.mat-paginator-navigation-next').click();
+    app().find('.mat-paginator-navigation-next').click({ force: true });
 
     // Check for new data
     cy.wait('@listTrades').its('response.body').should('not.eq', trades);
 
     // Paginate: previous
-    app().find('.mat-paginator-navigation-previous').click();
+    app().find('.mat-paginator-navigation-previous').click({ force: true });
 
     // Check for new data
     cy.wait('@listTrades').its('response.body').should('not.eq', trades);

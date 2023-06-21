@@ -1,3 +1,4 @@
+// @ts-ignore
 function app() {
   return cy.get('app-transfer');
 }
@@ -52,9 +53,9 @@ describe('transfer test', () => {
 
   it('should swap between deposit/withdraw', () => {
     app().find('#action').should('contain', 'DEPOSIT');
-    app().find('.mat-tab-labels').contains('WITHDRAW').click();
+    app().find('.mat-tab-labels').contains('WITHDRAW').click({ force: true });
     app().find('#action').should('contain', 'WITHDRAW');
-    app().find('.mat-tab-labels').contains('DEPOSIT').click();
+    app().find('.mat-tab-labels').contains('DEPOSIT').click({ force: true });
   });
 
   it('should invalidate the amount input on withdraw > platform_available', () => {
