@@ -68,7 +68,8 @@ describe('BankAccountConnectComponent', () => {
       removeItem: function () {}
     };
     location = {
-      search: ''
+      search: '',
+      hash: { indexOf: function () {}, substring: function () {}, search: '' }
     };
   }
 
@@ -190,9 +191,8 @@ describe('BankAccountConnectComponent', () => {
 
     // Set query param
     // @ts-ignore
-    component['window'].location = {
-      search: '?oauth_state_id=4c5cbac5-7b53-46cc-81f2-48df452a5094'
-    };
+    component['window'].location.search =
+      '?oauth_state_id=4c5cbac5-7b53-46cc-81f2-48df452a5094';
 
     component.ngOnInit();
     expect(checkSupportedFiatAssetsSpy).toHaveBeenCalled();
@@ -205,9 +205,7 @@ describe('BankAccountConnectComponent', () => {
     component['window'].localStorage.getItem = () => 'token';
     // Set query param
     // @ts-ignore
-    component['window'].location = {
-      search: '?oauth_state_id=state'
-    };
+    component['window'].location.search = '?oauth_state_id=state';
 
     component.ngOnInit();
     expect(bootstrapPlaidSpy).toHaveBeenCalled();

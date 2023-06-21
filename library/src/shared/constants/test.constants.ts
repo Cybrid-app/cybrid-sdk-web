@@ -41,7 +41,8 @@ export class TestConstants {
     fiat: 'USD',
     features: ['attestation_identity_records', 'backstopped_funding_source'],
     environment: 'staging',
-    redirectUri: 'http://localhost:4200/demo/bank-account-connect'
+    redirectUri:
+      'https://cybrid-app.github.io/cybrid-sdk-web/demo/bank-account-connect'
   };
 
   static ASSET_LIST_BANK_MODEL: AssetListBankModel = {

@@ -1,0 +1,37 @@
+<!-- Workaround fo Github Pages. If a route doesn't exist, this 404 will be served which mirrors the index.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Cybrid Web Component Shell</title>
+    <base href="/cybrid-sdk-web/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined"
+      rel="stylesheet"
+    />
+    <!-- Redirect with Hash location strategy. Plaid doesn't allow for '#' in their redirectUri-->
+    <script>
+      const currentPath = window.location.pathname;
+      const currentSearch = window.location.search;
+
+      const newPath =
+        currentPath.replace(
+          /^\/cybrid-sdk-web\/(.*)$/,
+          '/cybrid-sdk-web/#/$1'
+        ) + currentSearch;
+
+      window.location.href = newPath;
+    </script>
+  </head>
+</html>

@@ -41,11 +41,13 @@ import {
   RoutingService
 } from '@services';
 
+// Components
+import { BankAccountConfirmComponent } from '../bank-account-confirm/bank-account-confirm.component';
+
 // Utility
 import { Constants } from '@constants';
 import { Poll, PollConfig } from '../../../../shared/utility/poll/poll';
 import { getLanguageFromLocale } from '../../../../shared/utility/locale-language';
-import { BankAccountConfirmComponent } from '../bank-account-confirm/bank-account-confirm.component';
 
 @Component({
   selector: 'app-bank-account-connect',
@@ -90,10 +92,10 @@ export class BankAccountConnectComponent implements OnInit {
     private customersService: CustomersService,
     private router: RoutingService,
     private route: ActivatedRoute,
-    private window: Window,
     private _renderer2: Renderer2,
     private platform: Platform,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private window: Window
   ) {}
 
   ngOnInit() {
@@ -121,9 +123,21 @@ export class BankAccountConnectComponent implements OnInit {
             this.mobile$.next(true);
           } else {
             const linkToken = this.window.localStorage.getItem('linkToken');
-            const oauth_state_id = new URLSearchParams(
-              this.window.location.search
-            ).get('oauth_state_id');
+            const urlParams = new URLSearchParams(this.window.location.search);
+
+            const queryOauthStateId = urlParams.get('oauth_state_id');
+            const hashOauthStateId = (() => {
+              const queryStringIndex = this.window.location.hash.indexOf('?');
+              if (queryStringIndex !== -1) {
+                const queryString =
+                  this.window.location.hash.substring(queryStringIndex);
+                const urlParams = new URLSearchParams(queryString);
+                return urlParams.get('oauth_state_id');
+              }
+              return null;
+            })();
+
+            const oauth_state_id = queryOauthStateId || hashOauthStateId;
 
             linkToken && oauth_state_id
               ? this.bootstrapPlaid(linkToken, oauth_state_id)
