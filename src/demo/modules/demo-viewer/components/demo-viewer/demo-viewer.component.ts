@@ -93,7 +93,9 @@ export class DemoViewerComponent implements OnInit {
       .get('component')
       ?.valueChanges.pipe(
         takeUntil(this.unsubscribe$),
-        tap((component) => this.router.navigate([`demo/${component}`]))
+        tap((component) => {
+          this.router.navigateByUrl(`demo/${component}`);
+        })
       )
       .subscribe();
 
@@ -102,7 +104,7 @@ export class DemoViewerComponent implements OnInit {
         tap((component) =>
           this.componentGroup
             .get('component')
-            ?.patchValue(component, { onlySelf: true })
+            ?.patchValue(component, { onlySelf: true, emitEvent: false })
         )
       )
       .subscribe();
