@@ -65,9 +65,11 @@ Install Node. Current version: [Node@16.14.2](https://nodejs.org/en/)
 
 Run `npm install` from the project root to install dependencies
 
+Run `npm run package:library` to build the library
+
 ## Run
 
-Run `ng serve` for a dev server
+Run `ng serve` for the demo server
 
 While running the Demo locally most browsers will block Cybrid api requests due to Cross-Origin Resource Sharing (CORS) rules. You must disable CORS to properly view the demo. Here's a handy script (for Mac OSX) that opens a developer friendly instance of Google Chrome:
 
