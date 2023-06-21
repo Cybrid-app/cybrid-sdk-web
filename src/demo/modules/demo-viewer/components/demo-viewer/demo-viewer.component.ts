@@ -102,9 +102,10 @@ export class DemoViewerComponent implements OnInit {
     this.demoViewerService.route$
       .pipe(
         tap((component) =>
-          this.componentGroup
-            .get('component')
-            ?.patchValue(component, { onlySelf: true, emitEvent: false })
+          this.componentGroup.get('component')?.patchValue(component, {
+            emitEvent: false,
+            onlySelf: true
+          })
         )
       )
       .subscribe();
