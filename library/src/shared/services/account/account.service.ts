@@ -1,15 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-
-import {
-  Observable,
-  Subject,
-  map,
-  catchError,
-  of,
-  switchMap,
-  combineLatest,
-  take
-} from 'rxjs';
+import { Observable, Subject, map, catchError, of, combineLatest } from 'rxjs';
 
 // Client
 import {
@@ -24,7 +14,6 @@ import {
 import {
   AssetService,
   Asset,
-  ConfigService,
   LEVEL,
   CODE,
   EventService,
@@ -64,8 +53,7 @@ export class AccountService implements OnDestroy {
     private accountsService: AccountsService,
     private pricesService: PricesService,
     private assetService: AssetService,
-    private assetPipe: AssetPipe,
-    private configService: ConfigService
+    private assetPipe: AssetPipe
   ) {}
 
   ngOnDestroy() {
@@ -74,17 +62,7 @@ export class AccountService implements OnDestroy {
   }
 
   getAccounts(): Observable<AccountBankModel[]> {
-    return this.configService.getConfig$().pipe(
-      take(1),
-      switchMap((config) => {
-        return this.accountsService.listAccounts(
-          '',
-          '',
-          '',
-          '',
-          config.customer
-        );
-      }),
+    return this.accountsService.listAccounts().pipe(
       map((accounts) => accounts.objects),
       catchError((err) => {
         this.eventService.handleEvent(
