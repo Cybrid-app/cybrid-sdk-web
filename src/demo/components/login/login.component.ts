@@ -6,7 +6,6 @@ import {
   TemplateRef,
   ViewChild
 } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -47,7 +46,6 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   forgotPasswordLink = this.env.idpBaseUrl.staging;
 
   constructor(
-    private http: HttpClient,
     private router: Router,
     public authService: AuthService,
     private errorService: ErrorService,

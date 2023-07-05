@@ -125,7 +125,7 @@ export class DemoComponent implements OnInit, OnDestroy {
       .pipe(
         takeUntil(this.unsubscribe$),
         filter((event: EventLog) => event.code == CODE.ROUTING_END),
-        map((event) => {
+        map((event: EventLog) => {
           this.componentGroup.get('component')?.patchValue(event.data.default, {
             emitEvent: false,
             onlySelf: true
