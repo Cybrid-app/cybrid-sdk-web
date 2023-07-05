@@ -33,10 +33,7 @@ import {
   RoutingData,
   RoutingService
 } from '@services';
-import {
-  AccountBankModel,
-  AccountsService
-} from '@cybrid/cybrid-api-bank-angular';
+import { AccountBankModel } from '@cybrid/cybrid-api-bank-angular';
 
 interface AccountData {
   balance: number;
@@ -91,7 +88,6 @@ export class AccountListComponent implements OnInit, OnDestroy {
     private eventService: EventService,
     private errorService: ErrorService,
     private accountService: AccountService,
-    private accountsService: AccountsService,
     private routingService: RoutingService
   ) {}
 
