@@ -6,15 +6,13 @@ import {
   TemplateRef,
   ViewChild
 } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 
 import { catchError, map, of, Subject, switchMap } from 'rxjs';
 
 // Services
-import { AuthService, ConfigService } from '../../services';
+import { AuthService } from '../../services';
 import { Environment, ErrorService } from 'library/src/shared/services';
 
 // Utility
@@ -46,11 +44,8 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   forgotPasswordLink = this.env.idpBaseUrl.staging;
 
   constructor(
-    private http: HttpClient,
-    private router: Router,
     public authService: AuthService,
     private errorService: ErrorService,
-    private configService: ConfigService,
     private dialog: MatDialog
   ) {}
 
