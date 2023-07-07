@@ -44,4 +44,16 @@ describe('IdentityContentComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should detect changes onInit', () => {
+    component.identity = { ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL };
+    const changeDetectorRefSpy = spyOn(
+      component['changeDetectorRef'],
+      'detectChanges'
+    );
+
+    component.ngOnInit();
+
+    expect(changeDetectorRefSpy).toHaveBeenCalled();
+  });
 });

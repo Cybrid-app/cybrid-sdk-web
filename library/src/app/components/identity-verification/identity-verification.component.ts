@@ -5,6 +5,7 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  concatMap,
   map,
   merge,
   of,
@@ -102,7 +103,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
     poll
       .start()
       .pipe(
-        switchMap(() => this.identityVerificationService.getCustomer()),
+        concatMap(() => this.identityVerificationService.getCustomer()),
         takeUntil(merge(poll.session$, this.unsubscribe$)),
         skipWhile((customer) => customer.state === 'storing'),
         map((customer) => {
@@ -163,9 +164,9 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
           this.identityVerificationGuid = identity.guid;
           return poll.start();
         }),
-        switchMap(() =>
+        concatMap(() =>
           this.identityVerificationService.getIdentityVerification(
-            this.identityVerificationGuid!
+            <string>this.identityVerificationGuid
           )
         ),
         takeUntil(merge(poll.session$, this.unsubscribe$)),
@@ -212,33 +213,10 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
    *
    **/
   checkIdentity(): void {
-    let currentIdentity: IdentityVerificationWithDetailsBankModel;
-
-    const poll = new Poll({
-      timeout: new BehaviorSubject<boolean>(false),
-      duration: Constants.POLL_DURATION,
-      interval: Constants.POLL_INTERVAL
-    });
-
-    poll
-      .start()
+    this.identityVerificationService
+      .getIdentityVerification(<string>this.identityVerificationGuid)
       .pipe(
-        switchMap(() => {
-          return this.identityVerificationService.getIdentityVerification(
-            this.identityVerificationGuid!
-          );
-        }),
-        tap((identity) => (currentIdentity = identity)),
-        takeUntil(
-          merge(poll.session$, this.unsubscribe$).pipe(
-            map(() => {
-              this.handleIdentityVerificationState(currentIdentity);
-            })
-          )
-        ),
-        skipWhile((identity) => !identity.outcome),
-        map((identity) => {
-          poll.stop();
+        tap((identity) => {
           this.handleIdentityVerificationState(identity);
         })
       )

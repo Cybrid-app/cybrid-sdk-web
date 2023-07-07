@@ -142,8 +142,9 @@ export default {
     verified: 'You have been verified.',
     rejected: 'Unable to verify identity.',
     support: 'Please contact customer support.',
+    pending: 'Pending identity verification, please check back later.',
     reviewing: 'Identity being reviewed.',
-    processing: 'Processing identity verification, check back later',
+    processing: 'Processing identity verification, please check back later',
     resume: 'Resume identity verification.'
   },
 
