@@ -156,6 +156,7 @@ describe('IdentityVerificationComponent', () => {
       'handleIdentityVerificationState'
     );
 
+    component.identityVerificationGuid = '123';
     component.checkIdentity();
 
     tick();
@@ -238,7 +239,7 @@ describe('IdentityVerificationComponent', () => {
     // State = 'completed'
     identityVerification.state = 'completed';
     component.handleIdentityVerificationState(identityVerification);
-    component.isLoading$.subscribe((res) => expect(res).toBeFalse());
+    component.isLoading$.subscribe((res: boolean) => expect(res).toBeFalse());
   });
 
   it('should handle persona state', () => {

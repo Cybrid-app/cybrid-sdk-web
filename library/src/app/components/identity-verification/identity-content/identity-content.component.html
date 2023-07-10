@@ -25,6 +25,14 @@
 </ng-container>
 
 <ng-template #personaState [ngSwitch]="identity.persona_state">
+  <ng-container *ngSwitchCase="'pending'">
+    <div class="verification-content">
+      <div>
+        <mat-icon color="primary">cached</mat-icon>
+        <strong>{{ 'identityVerification.pending' | translate }}</strong>
+      </div>
+    </div>
+  </ng-container>
   <ng-container *ngSwitchCase="'reviewing'">
     <div class="verification-content">
       <div>

@@ -9,6 +9,7 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  concatMap,
   map,
   merge,
   Observable,
@@ -223,7 +224,7 @@ export class BankAccountConnectComponent implements OnInit {
         map((workflow) => (workflow_guid = workflow.guid!)),
         switchMap(() => poll.start()),
         takeUntil(merge(poll.session$, this.unsubscribe$)),
-        switchMap(() => this.bankAccountService.getWorkflow(workflow_guid)),
+        concatMap(() => this.bankAccountService.getWorkflow(workflow_guid)),
         skipWhile((workflow) => !workflow.plaid_link_token),
         tap(() => poll.stop())
       );

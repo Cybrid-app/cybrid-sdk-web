@@ -1,5 +1,4 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 
 import {
   BehaviorSubject,
@@ -41,7 +40,6 @@ export class IdentityVerificationService implements OnDestroy {
   };
 
   constructor(
-    private http: HttpClient,
     private identityVerificationService: IdentityVerificationsService,
     private customerService: CustomersService,
     private configService: ConfigService,
