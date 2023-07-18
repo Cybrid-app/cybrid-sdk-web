@@ -132,6 +132,7 @@ interface ComponentConfig {
   // It must be registered with Cybrid so that we may add it to an internal Plaid allow-list
   // If this is undefined and on web-mobile the bank-account-connect component will return an Error, and serve a message to the user that explains mobile access is unavailable
   // The query parameter 'oauth_state_id' returned from Plaid must be present in the url when you re-render the bank-account-connect component after authentication
+  // We cannot register a URI that uses a hash location strategy, ex: https://app.com/#/bank-account-connect
   redirectUri?: string;
 }
 ```
