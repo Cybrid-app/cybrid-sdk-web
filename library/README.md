@@ -93,51 +93,17 @@ A default component configuration is set if no config is bound. The full configu
 
 ```typescript
 interface ComponentConfig {
-  // The number in milliseconds the component waits before refreshing data
-  // Default: 5000
   refreshInterval: number;
-
-  // Routing flag to enable or disable internal routing between components
-  // Default: true
   routing: boolean;
-
-  // The current locale
-  // Supports: 'en-US' | 'fr-CA'
-  // Default: 'en-US'
   locale: string;
-
-  // Light mode or dark mode styling
-  // Supports: 'LIGHT' | 'DARK'
-  // Default: 'LIGHT'
   theme: string;
-
-  // The current customer GUID
   customer: string;
-
-  // The current fiat currency (counter asset for all value calculation)
-  // Supports: 'USD | CAD'
-  // Default: 'USD'
   fiat: string;
-
-  // The banks features
-  // Supports: 'attestation_identity_records' | 'kyc_identity_verifications' | 'backstopped_funding_source' | 'plaid_funding_source'
-  // Default: []
   features: Array<string>;
-
-  // The environment that you are authenticated against
-  // Supports: 'sandbox' | 'production'
   environment: string;
-
-  // The redirect Uri that the Plaid SDK uses to return from a mobile OAuth flow
-  // It must be registered with Cybrid so that we may add it to an internal Plaid allow-list
-  // If this is undefined and on web-mobile the bank-account-connect component will return an Error, and serve a message to the user that explains mobile access is unavailable
-  // The query parameter 'oauth_state_id' returned from Plaid must be present in the url when you re-render the bank-account-connect component after authentication
   redirectUri?: string;
 }
 ```
-
-> NOTE: Disabling routing will also remove routing elements from the ui, like the back button in `trade`. The app will still fire events where routing would have typically occurred such as completing a trade, or clicking an asset in the `price-list`. See 'Events' below for more information.
-
 Example:
 
 ```typescript
@@ -149,13 +115,58 @@ your_config = {
   customer: '969c744a02b11ed', //example GUID,
   fiat: 'USD',
   features: ['attestation_identity_records', 'backstopped_funding_source'],
-  environment: 'sandbox'
+  environment: 'sandbox',
+  redirectUri: 'https://app.com/bank-account-connect'
 };
 ```
 
 ```html
 <cybrid-app [config]="your_config"></cybrid-app>
 ```
+
+**Parameters**
+
+#### ``refreshInterval``
+The number in milliseconds the component waits before refreshing data.
+Default: 5000
+
+#### ``routing``
+A routing flag to enable or disable internal routing between components.
+Default: true
+
+> NOTE: Disabling routing will also remove routing elements from the ui, like the back button in `trade`.
+The app will still fire events where routing would have  occurred such as completing a trade, or clicking an asset in the `price-list`. See 'Events' below for more information.
+
+#### ``locale``
+The current locale.
+Supports: 'en-US' | 'fr-CA'
+Default: 'en-US'
+
+#### ``theme``
+Light mode or dark mode styling.
+Supports: 'LIGHT' | 'DARK'
+Default: 'LIGHT'
+
+#### ``fiat``
+The current fiat currency (counter asset for all value calculation).
+Supports: 'USD | CAD'
+Default: 'USD'
+
+#### ``features``
+The banks features.
+Supports: 'attestation_identity_records' | 'kyc_identity_verifications' | 'backstopped_funding_source' | 'plaid_funding_source'
+Default: []
+
+#### ``environment``
+The environment that you are authenticated against.
+Supports: 'sandbox' | 'production'
+
+#### ``redirectUri`
+The redirect Uri that the Plaid SDK uses to return from a mobile OAuth flow. It must be registered with Cybrid so that we may add it to an internal Plaid allow-list.
+If this is undefined and on web-mobile the bank-account-connect component will return an Error, and serve a message to the user that explains mobile access is unavailable.
+The query parameter 'oauth_state_id' returned from Plaid must be present in the url when you re-render the bank-account-connect component after authentication.
+
+> NOTE: We cannot register a URI that uses a hash location strategy, ex: https://app.com/#/bank-account-connect
 
 ### `component` (optional)
 
