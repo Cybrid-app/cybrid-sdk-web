@@ -102,6 +102,7 @@ export class AccountDetailsComponent
       CODE.COMPONENT_INIT,
       'Initializing account-detail component'
     );
+    this.setAccountGuid();
     this.getAccount();
     this.refreshData();
   }
@@ -117,7 +118,7 @@ export class AccountDetailsComponent
     this.unsubscribe$.complete();
   }
 
-  getAccount() {
+  setAccountGuid(): void {
     // Set currently selected account based on routing data, for instance from an account-list row click
     this.route.queryParams
       .pipe(
@@ -129,7 +130,9 @@ export class AccountDetailsComponent
         })
       )
       .subscribe();
+  }
 
+  getAccount() {
     this.configService
       .getConfig$()
       .pipe(
