@@ -12,8 +12,6 @@ import { AuthService } from '../../../../services/auth/auth.service';
 import { ConfigService } from '../../../../services/config/config.service';
 import { DemoViewerService } from '../../services/demo-viewer.service';
 
-import { BankBankModel } from '@cybrid/cybrid-api-bank-angular';
-
 @Component({
   selector: 'app-sdk',
   templateUrl: './demo-viewer.component.html',
@@ -53,12 +51,6 @@ export class DemoViewerComponent implements OnInit {
     this.initLanguageGroup();
   }
 
-  isBackstopped(): boolean {
-    return this.config.features.includes(
-      BankBankModel.FeaturesEnum.BackstoppedFundingSource
-    );
-  }
-
   getTooltip(component: string): string {
     if (component == 'account-details')
       return 'Disabled: Navigate via account-list';
@@ -68,9 +60,7 @@ export class DemoViewerComponent implements OnInit {
     )
       return 'Disabled: Sign in as a private user to access';
     else {
-      if (this.isBackstopped() && this.isDisabled(component)) {
-        return 'Component is unavailable to backstopped banks';
-      } else return '';
+      return '';
     }
   }
 
@@ -81,11 +71,7 @@ export class DemoViewerComponent implements OnInit {
       component == 'identity-verification'
     )
       return true;
-    else {
-      if (this.isBackstopped()) {
-        return !Constants.COMPONENTS_BACKSTOPPED.includes(component);
-      } else return false;
-    }
+    else return false;
   }
 
   initComponentGroup() {
