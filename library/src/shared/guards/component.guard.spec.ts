@@ -106,7 +106,7 @@ describe('ComponentGuard', () => {
       {} as RouterStateSnapshot;
 
     let config = TestConstants.CONFIG;
-    config.features = ['identity-verification'];
+    config.features = ['attestation_identity_records'];
     MockConfigService.getConfig$.and.returnValue(of(config));
 
     guard
