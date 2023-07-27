@@ -59,44 +59,6 @@ describe('ComponentGuard', () => {
     expect(guard).toBeTruthy();
   });
 
-  it('should pass allowed components in a backstopped bank', () => {
-    const mockActivatedRouteSnapshot: ActivatedRouteSnapshot = {
-      routeConfig: { path: 'price-list' }
-    } as unknown as ActivatedRouteSnapshot;
-
-    const mockRouterStateSnapshot: RouterStateSnapshot =
-      {} as RouterStateSnapshot;
-
-    let config = TestConstants.CONFIG;
-    config.features = ['backstopped_funding_source'];
-    MockConfigService.getConfig$.and.returnValue(of(config));
-
-    guard
-      .canActivate(mockActivatedRouteSnapshot, mockRouterStateSnapshot)
-      .subscribe((res) => {
-        expect(res).toBeTrue();
-      });
-  });
-
-  it('should fail unavailable components in a backstopped bank', () => {
-    const mockActivatedRouteSnapshot: ActivatedRouteSnapshot = {
-      routeConfig: { path: 'transfer' }
-    } as unknown as ActivatedRouteSnapshot;
-
-    const mockRouterStateSnapshot: RouterStateSnapshot =
-      {} as RouterStateSnapshot;
-
-    let config = TestConstants.CONFIG;
-    config.features = ['backstopped_funding_source'];
-    MockConfigService.getConfig$.and.returnValue(of(config));
-
-    guard
-      .canActivate(mockActivatedRouteSnapshot, mockRouterStateSnapshot)
-      .subscribe((res) => {
-        expect(res).toBeFalse();
-      });
-  });
-
   it('should pass allowed components in an attestation bank', () => {
     const mockActivatedRouteSnapshot: ActivatedRouteSnapshot = {
       routeConfig: { path: 'price-list' }
@@ -111,7 +73,7 @@ describe('ComponentGuard', () => {
 
     guard
       .canActivate(mockActivatedRouteSnapshot, mockRouterStateSnapshot)
-      .subscribe((res) => {
+      .subscribe((res: boolean) => {
         expect(res).toBeTrue();
       });
   });
@@ -130,21 +92,21 @@ describe('ComponentGuard', () => {
 
     guard
       .canActivate(mockActivatedRouteSnapshot, mockRouterStateSnapshot)
-      .subscribe((res) => {
+      .subscribe((res: boolean) => {
         expect(res).toBeFalse();
       });
   });
 
   it('should issue an event if routing is denied', fakeAsync(() => {
     const mockActivatedRouteSnapshot: ActivatedRouteSnapshot = {
-      routeConfig: { path: 'transfer' }
+      routeConfig: { path: 'identity-verification' }
     } as unknown as ActivatedRouteSnapshot;
 
     const mockRouterStateSnapshot: RouterStateSnapshot =
       {} as RouterStateSnapshot;
 
     let config = TestConstants.CONFIG;
-    config.features = ['backstopped_funding_source'];
+    config.features = ['identity-verification'];
     MockConfigService.getConfig$.and.returnValue(of(config));
 
     guard

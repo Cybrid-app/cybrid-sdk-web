@@ -25,22 +25,6 @@ export class ComponentGuard implements CanActivate {
       map((config) => {
         if (
           config.features.includes(
-            BankBankModel.FeaturesEnum.BackstoppedFundingSource
-          ) &&
-          !Constants.COMPONENTS_BACKSTOPPED.includes(
-            <string>route.routeConfig?.path
-          )
-        ) {
-          this.eventService.handleEvent(
-            LEVEL.INFO,
-            CODE.ROUTING_DENIED,
-            'Component: ' +
-              route.routeConfig?.path +
-              ' is unavailable to backstopped banks'
-          );
-          return false;
-        } else if (
-          config.features.includes(
             BankBankModel.FeaturesEnum.AttestationIdentityRecords
           ) &&
           !Constants.COMPONENTS_ATTESTATION.includes(

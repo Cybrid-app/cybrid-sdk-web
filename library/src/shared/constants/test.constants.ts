@@ -243,7 +243,7 @@ export class TestConstants {
         state: 'created'
       },
       {
-        type: 'backstopped',
+        type: 'fiat',
         guid: 'c907b45a8eae49f135dc0d2eee734dce',
         created_at: '2022-04-30T03:40:54.677Z',
         asset: 'USD',
