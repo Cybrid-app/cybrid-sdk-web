@@ -1,4 +1,12 @@
-import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  Renderer2
+} from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 
 import {
@@ -42,7 +50,8 @@ import { Constants } from '@constants';
 @Component({
   selector: 'app-identity-verification',
   templateUrl: './identity-verification.component.html',
-  styleUrls: ['./identity-verification.component.scss']
+  styleUrls: ['./identity-verification.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class IdentityVerificationComponent implements OnInit, OnDestroy {
   identity$ =
@@ -74,7 +83,8 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
     private errorService: ErrorService,
     private identityVerificationService: IdentityVerificationService,
     private routingService: RoutingService,
-    private _renderer2: Renderer2
+    private _renderer2: Renderer2,
+    private ngZone: NgZone
   ) {}
 
   ngOnInit(): void {
@@ -224,31 +234,35 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   }
 
   handlePersonaState(identity: IdentityVerificationWithDetailsBankModel): void {
-    switch (identity.persona_state) {
-      case 'waiting':
-        this.bootstrapPersona(identity.persona_inquiry_id!);
-        break;
-      case 'pending':
-        this.bootstrapPersona(identity.persona_inquiry_id!);
-        break;
-      case 'reviewing':
-        this.identity$.next(identity);
-        this.isLoading$.next(false);
-        break;
-      case 'processing':
-        this.identity$.next(identity);
-        this.isLoading$.next(false);
-        break;
-      case 'expired':
-        this.getCustomerStatus();
-        break;
-      case 'completed':
-        this.identity$.next(identity);
-        this.isLoading$.next(false);
-        break;
-      case 'unknown':
-        this.error$.next(true);
-    }
+    console.log(identity);
+    console.log('handlePersonaState');
+    this.ngZone.run(() => {
+      switch (identity.persona_state) {
+        case 'waiting':
+          this.bootstrapPersona(identity.persona_inquiry_id!);
+          break;
+        case 'pending':
+          this.bootstrapPersona(identity.persona_inquiry_id!);
+          break;
+        case 'reviewing':
+          this.isLoading$.next(false);
+          this.identity$.next(identity);
+          break;
+        case 'processing':
+          this.isLoading$.next(false);
+          this.identity$.next(identity);
+          break;
+        case 'expired':
+          this.getCustomerStatus();
+          break;
+        case 'completed':
+          this.isLoading$.next(false);
+          this.identity$.next(identity);
+          break;
+        case 'unknown':
+          this.error$.next(true);
+      }
+    });
   }
 
   getPersonaLanguageAlias(locale: string): string {
