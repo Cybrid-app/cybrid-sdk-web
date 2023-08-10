@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, Inject, NgZone, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  Renderer2
+} from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 
 import {
@@ -43,7 +51,7 @@ import { Constants } from '@constants';
   selector: 'app-identity-verification',
   templateUrl: './identity-verification.component.html',
   styleUrls: ['./identity-verification.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class IdentityVerificationComponent implements OnInit, OnDestroy {
   identity$ =
@@ -77,7 +85,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
     private routingService: RoutingService,
     private _renderer2: Renderer2,
     private ngZone: NgZone
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.eventService.handleEvent(
@@ -254,7 +262,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
         case 'unknown':
           this.error$.next(true);
       }
-    })
+    });
   }
 
   getPersonaLanguageAlias(locale: string): string {
