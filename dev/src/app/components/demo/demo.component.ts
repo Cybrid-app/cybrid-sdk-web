@@ -77,12 +77,6 @@ export class DemoComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  isBackstopped(): boolean {
-    return this.configService.config$
-      .getValue()!
-      .features.includes(BankBankModel.FeaturesEnum.BackstoppedFundingSource);
-  }
-
   getTooltip(component: string): string {
     if (component == 'account-details')
       return 'Disabled: Navigate via account-list';
@@ -92,9 +86,7 @@ export class DemoComponent implements OnInit, OnDestroy {
     )
       return 'Disabled: Sign in as a private user to access';
     else {
-      if (this.isBackstopped() && this.isDisabled(component)) {
-        return 'Component is unavailable to backstopped banks';
-      } else return '';
+      return '';
     }
   }
 
@@ -106,9 +98,7 @@ export class DemoComponent implements OnInit, OnDestroy {
     )
       return true;
     else {
-      if (this.isBackstopped()) {
-        return !Constants.COMPONENTS_BACKSTOPPED.includes(component);
-      } else return false;
+      return false;
     }
   }
 
