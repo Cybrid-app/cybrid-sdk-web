@@ -10,7 +10,7 @@ orbs:
 executors:
   cypress:
     docker:
-      - image: cypress/base:18.15.0
+      - image: cypress/base:18.16.1
 
 jobs:
   publish:
