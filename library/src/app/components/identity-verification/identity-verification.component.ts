@@ -148,6 +148,11 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
         this.isLoading$.next(false);
         break;
       case 'rejected':
+        this.eventService.handleEvent(
+          LEVEL.WARNING,
+          CODE.KYC_REJECTED,
+          'Customer KYC has been rejected'
+        );
         this.customer$.next(customer);
         this.isLoading$.next(false);
         break;

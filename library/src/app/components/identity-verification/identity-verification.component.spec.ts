@@ -123,6 +123,19 @@ describe('IdentityVerificationComponent', () => {
     discardPeriodicTasks();
   }));
 
+  it('should log an event if the customer state is rejected', fakeAsync(() => {
+    let customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
+    customer.state = 'rejected';
+    MockIdentityVerificationService.getCustomer.and.returnValue(of(customer));
+
+    component.getCustomerStatus();
+    tick();
+
+    expect(MockEventService.handleEvent).toHaveBeenCalled();
+
+    discardPeriodicTasks();
+  }));
+
   it('should verify identity', fakeAsync(() => {
     const handleIdentityVerificationStateSpy = spyOn(
       component,
