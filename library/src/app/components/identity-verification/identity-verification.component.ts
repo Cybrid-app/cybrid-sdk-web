@@ -85,7 +85,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
     private routingService: RoutingService,
     private _renderer2: Renderer2,
     private ngZone: NgZone
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.eventService.handleEvent(
@@ -152,7 +152,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
           LEVEL.WARNING,
           CODE.KYC_REJECTED,
           'Customer KYC has been rejected'
-        )
+        );
         this.customer$.next(customer);
         this.isLoading$.next(false);
         break;
