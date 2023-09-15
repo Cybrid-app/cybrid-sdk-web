@@ -2,15 +2,15 @@ version: 2.1
 
 orbs:
   node: circleci/node@5.1.0
-  browser-tools: circleci/browser-tools@1.4.5
+  browser-tools: circleci/browser-tools@1.4.6
   cypress: cypress-io/cypress@2.2.0
   codecov: codecov/codecov@3.2.5
-  jq: circleci/jq@2.2.1
+  jq: circleci/jq@3.0.0
 
 executors:
   cypress:
     docker:
-      - image: cypress/base:20.5.0
+      - image: cypress/base:20.6.1
 
 jobs:
   publish:
