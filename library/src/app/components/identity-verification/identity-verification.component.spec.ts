@@ -349,6 +349,12 @@ describe('IdentityVerificationComponent', () => {
     expect(MockEventService.handleEvent).toHaveBeenCalled();
   });
 
+  it('should log an event when onComplete', () => {
+    component.personaOnComplete();
+
+    expect(MockEventService.handleEvent).toHaveBeenCalled();
+  });
+
   it('should route when onComplete()', () => {
     component.onComplete();
 

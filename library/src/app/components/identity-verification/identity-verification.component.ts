@@ -280,6 +280,11 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   }
 
   personaOnComplete(): void {
+    this.eventService.handleEvent(
+      LEVEL.INFO,
+      CODE.KYC_SUBMITTED,
+      'KYC has been submitted'
+    );
     this.checkIdentity();
   }
 
