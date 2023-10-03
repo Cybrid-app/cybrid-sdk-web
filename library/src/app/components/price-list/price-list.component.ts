@@ -67,7 +67,7 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
     private routingService: RoutingService,
     private assetService: AssetService,
     private pricesService: PricesService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.eventService.handleEvent(
