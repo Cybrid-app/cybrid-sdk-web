@@ -86,7 +86,7 @@ export class AssetService {
     return this.assetList$.asObservable();
   }
 
-  getAsset(code: string): any {
+  getAsset(code: string): any | null {
     const asset = this.assetList.find((list) => {
       return list.code == code.toUpperCase();
     });
@@ -101,6 +101,8 @@ export class AssetService {
       this.errorService.handleError(
         new Error('Error retrieving asset data for: ' + `${code}`)
       );
+
+      return null;
     }
   }
 }
