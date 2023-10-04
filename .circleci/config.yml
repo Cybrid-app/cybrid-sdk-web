@@ -202,6 +202,8 @@ workflows:
           store_artifacts: true
 
       - publish:
+          requires:
+            - test
           filters:
             branches:
               only:
