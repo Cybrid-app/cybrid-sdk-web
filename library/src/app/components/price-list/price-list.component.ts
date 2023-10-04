@@ -120,17 +120,22 @@ export class PriceListComponent implements OnInit, AfterViewChecked, OnDestroy {
           const data: Array<SymbolPrice> = [];
           list.forEach((model) => {
             if (model.symbol) {
-              const [asset, counter_asset] = symbolSplit(model.symbol);
-              const symbol: SymbolPrice = {
-                asset: this.assetService.getAsset(asset),
-                counter_asset: this.assetService.getAsset(counter_asset),
-                symbol: model.symbol,
-                buy_price: model.buy_price,
-                sell_price: model.sell_price,
-                buy_price_last_updated_at: model.buy_price_last_updated_at,
-                sell_price_last_updated_at: model.sell_price_last_updated_at
-              };
-              data.push(symbol);
+              const [_asset, _counter_asset] = symbolSplit(model.symbol);
+              let asset = this.assetService.getAsset(_asset);
+              let counter_asset = this.assetService.getAsset(_counter_asset);
+
+              if (asset && counter_asset) {
+                const symbol: SymbolPrice = {
+                  asset: asset,
+                  counter_asset: counter_asset,
+                  symbol: model.symbol,
+                  buy_price: model.buy_price,
+                  sell_price: model.sell_price,
+                  buy_price_last_updated_at: model.buy_price_last_updated_at,
+                  sell_price_last_updated_at: model.sell_price_last_updated_at
+                };
+                data.push(symbol);
+              }
             }
           });
           this.eventService.handleEvent(
