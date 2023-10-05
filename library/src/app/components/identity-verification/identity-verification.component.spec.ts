@@ -353,7 +353,7 @@ describe('IdentityVerificationComponent', () => {
       expect(handleIdentityVerificationStateSpy).toHaveBeenCalled();
     });
 
-    xit('should handle completed state', () => {
+    it('should handle completed state', () => {
       let identityVerification = {
         ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
       };
