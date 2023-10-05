@@ -36,7 +36,11 @@ describe('IdentityVerificationService', () => {
   });
   let MockIdentityVerificationsService = jasmine.createSpyObj(
     'IdentityVerificationsService',
-    ['createIdentityVerification', 'getIdentityVerification']
+    [
+      'createIdentityVerification',
+      'getIdentityVerification',
+      'listIdentityVerifications'
+    ]
   );
   const error$ = throwError(() => {
     new Error('Error');
@@ -75,6 +79,9 @@ describe('IdentityVerificationService', () => {
     );
     MockIdentityVerificationsService.getIdentityVerification.and.returnValue(
       of(TestConstants.IDENTITY_VERIFICATION_BANK_MODEL)
+    );
+    MockIdentityVerificationsService.listIdentityVerifications.and.returnValue(
+      of(TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL)
     );
     MockIdentityVerificationsService = TestBed.inject(
       IdentityVerificationsService
@@ -143,6 +150,30 @@ describe('IdentityVerificationService', () => {
 
     // Reset
     MockIdentityVerificationsService.getIdentityVerification.and.returnValue(
+      TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
+    );
+  });
+
+  it('should list identity verifications', () => {
+    service.listIdentityVerifications().subscribe();
+
+    expect(
+      MockIdentityVerificationsService.listIdentityVerifications
+    ).toHaveBeenCalled();
+  });
+
+  it('should handle error on listIdentityVerifications()', () => {
+    MockIdentityVerificationsService.listIdentityVerifications.and.returnValue(
+      error$
+    );
+
+    service.listIdentityVerifications().subscribe();
+
+    expect(MockErrorService.handleError).toHaveBeenCalled();
+    expect(MockEventService.handleEvent).toHaveBeenCalled();
+
+    // Reset
+    MockIdentityVerificationsService.listIdentityVerifications.and.returnValue(
       TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
     );
   });

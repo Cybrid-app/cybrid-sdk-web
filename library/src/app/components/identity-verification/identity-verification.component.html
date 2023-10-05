@@ -60,11 +60,9 @@
           <button mat-stroked-button (click)="onCancel()">
             {{ 'cancel' | translate }}
           </button>
-          <button
-            mat-flat-button
-            color="primary"
-            (click)="verifyIdentity(); isCanceled = !isCanceled"
-          >
+          <button mat-flat-button color="primary" (click)="
+              checkExistingIdentityVerifications(); isCanceled = !isCanceled
+            ">
             {{ 'resume' | translate }}
           </button>
         </div>

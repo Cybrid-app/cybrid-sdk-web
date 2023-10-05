@@ -141,7 +141,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   handleCustomerState(customer: CustomerBankModel): void {
     switch (customer.state) {
       case 'unverified':
-        this.verifyIdentity();
+        this.checkExistingIdentityVerifications();
         break;
       case 'verified':
         this.customer$.next(customer);
@@ -159,6 +159,37 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
       default:
         this.error$.next(true);
     }
+  }
+
+  /**
+   * Checks for an existing identity verification
+   *
+   * Handles most recent IDV that exists in a waiting state
+   * Creates new IDV if no IDV exists or the state is not waiting
+   **/
+  checkExistingIdentityVerifications(): void {
+    this.identityVerificationService
+      .listIdentityVerifications()
+      .pipe(
+        map((list) => list.objects[0]),
+        switchMap((identity) => {
+          if (
+            !identity ||
+            identity.state !== IdentityVerificationBankModel.StateEnum.Waiting
+          ) {
+            this.verifyIdentity();
+            return of(undefined);
+          }
+          this.identityVerificationGuid = identity?.guid;
+          return this.identityVerificationService.getIdentityVerification(
+            <string>identity.guid
+          );
+        }),
+        map((identity) => {
+          if (identity) this.handleIdentityVerificationState(identity);
+        })
+      )
+      .subscribe();
   }
 
   /**
@@ -239,8 +270,6 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   }
 
   handlePersonaState(identity: IdentityVerificationWithDetailsBankModel): void {
-    console.log(identity);
-    console.log('handlePersonaState');
     this.ngZone.run(() => {
       switch (identity.persona_state) {
         case 'waiting':

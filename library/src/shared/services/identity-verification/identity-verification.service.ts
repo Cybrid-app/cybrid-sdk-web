@@ -14,6 +14,7 @@ import {
 import {
   CustomerBankModel,
   CustomersService,
+  IdentityVerificationListBankModel,
   IdentityVerificationsService,
   IdentityVerificationWithDetailsBankModel,
   PostIdentityVerificationBankModel
@@ -98,6 +99,21 @@ export class IdentityVerificationService implements OnDestroy {
           LEVEL.ERROR,
           CODE.DATA_ERROR,
           'There was an error fetching the identity verification',
+          err
+        );
+        this.errorService.handleError(err);
+        return of(err);
+      })
+    );
+  }
+
+  listIdentityVerifications(): Observable<IdentityVerificationListBankModel> {
+    return this.identityVerificationService.listIdentityVerifications().pipe(
+      catchError((err) => {
+        this.eventService.handleEvent(
+          LEVEL.ERROR,
+          CODE.DATA_ERROR,
+          'There was an error listing identity verifications',
           err
         );
         this.errorService.handleError(err);
