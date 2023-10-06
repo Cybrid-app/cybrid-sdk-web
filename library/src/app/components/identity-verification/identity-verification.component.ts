@@ -162,7 +162,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Creates an identity verification and polls on the status
+   * Checks for waiting IDVs, creates a new IDV otherwise
    *
    * Skips IDV with a state of storing
    * Handles IDV that returns a non-storing state, else returns an error
@@ -170,23 +170,37 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   verifyIdentity(): void {
     this.isLoading$.next(true);
 
+    // Fetch the latest IDV
+    const page = '0';
+    const perPage = '1';
+
     const poll = new Poll(this.pollConfig);
 
     this.identityVerificationService
-      .createIdentityVerification()
+      .listIdentityVerifications(page, perPage)
       .pipe(
+        map((list) => list.objects[0]),
         switchMap((identity) => {
-          this.identityVerificationGuid = identity.guid;
-          return poll.start();
+          return identity &&
+            identity.state !== IdentityVerificationBankModel.StateEnum.Expired
+            ? of(identity)
+            : this.identityVerificationService.createIdentityVerification();
         }),
+        tap((identity) => {
+          this.identityVerificationGuid = identity.guid;
+        }),
+        switchMap(() => poll.start()),
         concatMap(() =>
           this.identityVerificationService.getIdentityVerification(
             <string>this.identityVerificationGuid
           )
         ),
         takeUntil(merge(poll.session$, this.unsubscribe$)),
-        skipWhile((identity) => identity.state == 'storing'),
-        map((identity) => {
+        skipWhile(
+          (identity) =>
+            identity.state == IdentityVerificationBankModel.StateEnum.Storing
+        ),
+        tap((identity) => {
           poll.stop();
           this.handleIdentityVerificationState(identity);
         }),
@@ -239,8 +253,6 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   }
 
   handlePersonaState(identity: IdentityVerificationWithDetailsBankModel): void {
-    console.log(identity);
-    console.log('handlePersonaState');
     this.ngZone.run(() => {
       switch (identity.persona_state) {
         case 'waiting':
