@@ -25,7 +25,6 @@ import {
 import { IdentityVerificationComponent } from '@components';
 import { TestConstants } from '@constants';
 import { SharedModule } from '../../../shared/modules/shared.module';
-import { IdentityVerificationBankModel } from '@cybrid/cybrid-api-bank-angular';
 
 describe('IdentityVerificationComponent', () => {
   let component: IdentityVerificationComponent;
@@ -145,39 +144,57 @@ describe('IdentityVerificationComponent', () => {
     discardPeriodicTasks();
   }));
 
-  it('should verify identity', fakeAsync(() => {
-    const handleIdentityVerificationStateSpy = spyOn(
-      component,
-      'handleIdentityVerificationState'
-    );
+  describe('handleIdentityVerificationState', () => {
+    describe('with waiting state', () => {
+      it('handles Persona state', () => {
+        const handlePersonaStateSpy = spyOn(component, 'handlePersonaState');
+        const identityVerificationBankModel = {
+          ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
+        };
+        identityVerificationBankModel.state = 'waiting';
 
-    component.verifyIdentity();
+        component.handleIdentityVerificationState(
+          identityVerificationBankModel
+        );
 
-    tick();
-    expect(
-      MockIdentityVerificationService.getIdentityVerification
-    ).toHaveBeenCalled();
-    expect(handleIdentityVerificationStateSpy).toHaveBeenCalledWith(
-      TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
-    );
+        expect(handlePersonaStateSpy).toHaveBeenCalledWith(
+          identityVerificationBankModel
+        );
+      });
+    });
 
-    discardPeriodicTasks();
-  }));
+    describe('with completed state', () => {
+      const identityVerificationBankModel = {
+        ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
+      };
+      identityVerificationBankModel.state = 'completed';
 
-  it('should check existing identity verifications', fakeAsync(() => {
-    component.checkExistingIdentityVerifications();
+      it('sets the identity$', () => {
+        const identity$Spy = spyOn(component.identity$, 'next');
 
-    tick();
-    expect(
-      MockIdentityVerificationService.listIdentityVerifications
-    ).toHaveBeenCalled();
+        component.handleIdentityVerificationState(
+          identityVerificationBankModel
+        );
 
-    discardPeriodicTasks();
-  }));
+        expect(identity$Spy).toHaveBeenCalledWith(
+          identityVerificationBankModel
+        );
+      });
+
+      it('sets the loading state', () => {
+        const isLoading$Spy = spyOn(component.isLoading$, 'next');
+
+        component.handleIdentityVerificationState(
+          identityVerificationBankModel
+        );
+
+        expect(isLoading$Spy).toHaveBeenCalledWith(false);
+      });
+    });
+  });
 
   describe('with no existing identity verifications', () => {
-    it('should verify identity', fakeAsync(() => {
-      const verifyIdentitySpy = spyOn(component, 'verifyIdentity');
+    it('should create an identity verification', fakeAsync(() => {
       let identityVerificationListBankModel = {
         ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL
       };
@@ -187,10 +204,12 @@ describe('IdentityVerificationComponent', () => {
         of(identityVerificationListBankModel)
       );
 
-      component.checkExistingIdentityVerifications();
+      component.verifyIdentity();
 
       tick();
-      expect(verifyIdentitySpy).toHaveBeenCalled();
+      expect(
+        MockIdentityVerificationService.createIdentityVerification
+      ).toHaveBeenCalled();
 
       discardPeriodicTasks();
 
@@ -202,9 +221,8 @@ describe('IdentityVerificationComponent', () => {
   });
 
   describe('with existing identity verifications', () => {
-    describe('with an identity verification in a non-waiting state', () => {
-      it('should verify identity', fakeAsync(() => {
-        const verifyIdentitySpy = spyOn(component, 'verifyIdentity');
+    describe('with expired state', () => {
+      it('should create an identity verification', fakeAsync(() => {
         let identityVerificationListBankModel = {
           ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL
         };
@@ -214,10 +232,12 @@ describe('IdentityVerificationComponent', () => {
           of(identityVerificationListBankModel)
         );
 
-        component.checkExistingIdentityVerifications();
+        component.verifyIdentity();
 
         tick();
-        expect(verifyIdentitySpy).toHaveBeenCalled();
+        expect(
+          MockIdentityVerificationService.createIdentityVerification
+        ).toHaveBeenCalled();
 
         discardPeriodicTasks();
 
@@ -228,9 +248,9 @@ describe('IdentityVerificationComponent', () => {
       }));
     });
 
-    describe('with an identity verfication in the waiting state', () => {
+    describe('with waiting state', () => {
       it('should get the identity verification', fakeAsync(() => {
-        component.checkExistingIdentityVerifications();
+        component.verifyIdentity();
 
         tick();
         expect(
@@ -239,51 +259,8 @@ describe('IdentityVerificationComponent', () => {
 
         discardPeriodicTasks();
       }));
-
-      it('should handle the identity verification state', fakeAsync(() => {
-        const handleIdentityVerificationStateSpy = spyOn(
-          component,
-          'handleIdentityVerificationState'
-        );
-
-        component.checkExistingIdentityVerifications();
-
-        tick();
-        expect(handleIdentityVerificationStateSpy).toHaveBeenCalled();
-      }));
     });
   });
-
-  it('should check identity', fakeAsync(() => {
-    let mockIdentityWithOutcome = {
-      ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
-    };
-    mockIdentityWithOutcome.outcome = 'passed';
-    MockIdentityVerificationService.getIdentityVerification.and.returnValue(
-      of(mockIdentityWithOutcome)
-    );
-
-    const handleIdentityVerificationStateSpy = spyOn(
-      component,
-      'handleIdentityVerificationState'
-    );
-
-    component.identityVerificationGuid = '123';
-    component.checkIdentity();
-
-    tick();
-    expect(
-      MockIdentityVerificationService.getIdentityVerification
-    ).toHaveBeenCalled();
-    expect(handleIdentityVerificationStateSpy).toHaveBeenCalled();
-
-    discardPeriodicTasks();
-
-    // Reset
-    MockIdentityVerificationService.getIdentityVerification.and.returnValue(
-      of(TestConstants.IDENTITY_VERIFICATION_BANK_MODEL)
-    );
-  }));
 
   it('should timeout after polling', fakeAsync(() => {
     const identitySpy = spyOn(component.identity$, 'next');
@@ -339,31 +316,6 @@ describe('IdentityVerificationComponent', () => {
 
     discardPeriodicTasks();
   }));
-
-  describe('when handling the identity verification state', () => {
-    it('should handle waiting state', () => {
-      const handleIdentityVerificationStateSpy = spyOn(
-        component,
-        'handleIdentityVerificationState'
-      );
-
-      component.handleIdentityVerificationState(
-        TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
-      );
-      expect(handleIdentityVerificationStateSpy).toHaveBeenCalled();
-    });
-
-    it('should handle completed state', () => {
-      let identityVerification = {
-        ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
-      };
-
-      identityVerification.state = 'completed';
-
-      component.handleIdentityVerificationState(identityVerification);
-      component.isLoading$.subscribe((res: boolean) => expect(res).toBeFalse());
-    });
-  });
 
   it('should handle persona state', () => {
     const bootstrapPersonaSpy = spyOn(component, 'bootstrapPersona');

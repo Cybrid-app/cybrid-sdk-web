@@ -141,7 +141,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   handleCustomerState(customer: CustomerBankModel): void {
     switch (customer.state) {
       case 'unverified':
-        this.checkExistingIdentityVerifications();
+        this.verifyIdentity();
         break;
       case 'verified':
         this.customer$.next(customer);
@@ -162,38 +162,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Checks for an existing identity verification
-   *
-   * Handles most recent IDV that exists in a waiting state
-   * Creates new IDV if no IDV exists or the state is not waiting
-   **/
-  checkExistingIdentityVerifications(): void {
-    this.identityVerificationService
-      .listIdentityVerifications()
-      .pipe(
-        map((list) => list.objects[0]),
-        switchMap((identity) => {
-          if (
-            !identity ||
-            identity.state !== IdentityVerificationBankModel.StateEnum.Waiting
-          ) {
-            this.verifyIdentity();
-            return of(undefined);
-          }
-          this.identityVerificationGuid = identity?.guid;
-          return this.identityVerificationService.getIdentityVerification(
-            <string>identity.guid
-          );
-        }),
-        map((identity) => {
-          if (identity) this.handleIdentityVerificationState(identity);
-        })
-      )
-      .subscribe();
-  }
-
-  /**
-   * Creates an identity verification and polls on the status
+   * Checks for waiting IDVs, creates a new IDV otherwise
    *
    * Skips IDV with a state of storing
    * Handles IDV that returns a non-storing state, else returns an error
@@ -201,23 +170,37 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   verifyIdentity(): void {
     this.isLoading$.next(true);
 
+    // Fetch the latest IDV
+    const page = '0';
+    const perPage = '1';
+
     const poll = new Poll(this.pollConfig);
 
     this.identityVerificationService
-      .createIdentityVerification()
+      .listIdentityVerifications(page, perPage)
       .pipe(
+        map((list) => list.objects[0]),
         switchMap((identity) => {
-          this.identityVerificationGuid = identity.guid;
-          return poll.start();
+          return identity &&
+            identity.state !== IdentityVerificationBankModel.StateEnum.Expired
+            ? of(identity)
+            : this.identityVerificationService.createIdentityVerification();
         }),
+        tap((identity) => {
+          this.identityVerificationGuid = identity.guid;
+        }),
+        switchMap(() => poll.start()),
         concatMap(() =>
           this.identityVerificationService.getIdentityVerification(
             <string>this.identityVerificationGuid
           )
         ),
         takeUntil(merge(poll.session$, this.unsubscribe$)),
-        skipWhile((identity) => identity.state == 'storing'),
-        map((identity) => {
+        skipWhile(
+          (identity) =>
+            identity.state == IdentityVerificationBankModel.StateEnum.Storing
+        ),
+        tap((identity) => {
           poll.stop();
           this.handleIdentityVerificationState(identity);
         }),

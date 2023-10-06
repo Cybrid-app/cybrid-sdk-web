@@ -107,18 +107,23 @@ export class IdentityVerificationService implements OnDestroy {
     );
   }
 
-  listIdentityVerifications(): Observable<IdentityVerificationListBankModel> {
-    return this.identityVerificationService.listIdentityVerifications().pipe(
-      catchError((err) => {
-        this.eventService.handleEvent(
-          LEVEL.ERROR,
-          CODE.DATA_ERROR,
-          'There was an error listing identity verifications',
-          err
-        );
-        this.errorService.handleError(err);
-        return of(err);
-      })
-    );
+  listIdentityVerifications(
+    page?: string,
+    perPage?: string
+  ): Observable<IdentityVerificationListBankModel> {
+    return this.identityVerificationService
+      .listIdentityVerifications(page, perPage)
+      .pipe(
+        catchError((err) => {
+          this.eventService.handleEvent(
+            LEVEL.ERROR,
+            CODE.DATA_ERROR,
+            'There was an error listing identity verifications',
+            err
+          );
+          this.errorService.handleError(err);
+          return of(err);
+        })
+      );
   }
 }
