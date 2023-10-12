@@ -370,7 +370,7 @@ describe('IdentityVerificationComponent', () => {
     // Define Persona client with open method
     let client = {
       options: { inquiryId: '' },
-      open: () => { }
+      open: () => {}
     };
 
     component.personaOnReady(client);
