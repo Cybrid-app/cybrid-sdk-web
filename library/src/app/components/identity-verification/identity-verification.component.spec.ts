@@ -304,6 +304,8 @@ describe('IdentityVerificationComponent', () => {
   }));
 
   it('should handle errors when calling verifyIdentity()', fakeAsync(() => {
+    MockIdentityVerificationService.getCustomer.and.returnValue(error$);
+    component.getCustomerStatus();
     MockIdentityVerificationService.createIdentityVerification.and.returnValue(
       error$
     );
@@ -368,7 +370,7 @@ describe('IdentityVerificationComponent', () => {
     // Define Persona client with open method
     let client = {
       options: { inquiryId: '' },
-      open: () => {}
+      open: () => { }
     };
 
     component.personaOnReady(client);
