@@ -32,7 +32,7 @@ import {
 
 // Utility
 import { Constants, TestConstants } from '@constants';
-import { AssetPipe, MockAssetPipe, TruncatePipe } from '@pipes';
+import { AssetFormatPipe, MockAssetFormatPipe, TruncatePipe } from '@pipes';
 import { SharedModule } from '../../../../shared/modules/shared.module';
 
 describe('TransferConfirmComponent', () => {
@@ -75,7 +75,11 @@ describe('TransferConfirmComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [TransferConfirmComponent, TruncatePipe, MockAssetPipe],
+      declarations: [
+        TransferConfirmComponent,
+        TruncatePipe,
+        MockAssetFormatPipe
+      ],
       imports: [
         BrowserAnimationsModule,
         HttpClientTestingModule,
@@ -94,7 +98,7 @@ describe('TransferConfirmComponent', () => {
           useValue: MockTransferConfirmData
         },
         { provide: MatDialogRef, useValue: MockDialog },
-        { provide: AssetPipe, useClass: MockAssetPipe },
+        { provide: AssetFormatPipe, useClass: MockAssetFormatPipe },
         { provide: EventService, useValue: MockEventService },
         { provide: ErrorService, useValue: MockErrorService },
         { provide: ConfigService, useValue: MockConfigService },

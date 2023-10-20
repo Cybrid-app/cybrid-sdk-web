@@ -35,7 +35,7 @@ import { TransferComponent } from '@components';
 
 // Utility
 import { TestConstants } from '@constants';
-import { AssetPipe, MockAssetPipe } from '@pipes';
+import { AssetFormatPipe, MockAssetFormatPipe } from '@pipes';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 describe('TransferComponent', () => {
@@ -92,7 +92,7 @@ describe('TransferComponent', () => {
         })
       ],
       providers: [
-        { provide: AssetPipe, useClass: MockAssetPipe },
+        { provide: AssetFormatPipe, useClass: MockAssetFormatPipe },
         { provide: EventService, useValue: MockEventService },
         { provide: ErrorService, useValue: MockErrorService },
         { provide: ConfigService, useValue: MockConfigService },

@@ -1,8 +1,8 @@
 <h2 mat-dialog-title>
   {{
-    ('transfer.' + data.transferBankModel.side | translate) +
-      ' ' +
-      ('transfer.details.details' | translate)
+  ('transfer.' + data.transferBankModel.side | translate) +
+  ' ' +
+  ('transfer.details.details' | translate)
   }}
 </h2>
 <mat-dialog-content>
@@ -10,28 +10,25 @@
     <span>{{ 'transfer.details.state' | translate }}</span>
     <div class="state">
       <ng-container [ngSwitch]="transfer.state">
-        <mat-icon
-          *ngSwitchCase="'storing' || 'initiating' || 'pending'"
-          color="primary"
-          >pending</mat-icon
-        >
-        <mat-icon *ngSwitchCase="'completed'" color="primary"
-          >check_circle</mat-icon
-        >
+        <mat-icon *ngSwitchCase="'storing' || 'initiating' || 'pending'" color="primary">pending</mat-icon>
+        <mat-icon *ngSwitchCase="'completed'" color="primary">check_circle</mat-icon>
         <mat-icon *ngSwitchCase="'failed'" color="primary">cancel</mat-icon>
       </ng-container>
       <span>{{
         transfer.state === 'storing' || 'initiating' || 'pending'
-          ? ('transfer.processing' | translate)
-          : (transfer.state | titlecase)
-      }}</span>
+        ? ('transfer.processing' | translate)
+        : (transfer.state | titlecase)
+        }}</span>
     </div>
   </div>
   <mat-divider></mat-divider>
   <div class="cybrid-list-item">
     <span>{{ 'transfer.amount' | translate }}</span>
     <div>
-      <span>{{ (transfer.amount ?? transfer.estimated_amount! | asset : data.asset) + ' ' }}</span>
+      <span>{{
+        (transfer.amount ?? transfer.estimated_amount!
+        | assetFormat : data.asset.code) + ' '
+        }}</span>
       <span class="mat-hint">{{ data.asset.code! }}</span>
     </div>
   </div>
@@ -49,7 +46,7 @@
       <span>{{ data.externalBankAccountBankModel.plaid_account_name }}</span>
       <span class="mat-hint">{{
         ' (' + data.externalBankAccountBankModel.plaid_account_mask + ')'
-      }}</span>
+        }}</span>
     </div>
   </div>
 </mat-dialog-content>

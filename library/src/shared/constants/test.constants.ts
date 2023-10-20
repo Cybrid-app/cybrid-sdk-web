@@ -20,12 +20,12 @@ import {
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
-import { ComponentConfig, Asset, Account } from '@services';
+import { ComponentConfig, Asset } from '@services';
 
 // Components
 import { SymbolPrice } from '@components';
 import { Constants } from '@constants';
-import { AccountOverview } from '../services/account/account.service';
+import { AccountBankModelWithDetails } from '../services/account/account.service';
 
 export class TestConstants {
   // For JWT validation testing
@@ -280,123 +280,25 @@ export class TestConstants {
     state: 'created'
   };
 
-  static ACCOUNT_MODEL: Account = {
-    asset: {
-      code: 'BTC',
-      decimals: '8',
-      name: 'Bitcoin',
-      symbol: '₿',
-      type: 'crypto',
-      url: 'https://images.cybrid.xyz/sdk/assets/svg/color/btc.svg'
-    },
-    counter_asset: {
-      code: 'USD',
-      decimals: '2',
-      name: 'United States Dollar',
-      symbol: '$',
-      type: 'fiat',
-      url: 'https://images.cybrid.xyz/sdk/assets/svg/color/usd.svg'
-    },
+  static ACCOUNT_BANK_MODEL_WITH_DETAILS: AccountBankModelWithDetails = {
+    type: 'trading',
+    guid: 'e65a460dc4d7ef94b38c1234399184f7',
+    created_at: '2023-10-17T17:33:49.318Z',
+    asset: 'BTC',
+    name: 'BTC account for 8c29c7ef95cb3cd565618fd081f161a1',
+    customer_guid: '8c29c7ef95cb3cd565618fd081f161a1',
+    platform_balance: '499000',
+    platform_available: '0',
+    state: 'created',
+    labels: null,
     price: {
       symbol: 'BTC-USD',
-      buy_price: '2129800',
-      sell_price: '2129700',
-      buy_price_last_updated_at: '2022-07-27T13:28:13.322Z',
-      sell_price_last_updated_at: '2022-07-27T13:28:13.322Z'
+      buy_price: '2844140',
+      sell_price: '2844052',
+      buy_price_last_updated_at: '2023-10-17T18:31:22.095Z',
+      sell_price_last_updated_at: '2023-10-17T18:31:22.095Z'
     },
-    value: 4944888.3490320295,
-    account: {
-      type: 'trading',
-      guid: '61dbf15e631571018ff808fa51746b46',
-      created_at: '2022-06-15T15:36:44.627Z',
-      asset: 'BTC',
-      name: 'Bitcoin',
-      customer_guid: 'e8dc9202e0e96a33b5b6a7b0cfb66c60',
-      platform_balance: '23218708499',
-      platform_available: '0',
-      state: 'created'
-    }
-  };
-
-  static ACCOUNT_OVERVIEW: AccountOverview = {
-    accounts: [
-      {
-        asset: {
-          type: 'crypto',
-          code: 'ETH',
-          name: 'Ethereum',
-          symbol: 'Ξ',
-          decimals: '18',
-          url: 'https://images.cybrid.xyz/sdk/assets/svg/color/eth.svg'
-        },
-        counter_asset: {
-          type: 'fiat',
-          code: 'USD',
-          name: 'United States Dollar',
-          symbol: '$',
-          decimals: '2',
-          url: 'https://images.cybrid.xyz/sdk/assets/svg/color/usd.svg'
-        },
-        price: {
-          symbol: 'ETH-USD',
-          buy_price: '150040',
-          sell_price: '150030',
-          buy_price_last_updated_at: '2022-07-27T16:52:36.137Z',
-          sell_price_last_updated_at: '2022-07-27T16:52:36.137Z'
-        },
-        value: 7498108.523601552,
-        account: {
-          type: 'trading',
-          guid: '85f532eff8604acc6aae30da86894eef',
-          created_at: '2022-06-15T15:37:20.950Z',
-          asset: 'ETH',
-          name: 'Ethereum',
-          customer_guid: 'e8dc9202e0e96a33b5b6a7b0cfb66c60',
-          platform_balance: '4.9977394678408e21',
-          platform_available: '0',
-          state: 'created'
-        }
-      },
-      {
-        asset: {
-          type: 'crypto',
-          code: 'BTC',
-          name: 'Bitcoin',
-          symbol: '₿',
-          decimals: '8',
-          url: 'https://images.cybrid.xyz/sdk/assets/svg/color/btc.svg'
-        },
-        counter_asset: {
-          type: 'fiat',
-          code: 'USD',
-          name: 'United States Dollar',
-          symbol: '$',
-          decimals: '2',
-          url: 'https://images.cybrid.xyz/sdk/assets/svg/color/usd.svg'
-        },
-        price: {
-          symbol: 'BTC-USD',
-          buy_price: '2162300',
-          sell_price: '2162200',
-          buy_price_last_updated_at: '2022-07-27T16:52:36.137Z',
-          sell_price_last_updated_at: '2022-07-27T16:52:36.137Z'
-        },
-        value: 5020349.15165378,
-        account: {
-          type: 'trading',
-          guid: '64584e7102b3e0d17fcd32c2df01231c',
-          created_at: '2022-06-15T15:36:44.627Z',
-          asset: 'BTC',
-          name: 'Bitcoin',
-          customer_guid: 'e8dc9202e0e96a33b5b6a7b0cfb66c60',
-          platform_balance: '23218708499',
-          platform_available: '0',
-          state: 'created'
-        }
-      }
-    ],
-    balance: 12518457.675255332,
-    fiatAccount: {} as AccountBankModel
+    value: 14191.819479999998
   };
 
   // Account-details component test models

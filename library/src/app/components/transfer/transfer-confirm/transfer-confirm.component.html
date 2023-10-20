@@ -2,16 +2,18 @@
   <ng-container *ngIf="quote$ | async as quote">
     <h2 mat-dialog-title>
       {{
-        ('transfer.confirm.confirm' | translate) +
-          ' ' +
-          ('transfer.' + quote.side | translate)
+      ('transfer.confirm.confirm' | translate) +
+      ' ' +
+      ('transfer.' + quote.side | translate)
       }}
     </h2>
     <mat-dialog-content>
       <div class="cybrid-list-item">
         <span>{{ 'transfer.amount' | translate }}</span>
         <div>
-          <span>{{ (quote.deliver_amount! | asset : data.asset) + ' ' }}</span>
+          <span>{{
+            (quote.deliver_amount! | assetFormat : data.asset.code) + ' '
+            }}</span>
           <span class="mat-hint">{{ data.asset.code! }}</span>
         </div>
       </div>
@@ -28,10 +30,10 @@
         <div>
           <span>{{
             data.externalBankAccountBankModel.plaid_account_name
-          }}</span>
+            }}</span>
           <span class="mat-hint">{{
             ' (' + data.externalBankAccountBankModel.plaid_account_mask + ')'
-          }}</span>
+            }}</span>
         </div>
       </div>
     </mat-dialog-content>
@@ -39,12 +41,7 @@
       <button id="done" mat-stroked-button mat-dialog-close>
         {{ 'cancel' | translate }}
       </button>
-      <button
-        id="confirm"
-        color="primary"
-        mat-flat-button
-        (click)="onConfirmTransfer()"
-      >
+      <button id="confirm" color="primary" mat-flat-button (click)="onConfirmTransfer()">
         <span>{{ 'confirm' | translate }}</span>
       </button>
     </mat-dialog-actions>
@@ -55,9 +52,9 @@
   <app-loading>
     <h2>
       {{
-        ('transfer.processing' | translate) +
-          ' ' +
-          ('transfer.' + quote$.getValue().side | translate)
+      ('transfer.processing' | translate) +
+      ' ' +
+      ('transfer.' + quote$.getValue().side | translate)
       }}
     </h2>
   </app-loading>

@@ -11,12 +11,14 @@
         <div class="cybrid-list-item">
           <span>{{
             ('trade.confirm.purchase' | translate) +
-              ' ' +
-              ('trade.amount' | translate)
-          }}</span>
+            ' ' +
+            ('trade.amount' | translate)
+            }}</span>
           <div>
             <span>
-              {{ (quote.deliver_amount! | asset : counter_asset) + ' ' }}
+              {{
+              (quote.deliver_amount! | assetFormat : counter_asset.code) + ' '
+              }}
             </span>
             <span class="mat-hint">{{ counter_asset.code }}</span>
           </div>
@@ -25,13 +27,13 @@
         <div class="cybrid-list-item">
           <span>{{
             ('trade.confirm.purchase' | translate) +
-              ' ' +
-              ('trade.quantity' | translate)
-          }}</span>
+            ' ' +
+            ('trade.quantity' | translate)
+            }}</span>
           <div>
             <span>{{
-              (quote.receive_amount! | asset : asset : 'trade') + ' '
-            }}</span>
+              (quote.receive_amount! | assetFormat : asset.code : 'trade') + ' '
+              }}</span>
             <span class="mat-hint">{{ asset.code }}</span>
           </div>
         </div>
@@ -39,7 +41,8 @@
         <div class="cybrid-list-item">
           <span>{{ 'trade.transaction' | translate }}</span>
           <div>
-            <span>{{ (quote.fee! | asset : counter_asset) + ' ' }} </span>
+            <span>{{ (quote.fee! | assetFormat : counter_asset.code) + ' ' }}
+            </span>
             <span class="mat-hint">{{ counter_asset.code }}</span>
           </div>
         </div>
@@ -49,13 +52,13 @@
         <div class="cybrid-list-item">
           <span>{{
             ('trade.confirm.sell' | translate) +
-              ' ' +
-              ('trade.amount' | translate)
-          }}</span>
+            ' ' +
+            ('trade.amount' | translate)
+            }}</span>
           <div>
             <span>{{
-              (quote.receive_amount! | asset : counter_asset) + ' '
-            }}</span>
+              (quote.receive_amount! | assetFormat : counter_asset.code) + ' '
+              }}</span>
             <span class="mat-hint"> {{ counter_asset.code }}</span>
           </div>
         </div>
@@ -63,13 +66,13 @@
         <div class="cybrid-list-item">
           <span>{{
             ('trade.confirm.sell' | translate) +
-              ' ' +
-              ('trade.quantity' | translate)
-          }}</span>
+            ' ' +
+            ('trade.quantity' | translate)
+            }}</span>
           <div>
             <span>{{
-              (quote.deliver_amount! | asset : asset : 'trade') + ' '
-            }}</span>
+              (quote.deliver_amount! | assetFormat : asset.code : 'trade') + ' '
+              }}</span>
             <span class="mat-hint">{{ asset.code }}</span>
           </div>
         </div>
@@ -77,7 +80,9 @@
         <div class="cybrid-list-item">
           <span>{{ 'trade.transaction' | translate }}</span>
           <div>
-            <span>{{ (quote.fee! | asset : counter_asset) + ' ' }}</span>
+            <span>{{
+              (quote.fee! | assetFormat : counter_asset.code) + ' '
+              }}</span>
             <span class="mat-hint">{{ counter_asset.code }}</span>
           </div>
         </div>
@@ -88,12 +93,7 @@
       <button id="cancel" mat-button [mat-dialog-close]>
         {{ 'cancel' | translate }}
       </button>
-      <button
-        id="confirm"
-        mat-flat-button
-        color="primary"
-        (click)="onConfirmTrade()"
-      >
+      <button id="confirm" mat-flat-button color="primary" (click)="onConfirmTrade()">
         {{ 'confirm' | translate }}
       </button>
     </mat-dialog-actions>

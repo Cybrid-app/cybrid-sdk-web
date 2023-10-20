@@ -27,6 +27,7 @@
 
 .cybrid-asset {
   display: flex;
+  justify-content: center;
   flex-direction: column;
   div + div {
     margin-top: -5px;
@@ -93,6 +94,10 @@ mat-progress-bar {
 
 .cybrid-sell-icon {
   transform: rotate(90deg);
+}
+
+.cybrid-hide {
+  display: none;
 }
 
 @media screen and (max-width: 599px) {

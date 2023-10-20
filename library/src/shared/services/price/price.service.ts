@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { catchError, map, Observable, of } from 'rxjs';
+import { catchError, tap, Observable, of } from 'rxjs';
 
 // Services
 import {
@@ -18,15 +18,15 @@ export class PriceService {
     private pricesService: PricesService,
     private eventService: EventService,
     private errorService: ErrorService
-  ) {}
+  ) { }
 
   /**
    * Get a list of prices
    * @return An array of SymbolPriceBankModel
    **/
-  listPrices(): Observable<SymbolPriceBankModel[]> {
-    return this.pricesService.listPrices().pipe(
-      map((priceList) => {
+  listPrices(symbol?: string): Observable<SymbolPriceBankModel[]> {
+    return this.pricesService.listPrices(symbol).pipe(
+      tap((priceList) => {
         this.eventService.handleEvent(
           LEVEL.INFO,
           CODE.DATA_REFRESHED,

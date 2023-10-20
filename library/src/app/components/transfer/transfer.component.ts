@@ -55,7 +55,7 @@ import {
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Utility
-import { AssetPipe } from '@pipes';
+import { AssetFormatPipe } from '@pipes';
 import { fiatMask } from '@utility';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -95,7 +95,7 @@ export class TransferComponent implements OnInit, OnDestroy {
     private bankAccountService: BankAccountService,
     private quotesService: QuotesService,
     private accountService: AccountService,
-    public assetPipe: AssetPipe,
+    public assetFormatPipe: AssetFormatPipe,
     private translatePipe: TranslatePipe,
     private assetService: AssetService,
     private errorService: ErrorService,
@@ -103,7 +103,7 @@ export class TransferComponent implements OnInit, OnDestroy {
     private router: RoutingService,
     private dialog: MatDialog,
     private snackbar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initTransferGroup();
@@ -132,9 +132,9 @@ export class TransferComponent implements OnInit, OnDestroy {
 
         if (value) {
           // Todo: @Dustin Swap for AssetFormatPipe
-          const platformAvailable = this.assetPipe.transform(
+          const platformAvailable = this.assetFormatPipe.transform(
             this.fiatAccount$.getValue()?.platform_available!,
-            this.fiatAsset,
+            this.fiatAsset.code,
             'trade'
           ) as number;
 
@@ -175,9 +175,9 @@ export class TransferComponent implements OnInit, OnDestroy {
   ) {
     return list.objects.length == perPage
       ? this.bankAccountService.listExternalBankAccounts(
-          (Number(list.page) + 1).toString(),
-          perPage.toString()
-        )
+        (Number(list.page) + 1).toString(),
+        perPage.toString()
+      )
       : EMPTY;
   }
 
@@ -218,7 +218,8 @@ export class TransferComponent implements OnInit, OnDestroy {
                 ),
                 catchError((err) => of(err))
               ),
-            this.accountService.getAccounts().pipe(
+            this.accountService.listAccounts().pipe(
+              map((accountList) => accountList.objects),
               map((accounts) => {
                 return accounts.find(
                   (account) => account.type == AccountBankModel.TypeEnum.Fiat
@@ -286,9 +287,9 @@ export class TransferComponent implements OnInit, OnDestroy {
             customer_guid: customer.guid,
             asset: asset.code,
             side: this.side as PostQuoteBankModel.SideEnum,
-            deliver_amount: this.assetPipe.transform(
+            deliver_amount: this.assetFormatPipe.transform(
               amount!,
-              asset,
+              asset.code,
               'base'
             ) as string
           };

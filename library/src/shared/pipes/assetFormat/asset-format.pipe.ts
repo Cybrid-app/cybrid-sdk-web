@@ -61,7 +61,7 @@ export class AssetFormatPipe implements PipeTransform, OnDestroy {
     code: string,
     unit: 'trade' | 'base' | 'trim' | 'formatted' = 'formatted'
   ): string | number | undefined {
-    if (value) {
+    if (value || value == 0) {
       const asset = this.assetService.getAsset(code);
       const assetDecimals = Number(asset.decimals);
       const divisor = new Big(10).pow(assetDecimals);

@@ -15,7 +15,7 @@ import { ConfigService, QuoteService } from '@services';
 // Utility
 import { TestConstants } from '@constants';
 import { TranslateService } from '@ngx-translate/core';
-import { AssetPipe, MockAssetPipe } from '@pipes';
+import { AssetFormatPipe, MockAssetFormatPipe } from '@pipes';
 
 describe('QuoteService', () => {
   let service: QuoteService;
@@ -39,7 +39,7 @@ describe('QuoteService', () => {
       providers: [
         { provide: TranslateService, useValue: MockTranslateService },
         { provide: ConfigService, useValue: MockConfigService },
-        { provide: AssetPipe, useClass: MockAssetPipe }
+        { provide: AssetFormatPipe, useClass: MockAssetFormatPipe }
       ]
     });
     service = TestBed.inject(QuoteService);
