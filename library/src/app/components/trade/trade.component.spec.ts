@@ -58,7 +58,7 @@ describe('TradeComponent', () => {
   ]);
   let MockConfigService = jasmine.createSpyObj('ConfigService', ['getConfig$']);
   let MockAccountService = jasmine.createSpyObj('AccountService', [
-    'getAccounts'
+    'listAccounts'
   ]);
   let MockPriceService = jasmine.createSpyObj('PriceService', ['listPrices']);
   let MockDialogService = jasmine.createSpyObj('MockDialogService', ['open']);
@@ -115,8 +115,8 @@ describe('TradeComponent', () => {
     MockAssetService = TestBed.inject(AssetService);
     MockAssetService.getAssets$.and.returnValue(of(TestConstants.ASSETS));
     MockAssetService.getAsset.and.returnValue(of(TestConstants.BTC_ASSET));
-    MockAccountService.getAccounts.and.returnValue(
-      of(TestConstants.ACCOUNT_LIST_BANK_MODEL.objects)
+    MockAccountService.listAccounts.and.returnValue(
+      of(TestConstants.ACCOUNT_LIST_BANK_MODEL)
     );
     MockPriceService = TestBed.inject(PriceService);
     MockPriceService.listPrices.and.returnValue(
@@ -149,7 +149,7 @@ describe('TradeComponent', () => {
 
     fixture.detectChanges();
 
-    expect(MockAccountService.getAccounts).toHaveBeenCalled();
+    expect(MockAccountService.listAccounts).toHaveBeenCalled();
     expect(accounts$Spy).toHaveBeenCalled();
 
     component.accounts$.subscribe((accounts) => expect(accounts).toBeDefined());

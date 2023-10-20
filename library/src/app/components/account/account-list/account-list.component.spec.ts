@@ -34,7 +34,6 @@ import { AccountListComponent } from '@components';
 import { MockAssetFormatPipe, AssetFormatPipe } from '@pipes';
 import { Constants, TestConstants } from '@constants';
 import { SharedModule } from '../../../../shared/modules/shared.module';
-import { AccountBankModel } from '@cybrid/cybrid-api-bank-angular';
 
 describe('AccountListComponent', () => {
   let component: AccountListComponent;
@@ -116,22 +115,28 @@ describe('AccountListComponent', () => {
 
   describe('when processing accounts', () => {
     it('should process fiat accounts', () => {
+      const accountList = { ...TestConstants.ACCOUNT_LIST_BANK_MODEL };
+      const priceList = [...TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY];
+
       const processedAccounts = component.processAccounts(
-        TestConstants.ACCOUNT_LIST_BANK_MODEL,
-        TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY
+        accountList,
+        priceList
       );
 
       // USD account
       const fiatAccount = processedAccounts[0];
 
       expect(fiatAccount.price).toBeUndefined();
-      expect(fiatAccount.value).toBe(Number(fiatAccount.platform_available));
+      expect(fiatAccount.value).toEqual(Number(fiatAccount.platform_available));
     });
 
     it('should process crypto accounts', () => {
+      const accountList = { ...TestConstants.ACCOUNT_LIST_BANK_MODEL };
+      const priceList = [...TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY];
+
       const processedAccounts = component.processAccounts(
-        TestConstants.ACCOUNT_LIST_BANK_MODEL,
-        TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY
+        accountList,
+        priceList
       );
 
       // ETH account
@@ -152,31 +157,33 @@ describe('AccountListComponent', () => {
     });
 
     it('should set the dataSource', () => {
+      const accountList = { ...TestConstants.ACCOUNT_LIST_BANK_MODEL };
+      const priceList = [...TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY];
+
       const processedAccounts = component.processAccounts(
-        TestConstants.ACCOUNT_LIST_BANK_MODEL,
-        TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY
+        accountList,
+        priceList
       );
 
-      expect(component.dataSource.data).toBe(processedAccounts);
+      expect(component.dataSource.data).toEqual(processedAccounts);
     });
 
     it('should set the totalRows', () => {
       const totalRows = Number(TestConstants.ACCOUNT_LIST_BANK_MODEL.total);
 
-      expect(component.totalRows).toBe(totalRows);
+      expect(component.totalRows).toEqual(totalRows);
     });
 
     it('should handle errors when listing accounts', () => {
       const refreshDataSubSpy = spyOn(component.refreshDataSub, 'unsubscribe');
-      const isLoading$Spy = spyOn(component.isLoading$, 'next');
+      const isRecoverable$Spy = spyOn(component.isRecoverable$, 'next');
 
       MockAccountService.listAccounts.and.returnValue(error$);
 
       component.listAccounts();
 
       expect(refreshDataSubSpy).toHaveBeenCalled();
-      expect(component.getAccountsError).toBeTruthy;
-      expect(isLoading$Spy).toHaveBeenCalledWith(false);
+      expect(isRecoverable$Spy).toHaveBeenCalled();
 
       // Reset
       MockAccountService.listAccounts.and.returnValue(
@@ -186,15 +193,14 @@ describe('AccountListComponent', () => {
 
     it('should handle errors when listing prices', () => {
       const refreshDataSubSpy = spyOn(component.refreshDataSub, 'unsubscribe');
-      const isLoading$Spy = spyOn(component.isLoading$, 'next');
+      const isRecoverable$Spy = spyOn(component.isRecoverable$, 'next');
 
       MockPriceService.listPrices.and.returnValue(error$);
 
       component.listAccounts();
 
       expect(refreshDataSubSpy).toHaveBeenCalled();
-      expect(component.getAccountsError).toBeTruthy;
-      expect(isLoading$Spy).toHaveBeenCalledWith(false);
+      expect(isRecoverable$Spy).toHaveBeenCalled();
 
       // Reset
       MockPriceService.listPrices.and.returnValue(
@@ -215,34 +221,29 @@ describe('AccountListComponent', () => {
   }));
 
   describe('when sorting accounts', () => {
-    it('should initially sort accounts', () => {
-      const sortedAccounts = component.sortAccounts(
-        TestConstants.ACCOUNT_LIST_BANK_MODEL
-      );
-
-      expect(sortedAccounts.objects[0].type).toBe('fiat');
-    });
-
     it('should sort by account', () => {
-      let account: AccountBankModel =
-        TestConstants.ACCOUNT_BANK_MODEL_WITH_DETAILS;
+      let account: AccountBankModelWithDetails = {
+        ...TestConstants.ACCOUNT_BANK_MODEL_WITH_DETAILS
+      };
 
       let sort = component.sortingDataAccessor(account, 'account');
       expect(sort).toEqual(<string>account.asset);
     });
 
     it('should sort by balance', () => {
-      let account: AccountBankModelWithDetails =
-        TestConstants.ACCOUNT_BANK_MODEL_WITH_DETAILS;
+      let account: AccountBankModelWithDetails = {
+        ...TestConstants.ACCOUNT_BANK_MODEL_WITH_DETAILS
+      };
 
       let sort = component.sortingDataAccessor(account, 'balance');
       expect(sort).toEqual(<number>account.value);
     });
     it('should sort by default', () => {
-      let account: AccountBankModelWithDetails =
-        TestConstants.ACCOUNT_BANK_MODEL_WITH_DETAILS;
-      let sort = component.sortingDataAccessor(account, '');
+      let account: AccountBankModelWithDetails = {
+        ...TestConstants.ACCOUNT_BANK_MODEL_WITH_DETAILS
+      };
 
+      let sort = component.sortingDataAccessor(account, '');
       expect(sort).toEqual('');
     });
   });
@@ -250,7 +251,7 @@ describe('AccountListComponent', () => {
   describe('when paginating', () => {
     beforeEach(() => {
       // Mock listAccounts() to avoid Angular testing error
-      component.listAccounts = () => {};
+      component.listAccounts = () => { };
     });
 
     it('should update the current page', () => {
@@ -263,7 +264,7 @@ describe('AccountListComponent', () => {
 
       component.pageChange(pageEvent);
 
-      expect(component.currentPage).toBe(pageIndex);
+      expect(component.currentPage).toEqual(pageIndex);
     });
 
     it('should update the page size', () => {
@@ -276,7 +277,7 @@ describe('AccountListComponent', () => {
 
       component.pageChange(pageEvent);
 
-      expect(component.pageSize).toBe(pageSize);
+      expect(component.pageSize).toEqual(pageSize);
     });
 
     it('should list accounts', () => {

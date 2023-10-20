@@ -90,11 +90,7 @@
             (click)="row.type == 'trading' ? onRowClick(row) : null"></tr>
           <tr class="mat-row" *matNoDataRow>
             <td id="warning" class="mat-cell cybrid-no-data" colspan="2">
-              {{
-              !getAccountsError
-              ? ('accountList.error.account' | translate)
-              : ('accountList.error.noData' | translate)
-              }}
+              {{ 'accountList.error.noData' | translate }}
             </td>
           </tr>
         </table>

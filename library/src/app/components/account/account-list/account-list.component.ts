@@ -1,6 +1,5 @@
 import {
   AfterContentInit,
-  ChangeDetectionStrategy,
   Component,
   OnDestroy,
   OnInit,
@@ -54,12 +53,10 @@ import { AssetFormatPipe } from '@pipes';
 @Component({
   selector: 'app-account-list',
   templateUrl: './account-list.component.html',
-  styleUrls: ['./account-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./account-list.component.scss']
 })
 export class AccountListComponent
-  implements OnInit, AfterContentInit, OnDestroy
-{
+  implements OnInit, AfterContentInit, OnDestroy {
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
   dataSource = new MatTableDataSource<AccountBankModelWithDetails>();
@@ -94,7 +91,7 @@ export class AccountListComponent
     private accountService: AccountService,
     private routingService: RoutingService,
     private assetFormatPipe: AssetFormatPipe
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.eventService.handleEvent(
@@ -116,46 +113,40 @@ export class AccountListComponent
     this.unsubscribe$.complete();
   }
 
-  sortAccounts(accountList: AccountListBankModel): AccountListBankModel {
-    accountList.objects = accountList.objects.sort((a: AccountBankModel) =>
-      a.type === AccountBankModel.TypeEnum.Fiat ? -1 : 1
-    );
-
-    return accountList;
-  }
-
   processAccounts(
     accountList: AccountListBankModel,
     priceList: SymbolPriceBankModel[]
   ): AccountBankModelWithDetails[] {
-    let accounts: AccountBankModelWithDetails[] =
-      this.sortAccounts(accountList).objects;
+    const processedAccounts: AccountBankModelWithDetails[] = [];
 
-    accounts.forEach((account) => {
-      account.price = priceList.find((price: SymbolPriceBankModel) => {
+    accountList.objects.forEach((account: AccountBankModelWithDetails) => {
+      const processedAccount: AccountBankModelWithDetails = { ...account };
+
+      processedAccount.price = priceList.find((price: SymbolPriceBankModel) => {
         return account.asset === price.symbol?.split('-')[0];
       });
 
-      account.price
-        ? (account.value =
-            Number(account.price.sell_price) *
-            Number(
-              this.assetFormatPipe.transform(
-                account.platform_balance,
-                <string>account.asset,
-                'trade'
-              )
-            ))
-        : (account.value = Number(account.platform_available));
+      processedAccount.value = processedAccount.price
+        ? Number(processedAccount.price.sell_price) *
+        Number(
+          this.assetFormatPipe.transform(
+            account.platform_balance,
+            <string>account.asset,
+            'trade'
+          )
+        )
+        : Number(account.platform_available);
+
+      processedAccounts.push(processedAccount);
     });
 
     this.totalAccountsValue$.next(
-      accounts
+      processedAccounts
         .reduce((acc, account) => acc + (account.value || 0), 0)
         .toString()
     );
 
-    return accounts;
+    return processedAccounts;
   }
 
   listAccounts(): void {
@@ -169,24 +160,25 @@ export class AccountListComponent
       this.priceService.listPrices()
     ])
       .pipe(
+        take(1),
         map(([accountList, priceList]) => {
           this.totalRows = Number(accountList.total);
           return this.processAccounts(accountList, priceList);
         }),
         tap((accounts) => {
           this.dataSource.data = accounts;
-          this.isLoading$.next(false);
-          this.isLoadingResults$.next(false);
         }),
         catchError((err) => {
           this.refreshDataSub?.unsubscribe();
-          this.getAccountsError = true;
-          this.isLoading$.next(false);
+          this.isRecoverable$.next(false);
 
           return of(err);
         })
       )
-      .subscribe();
+      .subscribe(() => {
+        this.isLoading$.next(false);
+        this.isLoadingResults$.next(false);
+      });
   }
 
   refreshData(): void {

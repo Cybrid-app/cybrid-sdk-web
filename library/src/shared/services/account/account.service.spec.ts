@@ -69,7 +69,7 @@ describe('AccountService', () => {
 
   describe('when getting an account, ', () => {
     it('should get an account', () => {
-      const testAccount = TestConstants.ACCOUNT_BANK_MODEL_BTC;
+      const testAccount = { ...TestConstants.ACCOUNT_BANK_MODEL_BTC };
 
       service.getAccount('').subscribe((account: AccountBankModel) => {
         expect(account).toEqual(testAccount);
@@ -88,7 +88,7 @@ describe('AccountService', () => {
 
   describe('when listing accounts', () => {
     it('should list accounts', () => {
-      const testAccounts = TestConstants.ACCOUNT_LIST_BANK_MODEL;
+      const testAccounts = { ...TestConstants.ACCOUNT_LIST_BANK_MODEL };
 
       service.listAccounts().subscribe((accounts: AccountListBankModel) => {
         expect(accounts).toEqual(testAccounts);

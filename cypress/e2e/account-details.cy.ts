@@ -19,7 +19,7 @@ describe('account-details test', () => {
     cy.visit('/');
 
     cy.intercept('GET', 'api/prices*').as('listPrices');
-    cy.intercept('GET', 'api/accounts*').as('listAccounts');
+    cy.intercept('GET', 'api/accounts/*').as('listAccount');
     cy.intercept('GET', 'api/trades*').as('listTrades');
     cy.intercept('GET', 'api/trades/*').as('getTrade');
 
@@ -73,10 +73,10 @@ describe('account-details test', () => {
     app().should('not.exist');
   });
 
-  it('should refresh the account list and paginate', () => {
-    // Intercept listAccounts response
+  it('should refresh the account and paginate', () => {
+    // Intercept listAccount response
     let account;
-    cy.wait('@listAccounts').then((interception) => {
+    cy.wait('@listAccount').then((interception) => {
       // @ts-ignore
       account = interception.response.body;
     });
@@ -88,7 +88,7 @@ describe('account-details test', () => {
     });
 
     // Check for new data
-    cy.wait('@listAccounts').its('response.body').should('not.eq', account);
+    cy.wait('@listAccount').its('response.body').should('not.eq', account);
     cy.wait('@listTrades').its('response.body').should('not.eq', trades);
 
     // Paginate: next
@@ -119,7 +119,9 @@ describe('account-details test', () => {
         .as('listTrades')
     );
 
-    cy.wait('@listTrades').then(() => app().find('#warning').should('exist'));
+    cy.wait('@listTrades').then(() =>
+      app().find('.cybrid-fatal').should('exist')
+    );
   });
 
   it('should navigate to onTrade()', () => {

@@ -92,6 +92,12 @@ describe('AssetFormatPipe', () => {
     ).toEqual('$1,234,567,891,234,568,000,000.56');
   });
 
+  it('should return the value if undefined', () => {
+    expect(
+      pipe.transform(undefined, TestConstants.CAD_ASSET.code)
+    ).toBeUndefined();
+  });
+
   it('should trim asset values', () => {
     expect(
       pipe.transform(

@@ -150,11 +150,13 @@ export class AccountDetailsComponent
     account: AccountBankModelWithDetails,
     priceList: SymbolPriceBankModel[]
   ): AccountBankModelWithDetails {
-    account.price = priceList.find((price: SymbolPriceBankModel) => {
+    const processedAccount = { ...account };
+
+    processedAccount.price = priceList.find((price: SymbolPriceBankModel) => {
       return account.asset === price.symbol?.split('-')[0];
     });
 
-    if (account.price) {
+    if (processedAccount.price) {
       const platformBalance = Number(
         this.assetFormatPipe.transform(
           account.platform_balance,
@@ -163,10 +165,11 @@ export class AccountDetailsComponent
         )
       );
 
-      account.value = Number(account.price.sell_price) * platformBalance;
+      processedAccount.value =
+        Number(processedAccount.price.sell_price) * platformBalance;
     }
 
-    return account;
+    return processedAccount;
   }
 
   getAccount(): void {
