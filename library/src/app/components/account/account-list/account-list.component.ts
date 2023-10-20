@@ -56,7 +56,8 @@ import { AssetFormatPipe } from '@pipes';
   styleUrls: ['./account-list.component.scss']
 })
 export class AccountListComponent
-  implements OnInit, AfterContentInit, OnDestroy {
+  implements OnInit, AfterContentInit, OnDestroy
+{
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
   dataSource = new MatTableDataSource<AccountBankModelWithDetails>();
@@ -91,7 +92,7 @@ export class AccountListComponent
     private accountService: AccountService,
     private routingService: RoutingService,
     private assetFormatPipe: AssetFormatPipe
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.eventService.handleEvent(
@@ -128,13 +129,13 @@ export class AccountListComponent
 
       processedAccount.value = processedAccount.price
         ? Number(processedAccount.price.sell_price) *
-        Number(
-          this.assetFormatPipe.transform(
-            account.platform_balance,
-            <string>account.asset,
-            'trade'
+          Number(
+            this.assetFormatPipe.transform(
+              account.platform_balance,
+              <string>account.asset,
+              'trade'
+            )
           )
-        )
         : Number(account.platform_available);
 
       processedAccounts.push(processedAccount);

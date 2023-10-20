@@ -70,7 +70,8 @@ import { AssetFormatPipe } from '@pipes';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AccountDetailsComponent
-  implements OnInit, AfterContentInit, OnDestroy {
+  implements OnInit, AfterContentInit, OnDestroy
+{
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
   dataSource: MatTableDataSource<TradeBankModel> = new MatTableDataSource();

@@ -103,7 +103,7 @@ export class TradeComponent implements OnInit, OnDestroy {
     private assetFormatPipe: AssetFormatPipe,
     private route: ActivatedRoute,
     public dialog: MatDialog
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.tradeData$ = combineLatest([this.accounts$, this.price$]).pipe(
@@ -178,10 +178,10 @@ export class TradeComponent implements OnInit, OnDestroy {
         map(([params, accounts]) => {
           const selectedAccount = params['code']
             ? <AccountBankModel>(
-              accounts.assets.find(
-                (account) => account.asset == params['code']
+                accounts.assets.find(
+                  (account) => account.asset == params['code']
+                )
               )
-            )
             : accounts.assets[0];
 
           this.tradeFormGroup = new FormGroup<TradeFormGroup>({
@@ -301,7 +301,7 @@ export class TradeComponent implements OnInit, OnDestroy {
               if (
                 price.asset !== 0 &&
                 price.counterAsset >
-                Number(accounts.counterAsset.platform_available)
+                  Number(accounts.counterAsset.platform_available)
               )
                 this.tradeFormGroup.controls.amount.setErrors({
                   insufficientFunds: true
@@ -327,15 +327,15 @@ export class TradeComponent implements OnInit, OnDestroy {
   getTradingPlatformAvailable(config: ComponentConfig): number {
     return config.environment == 'sandbox' || config.environment == 'staging'
       ? (this.assetFormatPipe.transform(
-        this.tradeFormGroup.controls.tradingAccount.value?.platform_balance,
-        <string>this.tradeFormGroup.controls.tradingAccount.value?.asset,
-        'trade'
-      ) as number)
+          this.tradeFormGroup.controls.tradingAccount.value?.platform_balance,
+          <string>this.tradeFormGroup.controls.tradingAccount.value?.asset,
+          'trade'
+        ) as number)
       : (this.assetFormatPipe.transform(
-        this.tradeFormGroup.controls.tradingAccount.value?.platform_available,
-        <string>this.tradeFormGroup.controls.tradingAccount.value?.asset,
-        'trade'
-      ) as number);
+          this.tradeFormGroup.controls.tradingAccount.value?.platform_available,
+          <string>this.tradeFormGroup.controls.tradingAccount.value?.asset,
+          'trade'
+        ) as number);
   }
 
   onSwitchInput(): void {
@@ -372,20 +372,20 @@ export class TradeComponent implements OnInit, OnDestroy {
         map((config) => {
           return this.side === 'buy'
             ? this.tradeFormGroup.controls.amount.setValue(
-              <number>(
-                this.assetFormatPipe.transform(
-                  this.tradeFormGroup.controls.fiatAccount.value
-                    ?.platform_available,
-                  <string>(
-                    this.tradeFormGroup.controls.fiatAccount.value?.asset
-                  ),
-                  'trade'
+                <number>(
+                  this.assetFormatPipe.transform(
+                    this.tradeFormGroup.controls.fiatAccount.value
+                      ?.platform_available,
+                    <string>(
+                      this.tradeFormGroup.controls.fiatAccount.value?.asset
+                    ),
+                    'trade'
+                  )
                 )
               )
-            )
             : this.tradeFormGroup.controls.amount.setValue(
-              this.getTradingPlatformAvailable(config)
-            );
+                this.getTradingPlatformAvailable(config)
+              );
         })
       )
       .subscribe();

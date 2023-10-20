@@ -75,7 +75,7 @@ describe('AccountDetailComponent', () => {
   });
 
   class MockAssetService {
-    constructor() { }
+    constructor() {}
     getAsset(code: string): AssetBankModel {
       if (code == 'BTC') return TestConstants.BTC_ASSET;
       else if (code == 'ETH') return TestConstants.ETH_ASSET;

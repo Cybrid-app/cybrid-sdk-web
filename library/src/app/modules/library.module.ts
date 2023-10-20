@@ -171,7 +171,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class LibraryModule implements DoBootstrap {
-  constructor(private injector: Injector) { }
+  constructor(private injector: Injector) {}
 
   ngDoBootstrap() {
     const AppElement = createCustomElement(AppComponent, {

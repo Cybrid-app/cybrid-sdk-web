@@ -58,7 +58,7 @@
             </th>
             <td id="balance" mat-cell *matCellDef="let account">
               <div class="cybrid-balance-cell">
-                <ng-container *ngIf="account.type == 'fiat'; else tradingAccount">
+                <ng-container *ngIf="account.type === 'fiat'; else tradingAccount">
                   <span>
                     {{ account.platform_available | assetFormat : config.fiat }}
                   </span>
@@ -85,9 +85,9 @@
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr [ngClass]="{
-              'cybrid-pointer': config.routing && row.type == 'trading'
+              'cybrid-pointer': config.routing && row.type === 'trading'
             }" class="cybrid-pointer" mat-row *matRowDef="let row; columns: displayedColumns"
-            (click)="row.type == 'trading' ? onRowClick(row) : null"></tr>
+            (click)="row.type === 'trading' ? onRowClick(row) : null"></tr>
           <tr class="mat-row" *matNoDataRow>
             <td id="warning" class="mat-cell cybrid-no-data" colspan="2">
               {{ 'accountList.error.noData' | translate }}

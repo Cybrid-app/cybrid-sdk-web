@@ -251,7 +251,7 @@ describe('AccountListComponent', () => {
   describe('when paginating', () => {
     beforeEach(() => {
       // Mock listAccounts() to avoid Angular testing error
-      component.listAccounts = () => { };
+      component.listAccounts = () => {};
     });
 
     it('should update the current page', () => {

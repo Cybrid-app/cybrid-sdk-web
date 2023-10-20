@@ -27,7 +27,7 @@ export class AccountService implements OnDestroy {
     private eventService: EventService,
     private errorService: ErrorService,
     private accountsService: AccountsService
-  ) { }
+  ) {}
 
   ngOnDestroy() {
     this.unsubscribe$.next('');

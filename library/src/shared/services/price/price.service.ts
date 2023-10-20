@@ -18,7 +18,7 @@ export class PriceService {
     private pricesService: PricesService,
     private eventService: EventService,
     private errorService: ErrorService
-  ) { }
+  ) {}
 
   /**
    * Get a list of prices

@@ -103,7 +103,7 @@ export class TransferComponent implements OnInit, OnDestroy {
     private router: RoutingService,
     private dialog: MatDialog,
     private snackbar: MatSnackBar
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.initTransferGroup();
@@ -175,9 +175,9 @@ export class TransferComponent implements OnInit, OnDestroy {
   ) {
     return list.objects.length == perPage
       ? this.bankAccountService.listExternalBankAccounts(
-        (Number(list.page) + 1).toString(),
-        perPage.toString()
-      )
+          (Number(list.page) + 1).toString(),
+          perPage.toString()
+        )
       : EMPTY;
   }
 
