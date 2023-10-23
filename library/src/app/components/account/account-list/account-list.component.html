@@ -16,7 +16,7 @@
       <div class="cybrid-table">
         <mat-progress-bar *ngIf="isLoadingResults$ | async" mode="indeterminate"></mat-progress-bar>
         <table id="accountList" class="mat-button-toggle-group-appearance-standard"
-          [ngClass]="{ 'cybrid-paginator': totalRows > 5 }" mat-table [dataSource]="dataSource" matSort
+          [ngClass]="{ 'cybrid-paginator': totalRows > pageSize }" mat-table [dataSource]="dataSource" matSort
           matSortDisableClear (matSortChange)="sortChange()">
           <!-- Account -->
           <ng-container matColumnDef="account">
