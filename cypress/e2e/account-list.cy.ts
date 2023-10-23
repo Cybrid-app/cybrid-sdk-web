@@ -31,7 +31,7 @@ describe('account-list test', () => {
       .should('contain.text', 'Account Value');
 
     app()
-      .find('#assetList')
+      .find('#accountList')
       .should('contain.text', 'Asset')
       .should('contain.text', 'Market Price')
       .should('contain.text', 'Balance')
@@ -39,12 +39,18 @@ describe('account-list test', () => {
 
       // Check table for ETH account
       .should('not.be.empty')
-      .should('contain.text', 'Ethereum')
+      .should(
+        'contain.text',
+        'ETH account for e8dc9202e0e96a33b5b6a7b0cfb66c60'
+      )
       .should('contain.text', 'ETH')
 
       // Check table for BTC account
       .should('not.be.empty')
-      .should('contain.text', 'Bitcoin')
+      .should(
+        'contain.text',
+        'BTC account for e8dc9202e0e96a33b5b6a7b0cfb66c60'
+      )
       .should('contain.text', 'BTC');
   });
 
@@ -79,7 +85,9 @@ describe('account-list test', () => {
     );
 
     // Check for error row
-    cy.wait('@listAccounts').then(() => app().find('#warning').should('exist'));
+    cy.wait('@listAccounts').then(() =>
+      app().find('.cybrid-fatal').should('exist')
+    );
   });
 
   it('should handle errors returned by prices api', () => {
@@ -93,6 +101,8 @@ describe('account-list test', () => {
     );
 
     // Check for error row
-    cy.wait('@listPrices').then(() => app().find('#warning').should('exist'));
+    cy.wait('@listPrices').then(() =>
+      app().find('.cybrid-fatal').should('exist')
+    );
   });
 });

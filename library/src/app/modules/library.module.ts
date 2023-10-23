@@ -75,12 +75,7 @@ import {
 
 // Utility
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import {
-  AssetPipe,
-  AssetIconPipe,
-  TruncatePipe,
-  AssetFormatPipe
-} from '@pipes';
+import { AssetIconPipe, TruncatePipe, AssetFormatPipe } from '@pipes';
 import { CustomPaginatorIntl } from '@utility';
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -112,7 +107,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     TransferComponent,
     TransferConfirmComponent,
     TransferDetailsComponent,
-    AssetPipe,
     AssetFormatPipe,
     TruncatePipe,
     AssetIconPipe,
@@ -155,7 +149,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     AssetService,
     PriceService,
     AccountService,
-    AssetPipe,
     AssetIconPipe,
     IdentityVerificationService,
     BankAccountService,

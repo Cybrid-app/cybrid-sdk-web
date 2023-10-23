@@ -13,7 +13,8 @@ import {
   Subject,
   switchMap,
   take,
-  takeUntil
+  takeUntil,
+  tap
 } from 'rxjs';
 
 // Client
@@ -118,12 +119,27 @@ export class TradeComponent implements OnInit, OnDestroy {
   }
 
   getAccountList(): void {
-    this.accountService
-      .getAccounts()
+    combineLatest([
+      this.accountService.listAccounts(),
+      this.priceService.listPrices(),
+      this.configService.getConfig$()
+    ])
       .pipe(
         take(1),
-        map((list) => list.filter((account) => account.state == 'created')),
-        map((accounts) => {
+        map(([accountList, priceList, config]) => {
+          return accountList.objects.filter((account) => {
+            const symbol = symbolBuild(<string>account.asset, config.fiat);
+
+            return (
+              priceList.find((price) => price.symbol == symbol) ||
+              account.type == 'fiat'
+            );
+          });
+        }),
+        map((accounts) =>
+          accounts.filter((account) => account.state == 'created')
+        ),
+        tap((accounts) => {
           this.accounts$.next({
             assets: accounts.filter((account) => account.type == 'trading'),
             counterAsset: accounts.filter(

@@ -1,71 +1,57 @@
 <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
+  <app-navigation [routingData]="routingData"></app-navigation>
   <ng-container *ngIf="(isLoading$ | async) !== true; else loading">
-    <ng-container
-      *ngIf="{
-        config: configService.getConfig$() | async,
-        component: configService.getComponent$()
-      } as data"
-    >
-      <app-navigation [routingData]="routingData"></app-navigation>
-      <ng-container *ngIf="account$ | async as account">
+    <ng-container *ngIf="configService.getConfig$() | async as config">
+      <ng-container *ngIf="{
+          account: account$ | async,
+          tradeList: tradeList$ | async,
+        } as data">
         <div class="cybrid-header">
           <div class="cybrid-account">
-            <img
-              class="cybrid-icon"
-              src="{{ account.asset.url }}"
-              alt="Crypto currency icon"
-            />
+            <img class="cybrid-icon" src="{{ data.account?.asset | assetIcon }}" alt="Crypto currency icon" />
             <div class="cybrid-asset">
               <div class="cybrid-asset-name">
-                <span class="cybrid-h2 cybrid-strong"
-                  >{{ account.asset.name }}
-                </span>
-                <span class="cybrid-h2 mat-hint">{{ account.asset.code }}</span>
+                <span class="cybrid-h2 cybrid-strong">{{ asset?.name }} </span>
+                <span class="cybrid-h2 mat-hint">{{
+                  data.account?.asset
+                  }}</span>
               </div>
-              <div class="cybrid-asset-value">
+              <div *ngIf="data.account?.price" class="cybrid-asset-value">
                 <span>
-                  {{ account.price.buy_price! | asset : account.counter_asset }}
+                  {{
+                  data.account?.price?.buy_price! | assetFormat : config.fiat
+                  }}
                 </span>
-                <span class="mat-hint">{{ account.counter_asset.code }}</span>
+                <span class="mat-hint">{{ config.fiat }}</span>
               </div>
             </div>
           </div>
           <div class="cybrid-holdings">
             <div>
-              <span class="cybrid-h2 cybrid-strong"
-                >{{
-                  account.account.platform_balance!
-                    | asset : account.asset : 'trade'
+              <span class="cybrid-h2 cybrid-strong">{{
+                data.account?.platform_balance
+                | assetFormat : data.account?.asset! : 'trade'
                 }}
               </span>
               <span class="cybrid-h2 mat-hint">{{
-                ' ' + account.asset.code
-              }}</span>
+                ' ' + data.account?.asset
+                }}</span>
             </div>
-            <div>
-              <span>{{ account.counter_asset.symbol }}</span>
+            <div *ngIf="data.account?.price">
               <span>{{
-                (account.value
-                  | currency : '' : '' : '' : data.config!.locale) + ' '
-              }}</span>
-              <span class="mat-hint">{{ account.counter_asset.code }}</span>
+                (data.account?.value | assetFormat : config.fiat) + ' '
+                }}</span>
+              <span class="mat-hint">{{ config.fiat }}</span>
             </div>
           </div>
         </div>
+
         <div class="cybrid-table">
-          <mat-progress-bar
-            *ngIf="isLoadingResults"
-            mode="indeterminate"
-          ></mat-progress-bar>
-          <table
-            id="tradeList"
-            mat-table
-            [dataSource]="dataSource"
-            matSort
-            (matSortChange)="sortChange()"
-            matSortDisableClear
-            class="cybrid-paginator mat-button-toggle-group-appearance-standard"
-          >
+          <mat-progress-bar *ngIf="isLoadingResults$ | async" mode="indeterminate"></mat-progress-bar>
+          <table id="tradeList" class="cybrid-paginator mat-button-toggle-group-appearance-standard"
+            [ngClass]="{ 'cybrid-paginator': totalRows > 5 }" mat-table [dataSource]="dataSource" matSort
+            matSortDisableClear (matSortChange)="sortChange()">
+            <!-- Transaction -->
             <ng-container matColumnDef="transaction">
               <th mat-header-cell *matHeaderCellDef mat-sort-header="">
                 <div class="cybrid-sort-header">
@@ -74,109 +60,78 @@
               </th>
               <td id="transaction" mat-cell *matCellDef="let transaction">
                 <div class="cybrid-transaction-cell">
-                  <mat-icon
-                    fontSet="material-icons-outlined"
-                    class="cybrid-success"
-                    [ngClass]="
+                  <mat-icon fontSet="material-icons-outlined" class="cybrid-success" [ngClass]="
                       transaction.side === 'sell'
                         ? 'cybrid-buy-icon'
                         : 'cybrid-sell-icon'
-                    "
-                    >outbound
+                    ">outbound
                   </mat-icon>
                   <div>
                     <span>{{ transaction.side | titlecase }}</span>
                     <span class="cybrid-h5 mat-hint">{{
                       transaction.created_at | date
-                    }}</span>
+                      }}</span>
                   </div>
                 </div>
               </td>
             </ng-container>
+
+            <!-- Balance -->
             <ng-container matColumnDef="balance">
-              <th
-                mat-header-cell
-                *matHeaderCellDef
-                mat-sort-header=""
-                arrowPosition="before"
-              >
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="" arrowPosition="before">
                 <div class="cybrid-sort-header">
                   <span>{{ 'accountDetails.balance' | translate }}</span>
                   <span class="mat-hint cybrid-h5 cybrid-code">{{
-                    data.config!.fiat
-                  }}</span>
+                    config.fiat
+                    }}</span>
                 </div>
               </th>
               <td id="balance" mat-cell *matCellDef="let balance">
                 <div *ngIf="balance.side === 'buy'" class="cybrid-balance-cell">
                   <div>
-                    <span class="mat-body-strong"
-                      >{{
-                        (balance.receive_amount
-                          | asset : account.asset : 'trade') + ' '
+                    <span class="mat-body-strong">{{
+                      (balance.receive_amount
+                      | assetFormat : data.account?.asset!) + ' '
                       }}
                     </span>
-                    <span class="mat-hint"> {{ account.asset.code }}</span>
+                    <span class="mat-hint"> {{ data.account?.asset }}</span>
                   </div>
                   <span class="cybrid-h5">{{
-                    balance.deliver_amount | asset : account.counter_asset
-                  }}</span>
+                    balance.deliver_amount | assetFormat : config.fiat
+                    }}</span>
                 </div>
-                <div
-                  *ngIf="balance.side === 'sell'"
-                  class="cybrid-balance-cell"
-                >
+                <div *ngIf="balance.side === 'sell'" class="cybrid-balance-cell">
                   <div>
-                    <span class="mat-body-strong"
-                      >{{
-                        '-' +
-                          (balance.deliver_amount
-                            | asset : account.asset : 'trade')
+                    <span class="mat-body-strong">{{
+                      '-' +
+                      (balance.deliver_amount
+                      | assetFormat : data.account?.asset! : 'trade')
                       }}
                     </span>
-                    <span class="mat-hint"> {{ account.asset.code }}</span>
+                    <span class="mat-hint"> {{ data.account?.asset! }}</span>
                   </div>
                   <span class="cybrid-h5">{{
-                    balance.receive_amount | asset : account.counter_asset
-                  }}</span>
+                    balance.receive_amount | assetFormat : config.fiat
+                    }}</span>
                 </div>
               </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr
-              class="cybrid-pointer"
-              mat-row
-              *matRowDef="let row; columns: displayedColumns"
-              (click)="onRowClick(row)"
-            ></tr>
+            <tr class="cybrid-pointer" mat-row *matRowDef="let row; columns: displayedColumns"
+              (click)="onRowClick(row)"></tr>
             <tr class="mat-row" *matNoDataRow>
               <td id="warning" class="mat-cell cybrid-no-data" colspan="2">
-                {{
-                  !getTradesError
-                    ? ('accountDetails.error.noData' | translate)
-                    : ('accountDetails.error.trade' | translate)
-                }}
+                {{ 'accountDetails.error.noData' | translate }}
               </td>
             </tr>
           </table>
-          <mat-paginator
-            [pageSize]="pageSize"
-            [pageIndex]="currentPage"
-            [length]="totalRows"
-            [pageSizeOptions]="pageSizeOptions"
-            (page)="pageChange($event)"
-            class="mat-button-toggle-group-appearance-standard"
-            aria-label="cryptocurrency accounts and balances"
-          >
-          </mat-paginator>
         </div>
+        <mat-paginator class="mat-button-toggle-group-appearance-standard" aria-label="account and balances"
+          [ngClass]="{ 'cybrid-hide': totalRows <= 5 }" [pageSize]="pageSize" [pageIndex]="currentPage"
+          [length]="totalRows" [pageSizeOptions]="pageSizeOptions" (page)="pageChange($event)">
+        </mat-paginator>
         <div class="cybrid-actions">
-          <button
-            id="trade"
-            mat-flat-button
-            color="primary"
-            (click)="onTrade()"
-          >
+          <button id="trade" mat-flat-button color="primary" (click)="onTrade()">
             {{ 'accountDetails.trade' | translate }}
           </button>
         </div>

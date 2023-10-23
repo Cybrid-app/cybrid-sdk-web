@@ -1,5 +1,6 @@
 import {
   AfterContentInit,
+  ChangeDetectionStrategy,
   Component,
   OnDestroy,
   OnInit,
@@ -14,23 +15,35 @@ import { MatDialog } from '@angular/material/dialog';
 import {
   BehaviorSubject,
   catchError,
+  combineLatest,
   map,
+  Observable,
   of,
+  startWith,
   Subject,
+  Subscription,
   switchMap,
   take,
   takeUntil,
-  timer
+  tap,
+  timer,
+  withLatestFrom
 } from 'rxjs';
 
 // Client
-import { TradeBankModel, TradesService } from '@cybrid/cybrid-api-bank-angular';
+import {
+  AccountBankModel,
+  AssetBankModel,
+  SymbolPriceBankModel,
+  TradeBankModel,
+  TradeListBankModel,
+  TradesService
+} from '@cybrid/cybrid-api-bank-angular';
 
 // Services
 import {
-  Account,
+  AccountBankModelWithDetails,
   AccountService,
-  Asset,
   AssetService,
   CODE,
   ComponentConfig,
@@ -39,19 +52,22 @@ import {
   EventService,
   LEVEL,
   RoutingData,
-  RoutingService
+  RoutingService,
+  PriceService
 } from '@services';
 
 // Components
 import { TradeSummaryComponent } from '@components';
 
 // Utility
-import { Constants } from '@constants';
+import { symbolBuild } from '@utility';
+import { AssetFormatPipe } from '@pipes';
 
 @Component({
   selector: 'app-account-details',
   templateUrl: './account-details.component.html',
-  styleUrls: ['./account-details.component.scss']
+  styleUrls: ['./account-details.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AccountDetailsComponent
   implements OnInit, AfterContentInit, OnDestroy
@@ -60,24 +76,31 @@ export class AccountDetailsComponent
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
   dataSource: MatTableDataSource<TradeBankModel> = new MatTableDataSource();
 
-  accountGuid: string = '';
-  account$ = new BehaviorSubject<Account | null>(null);
+  account$ = new BehaviorSubject<AccountBankModelWithDetails | null>(null);
+  tradeList$ = new BehaviorSubject<TradeListBankModel | null>(null);
 
-  asset: Asset = Constants.BTC_ASSET;
-  counterAssetCode = Constants.USD_ASSET.code;
+  accountGuid: string | null = null;
+  asset: AssetBankModel | null = null;
+  counterAsset: AssetBankModel | null = null;
 
   displayedColumns: string[] = ['transaction', 'balance'];
-  getTradesError = false;
-  isLoadingResults = true;
 
   totalRows = 0;
   pageSize = 5;
   currentPage = 0;
   pageSizeOptions: number[] = [5, 10, 25, 100];
 
-  isLoading$ = new BehaviorSubject(true);
+  isLoading$ = combineLatest([this.account$, this.tradeList$]).pipe(
+    switchMap(([account, tradeList]) =>
+      account && tradeList ? of(false) : of(true)
+    )
+  );
+  isLoadingResults$ = new BehaviorSubject(true);
   isRecoverable$ = new BehaviorSubject(true);
-  private unsubscribe$ = new Subject();
+
+  refreshDataSub!: Subscription;
+
+  unsubscribe$ = new Subject();
 
   routingData: RoutingData = {
     route: 'account-list',
@@ -86,15 +109,23 @@ export class AccountDetailsComponent
 
   constructor(
     public configService: ConfigService,
-    private errorService: ErrorService,
     private eventService: EventService,
     private accountService: AccountService,
     private tradeService: TradesService,
+    private priceService: PriceService,
     private assetService: AssetService,
     private route: ActivatedRoute,
     private routingService: RoutingService,
-    public dialog: MatDialog
-  ) {}
+    public dialog: MatDialog,
+    private assetFormatPipe: AssetFormatPipe
+  ) {
+    this.route.queryParams
+      .pipe(
+        take(1),
+        tap((params) => (this.accountGuid = params['accountGuid']))
+      )
+      .subscribe();
+  }
 
   ngOnInit() {
     this.eventService.handleEvent(
@@ -102,8 +133,6 @@ export class AccountDetailsComponent
       CODE.COMPONENT_INIT,
       'Initializing account-detail component'
     );
-    this.setAccountGuid();
-    this.getAccount();
     this.refreshData();
   }
 
@@ -118,67 +147,62 @@ export class AccountDetailsComponent
     this.unsubscribe$.complete();
   }
 
-  setAccountGuid(): void {
-    // Set currently selected account based on routing data, for instance from an account-list row click
-    this.route.queryParams
+  processAccount(
+    account: AccountBankModelWithDetails,
+    priceList: SymbolPriceBankModel[]
+  ): AccountBankModelWithDetails {
+    const processedAccount = { ...account };
+
+    processedAccount.price = priceList.find((price: SymbolPriceBankModel) => {
+      return account.asset === price.symbol?.split('-')[0];
+    });
+
+    if (processedAccount.price) {
+      const platformBalance = Number(
+        this.assetFormatPipe.transform(
+          account.platform_balance,
+          <string>account.asset,
+          'trade'
+        )
+      );
+
+      processedAccount.value =
+        Number(processedAccount.price.sell_price) * platformBalance;
+    }
+
+    return processedAccount;
+  }
+
+  getAccount(): void {
+    combineLatest([
+      this.configService.getConfig$(),
+      this.accountService.getAccount(<string>this.accountGuid),
+      this.priceService.listPrices()
+    ])
       .pipe(
         take(1),
-        map((params) => {
-          if (params) {
-            this.accountGuid = params['accountGuid'];
-          }
+        tap(([config, account]) => {
+          this.asset = this.assetService.getAsset(<string>account.asset);
+          this.counterAsset = this.assetService.getAsset(config.fiat);
+        }),
+        map(([config, account, priceList]) =>
+          this.processAccount(account, priceList)
+        ),
+        tap((account) => {
+          this.account$.next(account);
+        }),
+        catchError((err) => {
+          this.refreshDataSub?.unsubscribe();
+          this.isRecoverable$.next(false);
+
+          return of(err);
         })
       )
       .subscribe();
   }
 
-  getAccount() {
-    this.configService
-      .getConfig$()
-      .pipe(
-        take(1),
-        map((config) => config.fiat),
-        switchMap((counterAsset) => {
-          return this.accountService
-            .getAccountDetails(this.accountGuid, counterAsset)
-            .pipe(
-              map((account) => {
-                this.asset = account.asset;
-                this.account$.next(account);
-                this.isLoading$.next(false);
-
-                this.eventService.handleEvent(
-                  LEVEL.INFO,
-                  CODE.DATA_REFRESHED,
-                  'Account details successfully updated'
-                );
-
-                // Call get trades here to stagger loading in the template (ensures paginator is not undefined)
-                this.getTrades();
-              }),
-              catchError((err) => {
-                this.eventService.handleEvent(
-                  LEVEL.ERROR,
-                  CODE.DATA_ERROR,
-                  'There was an error fetching account details'
-                );
-
-                this.errorService.handleError(
-                  new Error('There was an error fetching account details')
-                );
-
-                this.dataSource.data = [];
-                this.getTradesError = true;
-                return of(err);
-              })
-            );
-        })
-      )
-      .subscribe();
-  }
-
-  getTrades(): void {
-    this.isLoadingResults = true;
+  listTrades(): void {
+    this.isLoadingResults$.next(true);
 
     this.tradeService
       .listTrades(
@@ -187,33 +211,41 @@ export class AccountDetailsComponent
         '',
         '',
         '',
-        this.accountGuid
+        <string>this.accountGuid
       )
       .pipe(
-        map((trades) => {
+        tap((trades) => {
+          this.totalRows = Number(trades.total);
           this.dataSource.data = trades.objects;
 
-          this.paginator.pageIndex = this.currentPage;
-          this.paginator.length = Number(trades.total);
-
-          this.isLoadingResults = false;
+          this.tradeList$.next(trades);
+          this.isLoadingResults$.next(false);
         }),
         catchError((err) => {
-          this.eventService.handleEvent(
-            LEVEL.ERROR,
-            CODE.DATA_ERROR,
-            'There was an error fetching trades'
-          );
-
-          this.errorService.handleError(
-            new Error('There was an error fetching trades')
-          );
-
+          this.refreshDataSub?.unsubscribe();
           this.dataSource.data = [];
-          this.getTradesError = true;
+          this.isRecoverable$.next(false);
 
           return of(err);
         })
+      )
+      .subscribe();
+  }
+
+  refreshData(): void {
+    this.refreshDataSub = this.configService
+      .getConfig$()
+      .pipe(
+        take(1),
+        switchMap((cfg: ComponentConfig) => {
+          return timer(cfg.refreshInterval, cfg.refreshInterval);
+        }),
+        startWith(0),
+        tap(() => {
+          this.getAccount();
+          this.listTrades();
+        }),
+        takeUntil(this.unsubscribe$)
       )
       .subscribe();
   }
@@ -222,33 +254,11 @@ export class AccountDetailsComponent
     this.pageSize = event.pageSize;
     this.currentPage = event.pageIndex;
 
-    this.getTrades();
+    this.listTrades();
   }
 
   sortChange(): void {
     this.dataSource.sort = this.sort;
-  }
-
-  refreshData(): void {
-    this.configService
-      .getConfig$()
-      .pipe(
-        take(1),
-        switchMap((cfg: ComponentConfig) => {
-          return timer(cfg.refreshInterval, cfg.refreshInterval);
-        }),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe({
-        next: () => {
-          this.eventService.handleEvent(
-            LEVEL.INFO,
-            CODE.DATA_FETCHING,
-            'Refreshing account details...'
-          );
-          this.getAccount();
-        }
-      });
   }
 
   sortingDataAccessor(trade: TradeBankModel, columnDef: string) {
@@ -256,7 +266,7 @@ export class AccountDetailsComponent
       case 'transaction':
         return trade.created_at!;
       case 'balance':
-        return trade.side! == 'buy'
+        return trade.side == 'buy'
           ? trade.receive_amount!
           : trade.deliver_amount!;
       default:
@@ -267,7 +277,7 @@ export class AccountDetailsComponent
   onTrade(): void {
     const extras: NavigationExtras = {
       queryParams: {
-        code: this.asset.code
+        code: this.asset?.code
       }
     };
     this.routingService.handleRoute({
@@ -277,12 +287,12 @@ export class AccountDetailsComponent
     });
   }
 
-  onRowClick(tradeBankModel: TradeBankModel): void {
+  onRowClick(trade: TradeBankModel): void {
     this.dialog.open(TradeSummaryComponent, {
       data: {
-        model: tradeBankModel,
+        model: trade,
         asset: this.asset,
-        counter_asset: this.assetService.getAsset(this.counterAssetCode)
+        counter_asset: this.counterAsset
       }
     });
   }

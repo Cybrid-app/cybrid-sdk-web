@@ -35,7 +35,7 @@ import { TransferComponent } from '@components';
 
 // Utility
 import { TestConstants } from '@constants';
-import { AssetPipe, MockAssetPipe } from '@pipes';
+import { AssetFormatPipe, MockAssetFormatPipe } from '@pipes';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 describe('TransferComponent', () => {
@@ -62,7 +62,7 @@ describe('TransferComponent', () => {
     'createQuote'
   ]);
   let MockAccountService = jasmine.createSpyObj('AccountService', [
-    'getAccounts'
+    'listAccounts'
   ]);
   let MockAssetService = jasmine.createSpyObj('AssetService', ['getAsset']);
   let MockRoutingService = jasmine.createSpyObj('RoutingService', [
@@ -92,7 +92,7 @@ describe('TransferComponent', () => {
         })
       ],
       providers: [
-        { provide: AssetPipe, useClass: MockAssetPipe },
+        { provide: AssetFormatPipe, useClass: MockAssetFormatPipe },
         { provide: EventService, useValue: MockEventService },
         { provide: ErrorService, useValue: MockErrorService },
         { provide: ConfigService, useValue: MockConfigService },
@@ -124,8 +124,8 @@ describe('TransferComponent', () => {
     );
     MockAssetService.getAsset.and.returnValue(TestConstants.USD_ASSET);
     MockAccountService = TestBed.inject(AccountService);
-    MockAccountService.getAccounts.and.returnValue(
-      of(TestConstants.ACCOUNT_LIST_BANK_MODEL.objects)
+    MockAccountService.listAccounts.and.returnValue(
+      of(TestConstants.ACCOUNT_LIST_BANK_MODEL)
     );
     MockAssetService = TestBed.inject(AssetService);
     MockRoutingService = TestBed.inject(RoutingService);
@@ -246,7 +246,7 @@ describe('TransferComponent', () => {
   });
 
   it('should handle an error on listAccounts()', () => {
-    MockAccountService.getAccounts.and.returnValue(error$);
+    MockAccountService.listAccounts.and.returnValue(error$);
 
     component.listAccounts();
     expect(MockErrorService.handleError).toHaveBeenCalled();

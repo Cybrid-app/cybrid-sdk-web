@@ -23,7 +23,7 @@ import { Configuration } from '@cybrid/cybrid-api-bank-angular';
 import { TransferDetailsComponent, TransferDetailsData } from '@components';
 
 // Utility
-import { AssetPipe, MockAssetPipe, TruncatePipe } from '@pipes';
+import { AssetFormatPipe, MockAssetFormatPipe, TruncatePipe } from '@pipes';
 import { of } from 'rxjs';
 import { TestConstants } from '@constants';
 
@@ -46,7 +46,11 @@ describe('TransferDetailsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [TransferDetailsComponent, MockAssetPipe, TruncatePipe],
+      declarations: [
+        TransferDetailsComponent,
+        MockAssetFormatPipe,
+        TruncatePipe
+      ],
       imports: [
         BrowserAnimationsModule,
         HttpClientTestingModule,
@@ -65,7 +69,7 @@ describe('TransferDetailsComponent', () => {
           provide: MAT_DIALOG_DATA,
           useValue: mockMatDialogData
         },
-        { provide: AssetPipe, useClass: MockAssetPipe },
+        { provide: AssetFormatPipe, useClass: MockAssetFormatPipe },
         TruncatePipe,
         TranslatePipe,
         Configuration

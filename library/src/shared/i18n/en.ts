@@ -13,6 +13,7 @@ export default {
   from: 'From',
   fatal: 'An unrecoverable error occurred',
   unexpectedError: 'Unexpected error.',
+  pending: 'pending',
 
   // Price list component
   priceList: {

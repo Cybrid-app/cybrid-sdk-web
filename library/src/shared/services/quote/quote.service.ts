@@ -6,15 +6,14 @@ import { map, Subject, takeUntil } from 'rxjs';
 import {
   AccountBankModel,
   AssetBankModel,
-  PostQuoteBankModel,
-  QuotesService
+  PostQuoteBankModel
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
 import { ComponentConfig, ConfigService } from '@services';
 
 // Utility
-import { AssetPipe } from '@pipes';
+import { AssetFormatPipe } from '@pipes';
 import { symbolBuild } from '@utility';
 
 @Injectable({
@@ -27,8 +26,7 @@ export class QuoteService implements OnDestroy {
 
   constructor(
     private configService: ConfigService,
-    private quotesService: QuotesService,
-    private assetPipe: AssetPipe
+    private assetFormatPipe: AssetFormatPipe
   ) {
     this.getCustomer();
   }
@@ -67,15 +65,15 @@ export class QuoteService implements OnDestroy {
     switch (side) {
       case 'buy': {
         if (input == 'trading') {
-          postQuoteBankModel.receive_amount = this.assetPipe.transform(
+          postQuoteBankModel.receive_amount = this.assetFormatPipe.transform(
             amount,
-            asset,
+            asset.code,
             'base'
           ) as string;
         } else {
-          postQuoteBankModel.deliver_amount = this.assetPipe.transform(
+          postQuoteBankModel.deliver_amount = this.assetFormatPipe.transform(
             amount,
-            counterAsset,
+            counterAsset.code,
             'base'
           ) as string;
         }
@@ -83,15 +81,15 @@ export class QuoteService implements OnDestroy {
       }
       case 'sell': {
         if (input == 'fiat') {
-          postQuoteBankModel.receive_amount = this.assetPipe.transform(
+          postQuoteBankModel.receive_amount = this.assetFormatPipe.transform(
             amount,
-            counterAsset,
+            counterAsset.code,
             'base'
           ) as string;
         } else {
-          postQuoteBankModel.deliver_amount = this.assetPipe.transform(
+          postQuoteBankModel.deliver_amount = this.assetFormatPipe.transform(
             amount,
-            asset,
+            asset.code,
             'base'
           ) as string;
         }

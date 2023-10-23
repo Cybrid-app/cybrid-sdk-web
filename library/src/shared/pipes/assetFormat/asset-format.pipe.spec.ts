@@ -46,9 +46,9 @@ describe('AssetFormatPipe', () => {
   });
 
   it('should transform asset values', () => {
-    expect(pipe.transform(0, TestConstants.BTC_ASSET.code)).toEqual(0);
-    expect(pipe.transform(0, TestConstants.ETH_ASSET.code)).toEqual(0);
-    expect(pipe.transform(0, TestConstants.CAD_ASSET.code)).toEqual(0);
+    expect(pipe.transform(0, TestConstants.BTC_ASSET.code)).toEqual('0');
+    expect(pipe.transform(0, TestConstants.ETH_ASSET.code)).toEqual('0');
+    expect(pipe.transform(0, TestConstants.CAD_ASSET.code)).toEqual('$0.00');
     expect(pipe.transform(1, 'BTC')).toEqual('0.00000001');
     expect(pipe.transform(1, TestConstants.ETH_ASSET.code)).toEqual(
       '0.000000000000000001'
@@ -90,6 +90,12 @@ describe('AssetFormatPipe', () => {
     expect(
       pipe.transform('123456789123456789123456', TestConstants.CAD_ASSET.code)
     ).toEqual('$1,234,567,891,234,568,000,000.56');
+  });
+
+  it('should return the value if undefined', () => {
+    expect(
+      pipe.transform(undefined, TestConstants.CAD_ASSET.code)
+    ).toBeUndefined();
   });
 
   it('should trim asset values', () => {

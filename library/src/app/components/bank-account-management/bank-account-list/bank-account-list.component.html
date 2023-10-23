@@ -2,22 +2,10 @@
   <app-navigation [routingData]="routingData"></app-navigation>
   <ng-container *ngIf="(isLoading$ | async) !== true; else loading">
     <div class="cybrid-table">
-      <mat-progress-bar
-        *ngIf="isLoadingResults$ | async"
-        mode="indeterminate"
-      ></mat-progress-bar>
-      <table
-        id="bank-account-list"
-        class="mat-button-toggle-group-appearance-standard"
-        [ngClass]="{ 'cybrid-paginator': dataSource.data.length > 5 }"
-        mat-table
-        matSort
-        matSortDisableClear
-        [dataSource]="dataSource"
-        matSortActive="status"
-        matSortDirection="asc"
-        (matSortChange)="sortChange()"
-      >
+      <mat-progress-bar *ngIf="isLoadingResults$ | async" mode="indeterminate"></mat-progress-bar>
+      <table id="bank-account-list" class="mat-button-toggle-group-appearance-standard"
+        [ngClass]="{ 'cybrid-paginator': dataSource.data.length > 5 }" mat-table matSort matSortDisableClear
+        [dataSource]="dataSource" matSortActive="status" matSortDirection="asc" (matSortChange)="sortChange()">
         <!-- Account -->
         <ng-container matColumnDef="account">
           <th mat-header-cell *matHeaderCellDef mat-sort-header="account">
@@ -32,7 +20,7 @@
                 <span>{{ account.name + ' - ' + account.asset + ' ' }}</span>
                 <span class="mat-hint">{{
                   '(***' + account.plaid_account_mask + ')'
-                }}</span>
+                  }}</span>
               </div>
             </div>
           </td>
@@ -40,12 +28,7 @@
 
         <!-- Status -->
         <ng-container matColumnDef="status">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            mat-sort-header="status"
-            arrowPosition="before"
-          >
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="status" arrowPosition="before">
             <div class="cybrid-sort-header">
               {{ 'bankAccountList.status' | translate }}
             </div>
@@ -54,46 +37,32 @@
             <div class="cybrid-status-cell">
               <span>{{
                 'bankAccountList.state.' + account.state | translate
-              }}</span>
+                }}</span>
             </div>
           </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr
-          mat-row
-          *matRowDef="let row; columns: displayedColumns"
-          class="cybrid-pointer"
-          (click)="onAccountSelect(row)"
-        ></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" class="cybrid-pointer"
+          (click)="onAccountSelect(row)"></tr>
         <tr class="mat-row" *matNoDataRow>
           <td id="warning" class="mat-cell cybrid-no-data" colspan="2">
             {{
-              !listExternalBankAccountsError
-                ? ('bankAccountList.empty' | translate)
-                : ('bankAccountList.error' | translate)
+            !listExternalBankAccountsError
+            ? ('bankAccountList.empty' | translate)
+            : ('bankAccountList.error' | translate)
             }}
           </td>
         </tr>
       </table>
     </div>
   </ng-container>
-  <mat-paginator
-    aria-label="bank accounts paginator"
-    class="mat-button-toggle-group-appearance-standard"
-    [ngClass]="{ 'cybrid-hide': dataSource.data.length <= 5 }"
-    [length]="dataSource.data.length"
-    [pageSize]="pageSize"
-    [pageSizeOptions]="pageSizeOptions"
-  >
+  <mat-paginator aria-label="bank accounts paginator" class="mat-button-toggle-group-appearance-standard"
+    [ngClass]="{ 'cybrid-hide': dataSource.data.length <= 5 }" [length]="dataSource.data.length" [pageSize]="pageSize"
+    [pageSizeOptions]="pageSizeOptions">
   </mat-paginator>
   <div *ngIf="(isLoading$ | async) !== true" class="cybrid-actions">
-    <button
-      id="add-account"
-      mat-flat-button
-      color="primary"
-      (click)="onAddAccount()"
-    >
+    <button id="add-account" mat-flat-button color="primary" (click)="onAddAccount()">
       {{ 'bankAccountList.addAccount' | translate }}
     </button>
   </div>

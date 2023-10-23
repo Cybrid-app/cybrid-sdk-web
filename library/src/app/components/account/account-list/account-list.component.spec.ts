@@ -5,7 +5,7 @@ import {
   TestBed,
   tick
 } from '@angular/core/testing';
-import { CUSTOM_ELEMENTS_SCHEMA, Pipe, PipeTransform } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -14,12 +14,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpLoaderFactory } from '../../../modules/library.module';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
+import { PageEvent } from '@angular/material/paginator';
 
 // Services
 import {
-  Account,
   AccountService,
-  AssetService,
+  AccountBankModelWithDetails,
+  PriceService,
   ConfigService,
   ErrorService,
   EventService,
@@ -30,7 +31,7 @@ import {
 import { AccountListComponent } from '@components';
 
 // Utility
-import { AssetPipe } from '@pipes';
+import { MockAssetFormatPipe, AssetFormatPipe } from '@pipes';
 import { Constants, TestConstants } from '@constants';
 import { SharedModule } from '../../../../shared/modules/shared.module';
 
@@ -47,10 +48,10 @@ describe('AccountListComponent', () => {
     'handleError'
   ]);
   let MockConfigService = jasmine.createSpyObj('ConfigService', ['getConfig$']);
-  let MockAssetService = jasmine.createSpyObj('AssetService', ['getAsset']);
   let MockAccountService = jasmine.createSpyObj('AccountService', [
-    'getPortfolio'
+    'listAccounts'
   ]);
+  let MockPriceService = jasmine.createSpyObj('PriceService', ['listPrices']);
   let MockRoutingService = jasmine.createSpyObj('RoutingService', [
     'handleRoute'
   ]);
@@ -58,18 +59,9 @@ describe('AccountListComponent', () => {
     new Error('Error');
   });
 
-  @Pipe({
-    name: 'asset'
-  })
-  class MockAssetPipe implements PipeTransform {
-    transform(value: any): any {
-      return value;
-    }
-  }
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AccountListComponent, MockAssetPipe],
+      declarations: [AccountListComponent, MockAssetFormatPipe],
       imports: [
         BrowserAnimationsModule,
         HttpClientTestingModule,
@@ -84,31 +76,32 @@ describe('AccountListComponent', () => {
         })
       ],
       providers: [
-        { provide: AssetPipe, useClass: MockAssetPipe },
-        { provide: AssetService, useValue: MockAssetService },
+        { provide: AssetFormatPipe, useClass: MockAssetFormatPipe },
         { provide: EventService, useValue: MockEventService },
         { provide: ErrorService, useValue: MockErrorService },
         { provide: ConfigService, useValue: MockConfigService },
         { provide: AccountService, useValue: MockAccountService },
+        { provide: PriceService, useValue: MockPriceService },
         { provide: RoutingService, useValue: MockRoutingService }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
     MockEventService = TestBed.inject(EventService);
     MockErrorService = TestBed.inject(ErrorService);
+    MockAccountService = TestBed.inject(AccountService);
+    MockPriceService = TestBed.inject(PriceService);
+    MockRoutingService = TestBed.inject(RoutingService);
     MockConfigService = TestBed.inject(ConfigService);
     MockConfigService.getConfig$.and.returnValue(of(TestConstants.CONFIG));
-    MockAssetService = TestBed.inject(AssetService);
-    MockAssetService.getAsset.and.returnValue(TestConstants.USD_ASSET);
-    MockAccountService = TestBed.inject(AccountService);
-    MockAccountService.getPortfolio.and.returnValue(
-      of(TestConstants.ACCOUNT_OVERVIEW)
+    MockAccountService.listAccounts.and.returnValue(
+      of(TestConstants.ACCOUNT_LIST_BANK_MODEL)
     );
-    MockRoutingService = TestBed.inject(RoutingService);
+    MockPriceService.listPrices.and.returnValue(
+      of(TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY)
+    );
 
     fixture = TestBed.createComponent(AccountListComponent);
     component = fixture.componentInstance;
-    component.currentFiat = Constants.USD_ASSET;
     fixture.detectChanges();
   });
 
@@ -120,66 +113,198 @@ describe('AccountListComponent', () => {
     expect(MockEventService.handleEvent).toHaveBeenCalled();
   });
 
-  it('should get accounts', fakeAsync(() => {
-    const balance$Spy = spyOn(component.balance$, 'next');
-    const fiatAccount$Spy = spyOn(component.fiatAccount$, 'next');
+  describe('when processing accounts', () => {
+    it('should process fiat accounts', () => {
+      const accountList = { ...TestConstants.ACCOUNT_LIST_BANK_MODEL };
+      const priceList = [...TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY];
 
-    component.ngOnInit();
-    tick();
+      const processedAccounts = component.processAccounts(
+        accountList,
+        priceList
+      );
 
-    expect(MockAccountService.getPortfolio).toHaveBeenCalled();
-    expect(MockEventService.handleEvent).toHaveBeenCalled();
-    expect(balance$Spy).toHaveBeenCalledWith(
-      TestConstants.ACCOUNT_OVERVIEW.balance
-    );
-    expect(fiatAccount$Spy).toHaveBeenCalledWith(
-      TestConstants.ACCOUNT_OVERVIEW.fiatAccount
-    );
-    expect(component.dataSource.data).toEqual(
-      TestConstants.ACCOUNT_OVERVIEW.accounts
-    );
-    discardPeriodicTasks();
-  }));
+      // USD account
+      const fiatAccount = processedAccounts[0];
 
-  it('should handle errors when calling get accounts', () => {
-    MockAccountService.getPortfolio.and.returnValue(error$);
+      expect(fiatAccount.price).toBeUndefined();
+      expect(fiatAccount.value).toEqual(Number(fiatAccount.platform_available));
+    });
 
-    component.ngOnInit();
+    it('should process crypto accounts', () => {
+      const accountList = { ...TestConstants.ACCOUNT_LIST_BANK_MODEL };
+      const priceList = [...TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY];
 
-    expect(MockEventService.handleEvent).toHaveBeenCalled();
-    expect(MockErrorService.handleError).toHaveBeenCalled();
+      const processedAccounts = component.processAccounts(
+        accountList,
+        priceList
+      );
+
+      // ETH account
+      const cryptoAccount = processedAccounts[2];
+
+      expect(cryptoAccount.price).toBeDefined();
+      expect(cryptoAccount.value).toBeDefined();
+    });
   });
 
-  it('should refresh the accounts', fakeAsync(() => {
-    const getAccountsSpy = spyOn(component, 'getAccounts');
+  describe('when listing accounts', () => {
+    it('should list accounts', () => {
+      expect(MockAccountService.listAccounts).toHaveBeenCalled();
+    });
 
-    component.ngOnInit();
-    tick(TestConstants.CONFIG.refreshInterval);
+    it('should list prices', () => {
+      expect(MockPriceService.listPrices).toHaveBeenCalled();
+    });
 
-    expect(getAccountsSpy).toHaveBeenCalledTimes(2);
-    expect(MockEventService.handleEvent).toHaveBeenCalled();
+    it('should set the dataSource', () => {
+      const accountList = { ...TestConstants.ACCOUNT_LIST_BANK_MODEL };
+      const priceList = [...TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY];
+
+      const processedAccounts = component.processAccounts(
+        accountList,
+        priceList
+      );
+
+      expect(component.dataSource.data).toEqual(processedAccounts);
+    });
+
+    it('should set the totalRows', () => {
+      const totalRows = Number(TestConstants.ACCOUNT_LIST_BANK_MODEL.total);
+
+      expect(component.totalRows).toEqual(totalRows);
+    });
+
+    it('should handle errors when listing accounts', () => {
+      const refreshDataSubSpy = spyOn(component.refreshDataSub, 'unsubscribe');
+      const isRecoverable$Spy = spyOn(component.isRecoverable$, 'next');
+
+      MockAccountService.listAccounts.and.returnValue(error$);
+
+      component.listAccounts();
+
+      expect(refreshDataSubSpy).toHaveBeenCalled();
+      expect(isRecoverable$Spy).toHaveBeenCalled();
+
+      // Reset
+      MockAccountService.listAccounts.and.returnValue(
+        TestConstants.ACCOUNT_LIST_BANK_MODEL
+      );
+    });
+
+    it('should handle errors when listing prices', () => {
+      const refreshDataSubSpy = spyOn(component.refreshDataSub, 'unsubscribe');
+      const isRecoverable$Spy = spyOn(component.isRecoverable$, 'next');
+
+      MockPriceService.listPrices.and.returnValue(error$);
+
+      component.listAccounts();
+
+      expect(refreshDataSubSpy).toHaveBeenCalled();
+      expect(isRecoverable$Spy).toHaveBeenCalled();
+
+      // Reset
+      MockPriceService.listPrices.and.returnValue(
+        TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY
+      );
+    });
+  });
+
+  it('should refresh data', fakeAsync(() => {
+    const listAccountsSpy = spyOn(component, 'listAccounts');
+
+    component.refreshData();
+    tick(Constants.REFRESH_INTERVAL);
+
+    expect(listAccountsSpy).toHaveBeenCalledTimes(2);
+
     discardPeriodicTasks();
   }));
 
-  it('should sort custom data fields', () => {
-    // Get first account ('ETH-USD')
-    let account: Account = TestConstants.ACCOUNT_OVERVIEW.accounts[0];
+  describe('when sorting accounts', () => {
+    it('should sort by account', () => {
+      let account: AccountBankModelWithDetails = {
+        ...TestConstants.ACCOUNT_BANK_MODEL_WITH_DETAILS
+      };
 
-    // Sort by account
-    let sort = component.sortingDataAccessor(account, 'asset');
-    expect(sort).toEqual(account.account.asset!);
+      let sort = component.sortingDataAccessor(account, 'account');
+      expect(sort).toEqual(<string>account.asset);
+    });
 
-    // Sort by balance
-    sort = component.sortingDataAccessor(account, 'balance');
-    expect(sort).toEqual(account.value);
+    it('should sort by balance', () => {
+      let account: AccountBankModelWithDetails = {
+        ...TestConstants.ACCOUNT_BANK_MODEL_WITH_DETAILS
+      };
 
-    // Sort by !account || !balance
-    sort = component.sortingDataAccessor(account, 'test');
-    expect(sort).toEqual('');
+      let sort = component.sortingDataAccessor(account, 'balance');
+      expect(sort).toEqual(<number>account.value);
+    });
+    it('should sort by default', () => {
+      let account: AccountBankModelWithDetails = {
+        ...TestConstants.ACCOUNT_BANK_MODEL_WITH_DETAILS
+      };
+
+      let sort = component.sortingDataAccessor(account, '');
+      expect(sort).toEqual('');
+    });
+  });
+
+  describe('when paginating', () => {
+    beforeEach(() => {
+      // Mock listAccounts() to avoid Angular testing error
+      component.listAccounts = () => {};
+    });
+
+    it('should update the current page', () => {
+      const pageIndex = 1;
+      const pageEvent: PageEvent = {
+        pageIndex: pageIndex,
+        pageSize: component.pageSize,
+        length: component.totalRows
+      };
+
+      component.pageChange(pageEvent);
+
+      expect(component.currentPage).toEqual(pageIndex);
+    });
+
+    it('should update the page size', () => {
+      const pageSize = 10;
+      const pageEvent: PageEvent = {
+        pageIndex: 0,
+        pageSize: pageSize,
+        length: component.totalRows
+      };
+
+      component.pageChange(pageEvent);
+
+      expect(component.pageSize).toEqual(pageSize);
+    });
+
+    it('should list accounts', () => {
+      const listAccountsSpy = spyOn(component, 'listAccounts');
+
+      const pageEvent: PageEvent = {
+        pageIndex: component.currentPage,
+        pageSize: component.pageSize,
+        length: component.totalRows
+      };
+
+      component.pageChange(pageEvent);
+
+      expect(listAccountsSpy).toHaveBeenCalled();
+    });
+  });
+
+  it('should sort', () => {
+    component.dataSource.sort = null;
+
+    component.sortChange();
+
+    expect(component.dataSource.sort).toBeDefined();
   });
 
   it('should navigate on row click', () => {
-    component.onRowClick(TestConstants.ACCOUNT_GUID);
+    component.onRowClick(TestConstants.ACCOUNT_BANK_MODEL_BTC);
 
     // Test default config.routing=true
     expect(MockRoutingService.handleRoute).toHaveBeenCalledWith({

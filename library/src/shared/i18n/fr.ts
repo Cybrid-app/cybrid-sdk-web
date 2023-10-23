@@ -13,6 +13,7 @@ export default {
   from: 'De',
   fatal: "Une erreur irrécupérable s'est produite",
   unexpectedError: 'Erreur inattendue.',
+  pending: 'en attente',
 
   // Price list component
   priceList: {

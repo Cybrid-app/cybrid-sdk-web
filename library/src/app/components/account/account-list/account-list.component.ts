@@ -1,81 +1,84 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterContentInit,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { NavigationExtras } from '@angular/router';
 
 import {
   BehaviorSubject,
   catchError,
+  combineLatest,
   map,
   of,
-  ReplaySubject,
+  startWith,
   Subject,
+  Subscription,
   switchMap,
   take,
   takeUntil,
-  timer,
-  combineLatest
+  tap,
+  timer
 } from 'rxjs';
+
+// Client
+import {
+  AccountBankModel,
+  AccountListBankModel,
+  SymbolPriceBankModel
+} from '@cybrid/cybrid-api-bank-angular';
 
 // Services
 import {
   AccountService,
-  Account,
+  AccountBankModelWithDetails,
+  PriceService,
   ComponentConfig,
   LEVEL,
   CODE,
   ConfigService,
   EventService,
-  ErrorService,
-  AssetService,
-  Asset,
   RoutingData,
   RoutingService
 } from '@services';
-import { AccountBankModel } from '@cybrid/cybrid-api-bank-angular';
 
-interface AccountData {
-  balance: number;
-  fiatAccount: AccountBankModel;
-}
+// Utility
+import { AssetFormatPipe } from '@pipes';
 
 @Component({
   selector: 'app-account-list',
   templateUrl: './account-list.component.html',
   styleUrls: ['./account-list.component.scss']
 })
-export class AccountListComponent implements OnInit, OnDestroy {
-  @ViewChild(MatSort) set matSort(sort: MatSort) {
-    this.dataSource.sort = sort;
-    this.dataSource.sortingDataAccessor = this.sortingDataAccessor;
-  }
+export class AccountListComponent
+  implements OnInit, AfterContentInit, OnDestroy
+{
+  @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort!: MatSort;
+  dataSource = new MatTableDataSource<AccountBankModelWithDetails>();
 
-  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
-    this.dataSource.paginator = paginator;
-  }
+  totalAccountsValue$ = new BehaviorSubject<string | null>(null);
 
-  dataSource = new MatTableDataSource<Account>();
-  displayedColumns: string[] = ['asset', 'balance'];
+  displayedColumns: string[] = ['account', 'balance'];
   getAccountsError = false;
 
-  balance$ = new ReplaySubject<number>(1);
-  fiatAccount$: ReplaySubject<AccountBankModel> =
-    new ReplaySubject<AccountBankModel>(1);
-  currentFiat!: Asset;
-
-  accountData$ = combineLatest([this.balance$, this.fiatAccount$]).pipe(
-    map(([balance, fiatAccount]) => {
-      return <AccountData>{
-        balance,
-        fiatAccount
-      };
-    })
-  );
+  totalRows = 0;
+  pageSize = 5;
+  currentPage = 0;
+  pageSizeOptions: number[] = [5, 10, 25, 100];
 
   isLoading$ = new BehaviorSubject(true);
+  isLoadingResults$ = new BehaviorSubject(true);
   isRecoverable$ = new BehaviorSubject(true);
-  private unsubscribe$ = new Subject();
+
+  refreshDataSub!: Subscription;
+
+  unsubscribe$ = new Subject();
 
   routingData: RoutingData = {
     route: 'price-list',
@@ -84,11 +87,11 @@ export class AccountListComponent implements OnInit, OnDestroy {
 
   constructor(
     public configService: ConfigService,
-    private assetService: AssetService,
+    private priceService: PriceService,
     private eventService: EventService,
-    private errorService: ErrorService,
     private accountService: AccountService,
-    private routingService: RoutingService
+    private routingService: RoutingService,
+    private assetFormatPipe: AssetFormatPipe
   ) {}
 
   ngOnInit(): void {
@@ -97,8 +100,13 @@ export class AccountListComponent implements OnInit, OnDestroy {
       CODE.COMPONENT_INIT,
       'Initializing account-list component'
     );
-    this.getAccounts();
     this.refreshData();
+  }
+
+  ngAfterContentInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sortingDataAccessor = this.sortingDataAccessor;
+    this.dataSource.sort = this.sort;
   }
 
   ngOnDestroy(): void {
@@ -106,70 +114,111 @@ export class AccountListComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  getAccounts(): void {
-    this.accountService
-      .getPortfolio()
+  processAccounts(
+    accountList: AccountListBankModel,
+    priceList: SymbolPriceBankModel[]
+  ): AccountBankModelWithDetails[] {
+    const processedAccounts: AccountBankModelWithDetails[] = [];
+
+    accountList.objects.forEach((account: AccountBankModelWithDetails) => {
+      const processedAccount: AccountBankModelWithDetails = { ...account };
+
+      processedAccount.price = priceList.find((price: SymbolPriceBankModel) => {
+        return account.asset === price.symbol?.split('-')[0];
+      });
+
+      processedAccount.value = processedAccount.price
+        ? Number(processedAccount.price.sell_price) *
+          Number(
+            this.assetFormatPipe.transform(
+              account.platform_balance,
+              <string>account.asset,
+              'trade'
+            )
+          )
+        : Number(account.platform_available);
+
+      processedAccounts.push(processedAccount);
+    });
+
+    this.totalAccountsValue$.next(
+      processedAccounts
+        .reduce((acc, account) => acc + (account.value || 0), 0)
+        .toString()
+    );
+
+    return processedAccounts;
+  }
+
+  listAccounts(): void {
+    this.isLoadingResults$.next(true);
+
+    combineLatest([
+      this.accountService.listAccounts(
+        this.currentPage.toString(),
+        this.pageSize.toString()
+      ),
+      this.priceService.listPrices()
+    ])
       .pipe(
-        map((accountOverview) => {
-          this.currentFiat = this.assetService.getAsset(
-            accountOverview.fiatAccount.asset!
-          );
-
-          this.balance$.next(accountOverview.balance);
-          this.fiatAccount$.next(accountOverview.fiatAccount);
-          this.dataSource.data = accountOverview.accounts;
-          this.getAccountsError = false;
-
-          this.eventService.handleEvent(
-            LEVEL.INFO,
-            CODE.DATA_REFRESHED,
-            'Accounts successfully updated'
-          );
-
-          this.isLoading$.next(false);
+        take(1),
+        map(([accountList, priceList]) => {
+          this.totalRows = Number(accountList.total);
+          return this.processAccounts(accountList, priceList);
         }),
-        takeUntil(this.unsubscribe$),
+        tap((accounts) => {
+          this.dataSource.data = accounts;
+        }),
         catchError((err) => {
-          this.eventService.handleEvent(
-            LEVEL.ERROR,
-            CODE.DATA_ERROR,
-            'There was an error fetching accounts'
-          );
+          this.refreshDataSub?.unsubscribe();
+          this.isRecoverable$.next(false);
 
-          this.errorService.handleError(
-            new Error('There was an error fetching accounts')
-          );
-
-          this.dataSource.data = [];
-          this.getAccountsError = true;
           return of(err);
         })
       )
-      .subscribe();
+      .subscribe(() => {
+        this.isLoading$.next(false);
+        this.isLoadingResults$.next(false);
+      });
   }
 
   refreshData(): void {
-    this.configService
+    this.refreshDataSub = this.configService
       .getConfig$()
       .pipe(
-        take(1),
         switchMap((cfg: ComponentConfig) => {
           return timer(cfg.refreshInterval, cfg.refreshInterval);
         }),
-        map(() => {
-          this.eventService.handleEvent(
-            LEVEL.INFO,
-            CODE.DATA_FETCHING,
-            'Refreshing accounts...'
-          );
-          this.getAccounts();
-        }),
+        startWith(0),
+        tap(() => this.listAccounts()),
         takeUntil(this.unsubscribe$)
       )
       .subscribe();
   }
 
-  onRowClick(accountGuid: string): void {
+  pageChange(event: PageEvent): void {
+    this.pageSize = event.pageSize;
+    this.currentPage = event.pageIndex;
+
+    this.listAccounts();
+  }
+
+  sortChange(): void {
+    this.dataSource.sort = this.sort;
+  }
+
+  sortingDataAccessor(account: AccountBankModelWithDetails, columnDef: string) {
+    switch (columnDef) {
+      case 'account':
+        return <string>account.asset;
+      case 'balance':
+        return <number>account.value;
+      default:
+        return '';
+    }
+  }
+
+  onRowClick(account: AccountBankModel): void {
     this.configService
       .getConfig$()
       .pipe(
@@ -178,7 +227,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
           if (config.routing) {
             const extras: NavigationExtras = {
               queryParams: {
-                accountGuid: accountGuid
+                accountGuid: account.guid
               }
             };
             this.routingService.handleRoute({
@@ -190,16 +239,5 @@ export class AccountListComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-  }
-
-  sortingDataAccessor(account: Account, columnDef: string) {
-    switch (columnDef) {
-      case 'asset':
-        return account.account.asset!;
-      case 'balance':
-        return account.value!;
-      default:
-        return '';
-    }
   }
 }
