@@ -114,7 +114,7 @@ your_config = {
   theme: 'DARK',
   customer: '969c744a02b11ed', //example GUID,
   fiat: 'USD',
-  features: ['attestation_identity_records', 'backstopped_funding_source'],
+  features: ['kyc_identity_verifications'],
   environment: 'sandbox',
   redirectUri: 'https://app.com/bank-account-connect'
 };
@@ -154,7 +154,7 @@ Default: 'USD'
 
 #### ``features``
 The banks features.
-Supports: 'attestation_identity_records' | 'kyc_identity_verifications' | 'backstopped_funding_source' | 'plaid_funding_source'
+Supports: 'attestation_identity_records' | 'kyc_identity_verifications'
 Default: []
 
 #### ``environment``
