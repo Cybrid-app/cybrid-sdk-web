@@ -60,7 +60,7 @@
     "@typescript-eslint/eslint-plugin": "5.56.0",
     "@typescript-eslint/parser": "5.56.0",
     "css-loader": "6.7.4",
-    "cypress": "13.3.2",
+    "cypress": "13.3.3",
     "eslint": "8.52.0",
     "eslint-config-prettier": "9.0.0",
     "eslint-plugin-prettier": "4.2.1",
