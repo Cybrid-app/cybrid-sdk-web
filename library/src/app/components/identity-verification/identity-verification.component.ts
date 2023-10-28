@@ -182,7 +182,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
         map((list) => list.objects[0]),
         switchMap((identity) => {
           return identity &&
-            identity.state !== IdentityVerificationBankModel.StateEnum.Expired
+            identity.state == IdentityVerificationBankModel.StateEnum.Waiting
             ? of(identity)
             : this.identityVerificationService.createIdentityVerification();
         }),
