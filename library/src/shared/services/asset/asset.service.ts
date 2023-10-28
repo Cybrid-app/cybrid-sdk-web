@@ -8,7 +8,10 @@ import {
   Observable,
   switchMap,
   catchError,
+  EMPTY,
+  expand,
   of,
+  reduce,
   ReplaySubject,
   take
 } from 'rxjs';
@@ -46,26 +49,47 @@ export class AssetService {
     this.initAssets();
   }
 
+  pageExternalAccounts(
+    list: AssetListBankModel
+  ): Observable<AssetListBankModel> | Observable<never> {
+    return list.objects.length == Number(list.per_page)
+      ? this.assetsService.listAssets(Number(list.page + 1).toString())
+      : EMPTY;
+  }
+
+  accumulateAssets(
+    acc: AssetBankModel[],
+    value: AssetBankModel[]
+  ): AssetBankModel[] {
+    return [...acc, ...value];
+  }
+
+  listAssets(): Observable<AssetBankModel[]> {
+    return this.assetsService.listAssets().pipe(
+      expand((list) => this.pageExternalAccounts(list)),
+      map((list) => list.objects),
+      reduce((acc, value) => this.accumulateAssets(acc, value))
+    );
+  }
+
   initAssets(): void {
     this.configService
       .getConfig$()
       .pipe(
         take(1),
-        switchMap(() => this.assetsService.listAssets()),
-        map((list: AssetListBankModel) => {
-          this.assets$.next(list.objects);
-          const assetList: Asset[] = list.objects.map(
-            (asset: AssetBankModel) => {
-              return {
-                type: asset.type,
-                code: asset.code,
-                name: asset.name,
-                symbol: asset.symbol,
-                decimals: asset.decimals,
-                url: Constants.ICON_HOST + asset.code.toLowerCase() + '.svg'
-              } as Asset;
-            }
-          );
+        switchMap(() => this.listAssets()),
+        map((list: AssetBankModel[]) => {
+          this.assets$.next(list);
+          const assetList: Asset[] = list.map((asset: AssetBankModel) => {
+            return {
+              type: asset.type,
+              code: asset.code,
+              name: asset.name,
+              symbol: asset.symbol,
+              decimals: asset.decimals,
+              url: Constants.ICON_HOST + asset.code.toLowerCase() + '.svg'
+            } as Asset;
+          });
           this.assetList$.next(assetList);
           this.assetList = assetList;
         }),

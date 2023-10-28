@@ -6,7 +6,7 @@ import {
 } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-import { of, throwError } from 'rxjs';
+import { of, Observable, throwError } from 'rxjs';
 
 // Client
 import {
@@ -89,6 +89,25 @@ describe('AssetService', () => {
     expect(MockErrorService.handleError).toHaveBeenCalled();
     expect(MockEventService.handleEvent).toHaveBeenCalled();
   }));
+
+  it('should page through assets', () => {
+    let assetList = {
+      ...TestConstants.ASSET_LIST_BANK_MODEL
+    };
+    assetList.objects = [];
+
+    // Fill objects with default amount per page
+    for (let i = 0; i < 10; i++) {
+      assetList.objects.push(TestConstants.ASSET_LIST_BANK_MODEL.objects[0]);
+    }
+
+    MockAssetsService.listAssets.and.returnValue(of(assetList));
+
+    assetService.listAssets();
+    expect(assetService.pageExternalAccounts(assetList)).toBeInstanceOf(
+      Observable<AssetListBankModel>
+    );
+  });
 
   it('should return the asset list as an observable', () => {
     assetService
