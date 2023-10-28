@@ -248,6 +248,46 @@ describe('IdentityVerificationComponent', () => {
       }));
     });
 
+    describe('with completed state', () => {
+      it('should create an identity verification', fakeAsync(() => {
+        let identityVerificationListBankModel = {
+          ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL
+        };
+        identityVerificationListBankModel.objects[0].state = 'completed';
+
+        MockIdentityVerificationService.listIdentityVerifications.and.returnValue(
+          of(identityVerificationListBankModel)
+        );
+
+        component.verifyIdentity();
+
+        tick();
+        expect(
+          MockIdentityVerificationService.createIdentityVerification
+        ).toHaveBeenCalled();
+
+        discardPeriodicTasks();
+
+        // Reset
+        MockIdentityVerificationService.listIdentityVerifications.and.returnValue(
+          of(TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL)
+        );
+      }));
+    });
+
+    describe('with storing state', () => {
+      it('should get the identity verification', fakeAsync(() => {
+        component.verifyIdentity();
+
+        tick();
+        expect(
+          MockIdentityVerificationService.getIdentityVerification
+        ).toHaveBeenCalled();
+
+        discardPeriodicTasks();
+      }));
+    });
+
     describe('with waiting state', () => {
       it('should get the identity verification', fakeAsync(() => {
         component.verifyIdentity();

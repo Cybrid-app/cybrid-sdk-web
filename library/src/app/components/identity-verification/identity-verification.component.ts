@@ -181,8 +181,9 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
       .pipe(
         map((list) => list.objects[0]),
         switchMap((identity) => {
-          return identity &&
-            identity.state !== IdentityVerificationBankModel.StateEnum.Expired
+          return identity?.state ===
+            IdentityVerificationBankModel.StateEnum.Waiting ||
+            identity?.state === IdentityVerificationBankModel.StateEnum.Storing
             ? of(identity)
             : this.identityVerificationService.createIdentityVerification();
         }),
