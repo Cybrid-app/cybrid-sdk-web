@@ -76,7 +76,7 @@
                   <span>{{
                     account.platform_balance | assetFormat : account.asset
                     }}</span>
-                  <span class="mat-hint cybrid-h5 cybrid-code">
+                  <span *ngIf="account.value !== undefined" class="mat-hint cybrid-h5 cybrid-code">
                     {{ account.value | assetFormat : config.fiat }}</span>
                 </ng-template>
               </div>
@@ -98,8 +98,8 @@
     </ng-container>
   </ng-container>
   <mat-paginator class="mat-button-toggle-group-appearance-standard" aria-label="cryptocurrency accounts and balances"
-    [ngClass]="{ 'cybrid-hide': totalRows <= 5 }" [pageSize]="pageSize" [pageIndex]="currentPage" [length]="totalRows"
-    [pageSizeOptions]="pageSizeOptions" (page)="pageChange($event)">
+    [ngClass]="{ 'cybrid-hide': totalRows <= pageSize }" [pageSize]="pageSize" [pageIndex]="currentPage"
+    [length]="totalRows" [pageSizeOptions]="pageSizeOptions" (page)="pageChange($event)">
   </mat-paginator>
 </ng-container>
 <ng-template #loading>

@@ -68,7 +68,7 @@ export class AccountListComponent
   getAccountsError = false;
 
   totalRows = 0;
-  pageSize = 5;
+  pageSize = 25;
   currentPage = 0;
   pageSizeOptions: number[] = [5, 10, 25, 100];
 
@@ -136,7 +136,7 @@ export class AccountListComponent
               'trade'
             )
           )
-        : Number(account.platform_available);
+        : undefined;
 
       processedAccounts.push(processedAccount);
     });
