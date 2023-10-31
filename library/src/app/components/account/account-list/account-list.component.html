@@ -59,7 +59,7 @@
               <div class="cybrid-balance-cell">
                 <ng-container *ngIf="account.type === 'fiat'; else tradingAccount">
                   <span>
-                    {{ account.platform_available | assetFormat : config.fiat }}
+                    {{ account.value | assetFormat : account.asset }}
                   </span>
                   <span class="mat-hint cybrid-h5 cybrid-code" *ngIf="
                       account.platform_balance - account.platform_available > 0

@@ -82,7 +82,7 @@ export class AccountListComponent
     private accountService: AccountService,
     private routingService: RoutingService,
     private assetFormatPipe: AssetFormatPipe
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.eventService.handleEvent(
@@ -116,16 +116,25 @@ export class AccountListComponent
         return account.asset === price.symbol?.split('-')[0];
       });
 
-      processedAccount.value = processedAccount.price
-        ? Number(processedAccount.price.sell_price) *
-        Number(
+      if (processedAccount.price) {
+        processedAccount.value =
+          Number(processedAccount.price.sell_price) *
+          Number(
+            this.assetFormatPipe.transform(
+              account.platform_balance,
+              <string>account.asset,
+              'trade'
+            )
+          );
+      } else if (processedAccount.type == 'fiat') {
+        processedAccount.value = Number(
           this.assetFormatPipe.transform(
-            account.platform_balance,
+            processedAccount.platform_available,
             <string>account.asset,
             'trade'
           )
-        )
-        : undefined;
+        );
+      }
 
       processedAccounts.push(processedAccount);
     });
@@ -136,6 +145,7 @@ export class AccountListComponent
         .toString()
     );
 
+    console.log('processedAccounts', processedAccounts);
     return processedAccounts;
   }
 

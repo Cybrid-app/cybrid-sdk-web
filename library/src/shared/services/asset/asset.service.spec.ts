@@ -104,7 +104,7 @@ describe('AssetService', () => {
     MockAssetsService.listAssets.and.returnValue(of(assetList));
 
     assetService.listAssets();
-    expect(assetService.pageExternalAccounts(assetList)).toBeInstanceOf(
+    expect(assetService.pageAssets(assetList)).toBeInstanceOf(
       Observable<AssetListBankModel>
     );
   });

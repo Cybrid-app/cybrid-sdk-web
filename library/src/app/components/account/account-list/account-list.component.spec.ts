@@ -127,7 +127,7 @@ describe('AccountListComponent', () => {
       const fiatAccount = processedAccounts[0];
 
       expect(fiatAccount.price).toBeUndefined();
-      expect(fiatAccount.value).toBeUndefined();
+      expect(fiatAccount.value).toBeDefined();
     });
 
     it('should process crypto accounts', () => {
