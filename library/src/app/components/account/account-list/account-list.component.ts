@@ -54,8 +54,7 @@ import { AssetFormatPipe } from '@pipes';
   styleUrls: ['./account-list.component.scss']
 })
 export class AccountListComponent
-  implements OnInit, AfterContentInit, OnDestroy
-{
+  implements OnInit, AfterContentInit, OnDestroy {
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
   dataSource = new MatTableDataSource<AccountBankModelWithDetails>();
 
@@ -146,7 +145,6 @@ export class AccountListComponent
         .toString()
     );
 
-    console.log('processedAccounts', processedAccounts);
     return processedAccounts;
   }
 
