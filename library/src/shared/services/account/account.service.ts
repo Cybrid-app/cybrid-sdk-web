@@ -69,9 +69,9 @@ export class AccountService implements OnDestroy {
   pageAccounts(perPage: number, list: AccountListBankModel) {
     return list.objects.length == perPage
       ? this.accountsService.listAccounts(
-        (Number(list.page) + 1).toString(),
-        perPage.toString()
-      )
+          (Number(list.page) + 1).toString(),
+          perPage.toString()
+        )
       : EMPTY;
   }
 
