@@ -49,7 +49,7 @@ export class AssetService {
     this.initAssets();
   }
 
-  pageExternalAccounts(
+  pageAssets(
     list: AssetListBankModel
   ): Observable<AssetListBankModel> | Observable<never> {
     return list.objects.length == Number(list.per_page)
@@ -66,7 +66,7 @@ export class AssetService {
 
   listAssets(): Observable<AssetBankModel[]> {
     return this.assetsService.listAssets().pipe(
-      expand((list) => this.pageExternalAccounts(list)),
+      expand((list) => this.pageAssets(list)),
       map((list) => list.objects),
       reduce((acc, value) => this.accumulateAssets(acc, value))
     );

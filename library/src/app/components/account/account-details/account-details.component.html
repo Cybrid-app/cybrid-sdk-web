@@ -130,7 +130,7 @@
           [ngClass]="{ 'cybrid-hide': totalRows <= 5 }" [pageSize]="pageSize" [pageIndex]="currentPage"
           [length]="totalRows" [pageSizeOptions]="pageSizeOptions" (page)="pageChange($event)">
         </mat-paginator>
-        <div class="cybrid-actions">
+        <div *ngIf="data.account?.price" class="cybrid-actions">
           <button id="trade" mat-flat-button color="primary" (click)="onTrade()">
             {{ 'accountDetails.trade' | translate }}
           </button>

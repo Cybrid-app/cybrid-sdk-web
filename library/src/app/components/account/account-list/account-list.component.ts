@@ -7,7 +7,6 @@ import {
 } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { NavigationExtras } from '@angular/router';
 
 import {
@@ -29,7 +28,6 @@ import {
 // Client
 import {
   AccountBankModel,
-  AccountListBankModel,
   SymbolPriceBankModel
 } from '@cybrid/cybrid-api-bank-angular';
 
@@ -56,21 +54,13 @@ import { AssetFormatPipe } from '@pipes';
   styleUrls: ['./account-list.component.scss']
 })
 export class AccountListComponent
-  implements OnInit, AfterContentInit, OnDestroy
-{
-  @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
+  implements OnInit, AfterContentInit, OnDestroy {
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
   dataSource = new MatTableDataSource<AccountBankModelWithDetails>();
 
   totalAccountsValue$ = new BehaviorSubject<string | null>(null);
 
   displayedColumns: string[] = ['account', 'balance'];
-  getAccountsError = false;
-
-  totalRows = 0;
-  pageSize = 25;
-  currentPage = 0;
-  pageSizeOptions: number[] = [5, 10, 25, 100];
 
   isLoading$ = new BehaviorSubject(true);
   isLoadingResults$ = new BehaviorSubject(true);
@@ -104,7 +94,6 @@ export class AccountListComponent
   }
 
   ngAfterContentInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor = this.sortingDataAccessor;
     this.dataSource.sort = this.sort;
   }
@@ -115,12 +104,12 @@ export class AccountListComponent
   }
 
   processAccounts(
-    accountList: AccountListBankModel,
+    accountList: AccountBankModel[],
     priceList: SymbolPriceBankModel[]
   ): AccountBankModelWithDetails[] {
     const processedAccounts: AccountBankModelWithDetails[] = [];
 
-    accountList.objects.forEach((account: AccountBankModelWithDetails) => {
+    accountList.forEach((account: AccountBankModelWithDetails) => {
       const processedAccount: AccountBankModelWithDetails = { ...account };
 
       processedAccount.price = priceList.find((price: SymbolPriceBankModel) => {
@@ -129,13 +118,13 @@ export class AccountListComponent
 
       processedAccount.value = processedAccount.price
         ? Number(processedAccount.price.sell_price) *
-          Number(
-            this.assetFormatPipe.transform(
-              account.platform_balance,
-              <string>account.asset,
-              'trade'
-            )
+        Number(
+          this.assetFormatPipe.transform(
+            account.platform_balance,
+            <string>account.asset,
+            'trade'
           )
+        )
         : undefined;
 
       processedAccounts.push(processedAccount);
@@ -150,25 +139,19 @@ export class AccountListComponent
     return processedAccounts;
   }
 
-  listAccounts(): void {
+  listAllAccounts(): void {
     this.isLoadingResults$.next(true);
 
     combineLatest([
-      this.accountService.listAccounts(
-        this.currentPage.toString(),
-        this.pageSize.toString()
-      ),
+      this.accountService.listAllAccounts(),
       this.priceService.listPrices()
     ])
       .pipe(
         take(1),
         map(([accountList, priceList]) => {
-          this.totalRows = Number(accountList.total);
           return this.processAccounts(accountList, priceList);
         }),
-        tap((accounts) => {
-          this.dataSource.data = accounts;
-        }),
+        tap((accounts) => (this.dataSource.data = accounts)),
         catchError((err) => {
           this.refreshDataSub?.unsubscribe();
           this.isRecoverable$.next(false);
@@ -190,17 +173,10 @@ export class AccountListComponent
           return timer(cfg.refreshInterval, cfg.refreshInterval);
         }),
         startWith(0),
-        tap(() => this.listAccounts()),
+        tap(() => this.listAllAccounts()),
         takeUntil(this.unsubscribe$)
       )
       .subscribe();
-  }
-
-  pageChange(event: PageEvent): void {
-    this.pageSize = event.pageSize;
-    this.currentPage = event.pageIndex;
-
-    this.listAccounts();
   }
 
   sortChange(): void {
