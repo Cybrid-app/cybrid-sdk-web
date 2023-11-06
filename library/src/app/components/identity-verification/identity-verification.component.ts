@@ -302,6 +302,12 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   }
 
   personaOnCancel(client: any): void {
+    this.eventService.handleEvent(
+      LEVEL.WARNING,
+      CODE.PERSONA_SDK_CANCEL,
+      'Persona SDK has been canceled'
+    );
+
     // Reset in memory client
     client.options.inquiryId = null;
     this.personaClient.next(client);
