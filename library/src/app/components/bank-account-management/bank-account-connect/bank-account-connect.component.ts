@@ -238,7 +238,14 @@ export class BankAccountConnectComponent implements OnInit {
     this.bankAccountService
       .createExternalBankAccount(account.name, public_token, account.id, code)
       .pipe(
-        map(() => this.isLoading$.next(false)),
+        map(() => {
+          this.isLoading$.next(false);
+          this.eventService.handleEvent(
+            LEVEL.INFO,
+            CODE.PLAID_SDK_COMPLETE,
+            'Bank account successfully connected'
+          );
+        }),
         catchError((err: any) => {
           this.error$.next(true);
           return of(err);
