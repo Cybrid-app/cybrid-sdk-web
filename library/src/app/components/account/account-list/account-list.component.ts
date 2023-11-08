@@ -128,16 +128,7 @@ export class AccountListComponent
             )
           );
       } else if (processedAccount.type == 'fiat') {
-        processedAccount.value =
-          // Convert to cents
-          100 *
-          Number(
-            this.assetFormatPipe.transform(
-              processedAccount.platform_available,
-              <string>account.asset,
-              'trade'
-            )
-          );
+        processedAccount.value = Number(processedAccount.platform_available);
       }
 
       processedAccounts.push(processedAccount);
