@@ -278,6 +278,7 @@ describe('BankAccountConnectComponent', () => {
     component.createExternalBankAccount({ name: '', id: '' }, '', '');
     expect(MockBankAccountService.createExternalBankAccount).toHaveBeenCalled();
     expect(isLoadingSpy).toHaveBeenCalledWith(false);
+    expect(MockEventService.handleEvent).toHaveBeenCalled();
   });
 
   it('should handle errors when creating an external bank account', () => {
