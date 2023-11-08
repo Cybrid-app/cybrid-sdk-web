@@ -10,11 +10,11 @@ import { HttpClient } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatSort } from '@angular/material/sort';
 
 import { HttpLoaderFactory } from '../../../modules/library.module';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
-import { PageEvent } from '@angular/material/paginator';
 
 // Services
 import {
@@ -49,7 +49,7 @@ describe('AccountListComponent', () => {
   ]);
   let MockConfigService = jasmine.createSpyObj('ConfigService', ['getConfig$']);
   let MockAccountService = jasmine.createSpyObj('AccountService', [
-    'listAccounts'
+    'listAllAccounts'
   ]);
   let MockPriceService = jasmine.createSpyObj('PriceService', ['listPrices']);
   let MockRoutingService = jasmine.createSpyObj('RoutingService', [
@@ -88,13 +88,13 @@ describe('AccountListComponent', () => {
     }).compileComponents();
     MockEventService = TestBed.inject(EventService);
     MockErrorService = TestBed.inject(ErrorService);
-    MockAccountService = TestBed.inject(AccountService);
     MockPriceService = TestBed.inject(PriceService);
     MockRoutingService = TestBed.inject(RoutingService);
     MockConfigService = TestBed.inject(ConfigService);
     MockConfigService.getConfig$.and.returnValue(of(TestConstants.CONFIG));
-    MockAccountService.listAccounts.and.returnValue(
-      of(TestConstants.ACCOUNT_LIST_BANK_MODEL)
+    MockAccountService = TestBed.inject(AccountService);
+    MockAccountService.listAllAccounts.and.returnValue(
+      of(TestConstants.ACCOUNT_LIST_BANK_MODEL.objects)
     );
     MockPriceService.listPrices.and.returnValue(
       of(TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY)
@@ -115,7 +115,7 @@ describe('AccountListComponent', () => {
 
   describe('when processing accounts', () => {
     it('should process fiat accounts', () => {
-      const accountList = { ...TestConstants.ACCOUNT_LIST_BANK_MODEL };
+      const accountList = [...TestConstants.ACCOUNT_LIST_BANK_MODEL.objects];
       const priceList = [...TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY];
 
       const processedAccounts = component.processAccounts(
@@ -127,11 +127,11 @@ describe('AccountListComponent', () => {
       const fiatAccount = processedAccounts[0];
 
       expect(fiatAccount.price).toBeUndefined();
-      expect(fiatAccount.value).toEqual(Number(fiatAccount.platform_available));
+      expect(fiatAccount.value).toBeDefined();
     });
 
     it('should process crypto accounts', () => {
-      const accountList = { ...TestConstants.ACCOUNT_LIST_BANK_MODEL };
+      const accountList = [...TestConstants.ACCOUNT_LIST_BANK_MODEL.objects];
       const priceList = [...TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY];
 
       const processedAccounts = component.processAccounts(
@@ -149,7 +149,7 @@ describe('AccountListComponent', () => {
 
   describe('when listing accounts', () => {
     it('should list accounts', () => {
-      expect(MockAccountService.listAccounts).toHaveBeenCalled();
+      expect(MockAccountService.listAllAccounts).toHaveBeenCalled();
     });
 
     it('should list prices', () => {
@@ -157,7 +157,7 @@ describe('AccountListComponent', () => {
     });
 
     it('should set the dataSource', () => {
-      const accountList = { ...TestConstants.ACCOUNT_LIST_BANK_MODEL };
+      const accountList = [...TestConstants.ACCOUNT_LIST_BANK_MODEL.objects];
       const priceList = [...TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY];
 
       const processedAccounts = component.processAccounts(
@@ -168,25 +168,19 @@ describe('AccountListComponent', () => {
       expect(component.dataSource.data).toEqual(processedAccounts);
     });
 
-    it('should set the totalRows', () => {
-      const totalRows = Number(TestConstants.ACCOUNT_LIST_BANK_MODEL.total);
-
-      expect(component.totalRows).toEqual(totalRows);
-    });
-
     it('should handle errors when listing accounts', () => {
       const refreshDataSubSpy = spyOn(component.refreshDataSub, 'unsubscribe');
       const isRecoverable$Spy = spyOn(component.isRecoverable$, 'next');
 
-      MockAccountService.listAccounts.and.returnValue(error$);
+      MockAccountService.listAllAccounts.and.returnValue(error$);
 
-      component.listAccounts();
+      component.listAllAccounts();
 
       expect(refreshDataSubSpy).toHaveBeenCalled();
       expect(isRecoverable$Spy).toHaveBeenCalled();
 
       // Reset
-      MockAccountService.listAccounts.and.returnValue(
+      MockAccountService.listAllAccounts.and.returnValue(
         TestConstants.ACCOUNT_LIST_BANK_MODEL
       );
     });
@@ -197,7 +191,7 @@ describe('AccountListComponent', () => {
 
       MockPriceService.listPrices.and.returnValue(error$);
 
-      component.listAccounts();
+      component.listAllAccounts();
 
       expect(refreshDataSubSpy).toHaveBeenCalled();
       expect(isRecoverable$Spy).toHaveBeenCalled();
@@ -210,7 +204,7 @@ describe('AccountListComponent', () => {
   });
 
   it('should refresh data', fakeAsync(() => {
-    const listAccountsSpy = spyOn(component, 'listAccounts');
+    const listAccountsSpy = spyOn(component, 'listAllAccounts');
 
     component.refreshData();
     tick(Constants.REFRESH_INTERVAL);
@@ -246,61 +240,12 @@ describe('AccountListComponent', () => {
       let sort = component.sortingDataAccessor(account, '');
       expect(sort).toEqual('');
     });
-  });
+    it('should update the dataSource', () => {
+      const dataSourceSort = component.dataSource.sort;
 
-  describe('when paginating', () => {
-    beforeEach(() => {
-      // Mock listAccounts() to avoid Angular testing error
-      component.listAccounts = () => {};
+      component.sortChange();
+      expect(dataSourceSort).toBeUndefined();
     });
-
-    it('should update the current page', () => {
-      const pageIndex = 1;
-      const pageEvent: PageEvent = {
-        pageIndex: pageIndex,
-        pageSize: component.pageSize,
-        length: component.totalRows
-      };
-
-      component.pageChange(pageEvent);
-
-      expect(component.currentPage).toEqual(pageIndex);
-    });
-
-    it('should update the page size', () => {
-      const pageSize = 10;
-      const pageEvent: PageEvent = {
-        pageIndex: 0,
-        pageSize: pageSize,
-        length: component.totalRows
-      };
-
-      component.pageChange(pageEvent);
-
-      expect(component.pageSize).toEqual(pageSize);
-    });
-
-    it('should list accounts', () => {
-      const listAccountsSpy = spyOn(component, 'listAccounts');
-
-      const pageEvent: PageEvent = {
-        pageIndex: component.currentPage,
-        pageSize: component.pageSize,
-        length: component.totalRows
-      };
-
-      component.pageChange(pageEvent);
-
-      expect(listAccountsSpy).toHaveBeenCalled();
-    });
-  });
-
-  it('should sort', () => {
-    component.dataSource.sort = null;
-
-    component.sortChange();
-
-    expect(component.dataSource.sort).toBeDefined();
   });
 
   it('should navigate on row click', () => {

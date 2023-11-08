@@ -15,12 +15,11 @@
 
       <div class="cybrid-table">
         <mat-progress-bar *ngIf="isLoadingResults$ | async" mode="indeterminate"></mat-progress-bar>
-        <table id="accountList" class="mat-button-toggle-group-appearance-standard"
-          [ngClass]="{ 'cybrid-paginator': totalRows > pageSize }" mat-table [dataSource]="dataSource" matSort
-          matSortDisableClear (matSortChange)="sortChange()">
+        <table id="accountList" class="mat-button-toggle-group-appearance-standard" mat-table [dataSource]="dataSource"
+          matSort matSortDisableClear (matSortChange)="sortChange()">
           <!-- Account -->
           <ng-container matColumnDef="account">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="account">
               <div class="cybrid-sort-header">
                 <span>{{ 'accountList.account.header' | translate }}</span>
                 <span class="mat-hint cybrid-h5 cybrid-code">{{
@@ -48,7 +47,7 @@
 
           <!-- Balance -->
           <ng-container matColumnDef="balance">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="" arrowPosition="before">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="balance" arrowPosition="before">
               <div class="cybrid-sort-header">
                 <span>{{ 'accountList.balance' | translate }}</span>
                 <span class="mat-hint cybrid-h5 cybrid-code">{{
@@ -60,7 +59,7 @@
               <div class="cybrid-balance-cell">
                 <ng-container *ngIf="account.type === 'fiat'; else tradingAccount">
                   <span>
-                    {{ account.platform_available | assetFormat : config.fiat }}
+                    {{ account.value | assetFormat : account.asset }}
                   </span>
                   <span class="mat-hint cybrid-h5 cybrid-code" *ngIf="
                       account.platform_balance - account.platform_available > 0
@@ -76,7 +75,7 @@
                   <span>{{
                     account.platform_balance | assetFormat : account.asset
                     }}</span>
-                  <span class="mat-hint cybrid-h5 cybrid-code">
+                  <span *ngIf="account.value !== undefined" class="mat-hint cybrid-h5 cybrid-code">
                     {{ account.value | assetFormat : config.fiat }}</span>
                 </ng-template>
               </div>
@@ -97,10 +96,6 @@
       </div>
     </ng-container>
   </ng-container>
-  <mat-paginator class="mat-button-toggle-group-appearance-standard" aria-label="cryptocurrency accounts and balances"
-    [ngClass]="{ 'cybrid-hide': totalRows <= 5 }" [pageSize]="pageSize" [pageIndex]="currentPage" [length]="totalRows"
-    [pageSizeOptions]="pageSizeOptions" (page)="pageChange($event)">
-  </mat-paginator>
 </ng-container>
 <ng-template #loading>
   <app-loading></app-loading>

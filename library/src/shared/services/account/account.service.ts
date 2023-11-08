@@ -1,5 +1,15 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Observable, Subject, catchError, of } from 'rxjs';
+import {
+  catchError,
+  EMPTY,
+  expand,
+  map,
+  tap,
+  Observable,
+  of,
+  reduce,
+  Subject
+} from 'rxjs';
 
 // Client
 import {
@@ -22,6 +32,8 @@ export interface AccountBankModelWithDetails extends AccountBankModel {
 })
 export class AccountService implements OnDestroy {
   private unsubscribe$ = new Subject();
+
+  accountsPerPage = 10;
 
   constructor(
     private eventService: EventService,
@@ -48,6 +60,39 @@ export class AccountService implements OnDestroy {
 
         this.errorService.handleError(
           new Error('There was an error listing accounts')
+        );
+        return of(err);
+      })
+    );
+  }
+
+  pageAccounts(perPage: number, list: AccountListBankModel) {
+    return list.objects.length == perPage
+      ? this.accountsService.listAccounts(
+          (Number(list.page) + 1).toString(),
+          perPage.toString()
+        )
+      : EMPTY;
+  }
+
+  accumulateAccounts(acc: AccountBankModel[], value: AccountBankModel[]) {
+    return [...acc, ...value];
+  }
+
+  listAllAccounts(): Observable<AccountBankModel[]> {
+    return this.accountsService.listAccounts().pipe(
+      expand((list) => this.pageAccounts(this.accountsPerPage, list)),
+      map((list) => list.objects),
+      reduce((acc, value) => this.accumulateAccounts(acc, value)),
+      catchError((err) => {
+        this.eventService.handleEvent(
+          LEVEL.ERROR,
+          CODE.DATA_ERROR,
+          'There was an error listing all accounts'
+        );
+
+        this.errorService.handleError(
+          new Error('There was an error listing all accounts')
         );
         return of(err);
       })
