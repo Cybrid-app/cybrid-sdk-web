@@ -187,6 +187,17 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
             ? of(identity)
             : this.identityVerificationService.createIdentityVerification();
         }),
+        switchMap((identity) =>
+          this.identityVerificationService.getIdentityVerification(
+            <string>identity.guid
+          )
+        ),
+        switchMap((identity) => {
+          return identity.persona_state ===
+            IdentityVerificationWithDetailsBankModel.PersonaStateEnum.Waiting
+            ? of(identity)
+            : this.identityVerificationService.createIdentityVerification();
+        }),
         tap((identity) => {
           this.identityVerificationGuid = identity.guid;
         }),
@@ -260,7 +271,8 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
           this.bootstrapPersona(identity.persona_inquiry_id!);
           break;
         case 'pending':
-          this.bootstrapPersona(identity.persona_inquiry_id!);
+          this.isLoading$.next(false);
+          this.identity$.next(identity);
           break;
         case 'reviewing':
           this.isLoading$.next(false);
