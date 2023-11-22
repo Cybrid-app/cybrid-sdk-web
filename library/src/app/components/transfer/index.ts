@@ -7,3 +7,4 @@ export {
   TransferDetailsComponent,
   TransferDetailsData
 } from './transfer-details/transfer-details.component';
+export { TransferSummaryComponent } from './transfer-summary/transfer-summary.component';

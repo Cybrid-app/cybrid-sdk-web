@@ -31,3 +31,28 @@ h2 {
 .mat-error {
   display: inline;
 }
+
+.cybrid-icon {
+  height: 48px;
+  width: 48px;
+}
+
+.status-chip {
+
+  font-size: 12px;
+  border-radius: 20px;
+  padding: 2px 17.5px;
+  line-height: 20px;
+  color: #000;
+  background-color: #fcda66;
+
+  &.state-failed {
+    color: #fff;
+    background-color: #d45736;
+  }
+
+  &.state-completed {
+    color: #fff;
+    background-color: #4dae51;
+  }
+}

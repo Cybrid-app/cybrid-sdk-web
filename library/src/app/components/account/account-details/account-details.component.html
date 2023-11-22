@@ -215,7 +215,7 @@
                   </ng-container>
                   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                   <tr class="cybrid-pointer" mat-row *matRowDef="let row; columns: displayedColumns"
-                  (click)="onRowClick(row)"></tr>
+                  (click)="onTransferClick(row)"></tr>
                   <tr class="mat-row" *matNoDataRow>
                     <td id="warning" class="mat-cell cybrid-no-data" colspan="2">
                       {{ 'accountDetails.error.noData' | translate }}

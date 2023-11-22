@@ -233,6 +233,13 @@ export default {
     details: {
       details: 'Details',
       state: 'State'
+    },
+
+    // Summary
+    summary: {
+      deposit: 'Deposit',
+      withdrawal: 'Withdrawal',
+      transferPlacedItem: 'Transfer Placed'
     }
   },
 

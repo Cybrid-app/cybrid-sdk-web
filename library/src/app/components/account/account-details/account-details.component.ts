@@ -60,7 +60,7 @@ import {
 } from '@services';
 
 // Components
-import { TradeSummaryComponent } from '@components';
+import { TradeSummaryComponent, TransferSummaryComponent } from '@components';
 
 // Utility
 import { symbolBuild } from '@utility';
@@ -384,7 +384,12 @@ export class AccountDetailsComponent
   }
 
   onTransferClick(transfer: TransferBankModel): void {
-    
+    this.dialog.open(TransferSummaryComponent, {
+      data: {
+        model: transfer,
+        asset: this.asset
+      }
+    });
   }
 
   getFiatPendingBalance(account: AccountBankModelWithDetails) : number {
@@ -397,9 +402,9 @@ export class AccountDetailsComponent
   getTransferIconName(transfer: TransferBankModel) : String {
     switch(transfer.side) {
       case 'deposit':
-        return 'cybrid-buy-icon';
+        return 'cybrid-deposit-icon';
       case 'withdrawal':
-        return 'cybrid-sell-icon';
+        return 'cybrid-withdrawal-icon';
       default:
         return '';
     }

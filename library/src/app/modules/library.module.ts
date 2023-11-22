@@ -68,6 +68,7 @@ import {
   TransferComponent,
   TransferConfirmComponent,
   TransferDetailsComponent,
+  TransferSummaryComponent,
   BankAccountListComponent,
   BankAccountDisconnectComponent,
   BankAccountDetailsComponent
@@ -107,6 +108,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     TransferComponent,
     TransferConfirmComponent,
     TransferDetailsComponent,
+    TransferSummaryComponent,
     AssetFormatPipe,
     TruncatePipe,
     AssetIconPipe,
