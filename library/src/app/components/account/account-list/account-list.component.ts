@@ -207,7 +207,8 @@ export class AccountListComponent
           if (config.routing) {
             const extras: NavigationExtras = {
               queryParams: {
-                accountGuid: account.guid
+                accountGuid: account.guid,
+                accountType: account.type
               }
             };
             this.routingService.handleRoute({

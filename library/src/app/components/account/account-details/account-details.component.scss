@@ -4,6 +4,9 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  .pending-balance {
+    color: #007aff;
+  }
 }
 
 .cybrid-account {
@@ -76,6 +79,20 @@ mat-progress-bar {
   div {
     display: flex;
     flex-direction: column;
+  }
+  .status-chip {
+    margin-left: 10px;
+    span {
+      font-size: 12px;
+      border-radius: 20px;
+      padding: 2px 17.5px;
+      line-height: 20px;
+
+      &.state-failed {
+        color: #fff;
+        background-color: #d45736;
+      }
+    }
   }
   span:last-of-type {
     margin-top: -5px;

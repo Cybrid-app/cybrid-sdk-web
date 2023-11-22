@@ -7,7 +7,7 @@
           <p class="mat-hint">{{ 'accountList.total' | translate }}</p>
           <div>
             <h1>
-              {{ value | assetFormat : config.fiat }}
+              Hi_: {{ value | assetFormat : config.fiat }}
             </h1>
           </div>
         </div>
@@ -83,10 +83,8 @@
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr [ngClass]="{
-              'cybrid-pointer': config.routing && row.type === 'trading'
-            }" class="cybrid-pointer" mat-row *matRowDef="let row; columns: displayedColumns"
-            (click)="row.type === 'trading' ? onRowClick(row) : null"></tr>
+          <tr class="cybrid-pointer" mat-row *matRowDef="let row; columns: displayedColumns"
+            (click)="onRowClick(row)"></tr>
           <tr class="mat-row" *matNoDataRow>
             <td id="warning" class="mat-cell cybrid-no-data" colspan="2">
               {{ 'accountList.error.noData' | translate }}

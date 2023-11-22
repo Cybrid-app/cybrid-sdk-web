@@ -92,6 +92,10 @@ export default {
     trade: 'Trade',
     transactions: 'Recent Transctions',
     balance: 'Balance',
+    listTransfers: {
+      recentTransfersTitle: 'Recent Transfers',
+      amountTitle: 'Amount'
+    },
     error: {
       trade: 'Error fetching trades',
       noData: 'No trades found'
