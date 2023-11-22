@@ -55,7 +55,7 @@
     "@angular/compiler-cli": "15.2.9",
     "@cypress/schematic": "2.5.1",
     "@types/big.js": "6.2.2",
-    "@types/jasmine": "5.1.2",
+    "@types/jasmine": "5.1.4",
     "@types/node": "20.9.2",
     "@typescript-eslint/eslint-plugin": "5.56.0",
     "@typescript-eslint/parser": "5.56.0",
