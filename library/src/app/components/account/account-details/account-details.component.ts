@@ -198,12 +198,10 @@ export class AccountDetailsComponent
       processedAccount.value =
         Number(processedAccount.price.sell_price) * platformBalance;
     }
-    console.log(processedAccount);
     return processedAccount;
   }
 
   getAccount(): void {
-    console.log("Pidiendo getAccount");
     combineLatest([
       this.configService.getConfig$(),
       this.accountService.getAccount(<string>this.accountGuid),
@@ -229,11 +227,9 @@ export class AccountDetailsComponent
         })
       )
       .subscribe();
-      console.log("Terminando getAccount");
   }
 
   listTrades(): void {
-    console.log("Pidiendo listTrades");
     this.isLoadingResults$.next(true);
 
     this.tradeService
@@ -262,11 +258,9 @@ export class AccountDetailsComponent
         })
       )
       .subscribe();
-      console.log("Terminando listTrades");
   }
 
   listTransfers(): void {
-    console.log("Pidiendo listTransfers");
     this.isLoadingResults$.next(true);
 
     this.transferService
@@ -295,7 +289,6 @@ export class AccountDetailsComponent
         })
       )
       .subscribe();
-      console.log("Terminando listTransfers");
   }
 
   refreshData(): void {

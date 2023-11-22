@@ -57,7 +57,8 @@
               <div>
                 <span class="pending-balance">{{
                   getFiatPendingBalance(account!) | assetFormat : config.fiat 
-                }} pending
+                }}
+                {{ 'pending' | translate }}
                 </span>
               </div>
             </ng-template>

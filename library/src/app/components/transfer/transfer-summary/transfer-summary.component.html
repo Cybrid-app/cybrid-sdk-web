@@ -36,7 +36,9 @@
             </div>
             <div class="inner">
               <span class="mat-body-strong">Date:</span>
-              <span>{{ transfer.created_at | date }}</span>
+              <span matTooltip="{{ transfer.created_at | date: 'MMM d, y hh:mm a' : 'UTC' }}" matTooltipPosition="above">{{
+                transfer.created_at | date
+              }}</span>
             </div>
           </div>
           <div class="cybrid-list-item" *ngIf="config.component === 'account-details'">
