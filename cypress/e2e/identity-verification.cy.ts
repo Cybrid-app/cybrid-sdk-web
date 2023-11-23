@@ -69,7 +69,7 @@ describe('identity-verification test', () => {
         .find('strong')
         .should('contain.text', text.identityVerification.verified);
       app()
-        .find('#customer-button-done')
+        .find('#identity-customer-button-done')
         .should('contain.text', text.done)
         .click();
     });
@@ -90,7 +90,7 @@ describe('identity-verification test', () => {
         .find('strong')
         .should('contain.text', text.identityVerification.rejected);
       app().find('p').should('contain.text', text.identityVerification.support);
-      app().find('#customer-button-done').contains(text.done).click();
+      app().find('#identity-customer-button-done').contains(text.done).click();
 
       app().should('not.exist');
     });
