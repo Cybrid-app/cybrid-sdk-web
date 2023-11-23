@@ -173,6 +173,32 @@ export class TestConstants {
     created_at: '2022-11-23T15:59:26.073Z'
   };
 
+  static FIAT_TRANSFER_BANK_MODEL: TransferBankModel = {
+    guid: '31d2ba27e4d1a443583fa05ba3bbd8e6',
+    transfer_type: 'funding',
+    customer_guid: '16d6aa37d74951c65c4510460cfac71c',
+    quote_guid: '26bf698b4c962d35729431982eb4cc3a',
+    external_bank_account_guid: '6be6313ef0dd1f345f88242347a15922',
+    asset: 'USD',
+    side: 'deposit',
+    state: 'completed',
+    failure_code: null,
+    amount: '5000',
+    estimated_amount: '5000',
+    fee: '0',
+    source_account: {
+      type: 'external_bank_account',
+      guid: '6be6313ef0dd1f345f88242347a15922'
+    },
+    destination_account: {
+      type: 'fiat',
+      guid: '5f9e3b002ba59ffa12052992729bcf5d'
+    },
+    created_at: '2023-06-02T16:07:11.886Z',
+    updated_at: '2023-07-05T14:04:23.291Z',
+    labels: null
+  };
+
   // Account-list component test models
   static ACCOUNT_GUID = '61dbf15e631571018ff808fa51746b46';
 
