@@ -96,6 +96,27 @@ describe('identity-verification test', () => {
     });
   });
 
+  it('should display frozen customer status', () => {
+    //Mock customer
+    const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
+    customer.state = 'frozen';
+
+    cy.intercept('GET', 'api/customers/*', (req) => {
+      delete req.headers['if-none-match'];
+      req.reply(customer);
+    }).as('getCustomer');
+
+    cy.wait('@getCustomer').then(() => {
+      app()
+        .find('strong')
+        .should('contain.text', text.identityVerification.frozen);
+      app().find('p').should('contain.text', text.identityVerification.support);
+      app().find('#identity-customer-button-done').contains(text.done).click();
+
+      app().should('not.exist');
+    });
+  });
+
   it('should poll on identity status', () => {
     //Mock customer
     const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };

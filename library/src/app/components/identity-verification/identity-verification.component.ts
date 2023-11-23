@@ -156,6 +156,15 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
         this.customer$.next(customer);
         this.isLoading$.next(false);
         break;
+      case 'frozen':
+        this.eventService.handleEvent(
+          LEVEL.WARNING,
+          CODE.CUSTOMER_FROZEN,
+          'Customer has been frozen'
+        );
+        this.customer$.next(customer);
+        this.isLoading$.next(false);
+        break;
       default:
         this.error$.next(true);
     }

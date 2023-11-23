@@ -146,6 +146,19 @@ describe('IdentityVerificationComponent', () => {
     discardPeriodicTasks();
   }));
 
+  it('should log an event if the customer state is frozen', fakeAsync(() => {
+    let customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
+    customer.state = 'frozen';
+    MockIdentityVerificationService.getCustomer.and.returnValue(of(customer));
+
+    component.getCustomerStatus();
+    tick();
+
+    expect(MockEventService.handleEvent).toHaveBeenCalled();
+
+    discardPeriodicTasks();
+  }));
+
   describe('handleIdentityVerificationState', () => {
     describe('with waiting state', () => {
       it('handles Persona state', () => {

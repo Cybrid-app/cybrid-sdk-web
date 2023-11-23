@@ -142,6 +142,7 @@ export default {
     verifying: 'Verifying...',
     verified: 'You have been verified.',
     rejected: 'Unable to verify identity.',
+    frozen: 'Your account has been frozen.',
     support: 'Please contact customer support.',
     pending: 'Pending identity verification, please check back later.',
     reviewing: 'Identity being reviewed.',
