@@ -1,10 +1,8 @@
 <ng-container *ngIf="configService.getConfig$() | async as config">
   <mat-card-title>
-    <app-cybrid-logo
-      [ngClass]="
+    <app-cybrid-logo [ngClass]="
         config.theme === 'LIGHT' ? 'cybrid-logo-light' : 'cybrid-logo-dark'
-      "
-    ></app-cybrid-logo>
+      "></app-cybrid-logo>
   </mat-card-title>
   <mat-card-content>
     <ng-container *ngIf="(error$ | async) !== true; else error">
@@ -14,9 +12,9 @@
             <app-loading [diameter]="16"></app-loading>
             <strong>{{
               isVerifying
-                ? ('identityVerification.verifying' | translate)
-                : ('identityVerification.checkStatus' | translate)
-            }}</strong>
+              ? ('identityVerification.verifying' | translate)
+              : ('identityVerification.checkStatus' | translate)
+              }}</strong>
           </div>
         </div>
       </ng-container>
@@ -24,12 +22,7 @@
       <ng-container *ngIf="customer$ | async as customer">
         <app-customer-content [customer]="customer"></app-customer-content>
         <div class="cybrid-actions">
-          <button
-            id="customer-button-done"
-            mat-flat-button
-            color="primary"
-            (click)="onComplete()"
-          >
+          <button id="identity-customer-button-done" mat-flat-button color="primary" (click)="onComplete()">
             {{ 'done' | translate }}
           </button>
         </div>
@@ -38,12 +31,7 @@
       <ng-container *ngIf="identity$ | async as identity">
         <app-identity-content [identity]="identity"></app-identity-content>
         <div class="cybrid-actions">
-          <button
-            id="identity-button-done"
-            mat-flat-button
-            color="primary"
-            (click)="onComplete()"
-          >
+          <button id="identity-button-done" mat-flat-button color="primary" (click)="onComplete()">
             {{ 'done' | translate }}
           </button>
         </div>
@@ -57,14 +45,11 @@
           </div>
         </div>
         <div class="cybrid-actions">
-          <button mat-stroked-button (click)="onCancel()">
+          <button id="identity-button-cancel" mat-stroked-button (click)="onCancel()">
             {{ 'cancel' | translate }}
           </button>
-          <button
-            mat-flat-button
-            color="primary"
-            (click)="verifyIdentity(); isCanceled = !isCanceled"
-          >
+          <button id="identity-button-resume" mat-flat-button color="primary"
+            (click)="verifyIdentity(); isCanceled = !isCanceled">
             {{ 'resume' | translate }}
           </button>
         </div>
