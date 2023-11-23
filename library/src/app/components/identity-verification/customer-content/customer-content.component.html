@@ -17,4 +17,14 @@
       <p>{{ 'identityVerification.support' | translate }}</p>
     </div>
   </ng-container>
+
+  <ng-container *ngSwitchCase="'frozen'">
+    <div class="verification-content">
+      <div>
+        <mat-icon color="warn">cancel</mat-icon>
+        <strong>{{ 'identityVerification.frozen' | translate }}</strong>
+      </div>
+      <p>{{ 'identityVerification.support' | translate }}</p>
+    </div>
+  </ng-container>
 </ng-container>
