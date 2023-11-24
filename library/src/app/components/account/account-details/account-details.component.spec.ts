@@ -20,7 +20,9 @@ import { PageEvent } from '@angular/material/paginator';
 import {
   AssetBankModel,
   TradeBankModel,
-  TradesService
+  TradesService,
+  TransferBankModel,
+  TransfersService
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
@@ -45,6 +47,7 @@ import { SharedModule } from '../../../../shared/modules/shared.module';
 describe('AccountDetailComponent', () => {
   let component: AccountDetailsComponent;
   let fixture: ComponentFixture<AccountDetailsComponent>;
+  var isTradingAccount = true;
 
   let MockEventService = jasmine.createSpyObj('EventService', [
     'getEvent',
@@ -59,14 +62,20 @@ describe('AccountDetailComponent', () => {
     'getConfig$',
     'getComponent$'
   ]);
-  let MockQueryParams = of({
-    accountID: TestConstants.ACCOUNT_GUID
+  let MockTradingQueryParams = of({
+    accountGuid: TestConstants.ACCOUNT_GUID,
+    accountType: 'trading'
+  });
+  let MockFiatQueryParams = of({
+    accountGuid: TestConstants.ACCOUNT_GUID,
+    accountType: 'fiat'
   });
   let MockAccountService = jasmine.createSpyObj('AccountService', [
     'getAccount'
   ]);
   let MockPriceService = jasmine.createSpyObj('PriceService', ['listPrices']);
   let MockTradesService = jasmine.createSpyObj('TradesService', ['listTrades']);
+  let MockTransfersService = jasmine.createSpyObj('TransfersService', ['listTransfers']);
   let MockRoutingService = jasmine.createSpyObj('RoutingService', [
     'handleRoute'
   ]);
@@ -112,11 +121,12 @@ describe('AccountDetailComponent', () => {
         { provide: AccountService, useValue: MockAccountService },
         { provide: PriceService, useValue: MockPriceService },
         { provide: TradesService, useValue: MockTradesService },
+        { provide: TransfersService, useValue: MockTransfersService },
         { provide: RoutingService, useValue: MockRoutingService },
         {
           provide: ActivatedRoute,
           useValue: {
-            queryParams: MockQueryParams
+            queryParams: (isTradingAccount) ? MockTradingQueryParams : MockFiatQueryParams
           }
         },
         AssetIconPipe
@@ -130,6 +140,10 @@ describe('AccountDetailComponent', () => {
     MockTradesService = TestBed.inject(TradesService);
     MockTradesService.listTrades.and.returnValue(
       of(TestConstants.TRADE_LIST_BANK_MODEL)
+    );
+    MockTransfersService = TestBed.inject(TransfersService);
+    MockTransfersService.listTransfers.and.returnValue(
+      of(TestConstants.TRANSFER_LIST_BANK_MODEL)
     );
     MockAccountService = TestBed.inject(AccountService);
     MockAccountService.getAccount.and.returnValue(
@@ -266,7 +280,30 @@ describe('AccountDetailComponent', () => {
     });
   });
 
-  it('should refresh data', fakeAsync(() => {
+  describe('when listing transfers', () => {
+
+    it('should list transfers', () => {
+      
+      component.accountType = 'fiat';
+      component.refreshData();
+      expect(MockTransfersService.listTransfers).toHaveBeenCalled();
+    });
+
+    it('should handle list transfer errors', () => {
+      const refreshDataSubSpy = spyOn(component.refreshDataSub, 'unsubscribe');
+      const isRecoverable$Spy = spyOn(component.isRecoverable$, 'next');
+
+      MockTransfersService.listTransfers.and.returnValue(error$);
+      component.transfersDataSource.data = TestConstants.TRANSFER_LIST_BANK_MODEL.objects;
+      component.listTransfers();
+
+      expect(refreshDataSubSpy).toHaveBeenCalled();
+      expect(isRecoverable$Spy).toHaveBeenCalledWith(false);
+      expect(component.transfersDataSource.data).toEqual([]);
+    });
+  });
+
+  it('should refresh data for accountType trading', fakeAsync(() => {
     const getAccountSpy = spyOn(component, 'getAccount');
     const listTradesSpy = spyOn(component, 'listTrades');
 
@@ -276,6 +313,20 @@ describe('AccountDetailComponent', () => {
     expect(getAccountSpy).toHaveBeenCalledTimes(2);
     expect(listTradesSpy).toHaveBeenCalledTimes(2);
 
+    discardPeriodicTasks();
+  }));
+
+  it('should refresh data for accountType fiat', fakeAsync(() => {
+
+    const getAccountSpy = spyOn(component, 'getAccount');
+    const listTransfersSpy = spyOn(component, 'listTransfers');
+
+    component.accountType = 'fiat';
+    component.refreshData();
+    tick(Constants.REFRESH_INTERVAL);
+
+    expect(getAccountSpy).toHaveBeenCalledTimes(2);
+    expect(listTransfersSpy).toHaveBeenCalledTimes(2);
     discardPeriodicTasks();
   }));
 
@@ -306,6 +357,20 @@ describe('AccountDetailComponent', () => {
 
       let sort = component.sortingDataAccessor(trade, '');
       expect(sort).toEqual('');
+    });
+  });
+
+  describe('when sorting transfers', () => {
+    it('should sort by transaction', () => {
+      let transfer: TransferBankModel = TestConstants.TRANSFER_BANK_MODEL;
+      let sort = component.sortingTransfersDataAccessor(transfer, 'transaction');
+      expect(sort).toEqual(<string>transfer.created_at);
+    });
+
+    it('should sort by balance for side: buy', () => {
+      let transfer: TransferBankModel = TestConstants.TRANSFER_BANK_MODEL;
+      let sort = component.sortingTransfersDataAccessor(transfer, 'balance');
+      expect(sort).toEqual(<string>transfer.estimated_amount);
     });
   });
 
@@ -349,6 +414,20 @@ describe('AccountDetailComponent', () => {
 
       expect(listTradesSpy).toHaveBeenCalled();
     });
+
+    it('should list transfers', () => {
+
+      component.accountType = 'fiat';
+      component.refreshData();
+      const listTransfersSpy = spyOn(component, 'listTransfers');
+      const pageEvent: PageEvent = {
+        pageIndex: component.currentPage,
+        pageSize: component.pageSize,
+        length: component.totalRows
+      };
+      component.pageChange(pageEvent);
+      expect(listTransfersSpy).toHaveBeenCalled();
+    });
   });
 
   it('should sort', () => {
@@ -359,10 +438,24 @@ describe('AccountDetailComponent', () => {
     expect(component.dataSource.sort).toBeDefined();
   });
 
+  it('should sort transfer', () => {
+
+    component.transfersDataSource.sort = null;
+    component.sortChange();
+    expect(component.transfersDataSource.sort).toBeDefined();
+  });
+
   it('should display the trade summary onRowClick()', () => {
     const dialogSpy = spyOn(component.dialog, 'open');
 
     component.onRowClick(TestConstants.TRADE_BANK_MODEL);
+    expect(dialogSpy).toHaveBeenCalled();
+  });
+
+  it('should display the transfer summary onTransferClick', () => {
+
+    const dialogSpy = spyOn(component.dialog, 'open');
+    component.onTransferClick(TestConstants.TRANSFER_BANK_MODEL);
     expect(dialogSpy).toHaveBeenCalled();
   });
 

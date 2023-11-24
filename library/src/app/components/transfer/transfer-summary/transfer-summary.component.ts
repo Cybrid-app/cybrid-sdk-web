@@ -84,13 +84,4 @@ export class TransferSummaryComponent implements OnInit {
       )
       .subscribe();
   }
-
-  onDialogClose(): void {
-    this.configService
-      .getComponent$()
-      .pipe(
-        take(1)
-      )
-      .subscribe();
-  }
 }

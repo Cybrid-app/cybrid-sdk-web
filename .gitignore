@@ -10,6 +10,7 @@ npm-debug.log
 
 # Miscellaneous
 /.idea
+/.vscode
 /.angular
 /cybrid-sdk-web.iml
 

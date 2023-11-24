@@ -248,7 +248,7 @@ describe('AccountListComponent', () => {
     });
   });
 
-  it('should navigate on row click', () => {
+  it('should navigate on trading account row click', () => {
     component.onRowClick(TestConstants.ACCOUNT_BANK_MODEL_BTC);
 
     // Test default config.routing=true
@@ -257,7 +257,24 @@ describe('AccountListComponent', () => {
       origin: 'account-list',
       extras: {
         queryParams: {
-          accountGuid: TestConstants.ACCOUNT_GUID
+          accountGuid: TestConstants.ACCOUNT_BANK_MODEL_BTC.guid,
+          accountType: 'trading'
+        }
+      }
+    });
+  });
+
+  it('should navigate on fiat account row click', () => {
+    component.onRowClick(TestConstants.ACCOUNT_BANK_MODEL_USD);
+
+    // Test default config.routing=true
+    expect(MockRoutingService.handleRoute).toHaveBeenCalledWith({
+      route: 'account-details',
+      origin: 'account-list',
+      extras: {
+        queryParams: {
+          accountGuid: TestConstants.ACCOUNT_BANK_MODEL_USD.guid,
+          accountType: 'fiat'
         }
       }
     });

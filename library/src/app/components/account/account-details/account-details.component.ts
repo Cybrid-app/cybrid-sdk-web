@@ -105,15 +105,9 @@ export class AccountDetailsComponent
       account && transferList ? of(false) : of(true))
   );
   
-  /* MATARLO */
   isLoadingTrades$ = combineLatest([this.account$, this.tradeList$]).pipe(
     switchMap(([account, tradeList]) =>
       account && tradeList ? of(false) : of(true))
-  );
-
-  isLoadingTradesAndTransfers$ = combineLatest([this.account$, this.tradeList$, this.transferList$]).pipe(
-    switchMap(([account, tradeList, transferList]) =>
-      account && tradeList && transferList ? of(false): of(true))
   );
 
   isLoadingResults$ = new BehaviorSubject(true);
@@ -297,15 +291,16 @@ export class AccountDetailsComponent
       .pipe(
         take(1),
         switchMap((cfg: ComponentConfig) => {
-          return timer(cfg.refreshInterval*10000000, cfg.refreshInterval*1000000);
+          return timer(cfg.refreshInterval, cfg.refreshInterval);
         }),
         startWith(0),
         tap(() => {
           this.getAccount();
           if (this.accountType == 'trading') {
             this.listTrades();
+          } else {
+            this.listTransfers();
           }
-          this.listTransfers();
         }),
         takeUntil(this.unsubscribe$)
       )

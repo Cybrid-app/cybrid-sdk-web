@@ -146,12 +146,4 @@ describe('TransferSummaryComponent', () => {
       expect(MockErrorService.handleError).toHaveBeenCalled();
       expect(MockDialogRef.close).toHaveBeenCalled();
     });
-  
-    it('should route to the price-list onDialogClose() if the parent is transfer', () => {
-      // Set parent component to transfer
-      MockConfigService.getComponent$.and.returnValue(of('transfer'));
-  
-      component.onDialogClose();
-      expect(MockRoutingService.handleRoute).toHaveBeenCalled();
-    });
   });
