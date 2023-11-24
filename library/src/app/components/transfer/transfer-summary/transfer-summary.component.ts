@@ -5,7 +5,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, catchError, map, of, Subject, take } from 'rxjs';
 
 // Client
-import { TransferBankModel, TransfersService } from '@cybrid/cybrid-api-bank-angular';
+import {
+  TransferBankModel,
+  TransfersService
+} from '@cybrid/cybrid-api-bank-angular';
 
 // Services
 import {
@@ -35,7 +38,6 @@ interface DialogData {
   ]
 })
 export class TransferSummaryComponent implements OnInit {
-
   transfer$: Subject<TransferBankModel> = new Subject<TransferBankModel>();
   trnasferBankModel: TransferBankModel = {};
 
@@ -70,7 +72,9 @@ export class TransferSummaryComponent implements OnInit {
           this.transfer$.next(transferBankModel);
         }),
         catchError((err: any) => {
-          const message = this.translatePipe.transform('transfer.summary.error');
+          const message = this.translatePipe.transform(
+            'transfer.summary.error'
+          );
           this.snackBar.open(message, 'OK');
           this.eventService.handleEvent(
             LEVEL.ERROR,

@@ -24,7 +24,7 @@
             </div>
           </div>
           <div class="cybrid-holdings">
-            <ng-container *ngIf="accountType == 'trading'; else fiatHoldings">
+            <ng-container *ngIf="accountType === 'trading'; else fiatHoldings">
               <div>
                 <span class="cybrid-h2 cybrid-strong">{{
                   account?.platform_balance
@@ -66,7 +66,7 @@
         </div>
 
         <!-- Trades table -->
-        <ng-container *ngIf="account?.type == 'trading'; else transfersList">
+        <ng-container *ngIf="account?.type === 'trading'; else transfersList">
           <ng-container *ngIf="(isLoadingTrades$ | async) !== true; else loading">
             <ng-container *ngIf="tradeList$ | async as tradeList">
               <div class="cybrid-table">
@@ -189,7 +189,7 @@
                             transaction.created_at | date
                             }}</span>
                         </div>
-                        <ng-container *ngIf="transaction.state == 'storing' || transaction.state == 'pending' || transaction.state == 'failed'">
+                        <ng-container *ngIf="transaction.state === 'storing' || transaction.state === 'pending' || transaction.state === 'failed'">
                           <div class="status-chip">
                             <span class="state-{{ transaction.state }}">{{ transaction.state | titlecase }}</span>
                           </div>

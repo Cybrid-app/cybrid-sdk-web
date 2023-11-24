@@ -78,7 +78,8 @@ export class AccountDetailsComponent
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
   dataSource: MatTableDataSource<TradeBankModel> = new MatTableDataSource();
-  transfersDataSource: MatTableDataSource<TransferBankModel> = new MatTableDataSource();
+  transfersDataSource: MatTableDataSource<TransferBankModel> =
+    new MatTableDataSource();
 
   account$ = new BehaviorSubject<AccountBankModelWithDetails | null>(null);
   tradeList$ = new BehaviorSubject<TradeListBankModel | null>(null);
@@ -97,17 +98,19 @@ export class AccountDetailsComponent
   pageSizeOptions: number[] = [5, 10, 25, 100];
 
   isLoadingAccount$ = this.account$.pipe(
-    switchMap(account => (account ? of(false) : of(true)))
+    switchMap((account) => (account ? of(false) : of(true)))
   );
 
   isLoadingTransfers$ = combineLatest([this.account$, this.transferList$]).pipe(
     switchMap(([account, transferList]) =>
-      account && transferList ? of(false) : of(true))
+      account && transferList ? of(false) : of(true)
+    )
   );
-  
+
   isLoadingTrades$ = combineLatest([this.account$, this.tradeList$]).pipe(
     switchMap(([account, tradeList]) =>
-      account && tradeList ? of(false) : of(true))
+      account && tradeList ? of(false) : of(true)
+    )
   );
 
   isLoadingResults$ = new BehaviorSubject(true);
@@ -139,9 +142,9 @@ export class AccountDetailsComponent
       .pipe(
         take(1),
         tap((params) => {
-          this.accountGuid = params['accountGuid']
-          this.accountType = params['accountType']
-      })
+          this.accountGuid = params['accountGuid'];
+          this.accountType = params['accountType'];
+        })
       )
       .subscribe();
   }
@@ -161,7 +164,8 @@ export class AccountDetailsComponent
     this.dataSource.sort = this.sort;
 
     this.transfersDataSource.paginator = this.paginator;
-    this.transfersDataSource.sortingDataAccessor = this.sortingTransfersDataAccessor;
+    this.transfersDataSource.sortingDataAccessor =
+      this.sortingTransfersDataAccessor;
     this.transfersDataSource.sort = this.sort;
   }
 
@@ -273,7 +277,6 @@ export class AccountDetailsComponent
           this.transfersDataSource.data = transfers.objects;
           this.transferList$.next(transfers);
           this.isLoadingResults$.next(false);
-          
         }),
         catchError((err) => {
           this.refreshDataSub?.unsubscribe();
@@ -308,7 +311,6 @@ export class AccountDetailsComponent
   }
 
   pageChange(event: PageEvent): void {
-
     this.pageSize = event.pageSize;
     this.currentPage = event.pageIndex;
 
@@ -321,7 +323,7 @@ export class AccountDetailsComponent
 
   sortChange(): void {
     this.dataSource.sort = this.sort;
-    this.transfersDataSource.sort = this.sort
+    this.transfersDataSource.sort = this.sort;
   }
 
   sortingDataAccessor(trade: TradeBankModel, columnDef: string) {
@@ -380,15 +382,14 @@ export class AccountDetailsComponent
     });
   }
 
-  getFiatPendingBalance(account: AccountBankModelWithDetails) : number {
-
+  getFiatPendingBalance(account: AccountBankModelWithDetails): number {
     const platformBalance = Number(account.platform_balance);
     const platformAvailable = Number(account.platform_available);
     return platformBalance - platformAvailable;
   }
 
-  getTransferIconName(transfer: TransferBankModel) : String {
-    switch(transfer.side) {
+  getTransferIconName(transfer: TransferBankModel): String {
+    switch (transfer.side) {
       case 'deposit':
         return 'cybrid-deposit-icon';
       case 'withdrawal':

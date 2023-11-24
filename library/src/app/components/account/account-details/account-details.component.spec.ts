@@ -18,6 +18,7 @@ import { PageEvent } from '@angular/material/paginator';
 
 // Client
 import {
+  AccountBankModel,
   AssetBankModel,
   TradeBankModel,
   TradesService,
@@ -75,7 +76,9 @@ describe('AccountDetailComponent', () => {
   ]);
   let MockPriceService = jasmine.createSpyObj('PriceService', ['listPrices']);
   let MockTradesService = jasmine.createSpyObj('TradesService', ['listTrades']);
-  let MockTransfersService = jasmine.createSpyObj('TransfersService', ['listTransfers']);
+  let MockTransfersService = jasmine.createSpyObj('TransfersService', [
+    'listTransfers'
+  ]);
   let MockRoutingService = jasmine.createSpyObj('RoutingService', [
     'handleRoute'
   ]);
@@ -126,7 +129,9 @@ describe('AccountDetailComponent', () => {
         {
           provide: ActivatedRoute,
           useValue: {
-            queryParams: (isTradingAccount) ? MockTradingQueryParams : MockFiatQueryParams
+            queryParams: isTradingAccount
+              ? MockTradingQueryParams
+              : MockFiatQueryParams
           }
         },
         AssetIconPipe
@@ -281,9 +286,7 @@ describe('AccountDetailComponent', () => {
   });
 
   describe('when listing transfers', () => {
-
     it('should list transfers', () => {
-      
       component.accountType = 'fiat';
       component.refreshData();
       expect(MockTransfersService.listTransfers).toHaveBeenCalled();
@@ -294,7 +297,8 @@ describe('AccountDetailComponent', () => {
       const isRecoverable$Spy = spyOn(component.isRecoverable$, 'next');
 
       MockTransfersService.listTransfers.and.returnValue(error$);
-      component.transfersDataSource.data = TestConstants.TRANSFER_LIST_BANK_MODEL.objects;
+      component.transfersDataSource.data =
+        TestConstants.TRANSFER_LIST_BANK_MODEL.objects;
       component.listTransfers();
 
       expect(refreshDataSubSpy).toHaveBeenCalled();
@@ -317,7 +321,6 @@ describe('AccountDetailComponent', () => {
   }));
 
   it('should refresh data for accountType fiat', fakeAsync(() => {
-
     const getAccountSpy = spyOn(component, 'getAccount');
     const listTransfersSpy = spyOn(component, 'listTransfers');
 
@@ -363,7 +366,10 @@ describe('AccountDetailComponent', () => {
   describe('when sorting transfers', () => {
     it('should sort by transaction', () => {
       let transfer: TransferBankModel = TestConstants.TRANSFER_BANK_MODEL;
-      let sort = component.sortingTransfersDataAccessor(transfer, 'transaction');
+      let sort = component.sortingTransfersDataAccessor(
+        transfer,
+        'transaction'
+      );
       expect(sort).toEqual(<string>transfer.created_at);
     });
 
@@ -371,6 +377,12 @@ describe('AccountDetailComponent', () => {
       let transfer: TransferBankModel = TestConstants.TRANSFER_BANK_MODEL;
       let sort = component.sortingTransfersDataAccessor(transfer, 'balance');
       expect(sort).toEqual(<string>transfer.estimated_amount);
+    });
+
+    it('should sort by default', () => {
+      let transfer: TransferBankModel = TestConstants.TRANSFER_BANK_MODEL;
+      let sort = component.sortingTransfersDataAccessor(transfer, '');
+      expect(sort).toEqual('');
     });
   });
 
@@ -416,7 +428,6 @@ describe('AccountDetailComponent', () => {
     });
 
     it('should list transfers', () => {
-
       component.accountType = 'fiat';
       component.refreshData();
       const listTransfersSpy = spyOn(component, 'listTransfers');
@@ -439,7 +450,6 @@ describe('AccountDetailComponent', () => {
   });
 
   it('should sort transfer', () => {
-
     component.transfersDataSource.sort = null;
     component.sortChange();
     expect(component.transfersDataSource.sort).toBeDefined();
@@ -453,7 +463,6 @@ describe('AccountDetailComponent', () => {
   });
 
   it('should display the transfer summary onTransferClick', () => {
-
     const dialogSpy = spyOn(component.dialog, 'open');
     component.onTransferClick(TestConstants.TRANSFER_BANK_MODEL);
     expect(dialogSpy).toHaveBeenCalled();
@@ -463,5 +472,35 @@ describe('AccountDetailComponent', () => {
     component.onTrade();
 
     expect(MockRoutingService.handleRoute).toHaveBeenCalled();
+  });
+
+  it('getFiatPendingBalance', () => {
+    let account: AccountBankModel = TestConstants.ACCOUNT_BANK_MODEL_USD;
+    let pendingBalance = component.getFiatPendingBalance(account);
+    expect(pendingBalance).toEqual(0);
+  });
+
+  it('getTransferIconName for deposit', () => {
+    let transferBankModel: TransferBankModel =
+      TestConstants.TRANSFER_BANK_MODEL;
+    transferBankModel.side = 'deposit';
+    let iconName = component.getTransferIconName(transferBankModel);
+    expect(iconName).toEqual('cybrid-deposit-icon');
+  });
+
+  it('getTransferIconName for withdrawal', () => {
+    let transferBankModel: TransferBankModel =
+      TestConstants.TRANSFER_BANK_MODEL;
+    transferBankModel.side = 'withdrawal';
+    let iconName = component.getTransferIconName(transferBankModel);
+    expect(iconName).toEqual('cybrid-withdrawal-icon');
+  });
+
+  it('getTransferIconName for default', () => {
+    let transferBankModel: TransferBankModel =
+      TestConstants.TRANSFER_BANK_MODEL;
+    transferBankModel.side = undefined;
+    let iconName = component.getTransferIconName(transferBankModel);
+    expect(iconName).toEqual('');
   });
 });
