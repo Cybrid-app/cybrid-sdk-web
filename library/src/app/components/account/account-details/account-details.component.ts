@@ -39,8 +39,7 @@ import {
   TradeListBankModel,
   TradesService,
   TransferBankModel,
-  TransferListBankModel,
-  TransfersService
+  TransferListBankModel
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
@@ -48,6 +47,7 @@ import {
   AccountBankModelWithDetails,
   AccountService,
   AssetService,
+  TransferService,
   CODE,
   ComponentConfig,
   ConfigService,
@@ -130,7 +130,7 @@ export class AccountDetailsComponent
     private eventService: EventService,
     private accountService: AccountService,
     private tradeService: TradesService,
-    private transferService: TransfersService,
+    private transferService: TransferService,
     private priceService: PriceService,
     private assetService: AssetService,
     private route: ActivatedRoute,
@@ -265,10 +265,6 @@ export class AccountDetailsComponent
       .listTransfers(
         this.currentPage.toString(),
         this.pageSize.toString(),
-        '',
-        '',
-        '',
-        '',
         <string>this.accountGuid
       )
       .pipe(

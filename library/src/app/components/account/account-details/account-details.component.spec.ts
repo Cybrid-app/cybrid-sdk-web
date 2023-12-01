@@ -22,18 +22,18 @@ import {
   AssetBankModel,
   TradeBankModel,
   TradesService,
-  TransferBankModel,
-  TransfersService
+  TransferBankModel
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
 import {
   AccountService,
   AssetService,
+  PriceService,
+  TransferService,
   ConfigService,
   ErrorService,
   EventService,
-  PriceService,
   RoutingService
 } from '@services';
 
@@ -76,7 +76,7 @@ describe('AccountDetailComponent', () => {
   ]);
   let MockPriceService = jasmine.createSpyObj('PriceService', ['listPrices']);
   let MockTradesService = jasmine.createSpyObj('TradesService', ['listTrades']);
-  let MockTransfersService = jasmine.createSpyObj('TransfersService', [
+  let MockTransferService = jasmine.createSpyObj('TransferService', [
     'listTransfers'
   ]);
   let MockRoutingService = jasmine.createSpyObj('RoutingService', [
@@ -124,7 +124,7 @@ describe('AccountDetailComponent', () => {
         { provide: AccountService, useValue: MockAccountService },
         { provide: PriceService, useValue: MockPriceService },
         { provide: TradesService, useValue: MockTradesService },
-        { provide: TransfersService, useValue: MockTransfersService },
+        { provide: TransferService, useValue: MockTransferService },
         { provide: RoutingService, useValue: MockRoutingService },
         {
           provide: ActivatedRoute,
@@ -146,8 +146,8 @@ describe('AccountDetailComponent', () => {
     MockTradesService.listTrades.and.returnValue(
       of(TestConstants.TRADE_LIST_BANK_MODEL)
     );
-    MockTransfersService = TestBed.inject(TransfersService);
-    MockTransfersService.listTransfers.and.returnValue(
+    MockTransferService = TestBed.inject(TransferService);
+    MockTransferService.listTransfers.and.returnValue(
       of(TestConstants.TRANSFER_LIST_BANK_MODEL)
     );
     MockAccountService = TestBed.inject(AccountService);
@@ -289,14 +289,14 @@ describe('AccountDetailComponent', () => {
     it('should list transfers', () => {
       component.accountType = 'fiat';
       component.refreshData();
-      expect(MockTransfersService.listTransfers).toHaveBeenCalled();
+      expect(MockTransferService.listTransfers).toHaveBeenCalled();
     });
 
     it('should handle list transfer errors', () => {
       const refreshDataSubSpy = spyOn(component.refreshDataSub, 'unsubscribe');
       const isRecoverable$Spy = spyOn(component.isRecoverable$, 'next');
 
-      MockTransfersService.listTransfers.and.returnValue(error$);
+      MockTransferService.listTransfers.and.returnValue(error$);
       component.transfersDataSource.data =
         TestConstants.TRANSFER_LIST_BANK_MODEL.objects;
       component.listTransfers();

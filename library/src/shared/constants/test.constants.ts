@@ -548,7 +548,7 @@ export class TestConstants {
   };
 
   static TRANSFER_LIST_BANK_MODEL: TransferListBankModel = {
-    total: '2',
+    total: '1',
     page: '0',
     per_page: '10',
     objects: [

@@ -19,11 +19,9 @@ import {
 import { HttpLoaderFactory } from '../../../modules/library.module';
 import { of, throwError } from 'rxjs';
 
-// Client
-import { TransfersService } from '@cybrid/cybrid-api-bank-angular';
-
 // Services
 import {
+  TransferService,
   EventService,
   ErrorService,
   ConfigService,
@@ -53,7 +51,7 @@ describe('TransferSummaryComponent', () => {
     'getConfig$',
     'getComponent$'
   ]);
-  let MockTransfersService = jasmine.createSpyObj('TransfersService', [
+  let MockTransferService = jasmine.createSpyObj('TransferService', [
     'getTransfer'
   ]);
   let MockRoutingService = jasmine.createSpyObj('RoutingService', [
@@ -90,7 +88,7 @@ describe('TransferSummaryComponent', () => {
       ],
       declarations: [TransferSummaryComponent],
       providers: [
-        { provide: TransfersService, useValue: MockTransfersService },
+        { provide: TransferService, useValue: MockTransferService },
         { provide: RoutingService, useValue: MockRoutingService },
         {
           provide: MAT_DIALOG_DATA,
@@ -108,8 +106,8 @@ describe('TransferSummaryComponent', () => {
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
-    MockTransfersService = TestBed.inject(TransfersService);
-    MockTransfersService.getTransfer.and.returnValue(
+    MockTransferService = TestBed.inject(TransferService);
+    MockTransferService.getTransfer.and.returnValue(
       of(TestConstants.FIAT_TRANSFER_BANK_MODEL)
     );
     MockRoutingService = TestBed.inject(RoutingService);
@@ -133,7 +131,7 @@ describe('TransferSummaryComponent', () => {
   it('should getTransfer()', () => {
     const transfer$Spy = spyOn(component.transfer$, 'next');
     component.ngOnInit();
-    expect(MockTransfersService.getTransfer).toHaveBeenCalled();
+    expect(MockTransferService.getTransfer).toHaveBeenCalled();
     expect(transfer$Spy).toHaveBeenCalled();
   });
 
@@ -141,7 +139,7 @@ describe('TransferSummaryComponent', () => {
     const error$ = throwError(() => {
       new Error('Error');
     });
-    MockTransfersService.getTransfer.and.returnValue(error$);
+    MockTransferService.getTransfer.and.returnValue(error$);
     component.ngOnInit();
     expect(MockSnackbar.open).toHaveBeenCalled();
     expect(MockEventService.handleEvent).toHaveBeenCalled();

@@ -5,13 +5,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, catchError, map, of, Subject, take } from 'rxjs';
 
 // Client
-import {
-  TransferBankModel,
-  TransfersService
-} from '@cybrid/cybrid-api-bank-angular';
+import { TransferBankModel } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
 import {
+  TransferService,
   ConfigService,
   EventService,
   CODE,
@@ -49,7 +47,7 @@ export class TransferSummaryComponent implements OnInit {
     public configService: ConfigService,
     private routingService: RoutingService,
     private snackBar: MatSnackBar,
-    private transfersService: TransfersService,
+    private transferService: TransferService,
     private eventService: EventService,
     private errorService: ErrorService,
     private translatePipe: TranslatePipe
@@ -65,7 +63,7 @@ export class TransferSummaryComponent implements OnInit {
       CODE.DATA_FETCHING,
       'Fetching transfer...'
     );
-    this.transfersService
+    this.transferService
       .getTransfer(this.data.model.guid!)
       .pipe(
         map((transferBankModel) => {
