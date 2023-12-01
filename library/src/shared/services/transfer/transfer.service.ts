@@ -13,9 +13,9 @@ import {
 
 // Client
 import {
-    TransferBankModel,
-    TransferListBankModel,
-    TransfersService
+  TransferBankModel,
+  TransferListBankModel,
+  TransfersService
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
@@ -45,23 +45,29 @@ export class TransferService implements OnDestroy {
     perPage?: string,
     customerGuid?: string
   ): Observable<TransferListBankModel> {
-    return this.trasnfersService.listTransfers(page, perPage, '', '', '', '', customerGuid).pipe(
-      catchError((err) => {
-        this.eventService.handleEvent(
-          LEVEL.ERROR,
-          CODE.DATA_ERROR,
-          'There was an error listing transfers'
-        );
+    return this.trasnfersService
+      .listTransfers(page, perPage, '', '', '', '', customerGuid)
+      .pipe(
+        catchError((err) => {
+          this.eventService.handleEvent(
+            LEVEL.ERROR,
+            CODE.DATA_ERROR,
+            'There was an error listing transfers'
+          );
 
-        this.errorService.handleError(
-          new Error('There was an error listing transfers')
-        );
-        return of(err);
-      })
-    );
+          this.errorService.handleError(
+            new Error('There was an error listing transfers')
+          );
+          return of(err);
+        })
+      );
   }
 
-  pageTransfers(perPage: number, list: TransferListBankModel, customerGuid: string) {
+  pageTransfers(
+    perPage: number,
+    list: TransferListBankModel,
+    customerGuid: string
+  ) {
     return list.objects.length == perPage
       ? this.trasnfersService.listTransfers(
           (Number(list.page) + 1).toString(),
@@ -77,7 +83,9 @@ export class TransferService implements OnDestroy {
 
   listAllTransfers(customerGuid: string): Observable<TransferBankModel[]> {
     return this.trasnfersService.listTransfers().pipe(
-      expand((list) => this.pageTransfers(this.transfersPerPage, list, customerGuid)),
+      expand((list) =>
+        this.pageTransfers(this.transfersPerPage, list, customerGuid)
+      ),
       map((list) => list.objects),
       reduce((acc, value) => this.accumulateTransfers(acc, value)),
       catchError((err) => {
