@@ -4,7 +4,7 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { HttpLoaderFactory } from '../../../app/modules/library.module';
 import { HttpClient } from '@angular/common/http';
 
-import { EMPTY, of, throwError } from 'rxjs';
+import { EMPTY, of, throwError, catchError } from 'rxjs';
 
 // Client
 import {
@@ -98,7 +98,9 @@ describe('TransferService', () => {
     it('should handle errors', () => {
       MockTransfersService.listTransfers.and.returnValue(error$);
 
-      service.listTransfers().subscribe(() => {
+      service.listTransfers().pipe(
+        catchError((err) => of(err))
+      ).subscribe(() => {
         expect(MockErrorService.handleError).toHaveBeenCalled();
         expect(MockEventService.handleEvent).toHaveBeenCalled();
       });
@@ -145,7 +147,7 @@ describe('TransferService', () => {
       service.transfersPerPage = Number(
         TestConstants.TRANSFER_LIST_BANK_MODEL.total
       );
-
+      
       service
         .listAllTransfers('')
         .subscribe((transfers: TransferBankModel[]) => {
@@ -158,10 +160,9 @@ describe('TransferService', () => {
     it('should handle errors', () => {
       MockTransfersService.listTransfers.and.returnValue(error$);
 
-      service.listAllTransfers('').subscribe(() => {
-        expect(MockErrorService.handleError).toHaveBeenCalled();
-        expect(MockEventService.handleEvent).toHaveBeenCalled();
-      });
+      service.listAllTransfers('').subscribe();
+      expect(MockErrorService.handleError).toHaveBeenCalled();
+      expect(MockEventService.handleEvent).toHaveBeenCalled();
     });
   });
 });

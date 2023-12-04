@@ -173,6 +173,21 @@ describe('AccountDetailComponent', () => {
     expect(MockEventService.handleEvent).toHaveBeenCalled();
   });
 
+  describe('isLoadingTransfers', () => {
+    it('should init as true', () => {
+      component.isLoadingTransfers$.subscribe((value) => {
+        expect(value).toBeTruthy();
+      });
+    });
+    it('should be false', () => {
+      component.account$.next(TestConstants.ACCOUNT_BANK_MODEL_USD);
+      component.transferList$.next(TestConstants.TRANSFER_LIST_BANK_MODEL);
+      component.isLoadingTransfers$.subscribe((value) => {
+        expect(value).toBeFalsy();
+      });
+    });
+  });
+
   describe('when processing account', () => {
     it('should process account price', () => {
       const processedAccount = component.processAccount(
