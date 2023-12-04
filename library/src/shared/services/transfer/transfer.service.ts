@@ -4,11 +4,11 @@ import {
   EMPTY,
   expand,
   map,
-  tap,
   Observable,
   of,
   reduce,
-  Subject
+  Subject,
+  throwError
 } from 'rxjs';
 
 // Client
@@ -58,7 +58,8 @@ export class TransferService implements OnDestroy {
           this.errorService.handleError(
             new Error('There was an error listing transfers')
           );
-          return of(err);
+
+          return throwError(() => err);
         })
       );
   }
