@@ -98,12 +98,13 @@ describe('TransferService', () => {
     it('should handle errors', () => {
       MockTransfersService.listTransfers.and.returnValue(error$);
 
-      service.listTransfers().pipe(
-        catchError((err) => of(err))
-      ).subscribe(() => {
-        expect(MockErrorService.handleError).toHaveBeenCalled();
-        expect(MockEventService.handleEvent).toHaveBeenCalled();
-      });
+      service
+        .listTransfers()
+        .pipe(catchError((err) => of(err)))
+        .subscribe(() => {
+          expect(MockErrorService.handleError).toHaveBeenCalled();
+          expect(MockEventService.handleEvent).toHaveBeenCalled();
+        });
     });
   });
 
@@ -147,7 +148,7 @@ describe('TransferService', () => {
       service.transfersPerPage = Number(
         TestConstants.TRANSFER_LIST_BANK_MODEL.total
       );
-      
+
       service
         .listAllTransfers('')
         .subscribe((transfers: TransferBankModel[]) => {
