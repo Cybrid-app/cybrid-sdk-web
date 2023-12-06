@@ -87,7 +87,7 @@ describe('account-details test', () => {
         }
         console.log(selectedTrParts);
         let transferType = selectedTrParts[0];
-        let transferMount = selectedTrParts[1];
+        let transferMonth = selectedTrParts[1];
         let transferDay = selectedTrParts[2];
         let transferYear = selectedTrParts[3];
         let transferAmount = selectedTrParts[4];
@@ -100,7 +100,7 @@ describe('account-details test', () => {
             .invoke('text')
             .should('include', 'Transaction ID:')
             .should('include', 'Date:')
-            .should('include', `${transferMount} ${transferDay} ${transferYear}`)
+            .should('include', `${transferMonth} ${transferDay} ${transferYear}`)
         cy.get('.cybrid-list-item')
           .should('not.be.empty')
           .invoke('text')

@@ -43,7 +43,6 @@
           </div>
           <div class="cybrid-list-item" *ngIf="config.component === 'account-details'">
             <span>{{ 'trade.summary.status' | translate }}</span>
-            <!--<span>{{ transfer.state | titlecase }}</span>-->
             <span class="status-chip state-{{ transfer.state }}">{{ transfer.state | titlecase }}</span>
           </div>
           <mat-divider *ngIf="config.component === 'account-details'"></mat-divider>
