@@ -57,9 +57,9 @@ export class AssetService {
   ): Observable<AssetListBankModel> | Observable<never> {
     return list.objects.length == perPage
       ? this.assetsService.listAssets(
-        (Number(list.page) + 1).toString(),
-        perPage.toString()
-      )
+          (Number(list.page) + 1).toString(),
+          perPage.toString()
+        )
       : EMPTY;
   }
 

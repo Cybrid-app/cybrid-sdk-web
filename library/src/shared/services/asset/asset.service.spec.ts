@@ -6,7 +6,7 @@ import {
 } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-import { of, throwError, EMPTY } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 // Client
 import {
@@ -43,10 +43,6 @@ describe('AssetService', () => {
     per_page: '0',
     objects: [testAssetModel]
   };
-
-  const error$ = throwError(() => {
-    new Error('Error');
-  });
 
   let MockAssetsService = jasmine.createSpyObj('AssetsService', {
     listAssets: of(testAssetList)
@@ -127,7 +123,9 @@ describe('AssetService', () => {
 
   describe('when listing all assets', () => {
     it('should list all assets', () => {
-      MockAssetsService.listAssets.and.returnValue(of(TestConstants.ASSET_LIST_BANK_MODEL))
+      MockAssetsService.listAssets.and.returnValue(
+        of(TestConstants.ASSET_LIST_BANK_MODEL)
+      );
 
       assetService.assetsPerPage = Number(
         TestConstants.ASSET_LIST_BANK_MODEL.total
@@ -140,7 +138,7 @@ describe('AssetService', () => {
       expect(MockAssetsService.listAssets).toHaveBeenCalled();
 
       // Reset
-      MockAssetsService.listAssets.and.returnValue(of(testAssetList))
+      MockAssetsService.listAssets.and.returnValue(of(testAssetList));
     });
   });
 
