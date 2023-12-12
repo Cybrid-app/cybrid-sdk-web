@@ -40,6 +40,8 @@ export class AssetService {
   assetList$ = new ReplaySubject<Asset[]>(1);
   assetList: Asset[] = [];
 
+  assetsPerPage = 10;
+
   constructor(
     private assetsService: AssetsService,
     private configService: ConfigService,
@@ -50,10 +52,14 @@ export class AssetService {
   }
 
   pageAssets(
+    perPage: number,
     list: AssetListBankModel
   ): Observable<AssetListBankModel> | Observable<never> {
-    return list.objects.length == Number(list.per_page)
-      ? this.assetsService.listAssets(Number(list.page + 1).toString())
+    return list.objects.length == perPage
+      ? this.assetsService.listAssets(
+        (Number(list.page) + 1).toString(),
+        perPage.toString()
+      )
       : EMPTY;
   }
 
@@ -64,9 +70,9 @@ export class AssetService {
     return [...acc, ...value];
   }
 
-  listAssets(): Observable<AssetBankModel[]> {
+  listAllAssets(): Observable<AssetBankModel[]> {
     return this.assetsService.listAssets().pipe(
-      expand((list) => this.pageAssets(list)),
+      expand((list) => this.pageAssets(this.assetsPerPage, list)),
       map((list) => list.objects),
       reduce((acc, value) => this.accumulateAssets(acc, value))
     );
@@ -77,7 +83,7 @@ export class AssetService {
       .getConfig$()
       .pipe(
         take(1),
-        switchMap(() => this.listAssets()),
+        switchMap(() => this.listAllAssets()),
         map((list: AssetBankModel[]) => {
           this.assets$.next(list);
           const assetList: Asset[] = list.map((asset: AssetBankModel) => {

@@ -6,11 +6,12 @@ import {
 } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-import { of, Observable, throwError } from 'rxjs';
+import { of, throwError, EMPTY } from 'rxjs';
 
 // Client
 import {
   AssetListBankModel,
+  AssetBankModel,
   AssetsService
 } from '@cybrid/cybrid-api-bank-angular';
 
@@ -42,6 +43,11 @@ describe('AssetService', () => {
     per_page: '0',
     objects: [testAssetModel]
   };
+
+  const error$ = throwError(() => {
+    new Error('Error');
+  });
+
   let MockAssetsService = jasmine.createSpyObj('AssetsService', {
     listAssets: of(testAssetList)
   });
@@ -90,29 +96,57 @@ describe('AssetService', () => {
     expect(MockEventService.handleEvent).toHaveBeenCalled();
   }));
 
-  it('should page through assets', () => {
-    let assetList = {
-      ...TestConstants.ASSET_LIST_BANK_MODEL
-    };
-    assetList.objects = [];
+  describe('when paging all assets', () => {
+    it('should page assets', () => {
+      const perPage = Number(TestConstants.ASSET_LIST_BANK_MODEL.total);
+      assetService.pageAssets(perPage, TestConstants.ASSET_LIST_BANK_MODEL);
 
-    // Fill objects with default amount per page
-    for (let i = 0; i < 10; i++) {
-      assetList.objects.push(TestConstants.ASSET_LIST_BANK_MODEL.objects[0]);
-    }
+      expect(MockAssetsService.listAssets).toHaveBeenCalled();
+    });
 
-    MockAssetsService.listAssets.and.returnValue(of(assetList));
+    it('should return EMPTY when complete', () => {
+      const perPage = Number(TestConstants.ASSET_LIST_BANK_MODEL.total + 1);
+      const assets = assetService.pageAssets(
+        perPage,
+        TestConstants.ASSET_LIST_BANK_MODEL
+      );
 
-    assetService.listAssets();
-    expect(assetService.pageAssets(assetList)).toBeInstanceOf(
-      Observable<AssetListBankModel>
-    );
+      expect(assets).toEqual(EMPTY);
+    });
+
+    it('should accumulate assets', () => {
+      const totalAssets = Number(TestConstants.ASSET_LIST_BANK_MODEL.total) + 1;
+      const assets = assetService.accumulateAssets(
+        TestConstants.ASSET_LIST_BANK_MODEL.objects,
+        [TestConstants.ASSET_LIST_BANK_MODEL.objects[0]]
+      );
+
+      expect(assets.length).toEqual(totalAssets);
+    });
+  });
+
+  describe('when listing all assets', () => {
+    it('should list all assets', () => {
+      MockAssetsService.listAssets.and.returnValue(of(TestConstants.ASSET_LIST_BANK_MODEL))
+
+      assetService.assetsPerPage = Number(
+        TestConstants.ASSET_LIST_BANK_MODEL.total
+      );
+
+      assetService.listAllAssets().subscribe((assets: AssetBankModel[]) => {
+        expect(TestConstants.ASSET_LIST_BANK_MODEL.objects).toEqual(assets);
+      });
+
+      expect(MockAssetsService.listAssets).toHaveBeenCalled();
+
+      // Reset
+      MockAssetsService.listAssets.and.returnValue(of(testAssetList))
+    });
   });
 
   it('should return the asset list as an observable', () => {
-    assetService
-      .getAssets$()
-      .subscribe((list) => expect(list).toEqual([testAssetModel]));
+    let assetList$ = assetService.getAssets$();
+    expect(assetList$).toEqual(assetService.assetList$.asObservable());
   });
 
   it('should return the asset if it exists', fakeAsync(() => {
