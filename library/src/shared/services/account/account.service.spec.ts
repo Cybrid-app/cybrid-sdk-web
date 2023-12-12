@@ -144,6 +144,8 @@ describe('AccountService', () => {
       service.listAllAccounts().subscribe((accounts: AccountBankModel[]) => {
         expect(TestConstants.ACCOUNT_LIST_BANK_MODEL.objects).toEqual(accounts);
       });
+
+      expect(MockAccountsService.listAccounts).toHaveBeenCalled();
     });
 
     it('should handle errors', () => {
