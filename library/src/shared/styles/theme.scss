@@ -6,9 +6,13 @@
 //  If you specify typography styles for the components you use elsewhere, you should delete this line.
 //  If you don't need the default component typographies but still want the hierarchy styles,
 //  you can delete this line and instead use:
-//    `@include mat.legacy-typography-hierarchy(mat.define-legacy-typography-config());`
+//    `@include mat.legacy-typography-hierarchy(mat.define-typography-config());`
+/* TODO(mdc-migration): Remove all-legacy-component-typographies once all legacy components are migrated*/
 @include mat.all-legacy-component-typographies();
+@include mat.all-component-typographies();
+/* TODO(mdc-migration): Remove legacy-core once all legacy components are migrated*/
 @include mat.legacy-core();
+@include mat.core();
 
 $dark-primary-text: rgba(black, 0.87);
 $dark-secondary-text: rgba(black, 0.54);
@@ -196,14 +200,18 @@ $light-theme: mat.define-light-theme(
 }
 
 .cybrid-light-theme {
+  /* TODO(mdc-migration): Remove all-legacy-component-themes once all legacy components are migrated*/
   @include mat.all-legacy-component-themes($light-theme);
+  @include mat.all-component-themes($light-theme);
 
   .mat-toolbar-single-row {
     height: 56px;
   }
 }
 .cybrid-dark-theme {
+  /* TODO(mdc-migration): Remove all-legacy-component-colors once all legacy components are migrated*/
   @include mat.all-legacy-component-colors($dark-theme);
+  @include mat.all-component-colors($dark-theme);
 
   // Default material component dark theme overrides
 
