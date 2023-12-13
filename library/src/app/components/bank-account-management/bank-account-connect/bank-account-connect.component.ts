@@ -3,7 +3,7 @@ import { ActivatedRoute, NavigationExtras } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { Platform } from '@angular/cdk/platform';
 import { MatStepper } from '@angular/material/stepper';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 
 import {
   BehaviorSubject,

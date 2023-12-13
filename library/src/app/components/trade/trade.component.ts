@@ -44,7 +44,7 @@ import {
   RoutingData
 } from '@services';
 import { TradeConfirmComponent, TradeSummaryComponent } from '@components';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 
 export interface Accounts {
   assets: AccountBankModel[];

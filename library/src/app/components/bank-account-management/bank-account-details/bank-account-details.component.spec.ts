@@ -12,10 +12,10 @@ import { HttpLoaderFactory } from '../../../modules/library.module';
 import { HttpClient } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogRef
-} from '@angular/material/dialog';
+  MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
+  MatLegacyDialog as MatDialog,
+  MatLegacyDialogRef as MatDialogRef
+} from '@angular/material/legacy-dialog';
 
 import { of } from 'rxjs';
 
@@ -28,7 +28,7 @@ import { BankAccountDetailsComponent } from '@components';
 // Utility
 import { TruncatePipe } from '@pipes';
 import { TestConstants } from '@constants';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 
 describe('BankAccountDetailsComponent', () => {
   let component: BankAccountDetailsComponent;

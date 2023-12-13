@@ -11,10 +11,10 @@ import {
 import { HttpLoaderFactory } from '../../../modules/library.module';
 import { HttpClient } from '@angular/common/http';
 import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef
-} from '@angular/material/dialog';
+  MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
+  MatLegacyDialogModule as MatDialogModule,
+  MatLegacyDialogRef as MatDialogRef
+} from '@angular/material/legacy-dialog';
 
 // Services
 import { Configuration } from '@cybrid/cybrid-api-bank-angular';

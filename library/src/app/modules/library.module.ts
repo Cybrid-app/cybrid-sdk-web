@@ -15,12 +15,12 @@ import {
   HttpClient
 } from '@angular/common/http';
 import { createCustomElement } from '@angular/elements';
-import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
+import { MAT_LEGACY_DIALOG_DEFAULT_OPTIONS as MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/legacy-dialog';
 
 // Modules
 import { MaterialModule } from '@modules';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatPaginatorIntl } from '@angular/material/paginator';
+import { MatLegacyPaginatorIntl as MatPaginatorIntl } from '@angular/material/legacy-paginator';
 import {
   TranslateModule,
   TranslateLoader,

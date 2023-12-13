@@ -1,10 +1,10 @@
 import { Component, Inject } from '@angular/core';
 import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogRef
-} from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+  MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
+  MatLegacyDialog as MatDialog,
+  MatLegacyDialogRef as MatDialogRef
+} from '@angular/material/legacy-dialog';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 
 import { BehaviorSubject, EMPTY, map, switchMap, take } from 'rxjs';
 import { TranslatePipe } from '@ngx-translate/core';

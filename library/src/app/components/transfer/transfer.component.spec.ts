@@ -11,7 +11,7 @@ import {
 import { HttpLoaderFactory } from '../../modules/library.module';
 import { HttpClient } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 
 import { Observable, of, throwError } from 'rxjs';
 
@@ -36,7 +36,7 @@ import { TransferComponent } from '@components';
 // Utility
 import { TestConstants } from '@constants';
 import { AssetFormatPipe, MockAssetFormatPipe } from '@pipes';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 
 describe('TransferComponent', () => {
   let component: TransferComponent;

@@ -10,10 +10,10 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { HttpLoaderFactory } from '../../../modules/library.module';
 import { HttpClient } from '@angular/common/http';
 import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogModule
-} from '@angular/material/dialog';
+  MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
+  MatLegacyDialog as MatDialog,
+  MatLegacyDialogModule as MatDialogModule
+} from '@angular/material/legacy-dialog';
 import {
   ExternalBankAccountListBankModel,
   ExternalBankAccountsService

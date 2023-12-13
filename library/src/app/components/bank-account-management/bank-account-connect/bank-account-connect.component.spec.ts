@@ -23,7 +23,7 @@ import { BankAccountConnectComponent } from '@components';
 
 // Utility
 import { TestConstants } from '@constants';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { PostWorkflowBankModel } from '@cybrid/cybrid-api-bank-angular';
 import { MatStepper } from '@angular/material/stepper';
 
