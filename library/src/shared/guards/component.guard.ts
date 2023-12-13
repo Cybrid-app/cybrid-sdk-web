@@ -1,9 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  CanActivate,
-  RouterStateSnapshot
-} from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { map, Observable } from 'rxjs';
 import { BankBankModel } from '@cybrid/cybrid-api-bank-angular';
 import { Constants } from '@constants';
@@ -12,7 +8,7 @@ import { CODE, ConfigService, EventService, LEVEL } from '@services';
 @Injectable({
   providedIn: 'root'
 })
-export class ComponentGuard implements CanActivate {
+export class ComponentGuard  {
   constructor(
     private configService: ConfigService,
     private eventService: EventService
