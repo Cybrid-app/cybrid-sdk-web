@@ -24,219 +24,118 @@
             </div>
           </div>
           <div class="cybrid-holdings">
-            <ng-container *ngIf="accountType === 'trading'; else fiatHoldings">
-              <div>
-                <span class="cybrid-h2 cybrid-strong">{{
-                  account?.platform_balance
-                  | assetFormat : account?.asset! : 'trade'
-                  }}
-                </span>
-                <span class="cybrid-h2 mat-hint">{{
-                  ' ' + account?.asset
-                  }}</span>
-              </div>
-              <div *ngIf="account?.price">
-                <span>{{
-                  (account?.value | assetFormat : config.fiat) + ' '
-                  }}</span>
-                <span class="mat-hint">{{ config.fiat }}</span>
-              </div>
-            </ng-container>
-            <ng-template #fiatHoldings>
-              <div>
-                <span class="cybrid-h2 cybrid-string">{{
-                  account?.platform_available
-                  | assetFormat : config.fiat
+            <div>
+              <span class="cybrid-h2 cybrid-strong">{{
+                account?.platform_balance
+                | assetFormat : account?.asset! : 'trade'
                 }}
-                </span>
-                <span class="cybrid-h2 mat-hint">{{
-                  ' ' + account?.asset
-                  }}
-                </span>
-              </div>
-              <div>
-                <span class="pending-balance">{{
-                  getFiatPendingBalance(account!) | assetFormat : config.fiat 
-                }}
-                {{ 'pending' | translate }}
-                </span>
-              </div>
-            </ng-template>
+              </span>
+              <span class="cybrid-h2 mat-hint">{{
+                ' ' + account?.asset
+                }}</span>
+            </div>
+            <div *ngIf="account?.price">
+              <span>{{
+                (account?.value | assetFormat : config.fiat) + ' '
+                }}</span>
+              <span class="mat-hint">{{ config.fiat }}</span>
+            </div>
           </div>
         </div>
-
         <!-- Trades table -->
-        <ng-container *ngIf="account?.type === 'trading'; else transfersList">
-          <ng-container *ngIf="(isLoadingTrades$ | async) !== true; else loading">
-            <ng-container *ngIf="tradeList$ | async as tradeList">
-              <div class="cybrid-table">
-                <mat-progress-bar *ngIf="isLoadingResults$ | async" mode="indeterminate"></mat-progress-bar>
-                <table id="tradeList" class="cybrid-paginator mat-button-toggle-group-appearance-standard"
-                  [ngClass]="{ 'cybrid-paginator': totalRows > 5 }" mat-table [dataSource]="dataSource" matSort
-                  matSortDisableClear (matSortChange)="sortChange()">
-                  <!-- Transaction -->
-                  <ng-container matColumnDef="transaction">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header="">
-                      <div class="cybrid-sort-header">
-                        {{ 'accountDetails.transactions' | translate }}
-                      </div>
-                    </th>
-                    <td id="transaction" mat-cell *matCellDef="let transaction">
-                      <div class="cybrid-transaction-cell">
-                        <mat-icon fontSet="material-icons-outlined" class="cybrid-success" [ngClass]="
-                            transaction.side === 'sell'
-                              ? 'cybrid-buy-icon'
-                              : 'cybrid-sell-icon'
-                          ">outbound
-                        </mat-icon>
-                        <div>
-                          <span>{{ transaction.side | titlecase }}</span>
-                          <span class="cybrid-h5 mat-hint">{{
-                            transaction.created_at | date
-                            }}</span>
-                        </div>
-                      </div>
-                    </td>
-                  </ng-container>
-      
-                  <!-- Balance -->
-                  <ng-container matColumnDef="balance">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header="" arrowPosition="before">
-                      <div class="cybrid-sort-header">
-                        <span>{{ 'accountDetails.balance' | translate }}</span>
-                        <span class="mat-hint cybrid-h5 cybrid-code">{{
-                          config.fiat
+        <ng-container *ngIf="(isLoadingTrades$ | async) !== true; else loading">
+          <ng-container *ngIf="tradeList$ | async as tradeList">
+            <div class="cybrid-table">
+              <mat-progress-bar *ngIf="isLoadingResults$ | async" mode="indeterminate"></mat-progress-bar>
+              <table id="tradeList" class="cybrid-paginator mat-button-toggle-group-appearance-standard"
+                [ngClass]="{ 'cybrid-paginator': totalRows > 5 }" mat-table [dataSource]="dataSource" matSort
+                matSortDisableClear (matSortChange)="sortChange()">
+                <!-- Transaction -->
+                <ng-container matColumnDef="transaction">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header="">
+                    <div class="cybrid-sort-header">
+                      {{ 'accountDetails.transactions' | translate }}
+                    </div>
+                  </th>
+                  <td id="transaction" mat-cell *matCellDef="let transaction">
+                    <div class="cybrid-transaction-cell">
+                      <mat-icon fontSet="material-icons-outlined" class="cybrid-success" [ngClass]="
+                          transaction.side === 'sell'
+                            ? 'cybrid-buy-icon'
+                            : 'cybrid-sell-icon'
+                        ">outbound
+                      </mat-icon>
+                      <div>
+                        <span>{{ transaction.side | titlecase }}</span>
+                        <span class="cybrid-h5 mat-hint">{{
+                          transaction.created_at | date
                           }}</span>
                       </div>
-                    </th>
-                    <td id="balance" mat-cell *matCellDef="let balance">
-                      <div *ngIf="balance.side === 'buy'" class="cybrid-balance-cell">
-                        <div>
-                          <span class="mat-body-strong">{{
-                            (balance.receive_amount
-                            | assetFormat : account?.asset!) + ' '
-                            }}
-                          </span>
-                          <span class="mat-hint"> {{ account?.asset }}</span>
-                        </div>
-                        <span class="cybrid-h5">{{
-                          balance.deliver_amount | assetFormat : config.fiat
-                          }}</span>
+                    </div>
+                  </td>
+                </ng-container>
+    
+                <!-- Balance -->
+                <ng-container matColumnDef="balance">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header="" arrowPosition="before">
+                    <div class="cybrid-sort-header">
+                      <span>{{ 'accountDetails.balance' | translate }}</span>
+                      <span class="mat-hint cybrid-h5 cybrid-code">{{
+                        config.fiat
+                        }}</span>
+                    </div>
+                  </th>
+                  <td id="balance" mat-cell *matCellDef="let balance">
+                    <div *ngIf="balance.side === 'buy'" class="cybrid-balance-cell">
+                      <div>
+                        <span class="mat-body-strong">{{
+                          (balance.receive_amount
+                          | assetFormat : account?.asset!) + ' '
+                          }}
+                        </span>
+                        <span class="mat-hint"> {{ account?.asset }}</span>
                       </div>
-                      <div *ngIf="balance.side === 'sell'" class="cybrid-balance-cell">
-                        <div>
-                          <span class="mat-body-strong">{{
-                            '-' +
-                            (balance.deliver_amount
-                            | assetFormat : account?.asset! : 'trade')
-                            }}
-                          </span>
-                          <span class="mat-hint"> {{ account?.asset! }}</span>
-                        </div>
-                        <span class="cybrid-h5">{{
-                          balance.receive_amount | assetFormat : config.fiat
-                          }}</span>
+                      <span class="cybrid-h5">{{
+                        balance.deliver_amount | assetFormat : config.fiat
+                        }}</span>
+                    </div>
+                    <div *ngIf="balance.side === 'sell'" class="cybrid-balance-cell">
+                      <div>
+                        <span class="mat-body-strong">{{
+                          '-' +
+                          (balance.deliver_amount
+                          | assetFormat : account?.asset! : 'trade')
+                          }}
+                        </span>
+                        <span class="mat-hint"> {{ account?.asset! }}</span>
                       </div>
-                    </td>
-                  </ng-container>
-                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                  <tr class="cybrid-pointer" mat-row *matRowDef="let row; columns: displayedColumns"
-                    (click)="onRowClick(row)"></tr>
-                  <tr class="mat-row" *matNoDataRow>
-                    <td id="warning" class="mat-cell cybrid-no-data" colspan="2">
-                      {{ 'accountDetails.error.noData' | translate }}
-                    </td>
-                  </tr>
-                </table>
-              </div>
-              <mat-paginator class="mat-button-toggle-group-appearance-standard" aria-label="account and balances"
-                [ngClass]="{ 'cybrid-hide': totalRows <= 5 }" [pageSize]="pageSize" [pageIndex]="currentPage"
-                [length]="totalRows" [pageSizeOptions]="pageSizeOptions" (page)="pageChange($event)">
-              </mat-paginator>
-              <div *ngIf="account?.price" class="cybrid-actions">
-                <button id="trade" mat-flat-button color="primary" (click)="onTrade()">
-                  {{ 'accountDetails.trade' | translate }}
-                </button>
-              </div>
-            </ng-container>
+                      <span class="cybrid-h5">{{
+                        balance.receive_amount | assetFormat : config.fiat
+                        }}</span>
+                    </div>
+                  </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr class="cybrid-pointer" mat-row *matRowDef="let row; columns: displayedColumns"
+                  (click)="onRowClick(row)"></tr>
+                <tr class="mat-row" *matNoDataRow>
+                  <td id="warning" class="mat-cell cybrid-no-data" colspan="2">
+                    {{ 'accountDetails.error.noData' | translate }}
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <mat-paginator class="mat-button-toggle-group-appearance-standard" aria-label="account and balances"
+              [ngClass]="{ 'cybrid-hide': totalRows <= 5 }" [pageSize]="pageSize" [pageIndex]="currentPage"
+              [length]="totalRows" [pageSizeOptions]="pageSizeOptions" (page)="pageChange($event)">
+            </mat-paginator>
+            <div *ngIf="account?.price" class="cybrid-actions">
+              <button id="trade" mat-flat-button color="primary" (click)="onTrade()">
+                {{ 'accountDetails.trade' | translate }}
+              </button>
+            </div>
           </ng-container>
         </ng-container>
-
-        <!-- Transfers table-->
-        <ng-template #transfersList>
-          <ng-container *ngIf="(isLoadingTransfers$ | async) !== true; else loading">
-            <ng-container *ngIf="transferList$ | async as transferList">
-              <div class="cybrid-table">
-                <mat-progress-bar *ngIf="isLoadingResults$ | async" mode="indeterminate"></mat-progress-bar>
-                <table id="transferList" class="cybrid-paginator mat-button-toggle-group-appearance-standard"
-                  [ngClass]="{ 'cybrid-paginator': totalRows > 5 }" mat-table [dataSource]="transfersDataSource" matSort
-                  matSortDisableClear (matSortChange)="sortChange()">
-                  <!-- Transaction (transfer by created) -->
-                  <ng-container matColumnDef="transaction">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header="">
-                      <div class="cybrid-sort-header">
-                        {{ 'accountDetails.listTransfers.recentTransfersTitle' | translate }}
-                      </div>
-                    </th>
-                    <td id="transaction" mat-cell *matCellDef="let transaction">
-                      <div class="cybrid-transaction-cell">
-                        <mat-icon fontSet="material-icons-outlined" class="cybrid-success" [ngClass]="
-                            getTransferIconName(transaction)">outbound
-                        </mat-icon>
-                        <div>
-                          <span>{{ transaction.side | titlecase }}</span>
-                          <span class="cybrid-h5 mat-hint">{{
-                            transaction.created_at | date
-                            }}</span>
-                        </div>
-                        <ng-container *ngIf="transaction.state === 'storing' || transaction.state === 'pending' || transaction.state === 'failed'">
-                          <div class="status-chip">
-                            <span class="state-{{ transaction.state }}">{{ transaction.state | titlecase }}</span>
-                          </div>
-                        </ng-container>
-                      </div>
-                    </td>
-                  </ng-container>
-              
-                  <!-- Amount -->
-                  <ng-container matColumnDef="balance">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header="" arrowPosition="before">
-                      <div class="cybrid-sort-header">
-                        {{ 'accountDetails.listTransfers.amountTitle' | translate }}
-                      </div>
-                    </th>
-                    <td id="balance" mat-cell *matCellDef="let balance">
-                      <div class="cybrid-balance-cell">
-                        <span class="mat-body-strong">{{
-                          (balance.estimated_amount | assetFormat : balance?.asset!) + ' '
-                          }} <span class="mat-hint"> {{ balance?.asset }}</span>
-                        </span>
-                      </div>
-                    </td>
-                  </ng-container>
-                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                  <tr class="cybrid-pointer" mat-row *matRowDef="let row; columns: displayedColumns"
-                  (click)="onTransferClick(row)"></tr>
-                  <tr class="mat-row" *matNoDataRow>
-                    <td id="warning" class="mat-cell cybrid-no-data" colspan="2">
-                      {{ 'accountDetails.error.noData' | translate }}
-                    </td>
-                  </tr>
-                </table>
-              </div>
-              <mat-paginator class="mat-button-toggle-group-appearance-standard" aria-label="account and balances"
-                [ngClass]="{ 'cybrid-hide': totalRows <= 5 }" [pageSize]="pageSize" [pageIndex]="currentPage"
-                [length]="totalRows" [pageSizeOptions]="pageSizeOptions" (page)="pageChange($event)">
-              </mat-paginator>
-              <div *ngIf="account?.price" class="cybrid-actions">
-                <button id="trade" mat-flat-button color="primary" (click)="onTrade()">
-                  {{ 'accountDetails.trade' | translate }}
-                </button>
-              </div>
-            </ng-container>
-          </ng-container>
-        </ng-template>
-
       </ng-continer>
     </ng-container>
   </ng-container>

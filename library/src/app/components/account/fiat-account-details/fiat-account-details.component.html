@@ -41,7 +41,7 @@
                         <div class="cybrid-table">
                             <mat-progress-bar *ngIf="isLoadingResults$ | async" mode="indeterminate"></mat-progress-bar>
                             <table id="transferList" class="cybrid-paginator mat-button-toggle-group-appearance-standard"
-                                [ngClass]="{ 'cybrid-paginator': totalRows > 5 }" mat-table [dataSource]="transfersDataSource" matSort
+                                [ngClass]="{ 'cybrid-paginator': totalRows > 5 }" mat-table [dataSource]="dataSource" matSort
                                  matSortDisableClear (matSortChange)="sortChange()">
                                  <!-- Transaction (transfer by created) -->
                                 <ng-container matColumnDef="transaction">

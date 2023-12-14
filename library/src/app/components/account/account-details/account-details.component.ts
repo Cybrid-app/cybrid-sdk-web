@@ -37,9 +37,7 @@ import {
   SymbolPriceBankModel,
   TradeBankModel,
   TradeListBankModel,
-  TradesService,
-  TransferBankModel,
-  TransferListBankModel
+  TradesService
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
@@ -47,7 +45,6 @@ import {
   AccountBankModelWithDetails,
   AccountService,
   AssetService,
-  TransferService,
   CODE,
   ComponentConfig,
   ConfigService,
@@ -60,7 +57,7 @@ import {
 } from '@services';
 
 // Components
-import { TradeSummaryComponent, TransferSummaryComponent } from '@components';
+import { TradeSummaryComponent } from '@components';
 
 // Utility
 import { symbolBuild } from '@utility';
@@ -78,15 +75,11 @@ export class AccountDetailsComponent
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
   dataSource: MatTableDataSource<TradeBankModel> = new MatTableDataSource();
-  transfersDataSource: MatTableDataSource<TransferBankModel> =
-    new MatTableDataSource();
 
   account$ = new BehaviorSubject<AccountBankModelWithDetails | null>(null);
   tradeList$ = new BehaviorSubject<TradeListBankModel | null>(null);
-  transferList$ = new BehaviorSubject<TransferListBankModel | null>(null);
 
   accountGuid: string | null = null;
-  accountType: string | null = null;
   asset: AssetBankModel | null = null;
   counterAsset: AssetBankModel | null = null;
 
@@ -99,12 +92,6 @@ export class AccountDetailsComponent
 
   isLoadingAccount$ = this.account$.pipe(
     switchMap((account) => (account ? of(false) : of(true)))
-  );
-
-  isLoadingTransfers$ = combineLatest([this.account$, this.transferList$]).pipe(
-    switchMap(([account, transferList]) =>
-      account && transferList ? of(false) : of(true)
-    )
   );
 
   isLoadingTrades$ = combineLatest([this.account$, this.tradeList$]).pipe(
@@ -130,7 +117,6 @@ export class AccountDetailsComponent
     private eventService: EventService,
     private accountService: AccountService,
     private tradeService: TradesService,
-    private transferService: TransferService,
     private priceService: PriceService,
     private assetService: AssetService,
     private route: ActivatedRoute,
@@ -143,7 +129,6 @@ export class AccountDetailsComponent
         take(1),
         tap((params) => {
           this.accountGuid = params['accountGuid'];
-          this.accountType = params['accountType'];
         })
       )
       .subscribe();
@@ -162,11 +147,6 @@ export class AccountDetailsComponent
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor = this.sortingDataAccessor;
     this.dataSource.sort = this.sort;
-
-    this.transfersDataSource.paginator = this.paginator;
-    this.transfersDataSource.sortingDataAccessor =
-      this.sortingTransfersDataAccessor;
-    this.transfersDataSource.sort = this.sort;
   }
 
   ngOnDestroy(): void {
@@ -258,32 +238,6 @@ export class AccountDetailsComponent
       .subscribe();
   }
 
-  listTransfers(): void {
-    this.isLoadingResults$.next(true);
-
-    this.transferService
-      .listTransfers(
-        this.currentPage.toString(),
-        this.pageSize.toString(),
-        <string>this.accountGuid
-      )
-      .pipe(
-        tap((transfers) => {
-          this.totalRows = Number(transfers.total);
-          this.transfersDataSource.data = transfers.objects;
-          this.transferList$.next(transfers);
-          this.isLoadingResults$.next(false);
-        }),
-        catchError((err) => {
-          this.refreshDataSub?.unsubscribe();
-          this.transfersDataSource.data = [];
-          this.isRecoverable$.next(false);
-          return of(err);
-        })
-      )
-      .subscribe();
-  }
-
   refreshData(): void {
     this.refreshDataSub = this.configService
       .getConfig$()
@@ -295,11 +249,7 @@ export class AccountDetailsComponent
         startWith(0),
         tap(() => {
           this.getAccount();
-          if (this.accountType == 'trading') {
-            this.listTrades();
-          } else {
-            this.listTransfers();
-          }
+          this.listTrades();
         }),
         takeUntil(this.unsubscribe$)
       )
@@ -309,17 +259,11 @@ export class AccountDetailsComponent
   pageChange(event: PageEvent): void {
     this.pageSize = event.pageSize;
     this.currentPage = event.pageIndex;
-
-    if (this.accountType == 'trading') {
-      this.listTrades();
-    } else {
-      this.listTransfers();
-    }
+    this.listTrades();
   }
 
   sortChange(): void {
     this.dataSource.sort = this.sort;
-    this.transfersDataSource.sort = this.sort;
   }
 
   sortingDataAccessor(trade: TradeBankModel, columnDef: string) {
@@ -330,17 +274,6 @@ export class AccountDetailsComponent
         return trade.side == 'buy'
           ? trade.receive_amount!
           : trade.deliver_amount!;
-      default:
-        return '';
-    }
-  }
-
-  sortingTransfersDataAccessor(transfer: TransferBankModel, columnDef: string) {
-    switch (columnDef) {
-      case 'transaction':
-        return transfer.created_at!;
-      case 'balance':
-        return transfer.estimated_amount!;
       default:
         return '';
     }
@@ -367,31 +300,5 @@ export class AccountDetailsComponent
         counter_asset: this.counterAsset
       }
     });
-  }
-
-  onTransferClick(transfer: TransferBankModel): void {
-    this.dialog.open(TransferSummaryComponent, {
-      data: {
-        model: transfer,
-        asset: this.asset
-      }
-    });
-  }
-
-  getFiatPendingBalance(account: AccountBankModelWithDetails): number {
-    const platformBalance = Number(account.platform_balance);
-    const platformAvailable = Number(account.platform_available);
-    return platformBalance - platformAvailable;
-  }
-
-  getTransferIconName(transfer: TransferBankModel): String {
-    switch (transfer.side) {
-      case 'deposit':
-        return 'cybrid-deposit-icon';
-      case 'withdrawal':
-        return 'cybrid-withdrawal-icon';
-      default:
-        return '';
-    }
   }
 }
