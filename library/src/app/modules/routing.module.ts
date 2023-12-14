@@ -11,7 +11,8 @@ import {
   BankAccountConnectComponent,
   TransferComponent,
   BankAccountListComponent,
-  FiatAccountDetailsComponent
+  FiatAccountDetailsComponent,
+  DepositAddressComponent
 } from '@components';
 
 import { ComponentGuard } from '@guards';
@@ -68,6 +69,11 @@ export const routes: Routes = [
       {
         path: 'transfer',
         component: TransferComponent,
+        canActivate: [ComponentGuard]
+      },
+      {
+        path: 'deposit-address',
+        component: DepositAddressComponent,
         canActivate: [ComponentGuard]
       }
     ]

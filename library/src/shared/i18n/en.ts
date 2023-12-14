@@ -90,6 +90,7 @@ export default {
   accountDetails: {
     holdings: 'Holdings',
     trade: 'Trade',
+    depositAddress: 'Get Deposit Address',
     transactions: 'Recent Transctions',
     balance: 'Balance',
     listTransfers: {
@@ -240,6 +241,19 @@ export default {
       deposit: 'Deposit',
       withdrawal: 'Withdrawal',
       transferPlacedItem: 'Transfer Placed'
+    }
+  },
+
+  // Deposit Address Component
+  depositAddress: {
+    title: 'Deposit',
+    sendOnlyOne: 'Send only',
+    sendOnlyTwo: 'to this deposit address.',
+    networkSubTitle: 'Network',
+    depositAddressSubTitle: 'Deposit Address',
+    paymentCodeButton: 'Generate payment code',
+    paymentComponent: {
+      title: 'Deposit details for'
     }
   },
 

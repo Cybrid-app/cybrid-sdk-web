@@ -292,6 +292,19 @@ export class TradingAccountDetailsComponent
     });
   }
 
+  onDepositAddress(): void {
+    const extras: NavigationExtras = {
+      queryParams: {
+        accountGuid: this.accountGuid
+      }
+    };
+    this.routingService.handleRoute({
+      origin: 'account-details',
+      route: 'deposit-address',
+      extras: extras
+    });
+  }
+
   onRowClick(trade: TradeBankModel): void {
     this.dialog.open(TradeSummaryComponent, {
       data: {

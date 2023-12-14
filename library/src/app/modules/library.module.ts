@@ -26,6 +26,7 @@ import {
   TranslateLoader,
   TranslatePipe
 } from '@ngx-translate/core';
+import { QRCodeModule } from 'angularx-qrcode';
 
 import { ApiModule, Configuration } from '@cybrid/cybrid-api-bank-angular';
 
@@ -72,7 +73,9 @@ import {
   TransferSummaryComponent,
   BankAccountListComponent,
   BankAccountDisconnectComponent,
-  BankAccountDetailsComponent
+  BankAccountDetailsComponent,
+  DepositAddressComponent,
+  DepositAddressPaymentComponent
 } from '@components';
 
 // Utility
@@ -111,6 +114,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     TransferConfirmComponent,
     TransferDetailsComponent,
     TransferSummaryComponent,
+    DepositAddressComponent,
+    DepositAddressPaymentComponent,
     AssetFormatPipe,
     TruncatePipe,
     AssetIconPipe,
@@ -132,7 +137,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     TranslateModule,
     ReactiveFormsModule,
     MaterialModule,
-    RoutingModule
+    RoutingModule,
+    QRCodeModule
   ],
   providers: [
     {

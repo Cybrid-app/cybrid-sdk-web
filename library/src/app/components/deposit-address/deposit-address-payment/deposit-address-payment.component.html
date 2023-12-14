@@ -1,0 +1,18 @@
+<ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
+  <ng-container *ngIf="account$ | async as account; else loading">
+    <h2 mat-dialog-title>{{ 'depositAddress.paymentComponent.title' | translate }}</h2>
+  </ng-container>
+</ng-container>
+<ng-template #loading>
+  <app-loading>
+  </app-loading>
+</ng-template>
+<ng-template #error>
+    <mat-card>
+      <mat-card-content>
+        <div class="fatal">
+          <p>{{ 'fatal' | translate }}</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+</ng-template>
