@@ -208,8 +208,7 @@ export class AccountListComponent
             const route = (account.type == 'trading') ? 'account-details' : 'fiat-account-details';
             const extras: NavigationExtras = {
               queryParams: {
-                accountGuid: account.guid,
-                accountType: account.type
+                accountGuid: account.guid
               }
             };
             this.routingService.handleRoute({

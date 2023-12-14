@@ -257,8 +257,7 @@ describe('AccountListComponent', () => {
       origin: 'account-list',
       extras: {
         queryParams: {
-          accountGuid: TestConstants.ACCOUNT_BANK_MODEL_BTC.guid,
-          accountType: 'trading'
+          accountGuid: TestConstants.ACCOUNT_BANK_MODEL_BTC.guid
         }
       }
     });
@@ -269,12 +268,11 @@ describe('AccountListComponent', () => {
 
     // Test default config.routing=true
     expect(MockRoutingService.handleRoute).toHaveBeenCalledWith({
-      route: 'account-details',
+      route: 'fiat-account-details',
       origin: 'account-list',
       extras: {
         queryParams: {
-          accountGuid: TestConstants.ACCOUNT_BANK_MODEL_USD.guid,
-          accountType: 'fiat'
+          accountGuid: TestConstants.ACCOUNT_BANK_MODEL_USD.guid
         }
       }
     });
