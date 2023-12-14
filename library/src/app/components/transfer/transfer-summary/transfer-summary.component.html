@@ -4,10 +4,7 @@
         component: configService.getComponent$() | async
       } as config">
       <ng-container *ngIf="transfer$ | async as transfer; else loading">
-        <h2 mat-dialog-title *ngIf="config.component === 'transfer'">
-          {{ 'transfer.summary.submission' | translate }}
-        </h2>
-        <h2 mat-dialog-title *ngIf="config.component === 'account-details'">
+        <h2 mat-dialog-title>
           <img class="cybrid-icon" src="{{ data.asset.url }}" alt="Crypto currency icon" />
           <span>{{
             transfer.side === 'deposit'
@@ -16,11 +13,8 @@
             }}</span>
         </h2>
         <mat-dialog-content>
-          <p *ngIf="config.component === 'transfer'" class="mat-hint">
-            {{ 'transfer.summary.message' | translate }}
-          </p>
   
-          <p *ngIf="config.component === 'account-details'" class="cybrid-subtitle">
+          <p class="cybrid-subtitle">
             <span class="mat-body-strong">{{
                 (transfer.estimated_amount | assetFormat : transfer.asset!) + ' '
               }}</span>
@@ -41,11 +35,11 @@
               }}</span>
             </div>
           </div>
-          <div class="cybrid-list-item" *ngIf="config.component === 'account-details'">
+          <div class="cybrid-list-item">
             <span>{{ 'trade.summary.status' | translate }}</span>
             <span class="status-chip state-{{ transfer.state }}">{{ transfer.state | titlecase }}</span>
           </div>
-          <mat-divider *ngIf="config.component === 'account-details'"></mat-divider>
+          <mat-divider></mat-divider>
           <div class="cybrid-list-item">
             <span>
               {{

@@ -1,6 +1,6 @@
 //@ts-ignore
 function app() {
-  return cy.get('app-account-details');
+  return cy.get('app-trading-account-details');
 }
 
 function accountDetailsSetup() {
