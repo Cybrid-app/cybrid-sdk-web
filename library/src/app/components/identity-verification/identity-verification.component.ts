@@ -203,7 +203,10 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
         ),
         switchMap((identity) => {
           return identity.persona_state ===
-            IdentityVerificationWithDetailsBankModel.PersonaStateEnum.Waiting
+            IdentityVerificationWithDetailsBankModel.PersonaStateEnum.Waiting ||
+            identity.persona_state ===
+              IdentityVerificationWithDetailsBankModel.PersonaStateEnum
+                .Reviewing
             ? of(identity)
             : this.identityVerificationService.createIdentityVerification();
         }),
@@ -219,7 +222,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
         takeUntil(merge(poll.session$, this.unsubscribe$)),
         skipWhile(
           (identity) =>
-            identity.state == IdentityVerificationBankModel.StateEnum.Storing
+            identity.state === IdentityVerificationBankModel.StateEnum.Storing
         ),
         tap((identity) => {
           poll.stop();

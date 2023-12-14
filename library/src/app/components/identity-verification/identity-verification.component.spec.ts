@@ -209,10 +209,13 @@ describe('IdentityVerificationComponent', () => {
   });
 
   describe('with no existing identity verifications', () => {
+    beforeEach(() =>
+      MockIdentityVerificationService.createIdentityVerification.calls.reset()
+    );
     it('should create an identity verification', fakeAsync(() => {
-      let identityVerificationListBankModel = {
-        ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL
-      };
+      let identityVerificationListBankModel = JSON.parse(
+        JSON.stringify(TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL)
+      );
       identityVerificationListBankModel.objects = [];
 
       MockIdentityVerificationService.listIdentityVerifications.and.returnValue(
@@ -236,86 +239,93 @@ describe('IdentityVerificationComponent', () => {
   });
 
   describe('with existing identity verifications', () => {
-    describe('with waiting persona_state', () => {
-      describe('with expired state', () => {
-        it('should create an identity verification', fakeAsync(() => {
-          let identityVerificationListBankModel = {
-            ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL
-          };
-          identityVerificationListBankModel.objects[0].state = 'expired';
+    beforeEach(() => {
+      MockIdentityVerificationService.createIdentityVerification.calls.reset();
+      MockIdentityVerificationService.listIdentityVerifications.and.returnValue(
+        of(TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL)
+      );
+      MockIdentityVerificationService.getIdentityVerification.and.returnValue(
+        of(TestConstants.IDENTITY_VERIFICATION_BANK_MODEL)
+      );
+    });
 
-          MockIdentityVerificationService.listIdentityVerifications.and.returnValue(
-            of(identityVerificationListBankModel)
-          );
+    describe('with expired state', () => {
+      it('should create an identity verification', fakeAsync(() => {
+        let identityVerificationListBankModel = JSON.parse(
+          JSON.stringify(TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL)
+        );
+        identityVerificationListBankModel.objects[0].state = 'expired';
 
-          component.verifyIdentity();
+        MockIdentityVerificationService.listIdentityVerifications.and.returnValue(
+          of(identityVerificationListBankModel)
+        );
 
-          tick();
-          expect(
-            MockIdentityVerificationService.createIdentityVerification
-          ).toHaveBeenCalled();
+        component.verifyIdentity();
 
-          discardPeriodicTasks();
+        tick();
+        expect(
+          MockIdentityVerificationService.createIdentityVerification
+        ).toHaveBeenCalled();
 
-          // Reset
-          MockIdentityVerificationService.listIdentityVerifications.and.returnValue(
-            of(TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL)
-          );
-        }));
-      });
+        discardPeriodicTasks();
+      }));
+    });
 
-      describe('with completed state', () => {
-        it('should create an identity verification', fakeAsync(() => {
-          let identityVerificationListBankModel = {
-            ...TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL
-          };
-          identityVerificationListBankModel.objects[0].state = 'completed';
+    describe('with completed state', () => {
+      it('should create an identity verification', fakeAsync(() => {
+        let identityVerificationListBankModel = JSON.parse(
+          JSON.stringify(TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL)
+        );
+        identityVerificationListBankModel.objects[0].state = 'completed';
 
-          MockIdentityVerificationService.listIdentityVerifications.and.returnValue(
-            of(identityVerificationListBankModel)
-          );
+        MockIdentityVerificationService.listIdentityVerifications.and.returnValue(
+          of(identityVerificationListBankModel)
+        );
 
-          component.verifyIdentity();
+        component.verifyIdentity();
 
-          tick();
-          expect(
-            MockIdentityVerificationService.createIdentityVerification
-          ).toHaveBeenCalled();
+        tick();
+        expect(
+          MockIdentityVerificationService.createIdentityVerification
+        ).toHaveBeenCalled();
 
-          discardPeriodicTasks();
+        discardPeriodicTasks();
+      }));
+    });
 
-          // Reset
-          MockIdentityVerificationService.listIdentityVerifications.and.returnValue(
-            of(TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL)
-          );
-        }));
-      });
+    describe('with storing state', () => {
+      it('should not create an identity verification', fakeAsync(() => {
+        let identityVerificationListBankModel = JSON.parse(
+          JSON.stringify(TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL)
+        );
+        identityVerificationListBankModel.objects[0].state = 'storing';
 
-      describe('with storing state', () => {
-        it('should get the identity verification', fakeAsync(() => {
-          component.verifyIdentity();
+        MockIdentityVerificationService.listIdentityVerifications.and.returnValue(
+          of(identityVerificationListBankModel)
+        );
 
-          tick();
-          expect(
-            MockIdentityVerificationService.getIdentityVerification
-          ).toHaveBeenCalled();
+        component.verifyIdentity();
 
-          discardPeriodicTasks();
-        }));
-      });
+        tick();
+        expect(
+          MockIdentityVerificationService.createIdentityVerification
+        ).not.toHaveBeenCalled();
 
-      describe('with waiting state', () => {
-        it('should get the identity verification', fakeAsync(() => {
-          component.verifyIdentity();
+        discardPeriodicTasks();
+      }));
+    });
 
-          tick();
-          expect(
-            MockIdentityVerificationService.getIdentityVerification
-          ).toHaveBeenCalled();
+    describe('with waiting state', () => {
+      it('should not create an identity verification', fakeAsync(() => {
+        component.verifyIdentity();
 
-          discardPeriodicTasks();
-        }));
-      });
+        tick();
+        expect(
+          MockIdentityVerificationService.createIdentityVerification
+        ).not.toHaveBeenCalled();
+
+        discardPeriodicTasks();
+      }));
     });
 
     describe('with pending persona_state', () => {
@@ -338,11 +348,29 @@ describe('IdentityVerificationComponent', () => {
         ).toHaveBeenCalled();
 
         discardPeriodicTasks();
+      }));
+    });
 
-        // Reset
+    describe('with reviewing persona_state', () => {
+      it('should not create an identity verification', fakeAsync(() => {
+        let identityVerificationBankModel = {
+          ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
+        };
+        identityVerificationBankModel.persona_state =
+          IdentityVerificationWithDetailsBankModel.PersonaStateEnum.Reviewing;
+
         MockIdentityVerificationService.getIdentityVerification.and.returnValue(
-          of(TestConstants.IDENTITY_VERIFICATION_BANK_MODEL)
+          of(identityVerificationBankModel)
         );
+
+        component.verifyIdentity();
+
+        tick();
+        expect(
+          MockIdentityVerificationService.createIdentityVerification
+        ).not.toHaveBeenCalled();
+
+        discardPeriodicTasks();
       }));
     });
   });
@@ -374,7 +402,13 @@ describe('IdentityVerificationComponent', () => {
 
     expect(identitySpy).toHaveBeenCalledTimes(1);
     expect(identitySpy).toHaveBeenCalledWith(identity);
+
     discardPeriodicTasks();
+
+    // Reset
+    MockIdentityVerificationService.getIdentityVerification.and.returnValue(
+      TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
+    );
   }));
 
   it('should handle errors when calling getCustomerStatus()', fakeAsync(() => {
@@ -402,6 +436,14 @@ describe('IdentityVerificationComponent', () => {
     expect(MockEventService.handleEvent).toHaveBeenCalled();
 
     discardPeriodicTasks();
+
+    // Reset
+    MockIdentityVerificationService.getCustomer.and.returnValue(
+      of(TestConstants.CUSTOMER_BANK_MODEL)
+    );
+    MockIdentityVerificationService.createIdentityVerification.and.returnValue(
+      of(TestConstants.IDENTITY_VERIFICATION_BANK_MODEL)
+    );
   }));
 
   it('should handle persona state', () => {
@@ -498,6 +540,9 @@ describe('IdentityVerificationComponent', () => {
 
     expect(MockErrorService.handleError).toHaveBeenCalled();
     expect(MockEventService.handleEvent).toHaveBeenCalled();
+
+    // Reset
+    MockConfigService.getConfig$.and.returnValue(of(TestConstants.CONFIG));
   });
 
   it('should log an event when onComplete', () => {
