@@ -64,12 +64,12 @@ import { symbolBuild } from '@utility';
 import { AssetFormatPipe } from '@pipes';
 
 @Component({
-  selector: 'app-account-details',
-  templateUrl: './account-details.component.html',
-  styleUrls: ['./account-details.component.scss'],
+  selector: 'app-trading-account-details',
+  templateUrl: './trading-account-details.component.html',
+  styleUrls: ['./trading-account-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AccountDetailsComponent
+export class TradingAccountDetailsComponent
   implements OnInit, AfterContentInit, OnDestroy
 {
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;

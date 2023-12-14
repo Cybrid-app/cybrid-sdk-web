@@ -6,7 +6,7 @@ import {
   PriceListComponent,
   TradeComponent,
   AccountListComponent,
-  AccountDetailsComponent,
+  TradingAccountDetailsComponent,
   IdentityVerificationComponent,
   BankAccountConnectComponent,
   TransferComponent,
@@ -42,7 +42,7 @@ export const routes: Routes = [
       },
       {
         path: 'account-details',
-        component: AccountDetailsComponent,
+        component: TradingAccountDetailsComponent,
         canActivate: [ComponentGuard]
       },
       {
