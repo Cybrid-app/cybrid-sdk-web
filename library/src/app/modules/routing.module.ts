@@ -6,11 +6,12 @@ import {
   PriceListComponent,
   TradeComponent,
   AccountListComponent,
-  AccountDetailsComponent,
+  TradingAccountDetailsComponent,
   IdentityVerificationComponent,
   BankAccountConnectComponent,
   TransferComponent,
-  BankAccountListComponent
+  BankAccountListComponent,
+  FiatAccountDetailsComponent
 } from '@components';
 
 import { ComponentGuard } from '@guards';
@@ -41,7 +42,12 @@ export const routes: Routes = [
       },
       {
         path: 'account-details',
-        component: AccountDetailsComponent,
+        component: TradingAccountDetailsComponent,
+        canActivate: [ComponentGuard]
+      },
+      {
+        path: 'fiat-account-details',
+        component: FiatAccountDetailsComponent,
         canActivate: [ComponentGuard]
       },
       {

@@ -16,3 +16,4 @@ export { RoutingService, RoutingData } from './routing/routing.service';
 export { IdentityVerificationService } from './identity-verification/identity-verification.service';
 export { BankAccountService } from './bank-account/bank-account.service';
 export { PriceService } from './price/price.service';
+export { TransferService } from './transfer/transfer.service';

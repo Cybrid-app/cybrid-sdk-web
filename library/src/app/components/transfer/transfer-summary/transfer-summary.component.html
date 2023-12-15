@@ -1,0 +1,98 @@
+<ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
+    <ng-container *ngIf="{
+        config: configService.getConfig$() | async,
+        component: configService.getComponent$() | async
+      } as config">
+      <ng-container *ngIf="transfer$ | async as transfer; else loading">
+        <h2 mat-dialog-title>
+          <img class="cybrid-icon" src="{{ data.asset.url }}" alt="Crypto currency icon" />
+          <span>{{
+            transfer.side === 'deposit'
+            ? ('transfer.summary.deposit' | translate)
+            : ('transfer.summary.withdrawal' | translate)
+            }}</span>
+        </h2>
+        <mat-dialog-content>
+  
+          <p class="cybrid-subtitle">
+            <span class="mat-body-strong">{{
+                (transfer.estimated_amount | assetFormat : transfer.asset!) + ' '
+              }}</span>
+            <span>{{ transfer.asset }}</span>
+          </p>
+  
+          <div class="cybrid-subheader-item">
+            <div class="inner">
+              <span class="mat-body-strong">Transaction ID:</span>
+              <span matTooltip="{{ transfer.guid }}" matTooltipPosition="above">{{
+                transfer.guid! | truncate : 9
+                }}</span>
+            </div>
+            <div class="inner">
+              <span class="mat-body-strong">Date:</span>
+              <span matTooltip="{{ transfer.created_at | date: 'MMM d, y hh:mm a' : 'UTC' }}" matTooltipPosition="above">{{
+                transfer.created_at | date
+              }}</span>
+            </div>
+          </div>
+          <div class="cybrid-list-item">
+            <span>{{ 'trade.summary.status' | translate }}</span>
+            <span class="status-chip state-{{ transfer.state }}">{{ transfer.state | titlecase }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="cybrid-list-item">
+            <span>
+              {{
+              ('transfer.summary.transferPlacedItem' | translate)
+              }}
+            </span>
+            <div>
+              <span>
+                {{
+                (transfer.estimated_amount! | assetFormat : transfer.asset!) + ' '
+                }}
+              </span>
+              <span class="mat-hint">{{ transfer.asset! }}</span>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="cybrid-list-item">
+            <span>{{ 'trade.transaction' | translate }}</span>
+            <div>
+              <span>
+                {{ (transfer.fee! | assetFormat : transfer.asset!) + ' ' }}
+              </span>
+              <span class="mat-hint">{{ transfer.asset! }}</span>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+          <button id="done" mat-stroked-button [mat-dialog-close]>
+            {{ 'done' | translate }}
+          </button>
+        </mat-dialog-actions>
+      </ng-container>
+      <ng-template #loading>
+        <app-loading>
+          <h2>
+            {{
+            config.component === 'trade'
+            ? ('trade.summary.submitting' | translate)
+            : ('trade.summary.loading' | translate)
+            }}
+          </h2>
+        </app-loading>
+      </ng-template>
+    </ng-container>
+  </ng-container>
+  <ng-template #error>
+    <mat-card>
+      <mat-card-content>
+        <div class="fatal">
+          <p>{{ 'fatal' | translate }}</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </ng-template>
+  

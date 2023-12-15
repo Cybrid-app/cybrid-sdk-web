@@ -4,6 +4,9 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  .pending-balance {
+    color: #007aff;
+  }
 }
 
 .cybrid-account {
@@ -77,6 +80,27 @@ mat-progress-bar {
     display: flex;
     flex-direction: column;
   }
+  .status-chip {
+    margin-left: 10px;
+    span {
+      font-size: 12px;
+      border-radius: 20px;
+      padding: 2px 17.5px;
+      line-height: 20px;
+      color: #000;
+      background-color: #fcda66;
+
+      &.state-failed {
+        color: #fff;
+        background-color: #d45736;
+      }
+
+      &.state-completed {
+        color: #fff;
+        background-color: #4dae51;
+      }
+    }
+  }
   span:last-of-type {
     margin-top: -5px;
   }
@@ -94,6 +118,11 @@ mat-progress-bar {
 
 .cybrid-sell-icon {
   transform: rotate(90deg);
+}
+
+.cybrid-deposit-icon {
+  transform: rotate(90deg);
+  color: #4dae51;
 }
 
 .cybrid-hide {

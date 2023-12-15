@@ -64,12 +64,12 @@ import { symbolBuild } from '@utility';
 import { AssetFormatPipe } from '@pipes';
 
 @Component({
-  selector: 'app-account-details',
-  templateUrl: './account-details.component.html',
-  styleUrls: ['./account-details.component.scss'],
+  selector: 'app-trading-account-details',
+  templateUrl: './trading-account-details.component.html',
+  styleUrls: ['./trading-account-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AccountDetailsComponent
+export class TradingAccountDetailsComponent
   implements OnInit, AfterContentInit, OnDestroy
 {
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
@@ -90,11 +90,16 @@ export class AccountDetailsComponent
   currentPage = 0;
   pageSizeOptions: number[] = [5, 10, 25, 100];
 
-  isLoading$ = combineLatest([this.account$, this.tradeList$]).pipe(
+  isLoadingAccount$ = this.account$.pipe(
+    switchMap((account) => (account ? of(false) : of(true)))
+  );
+
+  isLoadingTrades$ = combineLatest([this.account$, this.tradeList$]).pipe(
     switchMap(([account, tradeList]) =>
       account && tradeList ? of(false) : of(true)
     )
   );
+
   isLoadingResults$ = new BehaviorSubject(true);
   isRecoverable$ = new BehaviorSubject(true);
 
@@ -122,7 +127,9 @@ export class AccountDetailsComponent
     this.route.queryParams
       .pipe(
         take(1),
-        tap((params) => (this.accountGuid = params['accountGuid']))
+        tap((params) => {
+          this.accountGuid = params['accountGuid'];
+        })
       )
       .subscribe();
   }
@@ -169,7 +176,6 @@ export class AccountDetailsComponent
       processedAccount.value =
         Number(processedAccount.price.sell_price) * platformBalance;
     }
-
     return processedAccount;
   }
 
@@ -253,7 +259,6 @@ export class AccountDetailsComponent
   pageChange(event: PageEvent): void {
     this.pageSize = event.pageSize;
     this.currentPage = event.pageIndex;
-
     this.listTrades();
   }
 

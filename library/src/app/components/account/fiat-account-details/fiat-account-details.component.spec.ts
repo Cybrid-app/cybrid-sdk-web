@@ -18,33 +18,33 @@ import { PageEvent } from '@angular/material/paginator';
 
 // Client
 import {
+  AccountBankModel,
   AssetBankModel,
-  TradeBankModel,
-  TradesService
+  TransferBankModel
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
 import {
   AccountService,
   AssetService,
+  TransferService,
   ConfigService,
   ErrorService,
   EventService,
-  PriceService,
   RoutingService
 } from '@services';
 
 // Components
-import { AccountDetailsComponent } from '@components';
+import { FiatAccountDetailsComponent } from '@components';
 
 // Utility
 import { MockAssetFormatPipe, AssetFormatPipe, AssetIconPipe } from '@pipes';
 import { Constants, TestConstants } from '@constants';
 import { SharedModule } from '../../../../shared/modules/shared.module';
 
-describe('AccountDetailComponent', () => {
-  let component: AccountDetailsComponent;
-  let fixture: ComponentFixture<AccountDetailsComponent>;
+describe('FiatAccountDetailsComponent', () => {
+  let component: FiatAccountDetailsComponent;
+  let fixture: ComponentFixture<FiatAccountDetailsComponent>;
 
   let MockEventService = jasmine.createSpyObj('EventService', [
     'getEvent',
@@ -59,14 +59,15 @@ describe('AccountDetailComponent', () => {
     'getConfig$',
     'getComponent$'
   ]);
-  let MockQueryParams = of({
-    accountID: TestConstants.ACCOUNT_GUID
+  let queryParams = of({
+    accountGuid: TestConstants.ACCOUNT_GUID
   });
   let MockAccountService = jasmine.createSpyObj('AccountService', [
     'getAccount'
   ]);
-  let MockPriceService = jasmine.createSpyObj('PriceService', ['listPrices']);
-  let MockTradesService = jasmine.createSpyObj('TradesService', ['listTrades']);
+  let MockTransferService = jasmine.createSpyObj('TransferService', [
+    'listTransfers'
+  ]);
   let MockRoutingService = jasmine.createSpyObj('RoutingService', [
     'handleRoute'
   ]);
@@ -77,8 +78,7 @@ describe('AccountDetailComponent', () => {
   class MockAssetService {
     constructor() {}
     getAsset(code: string): AssetBankModel {
-      if (code == 'BTC') return TestConstants.BTC_ASSET;
-      else if (code == 'ETH') return TestConstants.ETH_ASSET;
+      if (code == 'USD') return TestConstants.USD_ASSET;
       else return TestConstants.USD_ASSET;
     }
   }
@@ -86,7 +86,7 @@ describe('AccountDetailComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [
-        AccountDetailsComponent,
+        FiatAccountDetailsComponent,
         MockAssetFormatPipe,
         AssetIconPipe
       ],
@@ -110,13 +110,12 @@ describe('AccountDetailComponent', () => {
         { provide: ErrorService, useValue: MockErrorService },
         { provide: ConfigService, useValue: MockConfigService },
         { provide: AccountService, useValue: MockAccountService },
-        { provide: PriceService, useValue: MockPriceService },
-        { provide: TradesService, useValue: MockTradesService },
+        { provide: TransferService, useValue: MockTransferService },
         { provide: RoutingService, useValue: MockRoutingService },
         {
           provide: ActivatedRoute,
           useValue: {
-            queryParams: MockQueryParams
+            queryParams: queryParams
           }
         },
         AssetIconPipe
@@ -127,21 +126,17 @@ describe('AccountDetailComponent', () => {
     MockErrorService = TestBed.inject(ErrorService);
     MockConfigService = TestBed.inject(ConfigService);
     MockConfigService.getConfig$.and.returnValue(of(TestConstants.CONFIG));
-    MockTradesService = TestBed.inject(TradesService);
-    MockTradesService.listTrades.and.returnValue(
-      of(TestConstants.TRADE_LIST_BANK_MODEL)
+    MockTransferService = TestBed.inject(TransferService);
+    MockTransferService.listTransfers.and.returnValue(
+      of(TestConstants.TRANSFER_LIST_BANK_MODEL)
     );
     MockAccountService = TestBed.inject(AccountService);
     MockAccountService.getAccount.and.returnValue(
       of(TestConstants.ACCOUNT_BANK_MODEL_BTC)
     );
-    MockPriceService = TestBed.inject(PriceService);
-    MockPriceService.listPrices.and.returnValue(
-      of(TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY)
-    );
     MockRoutingService = TestBed.inject(RoutingService);
 
-    fixture = TestBed.createComponent(AccountDetailsComponent);
+    fixture = TestBed.createComponent(FiatAccountDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -154,23 +149,20 @@ describe('AccountDetailComponent', () => {
     expect(MockEventService.handleEvent).toHaveBeenCalled();
   });
 
-  describe('when processing account', () => {
-    it('should process account price', () => {
-      const processedAccount = component.processAccount(
-        TestConstants.ACCOUNT_BANK_MODEL_BTC,
-        TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY
-      );
-
-      expect(processedAccount.price).toBeDefined();
+  describe('isLoadingTransfers', () => {
+    it('should be false', () => {
+      component.account$.next(TestConstants.ACCOUNT_BANK_MODEL_USD);
+      component.transferList$.next(TestConstants.TRANSFER_LIST_BANK_MODEL);
+      component.isLoadingTransfers$.subscribe((value) => {
+        expect(value).toBeFalsy();
+      });
     });
-
-    it('should process account value', () => {
-      const processedAccount = component.processAccount(
-        TestConstants.ACCOUNT_BANK_MODEL_BTC,
-        TestConstants.SYMBOL_PRICE_BANK_MODEL_ARRAY
-      );
-
-      expect(processedAccount.value).toBeDefined();
+    it('should init as true', () => {
+      component.account$.next(null);
+      component.transferList$.next(null);
+      component.isLoadingTransfers$.subscribe((value) => {
+        expect(value).toBeTruthy();
+      });
     });
   });
 
@@ -181,27 +173,13 @@ describe('AccountDetailComponent', () => {
 
     it('should get assets', () => {
       component.asset = null;
-      component.counterAsset = null;
-
       component.getAccount();
-
       expect(component.asset).toBeDefined();
-      expect(component.counterAsset).toBeDefined();
-    });
-
-    it('should process account', () => {
-      const processAccountSpy = spyOn(component, 'processAccount');
-
-      component.getAccount();
-
-      expect(processAccountSpy).toHaveBeenCalled();
     });
 
     it('should set account', () => {
       const account$spy = spyOn(component.account$, 'next');
-
       component.getAccount();
-
       expect(account$spy).toHaveBeenCalled();
     });
 
@@ -215,50 +193,22 @@ describe('AccountDetailComponent', () => {
       expect(refreshDataSubSpy).toHaveBeenCalled();
       expect(isRecoverable$Spy).toHaveBeenCalledWith(false);
     });
-
-    it('should get config', () => {
-      expect(MockConfigService.getConfig$).toHaveBeenCalled();
-    });
-
-    it('should handle get config errors', () => {
-      const refreshDataSubSpy = spyOn(component.refreshDataSub, 'unsubscribe');
-      const isRecoverable$Spy = spyOn(component.isRecoverable$, 'next');
-      MockConfigService.getConfig$.and.returnValue(error$);
-
-      component.getAccount();
-
-      expect(refreshDataSubSpy).toHaveBeenCalled();
-      expect(isRecoverable$Spy).toHaveBeenCalledWith(false);
-    });
-
-    it('should get price', () => {
-      expect(MockPriceService.listPrices).toHaveBeenCalled();
-    });
-
-    it('should handle get price errors', () => {
-      const refreshDataSubSpy = spyOn(component.refreshDataSub, 'unsubscribe');
-      const isRecoverable$Spy = spyOn(component.isRecoverable$, 'next');
-      MockPriceService.listPrices.and.returnValue(error$);
-
-      component.getAccount();
-
-      expect(refreshDataSubSpy).toHaveBeenCalled();
-      expect(isRecoverable$Spy).toHaveBeenCalledWith(false);
-    });
   });
 
-  describe('when listing trades', () => {
-    it('should list trades', () => {
-      expect(MockTradesService.listTrades).toHaveBeenCalled();
+  describe('when listing transfers', () => {
+    it('should list transfers', () => {
+      component.refreshData();
+      expect(MockTransferService.listTransfers).toHaveBeenCalled();
     });
 
-    it('should handle list trade errors', () => {
+    it('should handle list transfer errors', () => {
       const refreshDataSubSpy = spyOn(component.refreshDataSub, 'unsubscribe');
       const isRecoverable$Spy = spyOn(component.isRecoverable$, 'next');
 
-      MockTradesService.listTrades.and.returnValue(error$);
-      component.dataSource.data = TestConstants.TRADE_LIST_BANK_MODEL.objects;
-      component.listTrades();
+      MockTransferService.listTransfers.and.returnValue(error$);
+      component.dataSource.data =
+        TestConstants.TRANSFER_LIST_BANK_MODEL.objects;
+      component.listTransfers();
 
       expect(refreshDataSubSpy).toHaveBeenCalled();
       expect(isRecoverable$Spy).toHaveBeenCalledWith(false);
@@ -266,45 +216,64 @@ describe('AccountDetailComponent', () => {
     });
   });
 
-  it('should refresh data', fakeAsync(() => {
+  it('should refresh data for accountType fiat', fakeAsync(() => {
     const getAccountSpy = spyOn(component, 'getAccount');
-    const listTradesSpy = spyOn(component, 'listTrades');
+    const listTransfersSpy = spyOn(component, 'listTransfers');
 
     component.refreshData();
     tick(Constants.REFRESH_INTERVAL);
 
     expect(getAccountSpy).toHaveBeenCalledTimes(2);
-    expect(listTradesSpy).toHaveBeenCalledTimes(2);
-
+    expect(listTransfersSpy).toHaveBeenCalledTimes(2);
     discardPeriodicTasks();
   }));
 
   describe('when sorting accounts', () => {
     it('should sort by transaction', () => {
-      let trade: TradeBankModel = TestConstants.TRADE_BANK_MODEL;
+      let transfer: TransferBankModel = TestConstants.TRANSFER_BANK_MODEL;
 
-      let sort = component.sortingDataAccessor(trade, 'transaction');
-      expect(sort).toEqual(<string>trade.created_at);
+      let sort = component.sortingTransfersDataAccessor(
+        transfer,
+        'transaction'
+      );
+      expect(sort).toEqual(<string>transfer.created_at);
+    });
+
+    it('should sort by balance', () => {
+      let transfer: TransferBankModel = {
+        ...TestConstants.TRANSFER_BANK_MODEL
+      };
+
+      let sort = component.sortingTransfersDataAccessor(transfer, 'balance');
+      expect(sort).toEqual(<string>transfer.estimated_amount);
+    });
+    it('should sort by default', () => {
+      let transfer: TransferBankModel = TestConstants.TRANSFER_BANK_MODEL;
+
+      let sort = component.sortingTransfersDataAccessor(transfer, '');
+      expect(sort).toEqual('');
+    });
+  });
+
+  describe('when sorting transfers', () => {
+    it('should sort by transaction', () => {
+      let transfer: TransferBankModel = TestConstants.TRANSFER_BANK_MODEL;
+      let sort = component.sortingTransfersDataAccessor(
+        transfer,
+        'transaction'
+      );
+      expect(sort).toEqual(<string>transfer.created_at);
     });
 
     it('should sort by balance for side: buy', () => {
-      let trade: TradeBankModel = TestConstants.TRADE_BANK_MODEL;
-
-      let sort = component.sortingDataAccessor(trade, 'balance');
-      expect(sort).toEqual(<string>trade.receive_amount);
+      let transfer: TransferBankModel = TestConstants.TRANSFER_BANK_MODEL;
+      let sort = component.sortingTransfersDataAccessor(transfer, 'balance');
+      expect(sort).toEqual(<string>transfer.estimated_amount);
     });
 
-    it('should sort by balance for side: sell', () => {
-      let trade: TradeBankModel = { ...TestConstants.TRADE_BANK_MODEL };
-      trade.side = 'sell';
-
-      let sort = component.sortingDataAccessor(trade, 'balance');
-      expect(sort).toEqual(<string>trade.deliver_amount);
-    });
     it('should sort by default', () => {
-      let trade: TradeBankModel = TestConstants.TRADE_BANK_MODEL;
-
-      let sort = component.sortingDataAccessor(trade, '');
+      let transfer: TransferBankModel = TestConstants.TRANSFER_BANK_MODEL;
+      let sort = component.sortingTransfersDataAccessor(transfer, '');
       expect(sort).toEqual('');
     });
   });
@@ -336,18 +305,15 @@ describe('AccountDetailComponent', () => {
       expect(component.pageSize).toBe(pageSize);
     });
 
-    it('should list accounts', () => {
-      const listTradesSpy = spyOn(component, 'listTrades');
-
+    it('should list transfers', () => {
+      const listTransfersSpy = spyOn(component, 'listTransfers');
       const pageEvent: PageEvent = {
         pageIndex: component.currentPage,
         pageSize: component.pageSize,
         length: component.totalRows
       };
-
       component.pageChange(pageEvent);
-
-      expect(listTradesSpy).toHaveBeenCalled();
+      expect(listTransfersSpy).toHaveBeenCalled();
     });
   });
 
@@ -359,16 +325,39 @@ describe('AccountDetailComponent', () => {
     expect(component.dataSource.sort).toBeDefined();
   });
 
-  it('should display the trade summary onRowClick()', () => {
+  it('should display the transfer summary onTransferClick', () => {
     const dialogSpy = spyOn(component.dialog, 'open');
-
-    component.onRowClick(TestConstants.TRADE_BANK_MODEL);
+    component.onTransferClick(TestConstants.TRANSFER_BANK_MODEL);
     expect(dialogSpy).toHaveBeenCalled();
   });
 
-  it('should navigate onTrade()', () => {
-    component.onTrade();
+  it('getFiatPendingBalance', () => {
+    let account: AccountBankModel = TestConstants.ACCOUNT_BANK_MODEL_USD;
+    let pendingBalance = component.getFiatPendingBalance(account);
+    expect(pendingBalance).toEqual(0);
+  });
 
-    expect(MockRoutingService.handleRoute).toHaveBeenCalled();
+  it('getTransferIconName for deposit', () => {
+    let transferBankModel: TransferBankModel =
+      TestConstants.TRANSFER_BANK_MODEL;
+    transferBankModel.side = 'deposit';
+    let iconName = component.getTransferIconName(transferBankModel);
+    expect(iconName).toEqual('cybrid-deposit-icon');
+  });
+
+  it('getTransferIconName for withdrawal', () => {
+    let transferBankModel: TransferBankModel =
+      TestConstants.TRANSFER_BANK_MODEL;
+    transferBankModel.side = 'withdrawal';
+    let iconName = component.getTransferIconName(transferBankModel);
+    expect(iconName).toEqual('cybrid-withdrawal-icon');
+  });
+
+  it('getTransferIconName for default', () => {
+    let transferBankModel: TransferBankModel =
+      TestConstants.TRANSFER_BANK_MODEL;
+    transferBankModel.side = undefined;
+    let iconName = component.getTransferIconName(transferBankModel);
+    expect(iconName).toEqual('');
   });
 });

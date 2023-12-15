@@ -61,7 +61,7 @@
                   <span>
                     {{ account.value | assetFormat : account.asset }}
                   </span>
-                  <span class="mat-hint cybrid-h5 cybrid-code" *ngIf="
+                  <span class="mat-hint cybrid-h5 cybrid-code pending-balance" *ngIf="
                       account.platform_balance - account.platform_available > 0
                     ">
                     {{
@@ -83,10 +83,8 @@
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr [ngClass]="{
-              'cybrid-pointer': config.routing && row.type === 'trading'
-            }" class="cybrid-pointer" mat-row *matRowDef="let row; columns: displayedColumns"
-            (click)="row.type === 'trading' ? onRowClick(row) : null"></tr>
+          <tr class="cybrid-pointer" mat-row *matRowDef="let row; columns: displayedColumns"
+            (click)="onRowClick(row)"></tr>
           <tr class="mat-row" *matNoDataRow>
             <td id="warning" class="mat-cell cybrid-no-data" colspan="2">
               {{ 'accountList.error.noData' | translate }}
