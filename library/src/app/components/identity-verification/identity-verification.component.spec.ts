@@ -23,10 +23,9 @@ import {
 } from '@services';
 
 import { IdentityVerificationComponent } from '@components';
+import { IdentityVerificationWithDetails } from '@models';
 import { TestConstants } from '@constants';
 import { SharedModule } from '../../../shared/modules/shared.module';
-
-import { IdentityVerificationWithDetailsBankModel } from '@cybrid/cybrid-api-bank-angular';
 
 describe('IdentityVerificationComponent', () => {
   let component: IdentityVerificationComponent;
@@ -334,7 +333,7 @@ describe('IdentityVerificationComponent', () => {
           ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
         };
         identityVerificationBankModel.persona_state =
-          IdentityVerificationWithDetailsBankModel.PersonaStateEnum.Pending;
+          IdentityVerificationWithDetails.PersonaStateEnum.Pending;
 
         MockIdentityVerificationService.getIdentityVerification.and.returnValue(
           of(identityVerificationBankModel)
@@ -357,7 +356,7 @@ describe('IdentityVerificationComponent', () => {
           ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
         };
         identityVerificationBankModel.persona_state =
-          IdentityVerificationWithDetailsBankModel.PersonaStateEnum.Reviewing;
+          IdentityVerificationWithDetails.PersonaStateEnum.Reviewing;
 
         MockIdentityVerificationService.getIdentityVerification.and.returnValue(
           of(identityVerificationBankModel)

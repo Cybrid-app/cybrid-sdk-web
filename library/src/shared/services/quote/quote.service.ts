@@ -4,10 +4,10 @@ import { map, Subject, takeUntil } from 'rxjs';
 
 // Client
 import {
-  AccountBankModel,
   AssetBankModel,
   PostQuoteBankModel
 } from '@cybrid/cybrid-api-bank-angular';
+import { Account, PostQuote } from '@models';
 
 // Services
 import { ComponentConfig, ConfigService } from '@services';
@@ -50,8 +50,8 @@ export class QuoteService implements OnDestroy {
 
   getQuote(
     amount: string | number,
-    input: AccountBankModel.TypeEnum,
-    side: PostQuoteBankModel.SideEnum,
+    input: Account.TypeEnum,
+    side: PostQuote.SideEnum,
     asset: AssetBankModel,
     counterAsset: AssetBankModel
   ): PostQuoteBankModel {

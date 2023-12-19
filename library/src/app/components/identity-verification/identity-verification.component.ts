@@ -43,6 +43,7 @@ import {
   IdentityVerificationBankModel,
   IdentityVerificationWithDetailsBankModel
 } from '@cybrid/cybrid-api-bank-angular';
+import{ IdentityVerification, IdentityVerificationWithDetails } from '@models'
 
 // Utility
 import { Constants } from '@constants';
@@ -191,8 +192,8 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
         map((list) => list.objects[0]),
         switchMap((identity) => {
           return identity?.state ===
-            IdentityVerificationBankModel.StateEnum.Waiting ||
-            identity?.state === IdentityVerificationBankModel.StateEnum.Storing
+            IdentityVerification.StateEnum.Waiting ||
+            identity?.state === IdentityVerification.StateEnum.Storing
             ? of(identity)
             : this.identityVerificationService.createIdentityVerification();
         }),
@@ -203,10 +204,10 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
         ),
         switchMap((identity) => {
           return identity.persona_state ===
-            IdentityVerificationWithDetailsBankModel.PersonaStateEnum.Waiting ||
+            IdentityVerificationWithDetails.PersonaStateEnum.Waiting ||
             identity.persona_state ===
-              IdentityVerificationWithDetailsBankModel.PersonaStateEnum
-                .Reviewing
+            IdentityVerificationWithDetails.PersonaStateEnum
+              .Reviewing
             ? of(identity)
             : this.identityVerificationService.createIdentityVerification();
         }),
@@ -222,7 +223,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
         takeUntil(merge(poll.session$, this.unsubscribe$)),
         skipWhile(
           (identity) =>
-            identity.state === IdentityVerificationBankModel.StateEnum.Storing
+            identity.state === IdentityVerification.StateEnum.Storing
         ),
         tap((identity) => {
           poll.stop();

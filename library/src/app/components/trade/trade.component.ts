@@ -21,13 +21,14 @@ import {
 import {
   AccountBankModel,
   PostQuoteBankModel,
-  QuoteBankModel,
   SymbolPriceBankModel,
   TradeBankModel
 } from '@cybrid/cybrid-api-bank-angular';
 
-import SideEnum = QuoteBankModel.SideEnum;
-import TypeEnum = AccountBankModel.TypeEnum;
+// Models
+import { Quote, Account } from '@models';
+import SideEnum = Quote.SideEnum;
+import TypeEnum = Account.TypeEnum;
 
 // Utility
 import { fiatMask, symbolBuild, filterPrices } from '@utility';

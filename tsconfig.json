@@ -24,6 +24,7 @@
     "paths": {
       "@environment": ["library/src/environments/index"],
       "@modules": ["library/src/shared/modules/index"],
+      "@models": ["library/src/shared/models/index"],
       "@components": ["library/src/app/components/index"],
       "@services": ["library/src/shared/services/index"],
       "@interceptors": ["library/src/shared/interceptors/index"],
