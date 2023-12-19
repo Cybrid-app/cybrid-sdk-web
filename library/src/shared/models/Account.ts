@@ -9,7 +9,7 @@ export namespace Account {
     Trading: 'trading',
     Fee: 'fee',
     Fiat: 'fiat',
-    Gas: 'gas',
+    Gas: 'gas'
   };
 
   export type StateEnum = 'storing' | 'created';
@@ -18,6 +18,6 @@ export namespace Account {
     Created: StateEnum;
   } = {
     Storing: 'storing',
-    Created: 'created',
+    Created: 'created'
   };
 }

@@ -4,9 +4,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { of } from 'rxjs';
 
 // Client
-import {
-  PostQuoteBankModel,
-} from '@cybrid/cybrid-api-bank-angular';
+import { PostQuoteBankModel } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
 import { ConfigService, QuoteService } from '@services';

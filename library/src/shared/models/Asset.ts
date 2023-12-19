@@ -5,6 +5,6 @@ export namespace Asset {
     Crypto: TypeEnum;
   } = {
     Fiat: 'fiat',
-    Crypto: 'crypto',
+    Crypto: 'crypto'
   };
 }

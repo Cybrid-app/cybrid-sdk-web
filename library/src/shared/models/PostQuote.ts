@@ -1,5 +1,9 @@
 export namespace PostQuote {
-  export type ProductTypeEnum = 'trading' | 'funding' | 'book_transfer' | 'crypto_transfer';
+  export type ProductTypeEnum =
+    | 'trading'
+    | 'funding'
+    | 'book_transfer'
+    | 'crypto_transfer';
   export const ProductTypeEnum: {
     Trading: ProductTypeEnum;
     Funding: ProductTypeEnum;
@@ -9,7 +13,7 @@ export namespace PostQuote {
     Trading: 'trading',
     Funding: 'funding',
     BookTransfer: 'book_transfer',
-    CryptoTransfer: 'crypto_transfer',
+    CryptoTransfer: 'crypto_transfer'
   };
 
   export type SideEnum = 'buy' | 'sell' | 'deposit' | 'withdrawal';
@@ -22,6 +26,6 @@ export namespace PostQuote {
     Buy: 'buy',
     Sell: 'sell',
     Deposit: 'deposit',
-    Withdrawal: 'withdrawal',
+    Withdrawal: 'withdrawal'
   };
 }

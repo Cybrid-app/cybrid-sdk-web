@@ -5,10 +5,14 @@ export namespace IdentityVerificationWithDetails {
     BankAccount: TypeEnum;
   } = {
     Kyc: 'kyc',
-    BankAccount: 'bank_account',
+    BankAccount: 'bank_account'
   };
 
-  export type MethodEnum = 'business_registration' | 'id_and_selfie' | 'attested' | 'plaid_identity_match';
+  export type MethodEnum =
+    | 'business_registration'
+    | 'id_and_selfie'
+    | 'attested'
+    | 'plaid_identity_match';
   export const MethodEnum: {
     BusinessRegistration: MethodEnum;
     IdAndSelfie: MethodEnum;
@@ -18,7 +22,7 @@ export namespace IdentityVerificationWithDetails {
     BusinessRegistration: 'business_registration',
     IdAndSelfie: 'id_and_selfie',
     Attested: 'attested',
-    PlaidIdentityMatch: 'plaid_identity_match',
+    PlaidIdentityMatch: 'plaid_identity_match'
   };
 
   export type StateEnum = 'storing' | 'waiting' | 'expired' | 'completed';
@@ -31,7 +35,7 @@ export namespace IdentityVerificationWithDetails {
     Storing: 'storing',
     Waiting: 'waiting',
     Expired: 'expired',
-    Completed: 'completed',
+    Completed: 'completed'
   };
 
   export type OutcomeEnum = 'passed' | 'failed';
@@ -40,10 +44,17 @@ export namespace IdentityVerificationWithDetails {
     Failed: OutcomeEnum;
   } = {
     Passed: 'passed',
-    Failed: 'failed',
+    Failed: 'failed'
   };
 
-  export type PersonaStateEnum = 'waiting' | 'pending' | 'reviewing' | 'processing' | 'expired' | 'completed' | 'unknown';
+  export type PersonaStateEnum =
+    | 'waiting'
+    | 'pending'
+    | 'reviewing'
+    | 'processing'
+    | 'expired'
+    | 'completed'
+    | 'unknown';
   export const PersonaStateEnum: {
     Waiting: PersonaStateEnum;
     Pending: PersonaStateEnum;
@@ -59,6 +70,6 @@ export namespace IdentityVerificationWithDetails {
     Processing: 'processing',
     Expired: 'expired',
     Completed: 'completed',
-    Unknown: 'unknown',
+    Unknown: 'unknown'
   };
 }

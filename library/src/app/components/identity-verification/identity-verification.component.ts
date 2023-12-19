@@ -43,7 +43,7 @@ import {
   IdentityVerificationBankModel,
   IdentityVerificationWithDetailsBankModel
 } from '@cybrid/cybrid-api-bank-angular';
-import{ IdentityVerification, IdentityVerificationWithDetails } from '@models'
+import { IdentityVerification, IdentityVerificationWithDetails } from '@models';
 
 // Utility
 import { Constants } from '@constants';
@@ -191,8 +191,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
       .pipe(
         map((list) => list.objects[0]),
         switchMap((identity) => {
-          return identity?.state ===
-            IdentityVerification.StateEnum.Waiting ||
+          return identity?.state === IdentityVerification.StateEnum.Waiting ||
             identity?.state === IdentityVerification.StateEnum.Storing
             ? of(identity)
             : this.identityVerificationService.createIdentityVerification();
@@ -206,8 +205,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
           return identity.persona_state ===
             IdentityVerificationWithDetails.PersonaStateEnum.Waiting ||
             identity.persona_state ===
-            IdentityVerificationWithDetails.PersonaStateEnum
-              .Reviewing
+              IdentityVerificationWithDetails.PersonaStateEnum.Reviewing
             ? of(identity)
             : this.identityVerificationService.createIdentityVerification();
         }),
