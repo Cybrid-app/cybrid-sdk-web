@@ -33,6 +33,11 @@ import {
 // Utility
 import { TranslatePipe } from '@ngx-translate/core';
 
+export interface DepositAddressPayment {
+  amount: number;
+  message: string;
+}
+
 @Component({
     selector: 'app-deposit-address-payment',
     templateUrl: './deposit-address-payment.component.html',
@@ -40,11 +45,14 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class DepositAddressPaymentComponent implements OnInit, OnDestroy {
   
-    account$: Subject<AccountBankModel> = new Subject<AccountBankModel>();
+    account: AccountBankModel = this.data.account;
+    amountValue: number;
+    messageValue: string;
 
     isRecoverable$ = new BehaviorSubject(true);
     unsubscribe$ = new Subject();
     refreshSub: Subscription = new Subscription();
+    refreshInterval = 0;
   
     constructor(
       @Inject(MAT_DIALOG_DATA) public data: any,
@@ -54,15 +62,24 @@ export class DepositAddressPaymentComponent implements OnInit, OnDestroy {
       private eventService: EventService,
       private errorService: ErrorService,
       private translatePipe: TranslatePipe
-    ) {}
+    ) {
 
-    ngOnInit(): void {
-      console.log(this.data);
-      this.account$.next(this.data.account);
+      this.amountValue = 2;
+      this.messageValue = 'Hello world';
     }
+
+    ngOnInit(): void {}
     
     ngOnDestroy() {
         this.unsubscribe$.next('');
         this.unsubscribe$.complete();
+    }
+
+    onRefreshClick(): void {
+      const depositPayment: DepositAddressPayment = {
+        amount: this.amountValue,
+        message: this.messageValue
+      };
+      this.dialogRef.close(depositPayment)
     }
 }

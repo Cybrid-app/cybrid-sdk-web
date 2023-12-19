@@ -251,9 +251,14 @@ export default {
     sendOnlyTwo: 'to this deposit address.',
     networkSubTitle: 'Network',
     depositAddressSubTitle: 'Deposit Address',
+    amountSubTitle: 'Amount',
+    messageSubTitle: 'Message',
     paymentCodeButton: 'Generate payment code',
     paymentComponent: {
-      title: 'Deposit details for'
+      title: 'Deposit details for',
+      amountTitle: 'Amount of',
+      transactionTitle: 'Message for transaction',
+      transactionHint: 'Optional message'
     }
   },
 

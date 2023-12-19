@@ -55,7 +55,7 @@ import {
   } from '@services';
   
   // Components
-  import { DepositAddressPaymentComponent } from '@components';
+  import { DepositAddressPaymentComponent, DepositAddressPayment } from '@components';
   
   // Utility
   import { symbolBuild } from '@utility';
@@ -77,6 +77,7 @@ import {
   
     accountGuid: string | null = null;
     asset: AssetBankModel | null = null;
+    depositValues: DepositAddressPayment | null = null;
   
     isLoading$ = combineLatest([this.account$, this.depositAddress$]).pipe(
       switchMap(([account, depositAddress]) =>
@@ -136,21 +137,8 @@ import {
     }
 
     refreshData(): void {
-        this.refreshDataSub = this.configService
-          .getConfig$()
-          .pipe(
-            take(1),
-            switchMap((cfg: ComponentConfig) => {
-              return timer(cfg.refreshInterval, cfg.refreshInterval);
-            }),
-            startWith(0),
-            tap(() => {
-              this.getAccount();
-              this.getListDepositAddress();
-            }),
-            takeUntil(this.unsubscribe$)
-          )
-          .subscribe();
+      this.getAccount();
+      this.getListDepositAddress();
     }
 
     getAccount(): void {
@@ -236,8 +224,28 @@ import {
 
     checkDepositAddressValue(depositAddress: DepositAddressBankModel): void {
       if (depositAddress.state == DepositAddressBankModel.StateEnum.Created) {
-        this.depositAddressUrl$.next(depositAddress.address ?? "");
+        this.createAddressUrl(depositAddress.address ?? "", depositAddress.asset ?? "")
       }
+    }
+
+    createAddressUrl(depositAddress: string, assetCode: string, amount: string = "", message: string = "") {
+
+      var addressFormatted = ""
+      switch(assetCode) {
+        case 'BTC':
+            addressFormatted += "bitcoin:" + depositAddress;
+            if(amount != '') {
+              addressFormatted += "&amount=" + amount;
+            }
+            if(message != '') {
+              addressFormatted += "?message=" + message;
+            }
+            break;
+        default:
+            addressFormatted += depositAddress   
+      }
+      console.log("URL: " + addressFormatted);
+      this.depositAddressUrl$.next(addressFormatted);
     }
 
     // -- View Functions
@@ -247,6 +255,23 @@ import {
           account: this.account$.value
         }
       });
+
+      this.dialogRef
+      .afterClosed()
+      .pipe(
+        map((value: DepositAddressPayment) => {
+          if (value) {
+            this.depositValues = value;
+            this.createAddressUrl(
+              this.depositAddress$.value?.address ?? "",
+              this.depositAddress$.value?.asset ?? "",
+              value.amount.toString(),
+              value.message
+            )
+          }
+        })
+      )
+      .subscribe();
     }
   }
   

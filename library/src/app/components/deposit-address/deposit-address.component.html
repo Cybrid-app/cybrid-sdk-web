@@ -25,6 +25,21 @@
                         <span class="cybrid-h3 cybrid-strong">{{ data?.depositAddress?.address! }}</span>
                     </div>
 
+                    <ng-container *ngIf="(depositValues) !== null">
+                      <ng-container *ngIf="(depositValues?.amount) !== null">
+                        <div class="amount">
+                          <span class="mat-hint">{{ 'depositAddress.amountSubTitle' | translate }}</span>
+                          <span class="cybrid-h3 cybrid-strong">{{ depositValues.amount! }}</span>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="(depositValues?.message) !== null">
+                        <div class="message">
+                          <span class="mat-hint">{{ 'depositAddress.messageSubTitle' | translate }}</span>
+                          <span class="cybrid-h3 cybrid-strong">{{ depositValues.message! }}</span>
+                        </div>
+                      </ng-container>
+                    </ng-container>
+
                     <button id="deposit-address" mat-flat-button color="primary" (click)="openPaymentDialog()">
                         {{ 'depositAddress.paymentCodeButton' | translate }}
                     </button>
