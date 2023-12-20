@@ -112,11 +112,11 @@ describe('IdentityVerificationService', () => {
       customer.type = 'individual';
 
       const postIdentityVerificationBankModel: PostIdentityVerificationBankModel =
-      {
-        customer_guid: customer.guid,
-        method: PostIdentityVerificationBankModel.MethodEnum.IdAndSelfie,
-        type: PostIdentityVerificationBankModel.TypeEnum.Kyc
-      };
+        {
+          customer_guid: customer.guid,
+          method: PostIdentityVerificationBankModel.MethodEnum.IdAndSelfie,
+          type: PostIdentityVerificationBankModel.TypeEnum.Kyc
+        };
 
       MockConfigService.getCustomer$.and.returnValue(of(customer));
 
@@ -138,12 +138,12 @@ describe('IdentityVerificationService', () => {
       customer.type = 'business';
 
       const postIdentityVerificationBankModel: PostIdentityVerificationBankModel =
-      {
-        customer_guid: customer.guid,
-        method:
-          PostIdentityVerificationBankModel.MethodEnum.BusinessRegistration,
-        type: PostIdentityVerificationBankModel.TypeEnum.Kyc
-      };
+        {
+          customer_guid: customer.guid,
+          method:
+            PostIdentityVerificationBankModel.MethodEnum.BusinessRegistration,
+          type: PostIdentityVerificationBankModel.TypeEnum.Kyc
+        };
 
       MockConfigService.getCustomer$.and.returnValue(of(customer));
 

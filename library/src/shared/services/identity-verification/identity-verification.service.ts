@@ -37,7 +37,7 @@ export class IdentityVerificationService implements OnDestroy {
     private configService: ConfigService,
     private eventService: EventService,
     private errorService: ErrorService
-  ) { }
+  ) {}
 
   ngOnDestroy() {
     this.unsubscribe$.next('');
@@ -49,15 +49,15 @@ export class IdentityVerificationService implements OnDestroy {
       take(1),
       switchMap((customer) => {
         const postIdentityVerificationBankModel: PostIdentityVerificationBankModel =
-        {
-          customer_guid: customer.guid,
-          method:
-            customer.type === Customer.TypeEnum.Business
-              ? PostIdentityVerificationBankModel.MethodEnum
-                .BusinessRegistration
-              : PostIdentityVerificationBankModel.MethodEnum.IdAndSelfie,
-          type: PostIdentityVerificationBankModel.TypeEnum.Kyc
-        };
+          {
+            customer_guid: customer.guid,
+            method:
+              customer.type === Customer.TypeEnum.Business
+                ? PostIdentityVerificationBankModel.MethodEnum
+                    .BusinessRegistration
+                : PostIdentityVerificationBankModel.MethodEnum.IdAndSelfie,
+            type: PostIdentityVerificationBankModel.TypeEnum.Kyc
+          };
         return this.identityVerificationService.createIdentityVerification(
           postIdentityVerificationBankModel
         );
