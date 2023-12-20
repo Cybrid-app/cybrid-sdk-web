@@ -156,6 +156,8 @@ describe('TransferService', () => {
             transfers
           );
         });
+
+      expect(MockTransfersService.listTransfers).toHaveBeenCalled();
     });
 
     it('should handle errors', () => {
