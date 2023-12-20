@@ -81,7 +81,8 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
 
   validIdentityState = [
     IdentityVerificationWithDetails.StateEnum.Storing,
-    IdentityVerificationWithDetails.StateEnum.Waiting
+    IdentityVerificationWithDetails.StateEnum.Waiting,
+    IdentityVerificationWithDetails.StateEnum.Completed
   ];
 
   validPersonaState = [
@@ -101,7 +102,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
     private routingService: RoutingService,
     private _renderer2: Renderer2,
     private ngZone: NgZone
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.eventService.handleEvent(
@@ -187,17 +188,6 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
       default:
         this.error$.next(true);
     }
-  }
-
-  identityPollingState(
-    identity?: IdentityVerificationWithDetailsBankModel
-  ): boolean {
-    return (
-      identity?.persona_state ===
-      IdentityVerificationWithDetails.PersonaStateEnum.Waiting ||
-      identity?.persona_state ===
-      IdentityVerificationWithDetails.PersonaStateEnum.Reviewing
-    );
   }
 
   /**
