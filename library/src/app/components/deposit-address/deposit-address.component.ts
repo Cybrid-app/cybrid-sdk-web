@@ -232,7 +232,6 @@ export class DepositAddressComponent
       default:
         addressFormatted += address;
     }
-    console.log('URL: ' + addressFormatted);
     this.depositAddressUrl$.next(addressFormatted);
   }
 
