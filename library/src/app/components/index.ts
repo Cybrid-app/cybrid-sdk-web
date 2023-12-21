@@ -15,4 +15,7 @@ export * from './transfer';
 export { CybridLogoComponent } from './cybrid-logo/cybrid-logo.component';
 //export * from './deposit-address';
 export { DepositAddressComponent } from './deposit-address/deposit-address.component';
-export { DepositAddressPaymentComponent, DepositAddressPayment } from './deposit-address/deposit-address-payment/deposit-address-payment.component';
+export {
+  DepositAddressPaymentComponent,
+  DepositAddressPayment
+} from './deposit-address/deposit-address-payment/deposit-address-payment.component';

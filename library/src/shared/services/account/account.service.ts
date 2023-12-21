@@ -5,6 +5,7 @@ import {
   expand,
   map,
   tap,
+  throwError,
   Observable,
   of,
   reduce,

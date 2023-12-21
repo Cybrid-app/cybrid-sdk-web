@@ -42,7 +42,8 @@ import {
   AccountService,
   IdentityVerificationService,
   BankAccountService,
-  PriceService
+  PriceService,
+  DepositAddressService
 } from '@services';
 
 // Interceptors
@@ -159,6 +160,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AssetService,
     PriceService,
     AccountService,
+    DepositAddressService,
     AssetIconPipe,
     IdentityVerificationService,
     BankAccountService,

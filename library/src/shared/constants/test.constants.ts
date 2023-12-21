@@ -625,31 +625,33 @@ export class TestConstants {
     labels: null
   };
 
+  static STORING_DEPOSIT_ADDRESS_BANK_MODEL: DepositAddressBankModel = {
+    guid: '987654321',
+    bank_guid: '123456789',
+    customer_guid: '123456789',
+    account_guid: '987654321',
+    created_at: '2023-06-02T16:07:11.886Z',
+    updated_at: '2023-07-05T14:04:23.291Z',
+    asset: 'ETH',
+    state: 'storing',
+    address: '1234567890',
+    format: 'standard',
+    tag: '1234',
+    labels: null
+  }
+
   static DEPOSIT_ADDRESS_LIST_BANK_MODEL: DepositAddressListBankModel = {
     total: '2',
     page: '0',
     per_page: '10',
     objects: [
       TestConstants.DEPOSIT_ADDRESS_BANK_MODEL,
-      {
-        guid: '987654321',
-        bank_guid: '123456789',
-        customer_guid: '123456789',
-        account_guid: '987654321',
-        created_at: '2023-06-02T16:07:11.886Z',
-        updated_at: '2023-07-05T14:04:23.291Z',
-        asset: 'ETH',
-        state: 'storing',
-        address: '1234567890',
-        format: 'standard',
-        tag: '1234',
-        labels: null
-      }
+      TestConstants.STORING_DEPOSIT_ADDRESS_BANK_MODEL
     ]
   };
 
   static POST_DEPOSIT_ADDRESS_BANK_MODEL: PostDepositAddressBankModel = {
     account_guid: '123456789',
     labels: null
-  }
+  };
 }
