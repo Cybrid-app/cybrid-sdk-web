@@ -4,13 +4,13 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { of } from 'rxjs';
 
 // Client
-import {
-  AccountBankModel,
-  PostQuoteBankModel
-} from '@cybrid/cybrid-api-bank-angular';
+import { PostQuoteBankModel } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
 import { ConfigService, QuoteService } from '@services';
+
+// Models
+import { Account, PostQuote } from '@models';
 
 // Utility
 import { TestConstants } from '@constants';
@@ -61,8 +61,8 @@ describe('QuoteService', () => {
 
     function testQuote(
       amounts: string[],
-      side: PostQuoteBankModel.SideEnum,
-      input: AccountBankModel.TypeEnum
+      side: PostQuote.SideEnum,
+      input: Account.TypeEnum
     ): PostQuoteBankModel[] {
       let quotes: PostQuoteBankModel[] = [];
       amounts.forEach((amount) => {
@@ -83,8 +83,8 @@ describe('QuoteService', () => {
     ];
     let testedAmounts = testQuote(
       testAmounts,
-      PostQuoteBankModel.SideEnum.Buy,
-      AccountBankModel.TypeEnum.Trading
+      PostQuote.SideEnum.Buy,
+      Account.TypeEnum.Trading
     ).map((quote) => quote.receive_amount) as string[];
     expect(testedAmounts).toEqual(expectedAmounts);
 
@@ -98,8 +98,8 @@ describe('QuoteService', () => {
     ];
     testedAmounts = testQuote(
       testAmounts,
-      PostQuoteBankModel.SideEnum.Buy,
-      AccountBankModel.TypeEnum.Fee
+      PostQuote.SideEnum.Buy,
+      Account.TypeEnum.Fee
     ).map((quote) => quote.deliver_amount) as string[];
     expect(testedAmounts).toEqual(expectedAmounts);
 
@@ -113,8 +113,8 @@ describe('QuoteService', () => {
     ];
     testedAmounts = testQuote(
       testAmounts,
-      PostQuoteBankModel.SideEnum.Sell,
-      AccountBankModel.TypeEnum.Trading
+      PostQuote.SideEnum.Sell,
+      Account.TypeEnum.Trading
     ).map((quote) => quote.deliver_amount) as string[];
     expect(testedAmounts).toEqual(expectedAmounts);
 
@@ -128,8 +128,8 @@ describe('QuoteService', () => {
     ];
     testedAmounts = testQuote(
       testAmounts,
-      PostQuoteBankModel.SideEnum.Sell,
-      AccountBankModel.TypeEnum.Fiat
+      PostQuote.SideEnum.Sell,
+      Account.TypeEnum.Fiat
     ).map((quote) => quote.receive_amount) as string[];
     expect(testedAmounts).toEqual(expectedAmounts);
 
@@ -150,8 +150,8 @@ describe('QuoteService', () => {
     ];
     testedAmounts = testQuote(
       testAmounts,
-      PostQuoteBankModel.SideEnum.Buy,
-      AccountBankModel.TypeEnum.Trading
+      PostQuote.SideEnum.Buy,
+      Account.TypeEnum.Trading
     ).map((quote) => quote.receive_amount) as string[];
     expect(testedAmounts).toEqual(expectedAmounts);
 
@@ -166,8 +166,8 @@ describe('QuoteService', () => {
     ];
     testedAmounts = testQuote(
       testAmounts,
-      PostQuoteBankModel.SideEnum.Sell,
-      AccountBankModel.TypeEnum.Trading
+      PostQuote.SideEnum.Sell,
+      Account.TypeEnum.Trading
     ).map((quote) => quote.deliver_amount) as string[];
     expect(testedAmounts).toEqual(expectedAmounts);
   });

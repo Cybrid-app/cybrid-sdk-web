@@ -3,22 +3,21 @@ import { Injectable, OnDestroy } from '@angular/core';
 import {
   BehaviorSubject,
   catchError,
-  map,
   Observable,
   of,
   Subject,
-  takeUntil
+  switchMap,
+  take
 } from 'rxjs';
 
 // Models
 import {
-  CustomerBankModel,
-  CustomersService,
   IdentityVerificationListBankModel,
   IdentityVerificationsService,
   IdentityVerificationWithDetailsBankModel,
   PostIdentityVerificationBankModel
 } from '@cybrid/cybrid-api-bank-angular';
+import { Customer } from '@models';
 
 // Services
 import { ConfigService } from '../config/config.service';
@@ -30,64 +29,50 @@ import { ErrorService } from '../error/error.service';
 })
 export class IdentityVerificationService implements OnDestroy {
   personaClient: BehaviorSubject<any | null> = new BehaviorSubject(null);
-  customerGuid: string = '';
 
   unsubscribe$ = new Subject();
 
-  postIdentityVerificationBankModel: PostIdentityVerificationBankModel = {
-    customer_guid: '',
-    method: PostIdentityVerificationBankModel.MethodEnum.IdAndSelfie,
-    type: PostIdentityVerificationBankModel.TypeEnum.Kyc
-  };
-
   constructor(
     private identityVerificationService: IdentityVerificationsService,
-    private customerService: CustomersService,
     private configService: ConfigService,
     private eventService: EventService,
     private errorService: ErrorService
-  ) {
-    this.getCustomerGuid();
-  }
+  ) {}
 
   ngOnDestroy() {
     this.unsubscribe$.next('');
     this.unsubscribe$.complete();
   }
 
-  getCustomerGuid(): void {
-    this.configService
-      .getConfig$()
-      .pipe(
-        takeUntil(this.unsubscribe$),
-        map((config) => {
-          this.customerGuid = config.customer;
-          this.postIdentityVerificationBankModel.customer_guid =
-            config.customer;
-        })
-      )
-      .subscribe();
-  }
-
-  getCustomer(): Observable<CustomerBankModel> {
-    return this.customerService.getCustomer(this.customerGuid);
-  }
-
   createIdentityVerification(): Observable<IdentityVerificationWithDetailsBankModel> {
-    return this.identityVerificationService
-      .createIdentityVerification(this.postIdentityVerificationBankModel)
-      .pipe(
-        catchError((err) => {
-          this.eventService.handleEvent(
-            LEVEL.ERROR,
-            CODE.DATA_ERROR,
-            'There was an error creating an identity verification',
-            err
-          );
-          this.errorService.handleError(err);
-          return of(err);
-        })
-      );
+    return this.configService.getCustomer$().pipe(
+      take(1),
+      switchMap((customer) => {
+        const postIdentityVerificationBankModel: PostIdentityVerificationBankModel =
+          {
+            customer_guid: customer.guid,
+            method:
+              customer.type === Customer.TypeEnum.Business
+                ? PostIdentityVerificationBankModel.MethodEnum
+                    .BusinessRegistration
+                : PostIdentityVerificationBankModel.MethodEnum.IdAndSelfie,
+            type: PostIdentityVerificationBankModel.TypeEnum.Kyc
+          };
+        return this.identityVerificationService.createIdentityVerification(
+          postIdentityVerificationBankModel
+        );
+      }),
+      catchError((err) => {
+        this.eventService.handleEvent(
+          LEVEL.ERROR,
+          CODE.DATA_ERROR,
+          'There was an error creating an identity verification',
+          err
+        );
+        this.errorService.handleError(err);
+        return of(err);
+      })
+    );
   }
 
   getIdentityVerification(

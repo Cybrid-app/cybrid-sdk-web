@@ -5,7 +5,7 @@ import {
   RouterStateSnapshot
 } from '@angular/router';
 import { map, Observable } from 'rxjs';
-import { BankBankModel } from '@cybrid/cybrid-api-bank-angular';
+import { Bank } from '@models';
 import { Constants } from '@constants';
 import { CODE, ConfigService, EventService, LEVEL } from '@services';
 
@@ -25,7 +25,7 @@ export class ComponentGuard implements CanActivate {
       map((config) => {
         if (
           config.features.includes(
-            BankBankModel.FeaturesEnum.AttestationIdentityRecords
+            Bank.FeaturesEnum.AttestationIdentityRecords
           ) &&
           !Constants.COMPONENTS_ATTESTATION.includes(
             <string>route.routeConfig?.path

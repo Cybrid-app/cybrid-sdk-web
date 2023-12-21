@@ -14,15 +14,17 @@ import {
 } from '@services';
 import { TestConstants } from '@constants';
 import {
-  CustomersService,
-  IdentityVerificationsService
+  IdentityVerificationListBankModel,
+  IdentityVerificationsService,
+  IdentityVerificationWithDetailsBankModel,
+  PostIdentityVerificationBankModel
 } from '@cybrid/cybrid-api-bank-angular';
 
 describe('IdentityVerificationService', () => {
   let service: IdentityVerificationService;
-  let MockConfigService = jasmine.createSpyObj('ConfigService', {
-    getConfig$: of(TestConstants.CONFIG)
-  });
+  let MockConfigService = jasmine.createSpyObj('ConfigService', [
+    'getCustomer$'
+  ]);
   let MockEventService = jasmine.createSpyObj('EventService', [
     'getEvent',
     'handleEvent'
@@ -31,9 +33,6 @@ describe('IdentityVerificationService', () => {
     'getError',
     'handleError'
   ]);
-  let MockCustomersService = jasmine.createSpyObj('CustomersService', {
-    getCustomer: of(TestConstants.CUSTOMER_BANK_MODEL)
-  });
   let MockIdentityVerificationsService = jasmine.createSpyObj(
     'IdentityVerificationsService',
     [
@@ -62,7 +61,6 @@ describe('IdentityVerificationService', () => {
         { provide: EventService, useValue: MockEventService },
         { provide: ErrorService, useValue: MockErrorService },
         { provide: ConfigService, useValue: MockConfigService },
-        { provide: CustomersService, useValue: MockCustomersService },
         {
           provide: IdentityVerificationsService,
           useValue: MockIdentityVerificationsService
@@ -71,9 +69,14 @@ describe('IdentityVerificationService', () => {
     });
     service = TestBed.inject(IdentityVerificationService);
     MockConfigService = TestBed.inject(ConfigService);
+    MockConfigService.getCustomer$.and.returnValue(
+      of(TestConstants.CUSTOMER_BANK_MODEL)
+    );
     MockEventService = TestBed.inject(EventService);
     MockErrorService = TestBed.inject(ErrorService);
-    MockCustomersService = TestBed.inject(CustomersService);
+    MockIdentityVerificationsService = TestBed.inject(
+      IdentityVerificationsService
+    );
     MockIdentityVerificationsService.createIdentityVerification.and.returnValue(
       of(TestConstants.IDENTITY_VERIFICATION_BANK_MODEL)
     );
@@ -83,98 +86,168 @@ describe('IdentityVerificationService', () => {
     MockIdentityVerificationsService.listIdentityVerifications.and.returnValue(
       of(TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL)
     );
-    MockIdentityVerificationsService = TestBed.inject(
-      IdentityVerificationsService
-    );
+  });
+
+  afterEach(() => {
+    MockErrorService.handleError.calls.reset();
+    MockEventService.handleEvent.calls.reset();
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should get the customer Guid', () => {
-    expect(service.customerGuid).toEqual('');
-    expect(MockConfigService.getConfig$).toHaveBeenCalled();
-  });
-
-  it('should get the customer', () => {
-    service.getCustomer();
-
-    expect(MockCustomersService.getCustomer).toHaveBeenCalledWith(
-      service.customerGuid
-    );
-  });
-
-  it('should create an identity verification', () => {
-    service
-      .createIdentityVerification()
-      .subscribe((res) =>
-        expect(res).toEqual(TestConstants.IDENTITY_VERIFICATION_BANK_MODEL)
+  describe('when creating an identity verification', () => {
+    afterEach(() => {
+      MockConfigService.getCustomer$.and.returnValue(
+        of(TestConstants.CUSTOMER_BANK_MODEL)
       );
+      MockIdentityVerificationsService.createIdentityVerification.and.returnValue(
+        of(TestConstants.IDENTITY_VERIFICATION_BANK_MODEL)
+      );
+    });
+
+    it('should create an identity verification for an individual', () => {
+      const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
+      customer.type = 'individual';
+
+      const postIdentityVerificationBankModel: PostIdentityVerificationBankModel =
+        {
+          customer_guid: customer.guid,
+          method: PostIdentityVerificationBankModel.MethodEnum.IdAndSelfie,
+          type: PostIdentityVerificationBankModel.TypeEnum.Kyc
+        };
+
+      MockConfigService.getCustomer$.and.returnValue(of(customer));
+
+      service
+        .createIdentityVerification()
+        .subscribe((identity: IdentityVerificationWithDetailsBankModel) => {
+          expect(identity).toEqual(
+            TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
+          );
+        });
+
+      expect(
+        MockIdentityVerificationsService.createIdentityVerification
+      ).toHaveBeenCalledWith(postIdentityVerificationBankModel);
+    });
+
+    it('should create an identity verification for a business', () => {
+      const customer = { ...TestConstants.CUSTOMER_BANK_MODEL };
+      customer.type = 'business';
+
+      const postIdentityVerificationBankModel: PostIdentityVerificationBankModel =
+        {
+          customer_guid: customer.guid,
+          method:
+            PostIdentityVerificationBankModel.MethodEnum.BusinessRegistration,
+          type: PostIdentityVerificationBankModel.TypeEnum.Kyc
+        };
+
+      MockConfigService.getCustomer$.and.returnValue(of(customer));
+
+      service
+        .createIdentityVerification()
+        .subscribe((identity: IdentityVerificationWithDetailsBankModel) => {
+          expect(identity).toEqual(
+            TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
+          );
+        });
+
+      expect(
+        MockIdentityVerificationsService.createIdentityVerification
+      ).toHaveBeenCalledWith(postIdentityVerificationBankModel);
+    });
+
+    it('should handle errors when getting the customer', () => {
+      MockConfigService.getCustomer$.and.returnValue(error$);
+
+      service.createIdentityVerification().subscribe();
+
+      expect(MockErrorService.handleError).toHaveBeenCalled();
+      expect(MockEventService.handleEvent).toHaveBeenCalled();
+    });
+
+    it('should handle errors when creating an identity verification', () => {
+      MockIdentityVerificationsService.createIdentityVerification.and.returnValue(
+        error$
+      );
+
+      service.createIdentityVerification().subscribe();
+
+      expect(MockErrorService.handleError).toHaveBeenCalled();
+      expect(MockEventService.handleEvent).toHaveBeenCalled();
+    });
   });
 
-  it('should handle errors on creating an identity verification', () => {
-    MockIdentityVerificationsService.createIdentityVerification.and.returnValue(
-      error$
-    );
+  describe('when getting an identity verification', () => {
+    afterEach(() => {
+      MockIdentityVerificationsService.getIdentityVerification.and.returnValue(
+        TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
+      );
+    });
 
-    service.createIdentityVerification().subscribe();
+    it('should get an identity verification', () => {
+      const guid = TestConstants.IDENTITY_VERIFICATION_BANK_MODEL.guid;
+      service
+        .getIdentityVerification(<string>guid)
+        .subscribe((identity: IdentityVerificationWithDetailsBankModel) => {
+          expect(identity).toEqual(
+            TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
+          );
+        });
 
-    expect(MockErrorService.handleError).toHaveBeenCalled();
-    expect(MockEventService.handleEvent).toHaveBeenCalled();
+      expect(
+        MockIdentityVerificationsService.getIdentityVerification
+      ).toHaveBeenCalled();
+    });
 
-    // Reset
-    MockIdentityVerificationsService.createIdentityVerification.and.returnValue(
-      of(TestConstants.IDENTITY_VERIFICATION_BANK_MODEL)
-    );
+    it('should handle errors', () => {
+      MockIdentityVerificationsService.getIdentityVerification.and.returnValue(
+        error$
+      );
+
+      service.getIdentityVerification('').subscribe();
+
+      expect(MockErrorService.handleError).toHaveBeenCalled();
+      expect(MockEventService.handleEvent).toHaveBeenCalled();
+    });
   });
 
-  it('should get an identity verification', () => {
-    // Default with existing identity verification
-    service.getIdentityVerification('').subscribe();
+  describe('when listing identity verifications', () => {
+    afterEach(() => {
+      MockIdentityVerificationsService.listIdentityVerifications.and.returnValue(
+        TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
+      );
+    });
 
-    expect(
-      MockIdentityVerificationsService.getIdentityVerification
-    ).toHaveBeenCalled();
-  });
+    it('should list identity verifications', () => {
+      const page = '0';
+      const perPage = '10';
 
-  it('should handle error on getIdentityVerification()', () => {
-    MockIdentityVerificationsService.getIdentityVerification.and.returnValue(
-      error$
-    );
+      service
+        .listIdentityVerifications(page, perPage)
+        .subscribe((list: IdentityVerificationListBankModel) => {
+          expect(list).toEqual(
+            TestConstants.IDENTITY_VERIFICATION_LIST_BANK_MODEL
+          );
+        });
 
-    service.getIdentityVerification('').subscribe();
+      expect(
+        MockIdentityVerificationsService.listIdentityVerifications
+      ).toHaveBeenCalledWith(page, perPage);
+    });
 
-    expect(MockErrorService.handleError).toHaveBeenCalled();
-    expect(MockEventService.handleEvent).toHaveBeenCalled();
+    it('should handle errors', () => {
+      MockIdentityVerificationsService.listIdentityVerifications.and.returnValue(
+        error$
+      );
 
-    // Reset
-    MockIdentityVerificationsService.getIdentityVerification.and.returnValue(
-      TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
-    );
-  });
+      service.listIdentityVerifications().subscribe();
 
-  it('should list identity verifications', () => {
-    service.listIdentityVerifications().subscribe();
-
-    expect(
-      MockIdentityVerificationsService.listIdentityVerifications
-    ).toHaveBeenCalled();
-  });
-
-  it('should handle error on listIdentityVerifications()', () => {
-    MockIdentityVerificationsService.listIdentityVerifications.and.returnValue(
-      error$
-    );
-
-    service.listIdentityVerifications().subscribe();
-
-    expect(MockErrorService.handleError).toHaveBeenCalled();
-    expect(MockEventService.handleEvent).toHaveBeenCalled();
-
-    // Reset
-    MockIdentityVerificationsService.listIdentityVerifications.and.returnValue(
-      TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
-    );
+      expect(MockErrorService.handleError).toHaveBeenCalled();
+      expect(MockEventService.handleEvent).toHaveBeenCalled();
+    });
   });
 });

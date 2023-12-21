@@ -25,6 +25,8 @@ import {
   tap
 } from 'rxjs';
 
+import { CustomersService } from '@cybrid/cybrid-api-bank-angular';
+
 // Services
 import {
   CODE,
@@ -43,6 +45,7 @@ import {
   IdentityVerificationBankModel,
   IdentityVerificationWithDetailsBankModel
 } from '@cybrid/cybrid-api-bank-angular';
+import { IdentityVerification, IdentityVerificationWithDetails } from '@models';
 
 // Utility
 import { Constants } from '@constants';
@@ -76,11 +79,25 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
 
   personaScriptSrc = Constants.PERSONA_SCRIPT_SRC;
 
+  validIdentityState = [
+    IdentityVerificationWithDetails.StateEnum.Storing,
+    IdentityVerificationWithDetails.StateEnum.Waiting,
+    IdentityVerificationWithDetails.StateEnum.Completed
+  ];
+
+  validPersonaState = [
+    IdentityVerificationWithDetails.PersonaStateEnum.Waiting,
+    IdentityVerificationWithDetails.PersonaStateEnum.Reviewing,
+    IdentityVerificationWithDetails.PersonaStateEnum.Processing,
+    IdentityVerificationWithDetails.PersonaStateEnum.Completed
+  ];
+
   constructor(
     @Inject(DOCUMENT) public _document: Document,
     public configService: ConfigService,
     private eventService: EventService,
     private errorService: ErrorService,
+    private customersService: CustomersService,
     private identityVerificationService: IdentityVerificationService,
     private routingService: RoutingService,
     private _renderer2: Renderer2,
@@ -93,7 +110,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
       CODE.COMPONENT_INIT,
       'Initializing identity-verification component'
     );
-    this.getCustomerStatus();
+    this.getCustomerState();
   }
 
   ngOnDestroy() {
@@ -107,13 +124,16 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
    * Skips customer with a state of storing
    * Handles customer that returns a non-storing state, else returns an error
    **/
-  getCustomerStatus(): void {
+  getCustomerState(): void {
     const poll = new Poll(this.pollConfig);
 
     poll
       .start()
       .pipe(
-        concatMap(() => this.identityVerificationService.getCustomer()),
+        switchMap(() => this.configService.getCustomer$()),
+        switchMap((customer) => {
+          return this.customersService.getCustomer(<string>customer.guid);
+        }),
         takeUntil(merge(poll.session$, this.unsubscribe$)),
         skipWhile((customer) => customer.state === 'storing'),
         map((customer) => {
@@ -189,27 +209,23 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
       .listIdentityVerifications(page, perPage)
       .pipe(
         map((list) => list.objects[0]),
-        switchMap((identity) => {
-          return identity?.state ===
-            IdentityVerificationBankModel.StateEnum.Waiting ||
-            identity?.state === IdentityVerificationBankModel.StateEnum.Storing
+        switchMap((identity) =>
+          this.validIdentityState.some((state) => identity?.state === state)
             ? of(identity)
-            : this.identityVerificationService.createIdentityVerification();
-        }),
+            : this.identityVerificationService.createIdentityVerification()
+        ),
         switchMap((identity) =>
           this.identityVerificationService.getIdentityVerification(
             <string>identity.guid
           )
         ),
-        switchMap((identity) => {
-          return identity.persona_state ===
-            IdentityVerificationWithDetailsBankModel.PersonaStateEnum.Waiting ||
-            identity.persona_state ===
-              IdentityVerificationWithDetailsBankModel.PersonaStateEnum
-                .Reviewing
+        switchMap((identity) =>
+          this.validPersonaState.some(
+            (state) => identity?.persona_state === state
+          )
             ? of(identity)
-            : this.identityVerificationService.createIdentityVerification();
-        }),
+            : this.identityVerificationService.createIdentityVerification()
+        ),
         tap((identity) => {
           this.identityVerificationGuid = identity.guid;
         }),
@@ -222,7 +238,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
         takeUntil(merge(poll.session$, this.unsubscribe$)),
         skipWhile(
           (identity) =>
-            identity.state === IdentityVerificationBankModel.StateEnum.Storing
+            identity.state === IdentityVerification.StateEnum.Storing
         ),
         tap((identity) => {
           poll.stop();
@@ -295,7 +311,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
           this.identity$.next(identity);
           break;
         case 'expired':
-          this.getCustomerStatus();
+          this.getCustomerState();
           break;
         case 'completed':
           this.isLoading$.next(false);
