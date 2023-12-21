@@ -39,10 +39,12 @@
                         </div>
                       </ng-container>
                     </ng-container>
-
-                    <button id="deposit-address" mat-flat-button color="primary" (click)="openPaymentDialog()">
+                    
+                    <ng-container *ngIf="(depositValues) === null">
+                      <button id="deposit-address" mat-flat-button color="primary" (click)="openPaymentDialog()">
                         {{ 'depositAddress.paymentCodeButton' | translate }}
-                    </button>
+                      </button>
+                    </ng-container>
                 </div>
               </div>
         </ng-container>

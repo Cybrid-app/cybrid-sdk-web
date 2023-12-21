@@ -17,7 +17,10 @@ import {
   TransferBankModel,
   TransferListBankModel,
   WorkflowBankModel,
-  WorkflowWithDetailsBankModel
+  WorkflowWithDetailsBankModel,
+  DepositAddressBankModel,
+  DepositAddressListBankModel,
+  PostDepositAddressBankModel
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
@@ -605,4 +608,48 @@ export class TestConstants {
     updated_at: '2023-07-05T14:04:23.291Z',
     labels: null
   };
+
+  // Deposit Address Models
+  static DEPOSIT_ADDRESS_BANK_MODEL: DepositAddressBankModel = {
+    guid: '123456789',
+    bank_guid: '123456789',
+    customer_guid: '123456789',
+    account_guid: '123456789',
+    created_at: '2023-06-02T16:07:11.886Z',
+    updated_at: '2023-07-05T14:04:23.291Z',
+    asset: 'BTC',
+    state: 'created',
+    address: '1234567890',
+    format: 'standard',
+    tag: '123456789',
+    labels: null
+  };
+
+  static DEPOSIT_ADDRESS_LIST_BANK_MODEL: DepositAddressListBankModel = {
+    total: '2',
+    page: '0',
+    per_page: '10',
+    objects: [
+      TestConstants.DEPOSIT_ADDRESS_BANK_MODEL,
+      {
+        guid: '987654321',
+        bank_guid: '123456789',
+        customer_guid: '123456789',
+        account_guid: '987654321',
+        created_at: '2023-06-02T16:07:11.886Z',
+        updated_at: '2023-07-05T14:04:23.291Z',
+        asset: 'ETH',
+        state: 'storing',
+        address: '1234567890',
+        format: 'standard',
+        tag: '1234',
+        labels: null
+      }
+    ]
+  };
+
+  static POST_DEPOSIT_ADDRESS_BANK_MODEL: PostDepositAddressBankModel = {
+    account_guid: '123456789',
+    labels: null
+  }
 }
