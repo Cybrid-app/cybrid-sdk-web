@@ -1,40 +1,43 @@
 <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
   
-    <h2 mat-dialog-title>{{ 'depositAddress.paymentComponent.title' | translate }} {{ account.asset }}</h2>
-
-    <div class="cybrid-input-flex">
-      <label class="mat-hint cybrid-h5">{{
-        'depositAddress.paymentComponent.amountTitle' | translate
-        }} {{ account.asset }}</label>
-      <mat-form-field appearance="outline">
-        <input matInput id="amount" class="cybrid-amount-input" formControlName="amount"
-        [(ngModel)]="amountValue" type="number" min="0" step="0.1" placeholder="0.0" />
-        <div class="cybrid-prefix" matPrefix>
-          {{ account.asset }}
-          <div class="cybrid-amount-divider"></div>
-        </div>
-      </mat-form-field>
-    </div>
-
-    <div class="cybrid-input-flex">
-      <label class="mat-hint cybrid-h5">{{
-        'depositAddress.paymentComponent.transactionTitle' | translate
-        }}</label>
-      <mat-form-field appearance="outline">
-        <input matInput #amount="matInput" id="amount" formControlName="message"
-        [(ngModel)]="messageValue" type="text" placeholder="{{ 'depositAddress.paymentComponent.transactionHint' | translate }}" />
-      </mat-form-field>
-    </div>
-
-    <mat-dialog-actions align="end">
-      <button id="cancel" mat-button [mat-dialog-close]>
-        {{ 'cancel' | translate }}
-      </button>
-      <button id="confirm" mat-flat-button color="primary" (click)="onRefreshClick()">
-        {{ 'confirm' | translate }}
-      </button>
-    </mat-dialog-actions>
+    <h2 mat-dialog-title>{{ 'depositAddress.paymentComponent.title' | translate }} {{ account?.asset ?? "" }}</h2>
+    <ng-container [formGroup]="depositAddressFormGroup">
+      <div class="cybrid-input-flex">
+        <label class="mat-hint cybrid-h5">{{
+          'depositAddress.paymentComponent.amountTitle' | translate
+          }} {{ account?.asset ?? "" }}</label>
+        <mat-form-field appearance="outline">
+          <input matInput #amount="matInput" id="amount" class="cybrid-amount-input" formControlName="amount" 
+          type="number" min="0" step="0.1" placeholder="0.0" />
+          <div class="cybrid-prefix" matPrefix>
+            {{ account?.asset ?? "" }}
+            <div class="cybrid-amount-divider"></div>
+          </div>
+          <mat-error *ngIf="depositAddressFormGroup.controls.amount.hasError('pattern')">{{ 'trade.error' | translate }}</mat-error>
+          <mat-error *ngIf="depositAddressFormGroup.controls.amount.hasError('insufficientFunds')">Insufficient funds</mat-error>
+        </mat-form-field>
+      </div>
   
+      <div class="cybrid-input-flex">
+        <label class="mat-hint cybrid-h5">{{
+          'depositAddress.paymentComponent.transactionTitle' | translate
+          }}</label>
+        <mat-form-field appearance="outline">
+          <input matInput #message="matInput" id="message" formControlName="message" 
+          type="text" placeholder="{{ 'depositAddress.paymentComponent.transactionHint' | translate }}" />
+        </mat-form-field>
+      </div>
+  
+      <mat-dialog-actions align="end">
+        <button id="cancel" mat-button [mat-dialog-close]>
+          {{ 'cancel' | translate }}
+        </button>
+        <button id="confirm" mat-flat-button color="primary" (click)="createDepositPaymentCode()" [disabled]="
+        !depositAddressFormGroup.valid || !(amount.value.toString().length > 0)">
+          {{ 'confirm' | translate }}
+        </button>
+      </mat-dialog-actions>
+    </ng-container>
 </ng-container>
 
 <ng-template #loading>

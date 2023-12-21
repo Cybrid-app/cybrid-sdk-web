@@ -1,17 +1,10 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 import {
   BehaviorSubject,
-  catchError,
-  map,
-  of,
-  Subject,
-  Subscription,
-  switchMap,
-  takeUntil,
-  timer
+  Subject
 } from 'rxjs';
 
 // Client
@@ -19,21 +12,17 @@ import { AccountBankModel } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
 import {
-  ComponentConfig,
-  ConfigService,
-  EventService,
-  CODE,
-  LEVEL,
-  ErrorService,
-  Asset
+  ConfigService
 } from '@services';
 
-// Utility
-import { TranslatePipe } from '@ngx-translate/core';
-
 export interface DepositAddressPayment {
-  amount: number;
+  amount: string;
   message: string;
+}
+
+export interface DepositAddressFormGroup {
+  amount: FormControl<number | null>;
+  message: FormControl<string | null>;
 }
 
 @Component({
@@ -43,38 +32,45 @@ export interface DepositAddressPayment {
 })
 export class DepositAddressPaymentComponent implements OnInit, OnDestroy {
   account: AccountBankModel = this.data.account;
-  amountValue: number;
-  messageValue: string;
+  depositAddressFormGroup!: FormGroup<DepositAddressFormGroup>;
 
   isRecoverable$ = new BehaviorSubject(true);
   unsubscribe$ = new Subject();
-  refreshSub: Subscription = new Subscription();
-  refreshInterval = 0;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<DepositAddressPaymentComponent>,
-    private snackBar: MatSnackBar,
-    public configService: ConfigService,
-    private eventService: EventService,
-    private errorService: ErrorService,
-    private translatePipe: TranslatePipe
-  ) {
-    this.amountValue = 2;
-    this.messageValue = 'Hello world';
-  }
+    public configService: ConfigService
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.initTradeForm();
+  }
 
   ngOnDestroy() {
     this.unsubscribe$.next('');
     this.unsubscribe$.complete();
   }
 
-  onRefreshClick(): void {
+  initTradeForm(): void {
+    this.depositAddressFormGroup = new FormGroup<DepositAddressFormGroup>({
+      amount: new FormControl(null, {
+        validators: [
+          Validators.min(0),
+          Validators.pattern(
+            /^(0*[1-9][0-9]*(\.[0-9]+)?|0+\.[0-9]*[1-9][0-9]*)$/
+          )
+        ]
+      }),
+      message: new FormControl(null)
+    });
+    this.depositAddressFormGroup.valueChanges.subscribe();
+  }
+
+  createDepositPaymentCode(): void {
     const depositPayment: DepositAddressPayment = {
-      amount: this.amountValue,
-      message: this.messageValue
+      amount: <string>this.depositAddressFormGroup.controls.amount.value?.toString() ?? null,
+      message: <string>this.depositAddressFormGroup.controls.message.value ?? null
     };
     this.dialogRef.close(depositPayment);
   }
