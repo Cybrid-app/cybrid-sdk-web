@@ -18,11 +18,12 @@ import {
 import { CODE, EventService, LEVEL } from '../event/event.service';
 import { ErrorService } from '../error/error.service';
 import { AssetBankModel } from '@cybrid/cybrid-api-bank-angular/model/asset';
+import { Asset } from '@models';
 import { ConfigService } from '../config/config.service';
 import { Constants } from '@constants';
 
 export interface Asset extends AssetBankModel {
-  type: AssetBankModel.TypeEnum;
+  type: Asset.TypeEnum;
   code: string;
   name: string;
   symbol: string;

@@ -1,7 +1,11 @@
 import { Component, Input } from '@angular/core';
-import { AccountBankModel } from '@cybrid/cybrid-api-bank-angular';
-import { ConfigService } from '@services';
 import { map } from 'rxjs';
+
+import { AccountBankModel } from '@cybrid/cybrid-api-bank-angular';
+
+import { ConfigService } from '@services';
+
+import { Account } from '@models';
 
 @Component({
   selector: 'app-account-balance',
@@ -22,7 +26,7 @@ export class AccountBalanceComponent {
   isSandboxTradingAccount(): boolean {
     return (
       (this.environment == 'staging' || this.environment == 'sandbox') &&
-      this.account?.type == AccountBankModel.TypeEnum.Trading
+      this.account?.type == Account.TypeEnum.Trading
     );
   }
 

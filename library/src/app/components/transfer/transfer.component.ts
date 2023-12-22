@@ -53,6 +53,7 @@ import {
   QuotesService,
   TransferBankModel
 } from '@cybrid/cybrid-api-bank-angular';
+import { Account, PostQuote } from '@models';
 
 // Utility
 import { AssetFormatPipe } from '@pipes';
@@ -222,7 +223,7 @@ export class TransferComponent implements OnInit, OnDestroy {
               map((accountList) => accountList.objects),
               map((accounts) => {
                 return accounts.find(
-                  (account) => account.type == AccountBankModel.TypeEnum.Fiat
+                  (account) => account.type == Account.TypeEnum.Fiat
                 );
               }),
               catchError((err) => of(err))
@@ -286,7 +287,7 @@ export class TransferComponent implements OnInit, OnDestroy {
             product_type: PostQuoteBankModel.ProductTypeEnum.Funding,
             customer_guid: customer.guid,
             asset: asset.code,
-            side: this.side as PostQuoteBankModel.SideEnum,
+            side: this.side as PostQuote.SideEnum,
             deliver_amount: this.assetFormatPipe.transform(
               amount!,
               asset.code,

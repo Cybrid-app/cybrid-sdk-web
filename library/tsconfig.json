@@ -22,6 +22,7 @@
     "paths": {
       "@environment": ["src/environments/index"],
       "@modules": ["src/shared/modules/index"],
+      "@models": ["src/shared/models/index"],
       "@components": ["src/app/components/index"],
       "@services": ["src/shared/services/index"],
       "@interceptors": ["src/shared/interceptors/index"],
