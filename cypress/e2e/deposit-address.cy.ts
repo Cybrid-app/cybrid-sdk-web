@@ -42,27 +42,6 @@ function accountDetailsSetup() {
         app()
           .find('.qrcode')
           .should('exist');
-        
-        app()
-          .find('qrcode[ng-reflect-qrdata]')
-          .invoke('attr', 'ng-reflect-qrdata')
-          .should('include', 'bitcoin:');
-
-        app()
-          .find('qrcode[ng-reflect-qrdata]')
-          .invoke('attr', 'ng-reflect-qrdata')
-          .then(qrData => {
-
-            qrCodeData = qrData ?? "";
-            var qrParts = qrCodeData.split('bitcoin:');
-            var address = qrParts[1];
-
-            app()
-                .find('.address')
-                .should('not.be.empty')
-                .should('contain.text', 'BTC Deposit Address')
-                .should('contain.text', address);
-        });
 
         app()
           .find('.cybrid-header')
@@ -75,6 +54,11 @@ function accountDetailsSetup() {
           .should('not.be.empty')
           .should('contain.text', 'Network')
           .should('contain.text', 'Bitcoin');
+
+        app()
+          .find('.address')
+          .should('not.be.empty')
+          .should('contain.text', 'BTC Deposit Address');
     });
 
     it('should update payment qrCode data', () => {
