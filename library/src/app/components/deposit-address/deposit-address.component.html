@@ -12,6 +12,7 @@
                     <span class="cybrid-h2 cybrid-strong asset">{{ 'depositAddress.title' | translate }} {{ data.account?.asset! }}</span>
                     <ng-container *ngIf="(isLoadingQR$ | async) !== true; else loading">
                         <qrcode [qrdata]="data.depositAddressQR!" [width]="200" [errorCorrectionLevel]="'M'" [margin]="0.5"></qrcode>
+                        <span class="qrCodeData hide">{{ data.depositAddressQR! }}</span>
                         <span class="mat-hint">{{ 'depositAddress.sendOnlyOne' | translate }} {{ data.account?.asset! }} {{ 'depositAddress.sendOnlyTwo' | translate }}</span>
                     </ng-container>
 

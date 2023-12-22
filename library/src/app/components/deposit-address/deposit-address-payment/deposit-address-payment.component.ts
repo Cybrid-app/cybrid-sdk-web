@@ -2,18 +2,13 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
-import {
-  BehaviorSubject,
-  Subject
-} from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 // Client
 import { AccountBankModel } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
-import {
-  ConfigService
-} from '@services';
+import { ConfigService } from '@services';
 
 export interface DepositAddressPayment {
   amount: string;
@@ -69,8 +64,12 @@ export class DepositAddressPaymentComponent implements OnInit, OnDestroy {
 
   createDepositPaymentCode(): void {
     const depositPayment: DepositAddressPayment = {
-      amount: <string>this.depositAddressFormGroup.controls.amount.value?.toString() ?? null,
-      message: <string>this.depositAddressFormGroup.controls.message.value ?? null
+      amount:
+        <string>(
+          this.depositAddressFormGroup.controls.amount.value?.toString()
+        ) ?? null,
+      message:
+        <string>this.depositAddressFormGroup.controls.message.value ?? null
     };
     this.dialogRef.close(depositPayment);
   }

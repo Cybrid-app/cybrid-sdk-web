@@ -1,20 +1,17 @@
-import {
-    ComponentFixture,
-    TestBed
-  } from '@angular/core/testing';
-  import { ActivatedRoute } from '@angular/router';
-  import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-  import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-  import { HttpLoaderFactory } from '../../modules/library.module';
-  import { HttpClient } from '@angular/common/http';
-  import { MatDialog } from '@angular/material/dialog';
-  import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-  import { HttpClientTestingModule } from '@angular/common/http/testing';
-  import { RouterTestingModule } from '@angular/router/testing';
-  import { of, throwError } from 'rxjs';
-  import { QRCodeModule } from 'angularx-qrcode';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { HttpLoaderFactory } from '../../modules/library.module';
+import { HttpClient } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { of, throwError } from 'rxjs';
+import { QRCodeModule } from 'angularx-qrcode';
 
-  // Client
+// Client
 import {
   AssetBankModel,
   DepositAddressListBankModel,
@@ -40,7 +37,6 @@ import { MockAssetFormatPipe, AssetFormatPipe, AssetIconPipe } from '@pipes';
 import { Constants, TestConstants } from '@constants';
 
 describe('DepositAddressComponent', () => {
-
   let component: DepositAddressComponent;
   let fixture: ComponentFixture<DepositAddressComponent>;
 
@@ -63,11 +59,10 @@ describe('DepositAddressComponent', () => {
   let MockAccountService = jasmine.createSpyObj('AccountService', [
     'getAccount'
   ]);
-  let MockDepositAddressService = jasmine.createSpyObj('DepositAddressService', [
-    'listDepositAddresses',
-    'getDepositAddress',
-    'createDepositAddress'
-  ]);
+  let MockDepositAddressService = jasmine.createSpyObj(
+    'DepositAddressService',
+    ['listDepositAddresses', 'getDepositAddress', 'createDepositAddress']
+  );
   let MockRoutingService = jasmine.createSpyObj('RoutingService', [
     'handleRoute'
   ]);
@@ -258,9 +253,10 @@ describe('DepositAddressComponent', () => {
     });
   });
 
-  describe('when verifyingAtLeastHaveOneAddress', () =>{
+  describe('when verifyingAtLeastHaveOneAddress', () => {
     it('should createDepositAddress', () => {
-      const depositAddresses = TestConstants.DEPOSIT_ADDRESS_LIST_BANK_MODEL.objects;
+      const depositAddresses =
+        TestConstants.DEPOSIT_ADDRESS_LIST_BANK_MODEL.objects;
       const createDepositAddressSpy = spyOn(component, 'createDepositAddress');
 
       component.verifyingAtLeastHaveOneAddress(depositAddresses);
@@ -269,7 +265,8 @@ describe('DepositAddressComponent', () => {
     });
 
     it('should getDepositAddress', () => {
-      const depositAddresses = TestConstants.DEPOSIT_ADDRESS_LIST_BANK_MODEL.objects;
+      const depositAddresses =
+        TestConstants.DEPOSIT_ADDRESS_LIST_BANK_MODEL.objects;
       const getDepositAddressSpy = spyOn(component, 'getDepositAddress');
 
       component.accountGuid = '123456789';
@@ -283,21 +280,19 @@ describe('DepositAddressComponent', () => {
     it('should not call createAddressUrl', () => {
       const depositAddress = TestConstants.STORING_DEPOSIT_ADDRESS_BANK_MODEL;
       const createAddressUrlSpy = spyOn(component, 'createAddressUrl');
-      
+
       component.checkDepositAddressValue(depositAddress);
 
       expect(createAddressUrlSpy).toHaveBeenCalledTimes(0);
-
     });
 
     it('should call createAddressUrl', () => {
       const depositAddress = TestConstants.DEPOSIT_ADDRESS_BANK_MODEL;
       const createAddressUrlSpy = spyOn(component, 'createAddressUrl');
-      
+
       component.checkDepositAddressValue(depositAddress);
 
       expect(createAddressUrlSpy).toHaveBeenCalled();
-
     });
 
     it('should call createAddressUrl with undefined address and asset', () => {
@@ -305,33 +300,30 @@ describe('DepositAddressComponent', () => {
       depositAddress.asset = undefined;
       depositAddress.address = undefined;
       const createAddressUrlSpy = spyOn(component, 'createAddressUrl');
-      
+
       component.checkDepositAddressValue(depositAddress);
 
       expect(createAddressUrlSpy).toHaveBeenCalled();
-
     });
   });
 
   describe('when createAddressUrl', () => {
     it('should create url for BTC', () => {
-
       const depositAddressUrl$spy = spyOn(component.depositAddressUrl$, 'next');
       component.createAddressUrl('1234', 'BTC');
       expect(depositAddressUrl$spy).toHaveBeenCalled();
       //expect(component.depositAddressUrl$.value).toEqual('bitcoin:1234');
 
-      component.createAddressUrl('12345', 'BTC', '1')
+      component.createAddressUrl('12345', 'BTC', '1');
       expect(depositAddressUrl$spy).toHaveBeenCalled();
       //expect(component.depositAddressUrl$.value).toEqual('bitcoin:1234&amount=1');
 
-      component.createAddressUrl('12345', 'BTC', '1', 'Hello')
+      component.createAddressUrl('12345', 'BTC', '1', 'Hello');
       expect(depositAddressUrl$spy).toHaveBeenCalled();
       //expect(component.depositAddressUrl$.value).toEqual('bitcoin:1234&amount=1&message=Hello');
     });
 
     it('should create url for default', () => {
-
       const depositAddressUrl$spy = spyOn(component.depositAddressUrl$, 'next');
       component.createAddressUrl('1234', 'DOGE');
       expect(depositAddressUrl$spy).toHaveBeenCalled();
@@ -346,5 +338,4 @@ describe('DepositAddressComponent', () => {
       expect(MockDialogService.open).toHaveBeenCalled();
     });
   });
-
 });

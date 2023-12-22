@@ -57,9 +57,7 @@ import { AssetFormatPipe } from '@pipes';
   styleUrls: ['./deposit-address.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DepositAddressComponent
-  implements OnInit, OnDestroy
-{
+export class DepositAddressComponent implements OnInit, OnDestroy {
   account$ = new BehaviorSubject<AccountBankModel | null>(null);
   depositAddress$ = new BehaviorSubject<DepositAddressBankModel | null>(null);
   depositAddressUrl$ = new BehaviorSubject<string | null>(null);

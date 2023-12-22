@@ -3,6 +3,10 @@
     flex-direction: column;
     align-items: center;
 
+    .hide {
+        display: none;
+    }
+
     .asset {
         margin-top: 0.5rem;
         margin-bottom: 1rem;

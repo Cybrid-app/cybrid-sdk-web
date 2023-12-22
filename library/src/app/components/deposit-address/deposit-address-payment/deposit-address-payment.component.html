@@ -2,7 +2,7 @@
   
     <h2 mat-dialog-title>{{ 'depositAddress.paymentComponent.title' | translate }} {{ account?.asset ?? "" }}</h2>
     <ng-container [formGroup]="depositAddressFormGroup">
-      <div class="cybrid-input-flex">
+      <div class="cybrid-input-flex amount-input">
         <label class="mat-hint cybrid-h5">{{
           'depositAddress.paymentComponent.amountTitle' | translate
           }} {{ account?.asset ?? "" }}</label>
@@ -18,7 +18,7 @@
         </mat-form-field>
       </div>
   
-      <div class="cybrid-input-flex">
+      <div class="cybrid-input-flex message-input">
         <label class="mat-hint cybrid-h5">{{
           'depositAddress.paymentComponent.transactionTitle' | translate
           }}</label>

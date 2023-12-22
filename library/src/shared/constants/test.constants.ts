@@ -638,7 +638,7 @@ export class TestConstants {
     format: 'standard',
     tag: '1234',
     labels: null
-  }
+  };
 
   static DEPOSIT_ADDRESS_LIST_BANK_MODEL: DepositAddressListBankModel = {
     total: '2',
