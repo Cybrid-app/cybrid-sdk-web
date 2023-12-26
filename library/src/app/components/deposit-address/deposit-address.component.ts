@@ -15,7 +15,6 @@ import {
   map,
   of,
   Subject,
-  Subscription,
   switchMap,
   take,
   tap
@@ -38,9 +37,11 @@ import {
   EventService,
   LEVEL,
   RoutingData,
-  RoutingService,
   DepositAddressService
 } from '@services';
+
+// Model
+import { DepositAddress } from '@models'; 
 
 // Components
 import {
@@ -202,7 +203,7 @@ export class DepositAddressComponent implements OnInit, OnDestroy {
   }
 
   checkDepositAddressValue(depositAddress: DepositAddressBankModel): void {
-    if (depositAddress.state == DepositAddressBankModel.StateEnum.Created) {
+    if (depositAddress.state == DepositAddress.StateEnum.Created) {
       this.createAddressUrl(
         depositAddress.address ?? '',
         depositAddress.asset ?? ''

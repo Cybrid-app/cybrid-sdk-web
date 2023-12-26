@@ -6,3 +6,4 @@ export { IdentityVerification } from './IdentityVerification';
 export { IdentityVerificationWithDetails } from './IdentityVerificationWithDetails';
 export { PostQuote } from './PostQuote';
 export { Quote } from './Quote';
+export { DepositAddress } from './DepositAddress';

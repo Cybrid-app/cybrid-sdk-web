@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
@@ -13,9 +13,7 @@ import { QRCodeModule } from 'angularx-qrcode';
 
 // Client
 import {
-  AssetBankModel,
-  DepositAddressListBankModel,
-  DepositAddressBankModel
+  AssetBankModel
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
@@ -159,6 +157,14 @@ describe('DepositAddressComponent', () => {
 
   it('it should log an event when the component is initialized', () => {
     expect(MockEventService.handleEvent).toHaveBeenCalled();
+  });
+
+  it('isLoading toBeFalsy', () => {
+    component.account$.next(TestConstants.ACCOUNT_BANK_MODEL_BTC);
+    component.depositAddress$.next(TestConstants.DEPOSIT_ADDRESS_BANK_MODEL);
+    component.isLoading$.subscribe((value) => {
+      expect(value).toBeFalsy();
+    });
   });
 
   it('isLoading toBeTruthy', () => {
@@ -308,26 +314,22 @@ describe('DepositAddressComponent', () => {
   });
 
   describe('when createAddressUrl', () => {
+
     it('should create url for BTC', () => {
-      const depositAddressUrl$spy = spyOn(component.depositAddressUrl$, 'next');
-      component.createAddressUrl('1234', 'BTC');
-      expect(depositAddressUrl$spy).toHaveBeenCalled();
-      //expect(component.depositAddressUrl$.value).toEqual('bitcoin:1234');
+
+      component.createAddressUrl('string', 'BTC');
+      expect(component.depositAddressUrl$.value).toEqual('bitcoin:string');
 
       component.createAddressUrl('12345', 'BTC', '1');
-      expect(depositAddressUrl$spy).toHaveBeenCalled();
-      //expect(component.depositAddressUrl$.value).toEqual('bitcoin:1234&amount=1');
+      expect(component.depositAddressUrl$.value).toEqual('bitcoin:12345&amount=1');
 
       component.createAddressUrl('12345', 'BTC', '1', 'Hello');
-      expect(depositAddressUrl$spy).toHaveBeenCalled();
-      //expect(component.depositAddressUrl$.value).toEqual('bitcoin:1234&amount=1&message=Hello');
+      expect(component.depositAddressUrl$.value).toEqual('bitcoin:12345&amount=1?message=Hello');
     });
 
     it('should create url for default', () => {
-      const depositAddressUrl$spy = spyOn(component.depositAddressUrl$, 'next');
       component.createAddressUrl('1234', 'DOGE');
-      expect(depositAddressUrl$spy).toHaveBeenCalled();
-      //expect(component.depositAddressUrl$.value).toEqual('bitcoin:1234');
+      expect(component.depositAddressUrl$.value).toEqual('1234');
     });
   });
 
