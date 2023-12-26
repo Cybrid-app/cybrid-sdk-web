@@ -41,7 +41,7 @@ import {
 } from '@services';
 
 // Model
-import { DepositAddress } from '@models'; 
+import { DepositAddress } from '@models';
 
 // Components
 import {

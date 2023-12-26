@@ -1,4 +1,9 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick
+} from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
@@ -12,9 +17,7 @@ import { of, throwError } from 'rxjs';
 import { QRCodeModule } from 'angularx-qrcode';
 
 // Client
-import {
-  AssetBankModel
-} from '@cybrid/cybrid-api-bank-angular';
+import { AssetBankModel } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
 import {
@@ -314,17 +317,19 @@ describe('DepositAddressComponent', () => {
   });
 
   describe('when createAddressUrl', () => {
-
     it('should create url for BTC', () => {
-
       component.createAddressUrl('string', 'BTC');
       expect(component.depositAddressUrl$.value).toEqual('bitcoin:string');
 
       component.createAddressUrl('12345', 'BTC', '1');
-      expect(component.depositAddressUrl$.value).toEqual('bitcoin:12345&amount=1');
+      expect(component.depositAddressUrl$.value).toEqual(
+        'bitcoin:12345&amount=1'
+      );
 
       component.createAddressUrl('12345', 'BTC', '1', 'Hello');
-      expect(component.depositAddressUrl$.value).toEqual('bitcoin:12345&amount=1?message=Hello');
+      expect(component.depositAddressUrl$.value).toEqual(
+        'bitcoin:12345&amount=1?message=Hello'
+      );
     });
 
     it('should create url for default', () => {
