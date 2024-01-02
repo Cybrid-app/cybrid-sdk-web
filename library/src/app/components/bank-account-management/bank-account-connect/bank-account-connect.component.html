@@ -27,7 +27,7 @@
                 <ng-container *ngIf="isLoading$ | async; else success">
                   <app-loading [diameter]="16"></app-loading>
                   <strong>{{
-                    params
+                    externalBankAccountGuid
                       ? ('bankAccountConnect.reconnectAccount' | translate)
                       : ('bankAccountConnect.addAccount' | translate)
                   }}</strong></ng-container
@@ -35,7 +35,7 @@
                 <ng-template #success>
                   <mat-icon color="primary">check_circle</mat-icon>
                   <strong>{{
-                    params
+                    externalBankAccountGuid
                       ? ('bankAccountConnect.successReconnect' | translate)
                       : ('bankAccountConnect.successAdded' | translate)
                   }}</strong>
@@ -61,7 +61,7 @@
               <div>
                 <mat-icon color="primary">play_circle</mat-icon>
                 <strong>{{
-                  params
+                  externalBankAccountGuid
                     ? ('bankAccountConnect.resumeReconnecting' | translate)
                     : ('bankAccountConnect.resumeAdding' | translate)
                 }}</strong>

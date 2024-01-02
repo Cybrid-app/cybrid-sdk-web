@@ -211,6 +211,18 @@ describe('BankAccountConnectComponent', () => {
     expect(bootstrapPlaidSpy).toHaveBeenCalled();
   });
 
+  it('should call onAddAccount() if an external_bank_account is set', () => {
+    const onAddAccountSpy = spyOn(component, 'onAddAccount');
+
+    // Set query param
+    // @ts-ignore
+    component['window'].location.search = '?external_bank_account=guid';
+
+    component.ngOnInit();
+
+    expect(onAddAccountSpy).toHaveBeenCalledWith('guid');
+  });
+
   it('should check for supported fiat assets', () => {
     const onAddAccountSpy = spyOn(component, 'onAddAccount');
 
@@ -233,25 +245,42 @@ describe('BankAccountConnectComponent', () => {
     MockConfigService.getConfig$.and.returnValue(of(TestConstants.CONFIG));
   });
 
-  it('should add account', () => {
-    component.bootstrapPlaid = () => undefined;
+  describe('when adding an account', () => {
+    it('should add account', () => {
+      component.bootstrapPlaid = () => undefined;
 
-    component.onAddAccount();
-    expect(MockBankAccountService.createWorkflow).toHaveBeenCalled();
-  });
+      component.onAddAccount();
+      expect(MockBankAccountService.createWorkflow).toHaveBeenCalledWith(
+        PostWorkflowBankModel.KindEnum.Create,
+        undefined
+      );
+    });
 
-  it('should handle errors on addAccount', () => {
-    const error$Spy = spyOn(component.error$, 'next');
-    component.bootstrapPlaid = () => undefined;
-    MockBankAccountService.createWorkflow.and.returnValue(error$);
+    it('should reconnect an account', () => {
+      const externalBankAccountGuid = 'guid';
+      component.bootstrapPlaid = () => undefined;
 
-    component.onAddAccount();
-    expect(error$Spy).toHaveBeenCalledWith(true);
+      component.onAddAccount(externalBankAccountGuid);
 
-    // Reset
-    MockBankAccountService.createWorkflow.and.returnValue(
-      of(TestConstants.WORKFLOW_BANK_MODEL)
-    );
+      expect(MockBankAccountService.createWorkflow).toHaveBeenCalledWith(
+        PostWorkflowBankModel.KindEnum.Update,
+        externalBankAccountGuid
+      );
+    });
+
+    it('should handle errors', () => {
+      const error$Spy = spyOn(component.error$, 'next');
+      component.bootstrapPlaid = () => undefined;
+      MockBankAccountService.createWorkflow.and.returnValue(error$);
+
+      component.onAddAccount();
+      expect(error$Spy).toHaveBeenCalledWith(true);
+
+      // Reset
+      MockBankAccountService.createWorkflow.and.returnValue(
+        of(TestConstants.WORKFLOW_BANK_MODEL)
+      );
+    });
   });
 
   it('should get the currency code', (done) => {
@@ -365,7 +394,7 @@ describe('BankAccountConnectComponent', () => {
   it('should handle plaidOnSuccess() in update mode', () => {
     // Define an external account guid to trigger update mode
     // @ts-ignore
-    component.params = '';
+    component.externalBankAccountGuid = '';
 
     component.plaidOnSuccess('', {
       accounts: [{ name: '', id: '', iso_currency_code: 'USD' }]
