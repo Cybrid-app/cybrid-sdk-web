@@ -186,6 +186,7 @@ export default {
       completed: 'Connected',
       failed: 'Failed',
       refresh_required: 'Refresh required',
+      unverified: 'Unverified',
       deleting: 'Disconnecting...',
       deleted: 'Disconnected'
     },

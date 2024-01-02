@@ -149,7 +149,8 @@ export class BankAccountListComponent implements OnInit, OnDestroy {
             (account) =>
               account.state == 'storing' ||
               account.state == 'completed' ||
-              account.state == 'refresh_required'
+              account.state == 'refresh_required' ||
+              account.state == 'unverified'
           )
         ),
         map((accounts) => (this.dataSource.data = accounts)),

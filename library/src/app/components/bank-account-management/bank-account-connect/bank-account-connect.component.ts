@@ -25,9 +25,7 @@ import {
 
 // Services
 import {
-  CustomersService,
   PostWorkflowBankModel,
-  WorkflowsService,
   WorkflowWithDetailsBankModel
 } from '@cybrid/cybrid-api-bank-angular';
 
@@ -75,7 +73,7 @@ export class BankAccountConnectComponent implements OnInit {
     route: 'bank-account-list'
   };
 
-  params: NavigationExtras | undefined;
+  externalBankAccountGuid: NavigationExtras | undefined;
 
   mobile$: BehaviorSubject<boolean | null> = new BehaviorSubject<
     boolean | null
@@ -89,8 +87,6 @@ export class BankAccountConnectComponent implements OnInit {
     private errorService: ErrorService,
     private eventService: EventService,
     private bankAccountService: BankAccountService,
-    private workflowService: WorkflowsService,
-    private customersService: CustomersService,
     private router: RoutingService,
     private route: ActivatedRoute,
     private _renderer2: Renderer2,
@@ -124,29 +120,35 @@ export class BankAccountConnectComponent implements OnInit {
             this.mobile$.next(true);
           } else {
             const linkToken = this.window.localStorage.getItem('linkToken');
-            const urlParams = new URLSearchParams(this.window.location.search);
 
-            const queryOauthStateId = urlParams.get('oauth_state_id');
-            const hashOauthStateId = (() => {
-              const queryStringIndex = this.window.location.hash.indexOf('?');
-              if (queryStringIndex !== -1) {
-                const queryString =
-                  this.window.location.hash.substring(queryStringIndex);
-                const urlParams = new URLSearchParams(queryString);
-                return urlParams.get('oauth_state_id');
-              }
-              return null;
-            })();
+            const oauth_state_id = this.getQueryParam('oauth_state_id');
+            const externalBankAccountGuid = this.getQueryParam(
+              'external_bank_account'
+            );
 
-            const oauth_state_id = queryOauthStateId || hashOauthStateId;
-
-            linkToken && oauth_state_id
-              ? this.bootstrapPlaid(linkToken, oauth_state_id)
-              : this.checkSupportedFiatAssets();
+            if (linkToken && oauth_state_id) {
+              this.bootstrapPlaid(linkToken, oauth_state_id);
+            } else if (externalBankAccountGuid) {
+              this.onAddAccount(externalBankAccountGuid);
+            } else this.checkSupportedFiatAssets();
           }
         })
       )
       .subscribe();
+  }
+
+  getQueryParam(param: string): string | null {
+    return (
+      new URLSearchParams(this.window.location.search).get(param) ??
+      (() => {
+        const queryStringIndex = this.window.location.hash.indexOf('?');
+        return queryStringIndex !== -1
+          ? new URLSearchParams(
+              this.window.location.hash.substring(queryStringIndex)
+            ).get(param)
+          : null;
+      })()
+    );
   }
 
   isMobile(): boolean {
@@ -176,13 +178,14 @@ export class BankAccountConnectComponent implements OnInit {
       .subscribe();
   }
 
-  onAddAccount(): void {
+  onAddAccount(externalBankAccountGuid?: string): void {
     this.route.queryParams
       .pipe(
         take(1),
         switchMap((params) => {
-          const externalBankAccountGuid = params['externalBankAccountGuid'];
-          this.params = externalBankAccountGuid;
+          const guid =
+            externalBankAccountGuid ?? params['externalBankAccountGuid'];
+          this.externalBankAccountGuid = guid;
 
           return externalBankAccountGuid
             ? this.createWorkflow(
@@ -321,9 +324,9 @@ export class BankAccountConnectComponent implements OnInit {
   }
 
   plaidOnSuccess(public_token: string, metadata?: any) {
-    if (this.params != null) {
+    if (this.externalBankAccountGuid != null) {
       this.bankAccountService
-        .patchExternalBankAccount(<string>this.params)
+        .patchExternalBankAccount(<string>this.externalBankAccountGuid)
         .pipe(
           map(() => this.isLoading$.next(false)),
           catchError((err) => {
@@ -332,7 +335,7 @@ export class BankAccountConnectComponent implements OnInit {
           })
         )
         .subscribe();
-    } else if (!this.params && metadata.accounts.length > 1) {
+    } else if (!this.externalBankAccountGuid && metadata.accounts.length > 1) {
       this.error$.next(true);
       this.eventService.handleEvent(
         LEVEL.ERROR,
@@ -342,7 +345,7 @@ export class BankAccountConnectComponent implements OnInit {
       this.errorService.handleError(
         new Error('Multiple accounts unsupported, select only one account')
       );
-    } else if (!this.params && metadata.accounts.length == 1) {
+    } else if (!this.externalBankAccountGuid && metadata.accounts.length == 1) {
       let account = metadata.accounts[0];
 
       this.configService

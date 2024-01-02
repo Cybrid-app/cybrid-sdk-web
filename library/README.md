@@ -188,6 +188,12 @@ Example:
 <cybrid-app component="trade"></cybrid-app>
 ```
 
+## `bank-account-connect`
+
+Query params:
+1. `oauth_state_id`. Returned by Plaid during a mobile OAuth flow. Completes the OAuth flow.
+2. `external_bank_account`. An external bank account guid. Pass to reconnect a bank account in the `refresh_required` state.
+
 ### Events
 
 An event logging service that can be subscribed to. Emits application events and errors as an `eventLog` Object:
