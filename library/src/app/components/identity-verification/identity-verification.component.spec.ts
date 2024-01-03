@@ -505,7 +505,7 @@ describe('IdentityVerificationComponent', () => {
 
         expect(
           MockIdentityVerificationService.createIdentityVerification
-        ).not.toHaveBeenCalled();
+        ).toHaveBeenCalled();
       });
     });
 
