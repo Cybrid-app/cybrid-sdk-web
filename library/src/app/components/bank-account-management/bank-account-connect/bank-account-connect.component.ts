@@ -183,14 +183,13 @@ export class BankAccountConnectComponent implements OnInit {
       .pipe(
         take(1),
         switchMap((params) => {
-          const guid =
+          this.externalBankAccountGuid =
             externalBankAccountGuid ?? params['externalBankAccountGuid'];
-          this.externalBankAccountGuid = guid;
 
-          return externalBankAccountGuid
+          return this.externalBankAccountGuid
             ? this.createWorkflow(
                 PostWorkflowBankModel.KindEnum.Update,
-                externalBankAccountGuid
+                this.externalBankAccountGuid.toString()
               )
             : this.createWorkflow(PostWorkflowBankModel.KindEnum.Create);
         }),
