@@ -1,0 +1,65 @@
+<ng-container *ngIf="(isRecoverable$ | async) !== false;">
+    <app-navigation [routingData]="routingData"></app-navigation>
+    <ng-container *ngIf="(isLoading$ | async) !== true; else loading">
+        <ng-container *ngIf="configService.getConfig$() | async as config">
+            <ng-container *ngIf="{
+                account: account$ | async,
+                depositAddress: depositAddress$ | async,
+                depositAddressQR: depositAddressUrl$ | async
+              } as data">
+              <div class="cybrid-header">
+                <div class="cybrid-account">
+                    <span class="cybrid-h2 cybrid-strong asset">{{ 'depositAddress.title' | translate }} {{ data.account?.asset! }}</span>
+                    <ng-container *ngIf="(isLoadingQR$ | async) !== true; else loading">
+                        <qrcode [qrdata]="data.depositAddressQR!" [width]="200" [errorCorrectionLevel]="'M'" [margin]="0.5"></qrcode>
+                        <span class="qrCodeData hide">{{ data.depositAddressQR! }}</span>
+                        <span class="mat-hint">{{ 'depositAddress.sendOnlyOne' | translate }} {{ data.account?.asset! }} {{ 'depositAddress.sendOnlyTwo' | translate }}</span>
+                    </ng-container>
+
+                    <div class="network">
+                        <span class="mat-hint">{{ 'depositAddress.networkSubTitle' | translate }}</span>
+                        <span class="cybrid-h3 cybrid-strong">{{ asset?.name! }}</span>
+                    </div>
+
+                    <div class="address">
+                        <span class="mat-hint">{{ data.account?.asset! }} {{ 'depositAddress.depositAddressSubTitle' | translate }}</span>
+                        <span class="cybrid-h3 cybrid-strong">{{ data?.depositAddress?.address! }}</span>
+                    </div>
+
+                    <ng-container *ngIf="(depositValues) !== null">
+                      <ng-container *ngIf="(depositValues?.amount) !== null">
+                        <div class="amount">
+                          <span class="mat-hint">{{ 'depositAddress.amountSubTitle' | translate }}</span>
+                          <span class="cybrid-h3 cybrid-strong">{{ depositValues.amount! }}</span>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="(depositValues?.message) !== null">
+                        <div class="message">
+                          <span class="mat-hint">{{ 'depositAddress.messageSubTitle' | translate }}</span>
+                          <span class="cybrid-h3 cybrid-strong">{{ depositValues.message! }}</span>
+                        </div>
+                      </ng-container>
+                    </ng-container>
+                    
+                    <ng-container *ngIf="(depositValues) === null">
+                      <button id="deposit-address" mat-flat-button color="primary" (click)="openPaymentDialog()">
+                        {{ 'depositAddress.paymentCodeButton' | translate }}
+                      </button>
+                    </ng-container>
+                </div>
+              </div>
+        </ng-container>
+    </ng-container>
+</ng-container>
+<ng-template #loading>
+    <app-loading></app-loading>
+  </ng-template>
+<ng-template #error>
+    <mat-card>
+      <mat-card-content>
+        <div class="cybrid-fatal">
+          <p>{{ 'fatal' | translate }}</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+</ng-template>

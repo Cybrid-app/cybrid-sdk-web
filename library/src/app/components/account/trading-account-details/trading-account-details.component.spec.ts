@@ -372,4 +372,9 @@ describe('AccountDetailComponent', () => {
 
     expect(MockRoutingService.handleRoute).toHaveBeenCalled();
   });
+
+  it('should navigate onDepositAddress()', () => {
+    component.onDepositAddress();
+    expect(MockRoutingService.handleRoute).toHaveBeenCalled();
+  });
 });
