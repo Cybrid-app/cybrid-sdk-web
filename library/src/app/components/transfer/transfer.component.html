@@ -1,133 +1,113 @@
-<ng-container *ngIf="(isLoading$ | async) !== true; else loading">
-  <ng-container
-    *ngIf="{
-      fiatAccount: fiatAccount$ | async,
-      bankAccounts: bankAccounts$ | async
-    } as accounts"
-  >
-    <ng-container *ngIf="configService.getConfig$() | async as config">
-      <app-navigation [routingData]="routingData"></app-navigation>
-      <ng-container *ngIf="accounts.bankAccounts!.length > 0; else noAccount">
-        <app-account-balance
-          [account]="accounts.fiatAccount"
-        ></app-account-balance>
-        <mat-tab-group
-          animationDuration="0ms"
-          (selectedTabChange)="onSwitchSide($event.tab.origin)"
-        >
-          <mat-tab
-            label="{{ 'transfer.deposit' | translate | uppercase }}"
-          ></mat-tab>
-          <mat-tab
-            label="{{ 'transfer.withdraw' | translate | uppercase }}"
-          ></mat-tab>
-        </mat-tab-group>
-        <ng-container [formGroup]="transferGroup">
-          <div class="cybrid-tabs">
-            <div class="cybrid-input-wrapper">
-              <div class="cybrid-input-flex">
-                <label class="mat-hint cybrid-h5">{{
-                  'transfer.bankAccount' | translate
-                }}</label>
-                <mat-form-field appearance="outline">
-                  <mat-select #account formControlName="account">
-                    <mat-select-trigger>
-                      <div class="cybrid-option">
-                        <mat-icon>savings</mat-icon>
-                        <span class="cybrid-trigger-name">
-                          <strong>{{
-                            account.value.plaid_institution_id + ' - '
-                          }}</strong>
-                          <span>{{ account.value.plaid_account_name }}</span>
-                          <span class="mat-hint">{{
-                            ' (' + account.value.plaid_account_mask + ')'
-                          }}</span>
-                        </span>
-                      </div>
-                    </mat-select-trigger>
-                    <mat-option
-                      *ngFor="let account of accounts.bankAccounts"
-                      [value]="account"
-                    >
-                      <div class="cybrid-option">
-                        <mat-icon>savings</mat-icon>
-                        <div>
-                          <span>{{
-                            account.plaid_institution_id + ' - '
-                          }}</span>
-                          <span>{{ account.plaid_account_name + ' ' }}</span>
-                          <span>{{
-                            '(' + account.plaid_account_mask + ')'
-                          }}</span>
+<ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
+  <ng-container *ngIf="(isLoading$ | async) !== true; else loading">
+    <ng-container *ngIf="{
+        fiatAccount: fiatAccount$ | async,
+        externalBankAccounts: externalBankAccounts$ | async
+      } as accounts">
+      <ng-container *ngIf="configService.getConfig$() | async as config">
+        <app-navigation [routingData]="routingData"></app-navigation>
+        <ng-container *ngIf="accounts.externalBankAccounts!.length > 0; else noAccount">
+          <app-account-balance [account]="accounts.fiatAccount"></app-account-balance>
+          <mat-tab-group animationDuration="0ms" (selectedTabChange)="onSwitchSide($event.tab.origin)">
+            <mat-tab label="{{ 'transfer.deposit' | translate | uppercase }}"></mat-tab>
+            <mat-tab label="{{ 'transfer.withdraw' | translate | uppercase }}"></mat-tab>
+          </mat-tab-group>
+          <ng-container [formGroup]="transferGroup">
+            <div class="cybrid-tabs">
+              <div class="cybrid-input-wrapper">
+                <div class="cybrid-input-flex">
+                  <label class="mat-hint cybrid-h5">{{
+                    'transfer.bankAccount' | translate
+                    }}</label>
+                  <mat-form-field appearance="outline">
+                    <mat-select #account formControlName="account">
+                      <mat-select-trigger>
+                        <div class="cybrid-option">
+                          <mat-icon>savings</mat-icon>
+                          <span class="cybrid-trigger-name">
+                            <strong>{{
+                              account.value.plaid_institution_id + ' - '
+                              }}</strong>
+                            <span>{{ account.value.plaid_account_name }}</span>
+                            <span class="mat-hint">{{
+                              ' (' + account.value.plaid_account_mask + ')'
+                              }}</span>
+                          </span>
                         </div>
-                      </div>
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-              <div class="cybrid-input-flex">
-                <label class="mat-hint cybrid-h5">{{
-                  'transfer.amount' | translate
-                }}</label>
-                <mat-form-field appearance="outline">
-                  <input
-                    matInput
-                    id="amount"
-                    [ngClass]="{ 'cybrid-amount-input': amount.value }"
-                    #amount="matInput"
-                    formControlName="amount"
-                    type="number"
-                    min="0"
-                    placeholder="0.00"
-                    step=".01"
-                  />
-                  <div *ngIf="amount.value" class="cybrid-prefix" matPrefix>
-                    {{ account.value.asset }}
-                    <div class="cybrid-amount-divider"></div>
-                  </div>
-                  <mat-error
-                    *ngIf="
-                      transferGroup.controls.amount.hasError(
-                        'nonSufficientFunds'
-                      )
-                    "
-                  >
-                    {{ 'transfer.nonSufficientFunds' | translate }}
-                  </mat-error>
-                </mat-form-field>
+                      </mat-select-trigger>
+                      <mat-option *ngFor="let account of accounts.externalBankAccounts" [value]="account">
+                        <div class="cybrid-option">
+                          <mat-icon>savings</mat-icon>
+                          <div>
+                            <span>{{
+                              account.plaid_institution_id + ' - '
+                              }}</span>
+                            <span>{{ account.plaid_account_name + ' ' }}</span>
+                            <span>{{
+                              '(' + account.plaid_account_mask + ')'
+                              }}</span>
+                          </div>
+                        </div>
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="cybrid-input-flex">
+                  <label class="mat-hint cybrid-h5">{{
+                    'transfer.amount' | translate
+                    }}</label>
+                  <mat-form-field appearance="outline">
+                    <input matInput id="amount" [ngClass]="{ 'cybrid-amount-input': amount.value }" #amount="matInput"
+                      formControlName="amount" type="number" min="0" placeholder="0.00" step=".01" />
+                    <div *ngIf="amount.value" class="cybrid-prefix" matPrefix>
+                      {{ account.value.asset }}
+                      <div class="cybrid-amount-divider"></div>
+                    </div>
+                    <mat-error *ngIf="
+                        transferGroup.controls.amount.hasError(
+                          'nonSufficientFunds'
+                        )
+                      ">
+                      {{ 'transfer.nonSufficientFunds' | translate }}
+                    </mat-error>
+                  </mat-form-field>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="cybrid-actions">
-            <button
-              id="action"
-              mat-flat-button
-              color="primary"
-              (click)="onTransfer()"
-              [disabled]="
-                transferGroup.invalid || (isCreatingTransfer$ | async)
-              "
-            >
-              {{
+            <div class="cybrid-actions">
+              <button id="action" mat-flat-button color="primary" (click)="onTransfer()" [disabled]="
+                  transferGroup.invalid || (isCreatingTransfer$ | async)
+                ">
+                {{
                 side === 'deposit'
-                  ? ('transfer.deposit' | translate | uppercase)
-                  : ('transfer.withdraw' | translate | uppercase)
-              }}
+                ? ('transfer.deposit' | translate | uppercase)
+                : ('transfer.withdraw' | translate | uppercase)
+                }}
+              </button>
+            </div>
+          </ng-container>
+        </ng-container>
+        <ng-template #noAccount>
+          <div class="cybrid-column cybrid-no-accounts">
+            <p>{{ 'transfer.noAccount' | translate }}</p>
+            <button mat-flat-button color="primary" (click)="onAddAccount()">
+              {{ 'transfer.addAccount' | translate }}
             </button>
           </div>
-        </ng-container>
+        </ng-template>
       </ng-container>
-      <ng-template #noAccount>
-        <div class="cybrid-column cybrid-no-accounts">
-          <p>{{ 'transfer.noAccount' | translate }}</p>
-          <button mat-flat-button color="primary" (click)="onAddAccount()">
-            {{ 'transfer.addAccount' | translate }}
-          </button>
-        </div>
-      </ng-template>
     </ng-container>
   </ng-container>
 </ng-container>
 <ng-template #loading>
   <app-loading></app-loading>
+</ng-template>
+<ng-template #error>
+  <mat-card>
+    <mat-card-content>
+      <div class="fatal">
+        <p>{{ 'fatal' | translate }}</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
 </ng-template>
