@@ -42,7 +42,7 @@
     "rxjs": "7.8.1",
     "tslib": "2.6.2",
     "zone.js": "0.13.3",
-    "angularx-qrcode": "15.0.1"
+    "angularx-qrcode": "17.0.0"
   },
   "devDependencies": {
     "@angular-builders/custom-webpack": "15.0.0",
