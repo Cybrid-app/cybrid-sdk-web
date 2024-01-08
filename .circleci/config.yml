@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  node: circleci/node@5.1.0
+  node: circleci/node@5.2.0
   browser-tools: circleci/browser-tools@1.4.6
   cypress: cypress-io/cypress@2.2.0
   codecov: codecov/codecov@3.3.0
@@ -10,12 +10,12 @@ orbs:
 executors:
   cypress:
     docker:
-      - image: cypress/base:20.9.0
+      - image: cypress/base:20.10.0
 
 jobs:
   publish:
     docker:
-      - image: cimg/node:21.4.0
+      - image: cimg/node:21.5.0
     working_directory: ~/project
     steps:
       - checkout
@@ -37,7 +37,7 @@ jobs:
 
   check-versions:
     docker:
-      - image: cimg/node:21.4.0
+      - image: cimg/node:21.5.0
     working_directory: ~/project
     steps:
       - checkout
@@ -55,7 +55,7 @@ jobs:
 
   deploy-demo:
     docker:
-      - image: cimg/node:21.4.0
+      - image: cimg/node:21.5.0
     steps:
       - run:
           name: Trigger Github workflow
