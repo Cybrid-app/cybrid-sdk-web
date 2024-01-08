@@ -7,17 +7,16 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
-  EMPTY,
-  expand,
+  filter,
   interval,
   map,
   of,
-  reduce,
   startWith,
   Subject,
   switchMap,
   take,
-  takeUntil
+  takeUntil,
+  tap
 } from 'rxjs';
 
 // Services
@@ -47,13 +46,12 @@ import {
 import { ExternalBankAccountBankModel } from '@cybrid/cybrid-api-bank-angular/model/externalBankAccount';
 import {
   AccountBankModel,
-  ExternalBankAccountListBankModel,
   PostQuoteBankModel,
   QuoteBankModel,
   QuotesService,
   TransferBankModel
 } from '@cybrid/cybrid-api-bank-angular';
-import { Account, PostQuote } from '@models';
+import { PostQuote } from '@models';
 
 // Utility
 import { AssetFormatPipe } from '@pipes';
@@ -71,8 +69,9 @@ interface TransferGroup {
   styleUrls: ['./transfer.component.scss']
 })
 export class TransferComponent implements OnInit, OnDestroy {
-  bankAccounts$: BehaviorSubject<ExternalBankAccountBankModel[] | null> =
-    new BehaviorSubject<ExternalBankAccountBankModel[] | null>(null);
+  externalBankAccounts$: BehaviorSubject<
+    ExternalBankAccountBankModel[] | null
+  > = new BehaviorSubject<ExternalBankAccountBankModel[] | null>(null);
   fiatAccount$: BehaviorSubject<AccountBankModel | null> =
     new BehaviorSubject<AccountBankModel | null>(null);
 
@@ -82,14 +81,13 @@ export class TransferComponent implements OnInit, OnDestroy {
   isCreatingTransfer$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   isLoading$ = new BehaviorSubject(true);
+  isRecoverable$ = new BehaviorSubject(true);
   unsubscribe$ = new Subject();
 
   routingData: RoutingData = {
     route: 'account-list',
     origin: 'transfer'
   };
-
-  externalBankAccountsPerPage = 10;
 
   constructor(
     public configService: ConfigService,
@@ -108,12 +106,70 @@ export class TransferComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initTransferGroup();
-    this.listAccounts();
+    this.getFiatAccount();
+    this.listExternalBankAccounts();
+
+    combineLatest([this.fiatAccount$, this.externalBankAccounts$])
+      .pipe(tap(() => this.isLoading$.next(false)))
+      .subscribe();
   }
 
   ngOnDestroy() {
     this.unsubscribe$.next('');
     this.unsubscribe$.complete();
+  }
+
+  getFiatAccount(): void {
+    this.configService
+      .getConfig$()
+      .pipe(
+        take(1),
+        switchMap((config) => interval(config.refreshInterval)),
+        startWith(0),
+        takeUntil(this.unsubscribe$),
+        switchMap(() =>
+          this.accountService.listAccounts(
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            'fiat'
+          )
+        ),
+        map((accounts) => accounts?.objects?.[0]),
+        tap((account) => {
+          this.fiatAsset = this.assetService.getAsset(account.asset!);
+          this.fiatAccount$.next(account);
+        }),
+        catchError((err) => {
+          this.isRecoverable$.next(false);
+          return of(err);
+        })
+      )
+      .subscribe();
+  }
+
+  listExternalBankAccounts(): void {
+    this.bankAccountService
+      .listExternalBankAccounts()
+      .pipe(
+        map((accounts) => accounts?.objects),
+        map((accounts) =>
+          accounts.filter((account) => account.state === 'completed')
+        ),
+        tap((accounts) => {
+          this.externalBankAccounts$.next(accounts);
+
+          this.transferGroup.patchValue({
+            account: accounts[0]
+          });
+        }),
+        catchError((err) => {
+          this.isRecoverable$.next(false);
+          return of(err);
+        })
+      )
+      .subscribe();
   }
 
   initTransferGroup() {
@@ -132,7 +188,6 @@ export class TransferComponent implements OnInit, OnDestroy {
         const amountControl = this.transferGroup.controls.amount;
 
         if (value) {
-          // Todo: @Dustin Swap for AssetFormatPipe
           const platformAvailable = this.assetFormatPipe.transform(
             this.fiatAccount$.getValue()?.platform_available!,
             this.fiatAsset.code,
@@ -167,99 +222,6 @@ export class TransferComponent implements OnInit, OnDestroy {
     // Update 'amount' validators which are dependent on side
     this.transferGroup.controls.amount.clearValidators();
     this.transferGroup.controls.amount.updateValueAndValidity();
-  }
-
-  // Expand function to page through external accounts
-  pageExternalAccounts(
-    perPage: number,
-    list: ExternalBankAccountListBankModel
-  ) {
-    return list.objects.length == perPage
-      ? this.bankAccountService.listExternalBankAccounts(
-          (Number(list.page) + 1).toString(),
-          perPage.toString()
-        )
-      : EMPTY;
-  }
-
-  accumulateExternalAccounts(
-    acc: ExternalBankAccountBankModel[],
-    value: ExternalBankAccountBankModel[]
-  ) {
-    return [...acc, ...value];
-  }
-
-  listAccounts(): void {
-    this.configService
-      .getConfig$()
-      .pipe(
-        take(1),
-        switchMap((config) => interval(config.refreshInterval)),
-        startWith(0),
-        switchMap(() =>
-          combineLatest([
-            this.bankAccountService
-              .listExternalBankAccounts(
-                undefined,
-                this.externalBankAccountsPerPage.toString()
-              )
-              .pipe(
-                expand((list) =>
-                  this.pageExternalAccounts(
-                    this.externalBankAccountsPerPage,
-                    list
-                  )
-                ),
-                map((list) => list.objects),
-                reduce((acc, value) =>
-                  this.accumulateExternalAccounts(acc, value)
-                ),
-                map((accounts) =>
-                  accounts.filter((account) => account.state === 'completed')
-                ),
-                catchError((err) => of(err))
-              ),
-            this.accountService.listAccounts().pipe(
-              map((accountList) => accountList.objects),
-              map((accounts) => {
-                return accounts.find(
-                  (account) => account.type == Account.TypeEnum.Fiat
-                );
-              }),
-              catchError((err) => of(err))
-            )
-          ])
-        ),
-        map((combined) => {
-          const [bankAccounts, fiatAccount]: [
-            ExternalBankAccountBankModel[],
-            AccountBankModel
-          ] = combined;
-
-          this.fiatAsset = this.assetService.getAsset(fiatAccount.asset!);
-          this.fiatAccount$.next(fiatAccount);
-          this.bankAccounts$.next(bankAccounts);
-
-          this.transferGroup.patchValue({
-            account: bankAccounts[0]
-          });
-
-          this.isLoading$.next(false);
-        }),
-        takeUntil(this.unsubscribe$),
-        catchError((err) => {
-          this.eventService.handleEvent(
-            LEVEL.ERROR,
-            CODE.DATA_ERROR,
-            'There was an error fetching bank account details'
-          );
-          this.errorService.handleError(
-            new Error('There was an error fetching bank account details')
-          );
-          return of(err);
-        })
-      )
-      .subscribe();
   }
 
   onTransfer(): void {

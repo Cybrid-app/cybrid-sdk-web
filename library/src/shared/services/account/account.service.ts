@@ -4,8 +4,6 @@ import {
   EMPTY,
   expand,
   map,
-  tap,
-  throwError,
   Observable,
   of,
   reduce,
@@ -49,22 +47,27 @@ export class AccountService implements OnDestroy {
 
   listAccounts(
     page?: string,
-    perPage?: string
+    perPage?: string,
+    owner?: string,
+    guid?: string,
+    type?: string
   ): Observable<AccountListBankModel> {
-    return this.accountsService.listAccounts(page, perPage).pipe(
-      catchError((err) => {
-        this.eventService.handleEvent(
-          LEVEL.ERROR,
-          CODE.DATA_ERROR,
-          'There was an error listing accounts'
-        );
+    return this.accountsService
+      .listAccounts(page, perPage, owner, guid, type)
+      .pipe(
+        catchError((err) => {
+          this.eventService.handleEvent(
+            LEVEL.ERROR,
+            CODE.DATA_ERROR,
+            'There was an error listing accounts'
+          );
 
-        this.errorService.handleError(
-          new Error('There was an error listing accounts')
-        );
-        return of(err);
-      })
-    );
+          this.errorService.handleError(
+            new Error('There was an error listing accounts')
+          );
+          return of(err);
+        })
+      );
   }
 
   pageAccounts(perPage: number, list: AccountListBankModel) {
