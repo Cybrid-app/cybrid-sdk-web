@@ -102,7 +102,7 @@ export class TransferComponent implements OnInit, OnDestroy {
     private router: RoutingService,
     private dialog: MatDialog,
     private snackbar: MatSnackBar
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.initTransferGroup();
