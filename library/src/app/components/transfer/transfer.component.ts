@@ -102,7 +102,7 @@ export class TransferComponent implements OnInit, OnDestroy {
     private router: RoutingService,
     private dialog: MatDialog,
     private snackbar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initTransferGroup();
@@ -110,7 +110,10 @@ export class TransferComponent implements OnInit, OnDestroy {
     this.listExternalBankAccounts();
 
     combineLatest([this.fiatAccount$, this.externalBankAccounts$])
-      .pipe(tap(() => this.isLoading$.next(false)))
+      .pipe(
+        take(1),
+        tap(() => this.isLoading$.next(false))
+      )
       .subscribe();
   }
 
