@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, Renderer2, ViewChild } from '@angular/core';
-import { ActivatedRoute, NavigationExtras } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { Platform } from '@angular/cdk/platform';
 import { MatStepper } from '@angular/material/stepper';
@@ -73,7 +73,7 @@ export class BankAccountConnectComponent implements OnInit {
     route: 'bank-account-list'
   };
 
-  externalBankAccountGuid: NavigationExtras | undefined;
+  externalBankAccountGuid: string | undefined = undefined;
 
   mobile$: BehaviorSubject<boolean | null> = new BehaviorSubject<
     boolean | null
@@ -101,12 +101,11 @@ export class BankAccountConnectComponent implements OnInit {
       CODE.COMPONENT_INIT,
       'Initializing bank-account-connect component'
     );
-    this.configService
-      .getConfig$()
+    combineLatest([this.configService.getConfig$(), this.route.queryParams])
       .pipe(
         take(1),
-        tap((config) => {
-          // Handle if mobile and no redirect uri has been set
+        tap((combined) => {
+          const [config, params] = combined;
 
           if (this.isMobile() && !config.redirectUri) {
             const message =
@@ -120,16 +119,17 @@ export class BankAccountConnectComponent implements OnInit {
             this.mobile$.next(true);
           } else {
             const linkToken = this.window.localStorage.getItem('linkToken');
-
             const oauth_state_id = this.getQueryParam('oauth_state_id');
-            const externalBankAccountGuid = this.getQueryParam(
-              'external_bank_account'
-            );
 
-            if (linkToken && oauth_state_id) {
+            this.externalBankAccountGuid =
+              this.getQueryParam('external_bank_account') ??
+              params['externalBankAccountGuid'] ??
+              this.window.localStorage.getItem('externalBankAccountGuid');
+
+            if (linkToken && oauth_state_id && this.externalBankAccountGuid) {
               this.bootstrapPlaid(linkToken, oauth_state_id);
-            } else if (externalBankAccountGuid) {
-              this.onAddAccount(externalBankAccountGuid);
+            } else if (this.externalBankAccountGuid) {
+              this.processAccount();
             } else this.checkSupportedFiatAssets();
           }
         })
@@ -171,26 +171,24 @@ export class BankAccountConnectComponent implements OnInit {
             );
             this.errorService.handleError(new Error(message));
           } else {
-            this.onAddAccount();
+            this.processAccount();
           }
         })
       )
       .subscribe();
   }
 
-  onAddAccount(externalBankAccountGuid?: string): void {
-    this.route.queryParams
+  processAccount(): void {
+    const workflow = this.externalBankAccountGuid
+      ? this.createWorkflow(
+          PostWorkflowBankModel.KindEnum.Update,
+          this.externalBankAccountGuid
+        )
+      : this.createWorkflow(PostWorkflowBankModel.KindEnum.Create);
+
+    workflow
       .pipe(
         take(1),
-        switchMap((params) => {
-          const guid =
-            externalBankAccountGuid ?? params['externalBankAccountGuid'];
-          this.externalBankAccountGuid = guid;
-
-          return guid
-            ? this.createWorkflow(PostWorkflowBankModel.KindEnum.Update, guid)
-            : this.createWorkflow(PostWorkflowBankModel.KindEnum.Create);
-        }),
         map((workflow) => {
           this.bootstrapPlaid(workflow.plaid_link_token!);
         }),
@@ -213,13 +211,13 @@ export class BankAccountConnectComponent implements OnInit {
 
   createWorkflow(
     kind: PostWorkflowBankModel.KindEnum,
-    externalAccountGuid?: string
+    externalBankAccountGuid?: string
   ): Observable<WorkflowWithDetailsBankModel> {
     const poll = new Poll(this.pollConfig);
     let workflow_guid: string;
 
     return this.bankAccountService
-      .createWorkflow(kind, externalAccountGuid)
+      .createWorkflow(kind, externalBankAccountGuid)
       .pipe(
         map((workflow) => (workflow_guid = workflow.guid!)),
         switchMap(() => poll.start()),
@@ -325,7 +323,11 @@ export class BankAccountConnectComponent implements OnInit {
       this.bankAccountService
         .patchExternalBankAccount(<string>this.externalBankAccountGuid)
         .pipe(
-          map(() => this.isLoading$.next(false)),
+          tap(() => {
+            this.window.localStorage.removeItem('linkToken');
+            this.window.localStorage.removeItem('externalBankAccountGuid');
+            this.isLoading$.next(false);
+          }),
           catchError((err) => {
             this.error$.next(true);
             return of(err);
