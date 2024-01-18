@@ -148,7 +148,22 @@ describe('BankAccountConnectComponent', () => {
     MockConfigService.getConfig$.calls.reset();
     MockConfigService.getCustomer$.calls.reset();
     MockRoutingService.handleRoute.calls.reset();
+    MockConfigService.getConfig$.and.returnValue(of(TestConstants.CONFIG));
     MockBankAccountService.createWorkflow.calls.reset();
+    MockBankAccountService.createWorkflow.and.returnValue(
+      of(TestConstants.WORKFLOW_BANK_MODEL)
+    );
+    MockBankAccountService.getWorkflow.and.returnValue(
+      of(TestConstants.WORKFLOW_BANK_MODEL_WITH_DETAILS)
+    );
+    MockBankAccountService.patchExternalBankAccount.and.returnValue(
+      of(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL)
+    );
+    MockBankAccountService.createExternalBankAccount.and.returnValue(
+      of(TestConstants.EXTERNAL_BANK_ACCOUNT_BANK_MODEL)
+    );
+    MockBankAccountService.getPlaidClient.and.returnValue(of(false));
+    MockActivatedRoute.queryParams = of({});
   });
 
   it('should create', () => {
@@ -362,6 +377,7 @@ describe('BankAccountConnectComponent', () => {
   describe('when bootstrapping Plaid', () => {
     beforeEach(() => {
       MockBankAccountService.setPlaidClient.calls.reset();
+      MockBankAccountService.getPlaidClient.and.returnValue(of(false));
     });
     describe('when there is no Plaid client', () => {
       it('should create a Plaid client', () => {
@@ -374,11 +390,9 @@ describe('BankAccountConnectComponent', () => {
     });
 
     describe('when there is a Plaid client', () => {
-      beforeEach(() => {
-        MockBankAccountService.getPlaidClient.and.returnValue(of(true));
-      });
-
       it('should not create a Plaid client', () => {
+        MockBankAccountService.getPlaidClient.and.returnValue(of(true));
+
         component.bootstrapPlaid('', '');
 
         expect(MockBankAccountService.setPlaidClient).not.toHaveBeenCalled();
@@ -397,133 +411,128 @@ describe('BankAccountConnectComponent', () => {
     });
   });
 
-  describe('when Plaid is successful', () => {});
+  describe('when Plaid is successful', () => {
+    describe('with no existing external bank account', () => {
+      describe('with multiple accounts returned', () => {
+        it('should return an error', () => {
+          const errorSpy = spyOn(component.error$, 'next');
 
-  // it('should bootstrap the Plaid sdk', () => {
-  //   // Default
-  //   component.bootstrapPlaid('');
-  //
-  //   // Previously loaded client
-  //   MockBankAccountService.getPlaidClient.and.returnValue(of(true));
-  //   component.bootstrapPlaid('');
-  //
-  //   // Ensure only one client has been loaded
-  //   expect(MockBankAccountService.setPlaidClient).toHaveBeenCalledOnceWith(
-  //     true
-  //   );
-  //
-  //   // Reset
-  //   MockBankAccountService.getPlaidClient.and.returnValue(of(false));
-  // });
-  //
-  // it('should handle errors when bootstrapping plaid', () => {
-  //   MockBankAccountService.getPlaidClient.and.returnValue(error$);
-  //
-  //   component.bootstrapPlaid('');
-  //
-  //   expect(MockErrorService.handleError).toHaveBeenCalled();
-  //   expect(MockEventService.handleEvent).toHaveBeenCalled();
-  //
-  //   // Reset
-  //   MockBankAccountService.getPlaidClient.and.returnValue(error$);
-  // });
-  //
-  // it('should handle plaidOnSuccess() with multiple accounts selected', () => {
-  //   const errorSpy = spyOn(component.error$, 'next');
-  //
-  //   component.plaidOnSuccess('', {
-  //     accounts: [
-  //       { name: '', id: '', iso_currency_code: '' },
-  //       { name: '', id: '', iso_currency_code: '' }
-  //     ]
-  //   });
-  //   expect(errorSpy).toHaveBeenCalledWith(true);
-  //   expect(MockErrorService.handleError).toHaveBeenCalled();
-  //   expect(MockEventService.handleEvent).toHaveBeenCalled();
-  // });
-  //
-  // it('should handle plaidOnSuccess() with a supported currency code', () => {
-  //   component.plaidOnSuccess('', {
-  //     accounts: [{ name: '', id: '', iso_currency_code: 'USD' }]
-  //   });
-  //   expect(MockBankAccountService.createExternalBankAccount).toHaveBeenCalled();
-  // });
-  //
-  // it('should handle plaidOnSuccess() with an unsupported currency code', () => {
-  //   const errorSpy = spyOn(component.error$, 'next');
-  //
-  //   component.plaidOnSuccess('', {
-  //     accounts: [{ name: '', id: '', iso_currency_code: 'CAD' }]
-  //   });
-  //   expect(errorSpy).toHaveBeenCalledWith(true);
-  // });
-  //
-  // it('should handle plaidOnSuccess() with an undefined iso_currency_code', () => {
-  //   const getCurrencyCodeSpy = spyOn(component, 'getCurrencyCode');
-  //
-  //   component.plaidOnSuccess('', {
-  //     accounts: [{ name: '', id: '', iso_currency_code: undefined }]
-  //   });
-  //   expect(getCurrencyCodeSpy).toHaveBeenCalled();
-  // });
-  //
-  // it('should handle plaidOnSuccess() in update mode', () => {
-  //   // Define an external account guid to trigger update mode
-  //   // @ts-ignore
-  //   component.externalBankAccountGuid = '';
-  //
-  //   component.plaidOnSuccess('', {
-  //     accounts: [{ name: '', id: '', iso_currency_code: 'USD' }]
-  //   });
-  //
-  //   expect(MockBankAccountService.patchExternalBankAccount).toHaveBeenCalled();
-  // });
-  //
-  // it('should handle getCurrencyCode() returning undefined', () => {
-  //   // Ensure stepper is defined
-  //   component.stepper = { next: () => {} } as MatStepper;
-  //   const stepperSpy = spyOn(component.stepper, 'next');
-  //
-  //   MockDialog.open.and.returnValue({
-  //     afterClosed: () => of(undefined)
-  //   });
-  //
-  //   component.plaidOnSuccess('', {
-  //     accounts: [{ name: '', id: '', iso_currency_code: undefined }]
-  //   });
-  //   expect(stepperSpy).toHaveBeenCalled();
-  //
-  //   // Reset
-  //   MockDialog.open.and.returnValue({
-  //     afterClosed: () => of('USD')
-  //   });
-  // });
-  //
-  // it('should handle a successful plaidOnExit()', () => {
-  //   // Ensure stepper is defined
-  //   component.stepper = { next: () => {} } as MatStepper;
-  //   const stepperSpy = spyOn(component.stepper, 'next');
-  //
-  //   component.plaidOnExit('', {});
-  //   expect(stepperSpy).toHaveBeenCalled();
-  // });
-  //
-  // it('should handle plaidOnExit() with metadata', () => {
-  //   component.stepper = { next: () => {} } as MatStepper;
-  //   component.plaidOnExit('', {});
-  //
-  //   expect(MockEventService.handleEvent).toHaveBeenCalled();
-  // });
-  //
-  // it('should handle plaidOnExit() with an error', () => {
-  //   component.plaidOnExit('error', {});
-  //
-  //   expect(MockErrorService.handleError).toHaveBeenCalled();
-  //   expect(MockEventService.handleEvent).toHaveBeenCalled();
-  // });
-  //
-  // it('should navigate onComplete()', () => {
-  //   component.onComplete();
-  //   expect(MockRoutingService.handleRoute).toHaveBeenCalled();
-  // });
+          component.plaidOnSuccess('', {
+            accounts: [
+              { name: '', id: '', iso_currency_code: '' },
+              { name: '', id: '', iso_currency_code: '' }
+            ]
+          });
+          expect(errorSpy).toHaveBeenCalledWith(true);
+          expect(MockErrorService.handleError).toHaveBeenCalled();
+          expect(MockEventService.handleEvent).toHaveBeenCalled();
+        });
+      });
+
+      describe('with one account returned', () => {
+        describe('with a supported currency code', () => {
+          it('should create an external bank account', () => {
+            component.plaidOnSuccess('', {
+              accounts: [{ name: '', id: '', iso_currency_code: 'USD' }]
+            });
+            expect(
+              MockBankAccountService.createExternalBankAccount
+            ).toHaveBeenCalled();
+          });
+        });
+
+        describe('with an unsupported currency code', () => {
+          it('should handle plaidOnSuccess() with an unsupported currency code', () => {
+            const errorSpy = spyOn(component.error$, 'next');
+
+            component.plaidOnSuccess('', {
+              accounts: [{ name: '', id: '', iso_currency_code: 'CAD' }]
+            });
+            expect(errorSpy).toHaveBeenCalledWith(true);
+          });
+        });
+
+        describe('with an undefined iso_currency_code', () => {
+          it('should get the currency code', () => {
+            const getCurrencyCodeSpy = spyOn(component, 'getCurrencyCode');
+
+            component.plaidOnSuccess('', {
+              accounts: [{ name: '', id: '', iso_currency_code: undefined }]
+            });
+            expect(getCurrencyCodeSpy).toHaveBeenCalled();
+          });
+        });
+
+        describe('when no currency code is returned', () => {
+          it('should move to the next step', () => {
+            component.stepper = { next: () => {} } as MatStepper;
+            const stepperSpy = spyOn(component.stepper, 'next');
+            component.getCurrencyCode = () => of(undefined);
+
+            component.plaidOnSuccess('', {
+              accounts: [{ name: '', id: '', iso_currency_code: undefined }]
+            });
+
+            expect(stepperSpy).toHaveBeenCalled();
+          });
+        });
+      });
+    });
+
+    describe('with an existing external bank account', () => {
+      beforeEach(() => {
+        component.externalBankAccountGuid = '';
+      });
+
+      it('should patch the external bank account', () => {
+        component.plaidOnSuccess('', {
+          accounts: [{ name: '', id: '', iso_currency_code: 'USD' }]
+        });
+
+        expect(
+          MockBankAccountService.patchExternalBankAccount
+        ).toHaveBeenCalled();
+      });
+
+      it('should handle errors', () => {
+        const error$Spy = spyOn(component.error$, 'next');
+        MockBankAccountService.patchExternalBankAccount.and.returnValue(error$);
+
+        component.plaidOnSuccess('', {
+          accounts: [{ name: '', id: '', iso_currency_code: 'USD' }]
+        });
+
+        expect(error$Spy).toHaveBeenCalledWith(true);
+      });
+    });
+  });
+
+  describe('when Plaid exits', () => {
+    describe('when Plaid is successful', () => {
+      it('should move to the next step', () => {
+        component.stepper = { next: () => {} } as MatStepper;
+        const stepperSpy = spyOn(component.stepper, 'next');
+
+        component.plaidOnExit('', {});
+        expect(stepperSpy).toHaveBeenCalled();
+        expect(MockEventService.handleEvent).toHaveBeenCalled();
+      });
+    });
+
+    describe('when Plaid is unsuccessful', () => {
+      it('should handle errors', () => {
+        component.plaidOnExit('error', {});
+
+        expect(MockErrorService.handleError).toHaveBeenCalled();
+        expect(MockEventService.handleEvent).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('when complete', () => {
+    it('should navigate', () => {
+      component.onComplete();
+      expect(MockRoutingService.handleRoute).toHaveBeenCalled();
+    });
+  });
 });

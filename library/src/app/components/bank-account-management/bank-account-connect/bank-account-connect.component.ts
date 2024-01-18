@@ -138,17 +138,19 @@ export class BankAccountConnectComponent implements OnInit {
   }
 
   getQueryParam(param: string): string | null {
-    return (
-      new URLSearchParams(this.window.location.search).get(param) ??
-      (() => {
-        const queryStringIndex = this.window.location.hash.indexOf('?');
-        return queryStringIndex !== -1
-          ? new URLSearchParams(
-              this.window.location.hash.substring(queryStringIndex)
-            ).get(param)
-          : null;
-      })()
+    const searchParams = new URLSearchParams(this.window.location.search);
+    const hashParams = new URLSearchParams(
+      this.window.location.hash.substring(
+        this.window.location.hash.indexOf('?') + 1
+      )
     );
+
+    const paramValueFromSearch = searchParams.get(param);
+    const paramValueFromHash = hashParams.get(param);
+
+    return paramValueFromSearch !== null
+      ? paramValueFromSearch
+      : paramValueFromHash;
   }
 
   isMobile(): boolean {
