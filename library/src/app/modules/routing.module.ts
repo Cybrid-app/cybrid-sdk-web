@@ -12,7 +12,8 @@ import {
   TransferComponent,
   BankAccountListComponent,
   FiatAccountDetailsComponent,
-  DepositAddressComponent
+  DepositAddressComponent,
+  ExternalWalletListComponent
 } from '@components';
 
 import { ComponentGuard } from '@guards';
@@ -74,6 +75,11 @@ export const routes: Routes = [
       {
         path: 'deposit-address',
         component: DepositAddressComponent,
+        canActivate: [ComponentGuard]
+      },
+      {
+        path: 'external-wallet',
+        component: ExternalWalletListComponent,
         canActivate: [ComponentGuard]
       }
     ]

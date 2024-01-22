@@ -1,0 +1,24 @@
+<ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
+    <app-navigation [routingData]="routingData"></app-navigation>
+    <ng-container *ngIf="(isLoadingWallets$ | async) !== true; else loading">
+        <ng-container *ngIf="configService.getConfig$() | async as config">
+
+            <div class="cybrid-header">
+                <span class="cybrid-h2 cybrid-strong asset">{{ 'depositAddress.title' | translate }}</span>
+            </div>
+
+        </ng-container>
+    </ng-container>
+</ng-container>
+<ng-template #loading>
+    <app-loading></app-loading>
+</ng-template>
+<ng-template #error>
+    <mat-card>
+      <mat-card-content>
+        <div class="cybrid-fatal">
+          <p>{{ 'fatal' | translate }}</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+</ng-template>

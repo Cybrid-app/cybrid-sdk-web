@@ -17,3 +17,4 @@ export {
   DepositAddressPaymentComponent,
   DepositAddressPayment
 } from './deposit-address/deposit-address-payment/deposit-address-payment.component';
+export * from './external-wallet';

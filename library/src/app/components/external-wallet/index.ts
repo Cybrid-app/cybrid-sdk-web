@@ -1,0 +1,1 @@
+export { ExternalWalletListComponent } from './external-wallet-list/external-wallet-list.component';
