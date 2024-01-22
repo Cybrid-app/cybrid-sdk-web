@@ -1,12 +1,64 @@
 <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
     <app-navigation [routingData]="routingData"></app-navigation>
     <ng-container *ngIf="(isLoadingWallets$ | async) !== true; else loading">
+        <div class="cybrid-header">
+            <span class="cybrid-h2 cybrid-strong asset">{{ 'externalWallet.title' | translate }}</span>
+        </div>
         <ng-container *ngIf="configService.getConfig$() | async as config">
+            <div class="cybrid-table">
+                <mat-progress-bar *ngIf="isLoadingResults$ | async" mode="indeterminate"></mat-progress-bar>
+                <table id="transferList" class="cybrid-paginator mat-button-toggle-group-appearance-standard"
+                    [ngClass]="{ 'cybrid-paginator': totalRows > 20 }" mat-table [dataSource]="dataSource" matSort
+                    matSortDisableClear (matSortChange)="sortChange()">
+                    <!-- Wallet item -->
+                    <!-- Name -->
+                    <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header="">
+                            <div class="cybrid-sort-header">
+                                {{ 'externalWallet.listWallets.name' | translate }}
+                            </div>
+                        </th>
+                        <td id="name" mat-cell *matCellDef="let wallet">
+                            <div class="cybrid-name-colum">
+                                <img class="cybrid-icon" src="{{ wallet.asset | assetIcon }}" alt="Crypto currency icon" />
+                                <span class="cybrid-h5 mat-hint">
+                                    {{ wallet.name }}
+                                    <span class="mat-hint cybrid-h5 cybrid-code">
+                                        {{ wallet.asset }}</span>
+                                </span>
+                            </div>
+                        </td>
+                    </ng-container>
 
-            <div class="cybrid-header">
-                <span class="cybrid-h2 cybrid-strong asset">{{ 'depositAddress.title' | translate }}</span>
+                    <!-- State -->
+                    <ng-container matColumnDef="state">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header="" arrowPosition="before">
+                            <div class="cybrid-sort-header">
+                                {{ 'externalWallet.listWallets.state' | translate }}
+                            </div>
+                        </th>
+                        <td id="state" mat-cell *matCellDef="let wallet">
+                            <div class="cybrid-state-colum">
+                                <div class="status-chip">
+                                    <span class="state-{{ wallet.state }}">{{ wallet.state | titlecase }}</span>
+                                </div>
+                            </div>
+                        </td>
+                    </ng-container>
+                    
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr class="cybrid-pointer" mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                    <tr class="mat-row" *matNoDataRow>
+                        <td id="warning" class="mat-cell cybrid-no-data" colspan="2">
+                            {{ 'accountDetails.error.noData' | translate }}
+                        </td>
+                    </tr>
+                </table>
             </div>
-
+            <mat-paginator class="mat-button-toggle-group-appearance-standard" aria-label="account and balances"
+                [ngClass]="{ 'cybrid-hide': totalRows <= 20 }" [pageSize]="pageSize" [pageIndex]="currentPage"
+                [length]="totalRows" [pageSizeOptions]="pageSizeOptions" (page)="pageChange($event)">
+            </mat-paginator>
         </ng-container>
     </ng-container>
 </ng-container>

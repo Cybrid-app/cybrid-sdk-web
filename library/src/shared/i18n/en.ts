@@ -263,6 +263,15 @@ export default {
     }
   },
 
+  // EXternal Wallet
+  externalWallet: {
+    title: 'My wallets',
+    listWallets: {
+      name: 'Wallet name',
+      state: 'State'
+    }
+  },
+
   // Auth service
   auth: {
     expired: 'User session has expired. Please login again.'

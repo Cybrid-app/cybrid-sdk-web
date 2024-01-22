@@ -1,0 +1,86 @@
+.cybrid-table {
+    position: relative;
+  }
+  
+  mat-progress-bar {
+    position: absolute;
+    top: 3.5rem;
+  }
+  
+  .cybrid-sort-header {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .mat-column-wallet {
+    .cybrid-sort-header {
+      text-align: start;
+    }
+  }
+  
+  .mat-column-balance {
+    .cybrid-sort-header {
+      text-align: end;
+    }
+  }
+  
+  .cybrid-name-colum {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .cybrid-state-colum {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+
+    .status-chip {
+        margin-left: 10px;
+        span {
+          font-size: 12px;
+          border-radius: 20px;
+          padding: 2px 17.5px;
+          line-height: 20px;
+          color: #000;
+          background-color: #fcda66;
+        
+          &.state-deleting {
+            color: #fff;
+            background-color: #d45736;
+          }
+
+          &.state-deleted {
+            color: #fff;
+            background-color: #d45736;
+          }
+
+          &.state-failed {
+            color: #fff;
+            background-color: #d45736;
+          }
+    
+          &.state-completed {
+            color: #fff;
+            background-color: #4dae51;
+          }
+        }
+      }
+  }
+  
+  .cybrid-symbol {
+    span:first-of-type {
+      font-weight: 500;
+    }
+  }
+  
+  .cybrid-icon {
+    max-width: 1.7rem;
+  }
+  
+  .cybrid-hide {
+    display: none;
+  }

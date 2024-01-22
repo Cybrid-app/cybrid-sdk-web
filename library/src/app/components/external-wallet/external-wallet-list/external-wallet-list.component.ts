@@ -76,7 +76,7 @@ export class ExternalWalletListComponent
     account$ = new BehaviorSubject<AccountBankModel | null>(null);
     walletList$ = new BehaviorSubject<ExternalWalletListBankModel | null>(null);
 
-    displayedColumns: string[] = ['transaction', 'balance'];
+    displayedColumns: string[] = ['name', 'state'];
 
     totalRows = 0;
     pageSize = 20;
@@ -134,8 +134,9 @@ export class ExternalWalletListComponent
             .listExternalWallets()
             .pipe(
                 tap((wallets) => {
-                    this.totalRows = Number(wallets.total);
-                    this.dataSource.data = wallets.objects;
+                    let walletsFiltered = wallets.objects.filter(item => !['deleted', 'deleting'].includes(item.state!));
+                    this.totalRows = Number(walletsFiltered.length);
+                    this.dataSource.data = walletsFiltered;
                     this.walletList$.next(wallets);
                     this.isLoadingResults$.next(false);
                 }),
@@ -178,12 +179,12 @@ export class ExternalWalletListComponent
 
     sortingWalletsDataAccessor(wallet: ExternalWalletBankModel, columnDef: string) {
         switch (columnDef) {
-          case 'transaction':
-            return wallet.created_at!;
-          case 'balance':
-            return wallet.name!;
-          default:
-            return '';
+            case 'name':
+                return wallet.name!;
+            case 'state':
+                return wallet.state!;
+            default:
+                return '';
         }
     }
 }
