@@ -10,54 +10,43 @@ import { ActivatedRoute, NavigationExtras } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatDialog } from '@angular/material/dialog';
 
 import {
     BehaviorSubject,
     catchError,
-    combineLatest,
-    map,
-    Observable,
     of,
     startWith,
     Subject,
     Subscription,
     switchMap,
     take,
+    map,
     takeUntil,
     tap,
-    timer,
-    withLatestFrom
+    timer
 } from 'rxjs';
 
 // Client
 import {
     ExternalWalletBankModel,
     ExternalWalletListBankModel,
-    AccountBankModel,
-    AssetBankModel
+    AccountBankModel
 } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
 import {
     ExternalWalletService,
-    AccountService,
     AssetService,
     CODE,
     ComponentConfig,
     ConfigService,
-    ErrorService,
     EventService,
     LEVEL,
     RoutingData,
     RoutingService
 } from '@services';
-  
-// Components
-import { TransferSummaryComponent } from '@components';
 
 // Utility
-import { symbolBuild } from '@utility';
 import { AssetFormatPipe } from '@pipes';
 
 @Component({
@@ -73,7 +62,6 @@ export class ExternalWalletListComponent
     @ViewChild(MatSort, { static: false }) sort!: MatSort;
     dataSource: MatTableDataSource<ExternalWalletBankModel> = new MatTableDataSource();
 
-    account$ = new BehaviorSubject<AccountBankModel | null>(null);
     walletList$ = new BehaviorSubject<ExternalWalletListBankModel | null>(null);
 
     displayedColumns: string[] = ['name', 'state'];
@@ -93,7 +81,7 @@ export class ExternalWalletListComponent
     unsubscribe$ = new Subject();
 
     routingData: RoutingData = {
-        route: 'external-wallet',
+        route: 'external-wallet-list',
         origin: 'external-wallet-list'
     };
 
@@ -186,5 +174,41 @@ export class ExternalWalletListComponent
             default:
                 return '';
         }
+    }
+
+    onAddWallet(): void {
+        /*const extras: NavigationExtras = {
+          queryParams: {
+            accountGuid: this.accountGuid
+          }
+        };
+        this.routingService.handleRoute({
+          origin: 'account-details',
+          route: 'deposit-address',
+          extras: extras
+        });*/
+    }
+
+    onWalletClick(wallet: ExternalWalletBankModel): void {
+        this.configService
+      .getConfig$()
+      .pipe(
+        take(1),
+        map((config: ComponentConfig) => {
+          if (config.routing) {
+            const extras: NavigationExtras = {
+                queryParams: {
+                    walletGuid: wallet.guid
+                }
+            }
+            this.routingService.handleRoute({
+                route: 'external-wallet-detail',
+                origin: 'external-wallet-list',
+                extras
+            });
+          }
+        })
+      )
+      .subscribe();
     }
 }

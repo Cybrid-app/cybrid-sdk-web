@@ -68,7 +68,7 @@ export class Constants {
     'bank-account-connect',
     'bank-account-list',
     'transfer',
-    'external-wallet'
+    'external-wallet-list'
   ];
   static COMPONENTS_BACKSTOPPED = [
     'price-list',

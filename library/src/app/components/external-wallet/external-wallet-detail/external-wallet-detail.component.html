@@ -1,0 +1,59 @@
+<ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
+    <app-navigation [routingData]="routingData"></app-navigation>
+    <ng-container *ngIf="(isLoadingWallet$ | async) !== true; else loading">
+        <ng-continer *ngIf="currentWallet$ | async as wallet">
+            <div class="cybrid-header">
+                <span class="cybrid-h2 cybrid-strong">{{ 'externalWalletDetail.title' | translate }}</span>
+                <div class="cybrid-state">
+                    <div class="status-chip">
+                        <span class="state-{{ wallet.state }}">{{ wallet.state | titlecase }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="asset">
+                <span class="mat-hint">{{ 'externalWalletDetail.asset' | translate }}</span>
+                <div class="asset-container">
+                    <img class="cybrid-icon" src="{{ wallet.asset | assetIcon }}" alt="Crypto currency icon" />
+                    <span class="cybrid-h3 cybrid-strong">{{ asset?.name! }}</span>
+                </div>
+            </div>
+
+            <div class="name">
+                <span class="mat-hint">{{ 'externalWalletDetail.name' | translate }}</span>
+                <span class="cybrid-h3 cybrid-strong item-value">{{ wallet?.name! }}</span>
+            </div>
+
+            <div class="address">
+                <span class="mat-hint">{{ 'externalWalletDetail.address' | translate }}</span>
+                <span class="cybrid-h3 cybrid-strong item-value">{{ wallet?.address! }}</span>
+            </div>
+
+            <ng-container *ngIf="wallet?.tag! !== '';">
+                <div class="tag">
+                    <span class="mat-hint">{{ 'externalWalletDetail.tag' | translate }}</span>
+                    <span class="cybrid-h3 cybrid-strong item-value">{{ wallet?.tag! }}</span>
+                </div>
+            </ng-container>
+
+            <div class="cybrid-actions">
+                <button id="external-wallet-delete" mat-flat-button color="primary" (click)="onDeleteWallet()">
+                  {{ 'externalWalletDetail.deleteWallet' | translate }}
+                </button>
+            </div>
+
+        </ng-continer>
+    </ng-container>
+</ng-container>
+<ng-template #loading>
+    <app-loading></app-loading>
+</ng-template>
+<ng-template #error>
+    <mat-card>
+      <mat-card-content>
+        <div class="cybrid-fatal">
+          <p>{{ 'fatal' | translate }}</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+</ng-template>

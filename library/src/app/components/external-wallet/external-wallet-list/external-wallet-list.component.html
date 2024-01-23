@@ -21,15 +21,11 @@
                         <td id="name" mat-cell *matCellDef="let wallet">
                             <div class="cybrid-name-colum">
                                 <img class="cybrid-icon" src="{{ wallet.asset | assetIcon }}" alt="Crypto currency icon" />
-                                <span class="cybrid-h5 mat-hint">
-                                    {{ wallet.name }}
-                                    <span class="mat-hint cybrid-h5 cybrid-code">
-                                        {{ wallet.asset }}</span>
-                                </span>
+                                <span class="cybrid-h3 ">{{ wallet.name }}</span>
+                                <span class="mat-hint cybrid-code">{{ wallet.asset }}</span>
                             </div>
                         </td>
                     </ng-container>
-
                     <!-- State -->
                     <ng-container matColumnDef="state">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header="" arrowPosition="before">
@@ -45,9 +41,8 @@
                             </div>
                         </td>
                     </ng-container>
-                    
                     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                    <tr class="cybrid-pointer" mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                    <tr class="cybrid-pointer" mat-row *matRowDef="let row; columns: displayedColumns" (click)="onWalletClick(row)"></tr>
                     <tr class="mat-row" *matNoDataRow>
                         <td id="warning" class="mat-cell cybrid-no-data" colspan="2">
                             {{ 'accountDetails.error.noData' | translate }}
@@ -59,6 +54,11 @@
                 [ngClass]="{ 'cybrid-hide': totalRows <= 20 }" [pageSize]="pageSize" [pageIndex]="currentPage"
                 [length]="totalRows" [pageSizeOptions]="pageSizeOptions" (page)="pageChange($event)">
             </mat-paginator>
+            <div class="cybrid-actions">
+                <button id="add-external-wallet" mat-flat-button color="primary" (click)="onAddWallet()">
+                  {{ 'externalWallet.addWallet' | translate }}
+                </button>
+              </div>
         </ng-container>
     </ng-container>
 </ng-container>

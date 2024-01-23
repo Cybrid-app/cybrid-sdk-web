@@ -269,7 +269,18 @@ export default {
     listWallets: {
       name: 'Wallet name',
       state: 'State'
-    }
+    },
+    addWallet: 'Add wallet'
+  },
+
+  // EXternal Wallet Detail
+  externalWalletDetail: {
+    title: 'My wallet',
+    asset: 'Asset',
+    name: 'Name',
+    address: 'Address',
+    tag: 'Tag',
+    deleteWallet: 'Delete'
   },
 
   // Auth service

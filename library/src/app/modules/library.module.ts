@@ -78,7 +78,8 @@ import {
   BankAccountDetailsComponent,
   DepositAddressComponent,
   DepositAddressPaymentComponent,
-  ExternalWalletListComponent
+  ExternalWalletListComponent,
+  ExternalWalletDetailComponent
 } from '@components';
 
 // Utility
@@ -120,6 +121,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     DepositAddressComponent,
     DepositAddressPaymentComponent,
     ExternalWalletListComponent,
+    ExternalWalletDetailComponent,
     AssetFormatPipe,
     TruncatePipe,
     AssetIconPipe,
