@@ -283,6 +283,20 @@ export default {
     deleteWallet: 'Delete'
   },
 
+  // EXternal Wallet Detail
+  externalWalletCreate: {
+    title: 'Create new wallet',
+    asset: 'Asset',
+    name: 'Name',
+    nameHint: 'Enter wallet name',
+    address: 'Address',
+    addressHint: 'Enter wallet address',
+    tag: 'Tag',
+    tagHint: 'Enter tag (optional)',
+    warning: 'You can lose all your coins ...',
+    createButton: 'Create wallet'
+  },
+
   // Auth service
   auth: {
     expired: 'User session has expired. Please login again.'

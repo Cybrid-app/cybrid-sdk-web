@@ -43,7 +43,6 @@ import {
 import {
     ExternalWalletService,
     TransferService,
-    AccountService,
     AssetService,
     CODE,
     ComponentConfig,
@@ -70,10 +69,6 @@ import { AssetFormatPipe } from '@pipes';
 export class ExternalWalletDetailComponent
   implements OnInit, AfterContentInit, OnDestroy
 {
-    @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
-    @ViewChild(MatSort, { static: false }) sort!: MatSort;
-    dataSource: MatTableDataSource<TransferBankModel> = new MatTableDataSource();
-
     walletGuid: string | null = null;
     asset: AssetBankModel | null = null;
     currentWallet$ = new BehaviorSubject<ExternalWalletBankModel | null>(null);
@@ -145,5 +140,41 @@ export class ExternalWalletDetailComponent
           .subscribe();
     }
 
-    onDeleteWallet(): void {}
+    onDeleteWallet(): void {
+
+        this.externalWalletService
+            .deleteExternalWallet(<string>this.walletGuid)
+            .pipe(
+                tap((wallet) => {
+                  this.onWallets();
+                }),
+                catchError((err) => {
+                  this.refreshDataSub?.unsubscribe();
+                  this.isRecoverable$.next(false);
+                  return of(err);
+                })
+              )
+              .subscribe();
+    }
+
+    onWallets(): void {
+        this.configService
+        .getConfig$()
+        .pipe(
+          take(1),
+          map((config: ComponentConfig) => {
+            if (config.routing) {
+              const extras: NavigationExtras = {
+                  queryParams: {}
+              }
+              this.routingService.handleRoute({
+                  route: 'external-wallet-list',
+                  origin: 'external-wallet-detail',
+                  extras
+              });
+            }
+          })
+        )
+        .subscribe();
+    }
 }

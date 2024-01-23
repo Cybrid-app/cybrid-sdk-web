@@ -91,4 +91,24 @@ export class ExternalWalletService implements OnDestroy {
                 })
             )
     }
+
+    deleteExternalWallet(externalWAlletGuid: string): Observable<ExternalWalletBankModel> {
+        return this.externalWalletsService
+            .deleteExternalWallet(<string> externalWAlletGuid)
+            .pipe(
+                catchError((err) => {
+                    this.eventService.handleEvent(
+                        LEVEL.ERROR,
+                        CODE.DATA_ERROR,
+                        'There was an error deleting external wallet'
+                    );
+
+                    this.errorService.handleError(
+                        new Error('There was an error deleting external wallet')
+                    );
+
+                    return of(err);
+                })
+            )
+    }
 }

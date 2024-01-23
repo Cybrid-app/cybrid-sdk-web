@@ -177,16 +177,24 @@ export class ExternalWalletListComponent
     }
 
     onAddWallet(): void {
-        /*const extras: NavigationExtras = {
-          queryParams: {
-            accountGuid: this.accountGuid
-          }
-        };
-        this.routingService.handleRoute({
-          origin: 'account-details',
-          route: 'deposit-address',
-          extras: extras
-        });*/
+        this.configService
+        .getConfig$()
+        .pipe(
+          take(1),
+          map((config: ComponentConfig) => {
+            if (config.routing) {
+              const extras: NavigationExtras = {
+                  queryParams: {}
+              }
+              this.routingService.handleRoute({
+                  route: 'external-wallet-create',
+                  origin: 'external-wallet-list',
+                  extras
+              });
+            }
+          })
+        )
+        .subscribe();
     }
 
     onWalletClick(wallet: ExternalWalletBankModel): void {

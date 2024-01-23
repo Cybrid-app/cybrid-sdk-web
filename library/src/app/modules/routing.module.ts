@@ -14,7 +14,8 @@ import {
   FiatAccountDetailsComponent,
   DepositAddressComponent,
   ExternalWalletListComponent,
-  ExternalWalletDetailComponent
+  ExternalWalletDetailComponent,
+  ExternalWalletCreateComponent
 } from '@components';
 
 import { ComponentGuard } from '@guards';
@@ -86,6 +87,11 @@ export const routes: Routes = [
       {
         path: 'external-wallet-detail',
         component: ExternalWalletDetailComponent,
+        canActivate: [ComponentGuard]
+      },
+      {
+        path: 'external-wallet-create',
+        component: ExternalWalletCreateComponent,
         canActivate: [ComponentGuard]
       }
     ]

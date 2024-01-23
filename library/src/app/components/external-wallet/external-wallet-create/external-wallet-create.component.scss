@@ -1,0 +1,49 @@
+.cybrid-header {
+    margin-bottom: 20px;
+}
+
+.cybrid-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.cybrid-option {
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.5rem;
+}
+  
+  .cybrid-trigger-name {
+    margin-left: 2.2rem;
+}
+  
+  .cybrid-trigger-icon {
+    position: absolute;
+    max-height: 1.7rem;
+    max-width: 1.7rem;
+}
+
+.cybrid-option-icon {
+    max-height: 1.7rem;
+    max-width: 1.7rem;
+}
+
+.cybrid-amount-input {
+    margin-left: 15px;
+}
+
+.warning {
+
+    padding: 7.5px 10px;
+    background-color: #fcf1ce;
+    border-radius: 5px;
+    margin-bottom: 10px;
+
+    span {
+
+        color: #f1b909;
+    }
+}
