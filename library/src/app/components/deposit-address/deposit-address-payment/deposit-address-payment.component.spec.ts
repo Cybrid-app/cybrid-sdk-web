@@ -100,6 +100,7 @@ describe('DepositAddressPaymentComponent', () => {
       account: TestConstants.ACCOUNT_BANK_MODEL_BTC
     };
     fixture.detectChanges();
+    component.account = TestConstants.ACCOUNT_BANK_MODEL_BTC;
     component.ngOnInit();
   });
 

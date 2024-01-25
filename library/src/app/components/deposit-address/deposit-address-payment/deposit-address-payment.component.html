@@ -1,5 +1,5 @@
 <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
-  
+  <ng-container *ngIf="(account != null || account != undefined)">
     <h2 mat-dialog-title>{{ 'depositAddress.paymentComponent.title' | translate }} {{ account.asset ?? "" }}</h2>
     <ng-container [formGroup]="depositAddressFormGroup">
       <div class="cybrid-input-flex amount-input">
@@ -38,6 +38,7 @@
         </button>
       </mat-dialog-actions>
     </ng-container>
+  </ng-container>
 </ng-container>
 
 <ng-template #loading>
