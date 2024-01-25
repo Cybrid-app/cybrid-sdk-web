@@ -20,7 +20,7 @@ import { ExternalWalletService, ErrorService, EventService } from '@services';
 // Utility
 import { TestConstants } from '@constants';
 
-fdescribe('ExternalWalletService', () => {
+describe('ExternalWalletService', () => {
     let service: ExternalWalletService;
     let MockEventService = jasmine.createSpyObj('EventService', ['handleEvent']);
     let MockErrorService = jasmine.createSpyObj('ErrorService', ['handleError']);

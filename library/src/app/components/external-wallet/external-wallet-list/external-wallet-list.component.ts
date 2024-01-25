@@ -102,14 +102,6 @@ export class ExternalWalletListComponent
           'Initializing external-wallet-list component'
         );
         this.refreshData();
-        this.configService
-            .getCustomer$()
-            .pipe(
-                tap((customer) => {
-                    console.log(customer);
-                })
-            )
-            .subscribe();
     }
 
     ngAfterContentInit() {
