@@ -93,7 +93,7 @@ export class BankAccountConnectComponent implements OnInit {
     private platform: Platform,
     private dialog: MatDialog,
     private window: Window
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.eventService.handleEvent(
@@ -183,9 +183,9 @@ export class BankAccountConnectComponent implements OnInit {
   processAccount(): void {
     const workflow = this.externalBankAccountGuid
       ? this.createWorkflow(
-          PostWorkflowBankModel.KindEnum.Update,
-          this.externalBankAccountGuid
-        )
+        PostWorkflowBankModel.KindEnum.Update,
+        this.externalBankAccountGuid
+      )
       : this.createWorkflow(PostWorkflowBankModel.KindEnum.Create);
 
     workflow
@@ -328,6 +328,11 @@ export class BankAccountConnectComponent implements OnInit {
           tap(() => {
             this.window.localStorage.removeItem('linkToken');
             this.window.localStorage.removeItem('externalBankAccountGuid');
+            this.eventService.handleEvent(
+              LEVEL.INFO,
+              CODE.PLAID_SDK_COMPLETE,
+              'Bank account successfully reconnected'
+            );
             this.isLoading$.next(false);
           }),
           catchError((err) => {
