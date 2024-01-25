@@ -492,6 +492,7 @@ describe('BankAccountConnectComponent', () => {
         expect(
           MockBankAccountService.patchExternalBankAccount
         ).toHaveBeenCalled();
+        expect(MockEventService.handleEvent).toHaveBeenCalled();
       });
 
       it('should handle errors', () => {

@@ -328,6 +328,11 @@ export class BankAccountConnectComponent implements OnInit {
           tap(() => {
             this.window.localStorage.removeItem('linkToken');
             this.window.localStorage.removeItem('externalBankAccountGuid');
+            this.eventService.handleEvent(
+              LEVEL.INFO,
+              CODE.PLAID_SDK_COMPLETE,
+              'Bank account successfully reconnected'
+            );
             this.isLoading$.next(false);
           }),
           catchError((err) => {
