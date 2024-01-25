@@ -17,25 +17,26 @@ import { AssetBankModel } from '@cybrid/cybrid-api-bank-angular';
 
 // Services
 import {
-    ExternalWalletService,
-    AssetService,
-    ConfigService,
-    ErrorService,
-    EventService,
-    RoutingService
+  ExternalWalletService,
+  AccountService,
+  AssetService,
+  ConfigService,
+  ErrorService,
+  EventService,
+  RoutingService
 } from '@services';
 
 // Components
-import { ExternalWalletDetailComponent } from '@components';
+import { ExternalWalletCreateComponent } from '@components';
 
 // Utility
 import { MockAssetFormatPipe, AssetFormatPipe, AssetIconPipe } from '@pipes';
 import { TestConstants } from '@constants';
 import { SharedModule } from '../../../../shared/modules/shared.module';
 
-describe('ExternalWalletDetailComponent', () => {
-    let component: ExternalWalletDetailComponent;
-    let fixture: ComponentFixture<ExternalWalletDetailComponent>;
+describe('ExternalWalletCreateComponent', () => {
+    let component: ExternalWalletCreateComponent;
+    let fixture: ComponentFixture<ExternalWalletCreateComponent>;
 
     let MockEventService = jasmine.createSpyObj('EventService', [
         'getEvent',
@@ -51,14 +52,19 @@ describe('ExternalWalletDetailComponent', () => {
         'getComponent$'
       ]);
       let MockExternalWalletService = jasmine.createSpyObj(
-        'ExternalWalletService', ['getExternalWallet', 'deleteExternalWallet']
+        'ExternalWalletService', ['createExternalWallet']
+      );
+      let MockAccountService = jasmine.createSpyObj(
+        'AccountService', ['listAccounts']
       );
       let MockRoutingService = jasmine.createSpyObj('RoutingService', [
         'handleRoute'
       ]);
+
       const error$ = throwError(() => {
         new Error('Error');
       });
+
       class MockAssetService {
         constructor() {}
         getAsset(code: string): AssetBankModel {
@@ -70,7 +76,7 @@ describe('ExternalWalletDetailComponent', () => {
       beforeEach(async () => {
         await TestBed.configureTestingModule({
           declarations: [
-            ExternalWalletDetailComponent,
+            ExternalWalletCreateComponent,
             MockAssetFormatPipe,
             AssetIconPipe
           ],
@@ -91,6 +97,7 @@ describe('ExternalWalletDetailComponent', () => {
             { provide: AssetService, useClass: MockAssetService },
             { provide: AssetFormatPipe, useClass: MockAssetFormatPipe },
             { provide: ExternalWalletService, useValue: MockExternalWalletService },
+            { provide: AccountService, useValue: MockAccountService },
             { provide: EventService, useValue: MockEventService },
             { provide: ErrorService, useValue: MockErrorService },
             { provide: ConfigService, useValue: MockConfigService },
@@ -104,15 +111,18 @@ describe('ExternalWalletDetailComponent', () => {
         MockConfigService.getConfig$.and.returnValue(of(TestConstants.CONFIG));
     
         MockExternalWalletService = TestBed.inject(ExternalWalletService);
-        MockExternalWalletService.getExternalWallet.and.returnValue(
+        MockExternalWalletService.createExternalWallet.and.returnValue(
           of(TestConstants.EXTERNAL_WALLET_BANK_MODEL)
         );
-        MockExternalWalletService.deleteExternalWallet.and.returnValue(
-            of(TestConstants.EXTERNAL_WALLET_BANK_MODEL)
-          );
+
+        MockAccountService = TestBed.inject(AccountService);
+        MockAccountService.listAccounts.and.returnValue(
+            of(TestConstants.ACCOUNT_LIST_BANK_MODEL)
+        );
+
         MockRoutingService = TestBed.inject(RoutingService);
     
-        fixture = TestBed.createComponent(ExternalWalletDetailComponent);
+        fixture = TestBed.createComponent(ExternalWalletCreateComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
       });
@@ -125,49 +135,103 @@ describe('ExternalWalletDetailComponent', () => {
         expect(MockEventService.handleEvent).toHaveBeenCalled();
       });
 
-      it('isLoadingWallet toBeFalsy', () => {
-        component.currentWallet$.next(TestConstants.EXTERNAL_WALLET_BANK_MODEL);
-        component.isLoadingWallet$.subscribe((value) => {
+      it('isLoadingAccounts toBeFalsy', () => {
+        component.accounts$.next(TestConstants.ACCOUNT_LIST_BANK_MODEL.objects);
+        component.isLoadingAccounts$.subscribe((value) => {
           expect(value).toBeFalsy();
         });
       });
     
-      it('isLoadingWallet toBeTruthy', () => {
-        component.currentWallet$.next(null);
-        component.isLoadingWallet$.subscribe((value) => {
+      it('isLoadingAccounts toBeTruthy', () => {
+        component.accounts$.next(null);
+        component.isLoadingAccounts$.subscribe((value) => {
           expect(value).toBeTruthy();
         });
       });
 
-      describe('when getWallet', () => {
-        it('should get wallet', () => {
-          component.getWallet();
-          expect(MockExternalWalletService.getExternalWallet).toHaveBeenCalled();
+      describe('when listAccounts', () => {
+        it('should list accounts', () => {
+          component.listAccounts();
+          expect(MockAccountService.listAccounts).toHaveBeenCalled();
         });
     
-        it('should handle get wallet errors', () => {
+        it('should handle list accounts errors', () => {
           const isRecoverable$Spy = spyOn(component.isRecoverable$, 'next');
     
-          MockExternalWalletService.getExternalWallet.and.returnValue(error$);
-          component.getWallet();
+          MockAccountService.listAccounts.and.returnValue(error$);
+          component.listAccounts();
     
           expect(isRecoverable$Spy).toHaveBeenCalledWith(false);
         });
       });
 
-      describe('when onDeleteWallet', () => {
-        it('should delete wallet', () => {
-          component.onDeleteWallet();
-          expect(MockExternalWalletService.deleteExternalWallet).toHaveBeenCalled();
-        });
+      describe('when onCreateWallet', () => {
+
+        it('should create wallet', () => {
+
+            component.onCreateWallet();
+
+            component.newWalletFormGroup.controls['account'].setValue(TestConstants.ACCOUNT_BANK_MODEL_BTC);
+            component.newWalletFormGroup.controls['name'].setValue("Test");
+            component.newWalletFormGroup.controls['address'].setValue("Test");
+            component.newWalletFormGroup.controls['tag'].setValue("Test");
+            component.onCreateWallet();
+            expect(MockExternalWalletService.createExternalWallet).toHaveBeenCalled();
+          });
     
-        it('should handle delete wallet errors', () => {
+        it('should handle create wallet errors', () => {
+
+            component.newWalletFormGroup.controls['account'].setValue(TestConstants.ACCOUNT_BANK_MODEL_BTC);
+            component.newWalletFormGroup.controls['name'].setValue("Test");
+            component.newWalletFormGroup.controls['address'].setValue("Test");
+            component.newWalletFormGroup.controls['tag'].setValue("Test");
           const isRecoverable$Spy = spyOn(component.isRecoverable$, 'next');
     
-          MockExternalWalletService.deleteExternalWallet.and.returnValue(error$);
-          component.onDeleteWallet();
+          MockExternalWalletService.createExternalWallet.and.returnValue(error$);
+          component.onCreateWallet();
     
           expect(isRecoverable$Spy).toHaveBeenCalledWith(false);
+        });
+      });
+
+      describe('when validateForm', () => {
+        it('should return with empty name', () => {
+            expect(component.validateForm("", "")).toBeFalsy();
+            expect(component.validateForm(undefined, "")).toBeFalsy();
+        });
+
+        it('should return with empty address', () => {
+            expect(component.validateForm("Test", "")).toBeFalsy();
+            expect(component.validateForm("Test", undefined)).toBeFalsy();
+        });
+
+        it('should return true', () => {
+            expect(component.validateForm("Test", "Test")).toBeTruthy();
+        });
+      });
+
+      describe('when createPostExternalWalletBankModel', () => {
+        it('with empty tag', () => {
+            let post = component.createPostExternalWalletBankModel("BTC", "123", "456", "")
+            expect(post.name).toEqual("123");
+            expect(post.tag).toBeNull();
+        });
+        it('with tag', () => {
+            let post = component.createPostExternalWalletBankModel("BTC", "123", "456", "999")
+            expect(post.name).toEqual("123");
+            expect(post.tag).toEqual("999");
+        });
+      });
+
+      it('onWallets()', () => {
+        component.onWallets();
+        // Test default config.routing=true
+        expect(MockRoutingService.handleRoute).toHaveBeenCalledWith({
+          route: 'external-wallet-list',
+          origin: 'external-wallet-create',
+          extras: {
+            queryParams: {}
+          }
         });
       });
 });

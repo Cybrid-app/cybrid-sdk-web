@@ -179,26 +179,26 @@ export class ExternalWalletCreateComponent
 
     }
 
-    validateForm(name: string, address: string): boolean {
+    validateForm(name: string|undefined, address: string|undefined): boolean {
         var ret = true;
-        if (name == undefined) {
+        if (name == undefined || name == "") {
             this.newWalletFormGroup.controls.name.setErrors({ empty: true });
             ret = false;
         }
-        if (address == undefined) {
+        if (address == undefined || address == "") {
             this.newWalletFormGroup.controls.address.setErrors({ empty: true });
             ret = false;
         }
         return ret;
     }
 
-    createPostExternalWalletBankModel(asset: string, name: string, address: string, tag: string): PostExternalWalletBankModel {
+    createPostExternalWalletBankModel(asset: string, name: string, address: string, tag: string|undefined): PostExternalWalletBankModel {
 
         const postExternalWalletBankModel: PostExternalWalletBankModel = {
             name: <string> name,
             asset: <string> asset,
             address: <string> address,
-            tag: (tag == undefined) ? null : tag
+            tag: (tag == undefined || tag == "") ? null : tag
         }
         return postExternalWalletBankModel;
     }
