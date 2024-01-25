@@ -1,6 +1,6 @@
 //@ts-ignore
 function app() {
-    return cy.get('external-wallet-detail');
+    return cy.get('app-external-wallet-detail');
 }
 
 function externalWalletDetailSetup() {

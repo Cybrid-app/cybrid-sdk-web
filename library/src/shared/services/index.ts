@@ -18,4 +18,4 @@ export { BankAccountService } from './bank-account/bank-account.service';
 export { PriceService } from './price/price.service';
 export { TransferService } from './transfer/transfer.service';
 export { DepositAddressService } from './deposit-address/deposit-address.service';
-export { ExternalWalletService } from './external-wallet/external-wallet.service'
+export { ExternalWalletService } from './external-wallet/external-wallet.service';

@@ -660,32 +660,32 @@ export class TestConstants {
 
   // External Wallet Models
   static EXTERNAL_WALLET_BANK_MODEL: ExternalWalletBankModel = {
-    guid: "9e9b37613021dbbb21208d1721c986bb",
-    name: "Web Wallet 1",
-    asset: "BTC",
-    environment: "sandbox",
-    customer_guid: "16d6aa37d74951c65c4510460cfac71c",
-    address: "0x98765432",
-    tag: "1234",
-    state: "completed",
+    guid: '9e9b37613021dbbb21208d1721c986bb',
+    name: 'Web Wallet 1',
+    asset: 'BTC',
+    environment: 'sandbox',
+    customer_guid: '16d6aa37d74951c65c4510460cfac71c',
+    address: '0x98765432',
+    tag: '1234',
+    state: 'completed',
     failure_code: null,
-    created_at: "2024-01-23T20:25:48.879103Z",
-    updated_at: "2024-01-23T20:25:49.449884Z"
-  }
+    created_at: '2024-01-23T20:25:48.879103Z',
+    updated_at: '2024-01-23T20:25:49.449884Z'
+  };
 
   static EXTERNAL_WALLET_BANK_MODEL_STORING: ExternalWalletBankModel = {
-    guid: "9e9b37613021dbbb21208d1721c986bb",
-    name: "Web Wallet 1",
-    asset: "BTC",
-    environment: "sandbox",
-    customer_guid: "16d6aa37d74951c65c4510460cfac71c",
-    address: "0x98765432",
-    tag: "1234",
-    state: "storing",
+    guid: '9e9b37613021dbbb21208d1721c986bb',
+    name: 'Web Wallet 1',
+    asset: 'BTC',
+    environment: 'sandbox',
+    customer_guid: '16d6aa37d74951c65c4510460cfac71c',
+    address: '0x98765432',
+    tag: '1234',
+    state: 'storing',
     failure_code: null,
-    created_at: "2024-01-23T20:25:48.879103Z",
-    updated_at: "2024-01-23T20:25:49.449884Z"
-  }
+    created_at: '2024-01-23T20:25:48.879103Z',
+    updated_at: '2024-01-23T20:25:49.449884Z'
+  };
 
   static EXTERNAL_WALLET_LIST_BANK_MODEL: ExternalWalletListBankModel = {
     total: '2',
@@ -695,12 +695,12 @@ export class TestConstants {
       TestConstants.EXTERNAL_WALLET_BANK_MODEL,
       TestConstants.EXTERNAL_WALLET_BANK_MODEL_STORING
     ]
-  }
+  };
 
   static POST_EXTERNAL_WALLET_BANK_MODEL: PostExternalWalletBankModel = {
     name: 'Test',
     asset: 'BTC',
     address: '12345',
     tag: '123'
-  }
+  };
 }
