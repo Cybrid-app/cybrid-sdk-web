@@ -39,7 +39,7 @@ import { MockAssetFormatPipe, AssetFormatPipe, AssetIconPipe } from '@pipes';
 import { Constants, TestConstants } from '@constants';
 import { SharedModule } from '../../../../shared/modules/shared.module';
 
-fdescribe('ExternalWalletListComponent', () => {
+describe('ExternalWalletListComponent', () => {
     let component: ExternalWalletListComponent;
     let fixture: ComponentFixture<ExternalWalletListComponent>;
 
