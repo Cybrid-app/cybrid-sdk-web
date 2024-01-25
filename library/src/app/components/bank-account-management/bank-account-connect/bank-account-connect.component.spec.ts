@@ -71,15 +71,15 @@ describe('BankAccountConnectComponent', () => {
 
   class MockWindow {
     localStorage = {
-      getItem: function() {
+      getItem: function () {
         return '';
       },
-      setItem: function() { },
-      removeItem: function() { }
+      setItem: function () {},
+      removeItem: function () {}
     };
     location = {
       search: '',
-      hash: { indexOf: function() { }, substring: function() { }, search: '' }
+      hash: { indexOf: function () {}, substring: function () {}, search: '' }
     };
   }
 
@@ -465,7 +465,7 @@ describe('BankAccountConnectComponent', () => {
 
         describe('when no currency code is returned', () => {
           it('should move to the next step', () => {
-            component.stepper = { next: () => { } } as MatStepper;
+            component.stepper = { next: () => {} } as MatStepper;
             const stepperSpy = spyOn(component.stepper, 'next');
             component.getCurrencyCode = () => of(undefined);
 
@@ -511,7 +511,7 @@ describe('BankAccountConnectComponent', () => {
   describe('when Plaid exits', () => {
     describe('when Plaid is successful', () => {
       it('should move to the next step', () => {
-        component.stepper = { next: () => { } } as MatStepper;
+        component.stepper = { next: () => {} } as MatStepper;
         const stepperSpy = spyOn(component.stepper, 'next');
 
         component.plaidOnExit('', {});

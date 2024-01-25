@@ -93,7 +93,7 @@ export class BankAccountConnectComponent implements OnInit {
     private platform: Platform,
     private dialog: MatDialog,
     private window: Window
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.eventService.handleEvent(
@@ -183,9 +183,9 @@ export class BankAccountConnectComponent implements OnInit {
   processAccount(): void {
     const workflow = this.externalBankAccountGuid
       ? this.createWorkflow(
-        PostWorkflowBankModel.KindEnum.Update,
-        this.externalBankAccountGuid
-      )
+          PostWorkflowBankModel.KindEnum.Update,
+          this.externalBankAccountGuid
+        )
       : this.createWorkflow(PostWorkflowBankModel.KindEnum.Create);
 
     workflow
