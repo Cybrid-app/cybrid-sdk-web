@@ -50,7 +50,7 @@ describe('AuthService', () => {
   });
 
   describe('when the token is valid', () => {
-    it('should set the token if valid', fakeAsync(() => {
+    it('should set the token', fakeAsync(() => {
       authService.setToken(customerToken);
       tick(1);
       discardPeriodicTasks();
