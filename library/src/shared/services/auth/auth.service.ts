@@ -5,6 +5,15 @@ import { ErrorService } from '../error/error.service';
 import jwt_decode, { JwtPayload } from 'jwt-decode';
 import { Constants } from '@constants';
 
+interface CybridJWTPayload extends JwtPayload {
+  sub_type: SubType;
+}
+
+enum SubType {
+  Bank = 'bank',
+  Customer = 'customer'
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -20,7 +29,7 @@ export class AuthService {
 
   setToken(token: any): void {
     const decodedToken = this.decodeToken(token);
-    if (decodedToken) {
+    if (decodedToken && this.validateToken(decodedToken)) {
       this.timeSession(decodedToken);
       this.eventService.handleEvent(
         LEVEL.INFO,
@@ -55,6 +64,10 @@ export class AuthService {
     } catch (err) {
       return null;
     }
+  }
+
+  validateToken(token: CybridJWTPayload): boolean {
+    return token.sub_type === SubType.Customer;
   }
 
   // TODO: Disconnect all polling in the app if the token is invalid
