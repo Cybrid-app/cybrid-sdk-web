@@ -7,3 +7,4 @@ export { IdentityVerificationWithDetails } from './IdentityVerificationWithDetai
 export { PostQuote } from './PostQuote';
 export { Quote } from './Quote';
 export { DepositAddress } from './DepositAddress';
+export { CybridJWTPayload, SubType } from './CybridJWTPayload';
