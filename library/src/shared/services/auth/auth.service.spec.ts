@@ -22,7 +22,8 @@ describe('AuthService', () => {
   let authService: AuthService;
   let MockEventService = jasmine.createSpyObj(EventService, ['handleEvent']);
   let MockErrorService = jasmine.createSpyObj(ErrorService, ['handleError']);
-  const testToken = TestConstants.JWT;
+  const customerToken = TestConstants.CUSTOMER_JWT;
+  const bankToken = TestConstants.BANK_JWT;
   const decode = jasmine.createSpy();
   Object.defineProperty(jwtDecode, 'jwt_decode', {
     value: decode
@@ -48,35 +49,56 @@ describe('AuthService', () => {
     expect(authService.token).toEqual('');
   });
 
-  it('should set the token if valid', fakeAsync(() => {
-    const handleEventSpy = MockEventService.handleEvent;
-    const jwt: JwtPayload = {};
-    decode.and.returnValue(jwt);
-    authService.setToken(testToken);
-    tick(1);
-    discardPeriodicTasks();
-    expect(handleEventSpy).toHaveBeenCalledWith(
-      LEVEL.INFO,
-      CODE.AUTH_SET,
-      'Setting auth token'
-    );
-  }));
+  describe('when the token is valid', () => {
+    it('should set the token', fakeAsync(() => {
+      authService.setToken(customerToken);
+      tick(1);
+      discardPeriodicTasks();
+      expect(MockEventService.handleEvent).toHaveBeenCalledWith(
+        LEVEL.INFO,
+        CODE.AUTH_SET,
+        'Setting auth token'
+      );
+    }));
+  });
 
-  it('should log an event and error if the token is invalid', fakeAsync(() => {
-    const handleEventSpy = MockEventService.handleEvent;
-    const handleErrorSpy = MockErrorService.handleError;
-    authService.setToken('test');
-    tick();
-    discardPeriodicTasks();
-    expect(handleEventSpy).toHaveBeenCalledWith(
-      LEVEL.ERROR,
-      CODE.AUTH_ERROR,
-      'Invalid authentication token'
-    );
-    expect(handleErrorSpy).toHaveBeenCalledWith(
-      new Error('Invalid authentication token')
-    );
-  }));
+  describe('when the token is invalid', () => {
+    describe('with an invalid token', () => {
+      it('should log an event and error', fakeAsync(() => {
+        const handleEventSpy = MockEventService.handleEvent;
+        const handleErrorSpy = MockErrorService.handleError;
+        authService.setToken('test');
+        tick();
+        discardPeriodicTasks();
+        expect(handleEventSpy).toHaveBeenCalledWith(
+          LEVEL.ERROR,
+          CODE.AUTH_ERROR,
+          'Invalid authentication token'
+        );
+        expect(handleErrorSpy).toHaveBeenCalledWith(
+          new Error('Invalid authentication token')
+        );
+      }));
+    });
+
+    describe('with an invalid subject', () => {
+      it('should log an event and error', fakeAsync(() => {
+        const handleEventSpy = MockEventService.handleEvent;
+        const handleErrorSpy = MockErrorService.handleError;
+        authService.setToken(bankToken);
+        tick();
+        discardPeriodicTasks();
+        expect(handleEventSpy).toHaveBeenCalledWith(
+          LEVEL.ERROR,
+          CODE.AUTH_ERROR,
+          'Invalid authentication token'
+        );
+        expect(handleErrorSpy).toHaveBeenCalledWith(
+          new Error('Invalid authentication token')
+        );
+      }));
+    });
+  });
 
   it('should log an event and error when the session expires', fakeAsync(() => {
     const handleEventSpy = MockEventService.handleEvent;
@@ -115,19 +137,19 @@ describe('AuthService', () => {
   }));
 
   it('should return the most recent token$ as a subscription', fakeAsync(() => {
-    authService.setToken(testToken);
+    authService.setToken(customerToken);
     tick();
     discardPeriodicTasks();
     authService.getToken$().subscribe((token) => {
-      expect(token).toEqual(testToken);
+      expect(token).toEqual(customerToken);
     });
   }));
 
   it('should return the most recent token', fakeAsync(() => {
-    authService.setToken(testToken);
+    authService.setToken(customerToken);
     tick();
     discardPeriodicTasks();
     const getToken = authService.getToken();
-    expect(getToken).toEqual(testToken);
+    expect(getToken).toEqual(customerToken);
   }));
 });
