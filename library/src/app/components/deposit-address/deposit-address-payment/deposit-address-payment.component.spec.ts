@@ -75,7 +75,12 @@ describe('DepositAddressPaymentComponent', () => {
       providers: [
         { provide: AssetService, useValue: MockAssetService },
         { provide: MatDialogRef, useValue: MockDialogRef },
-        { provide: MAT_DIALOG_DATA, useValue: {} },
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: {
+            account: TestConstants.ACCOUNT_BANK_MODEL_BTC
+          }
+        },
         { provide: EventService, useValue: MockEventService },
         { provide: ErrorService, useValue: MockErrorService },
         { provide: ConfigService, useValue: MockConfigService }
@@ -100,6 +105,7 @@ describe('DepositAddressPaymentComponent', () => {
       account: TestConstants.ACCOUNT_BANK_MODEL_BTC
     };
     fixture.detectChanges();
+    component.account = TestConstants.ACCOUNT_BANK_MODEL_BTC;
     component.ngOnInit();
   });
 

@@ -1,0 +1,77 @@
+.cybrid-header {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+}
+
+.cybrid-state {
+
+    margin-left: auto;
+    margin-top: 5px;
+
+    .status-chip {
+        margin-left: 10px;
+        span {
+          font-size: 12px;
+          border-radius: 20px;
+          padding: 2px 17.5px;
+          line-height: 20px;
+          color: #000;
+          background-color: #fcda66;
+        
+          &.state-deleting {
+            color: #fff;
+            background-color: #d45736;
+          }
+
+          &.state-deleted {
+            color: #fff;
+            background-color: #d45736;
+          }
+
+          &.state-failed {
+            color: #fff;
+            background-color: #d45736;
+          }
+    
+          &.state-completed {
+            color: #fff;
+            background-color: #4dae51;
+          }
+        }
+      }
+}
+
+.asset, .name, .address, .tag {
+    display: flex;
+    flex-direction: column;
+    margin-top: 2rem;
+}
+
+.item-value {
+    margin-top: 5px;
+}
+
+.asset-container {
+
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    background-color: #f5f5f5;
+    padding: 7.5px 0;
+    margin-top: 10px;
+    max-width: 200px;
+
+    span {
+        margin-left: 15px;
+        margin-top: 5px;
+    }
+}
+
+.cybrid-icon {
+    max-width: 1.7rem;
+}
+
+#external-wallet-delete {
+    background-color: #ff0001;
+}

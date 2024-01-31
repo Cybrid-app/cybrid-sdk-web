@@ -1,16 +1,16 @@
 <ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
-  
-    <h2 mat-dialog-title>{{ 'depositAddress.paymentComponent.title' | translate }} {{ account?.asset ?? "" }}</h2>
+  <ng-container *ngIf="(account !== null || account !== undefined)">
+    <h2 mat-dialog-title>{{ 'depositAddress.paymentComponent.title' | translate }} {{ account.asset ?? "" }}</h2>
     <ng-container [formGroup]="depositAddressFormGroup">
       <div class="cybrid-input-flex amount-input">
         <label class="mat-hint cybrid-h5">{{
           'depositAddress.paymentComponent.amountTitle' | translate
-          }} {{ account?.asset ?? "" }}</label>
+          }} {{ account.asset ?? "" }}</label>
         <mat-form-field appearance="outline">
           <input matInput #amount="matInput" id="amount" class="cybrid-amount-input" formControlName="amount" 
           type="number" min="0" step="0.1" placeholder="0.0" />
           <div class="cybrid-prefix" matPrefix>
-            {{ account?.asset ?? "" }}
+            {{ account.asset ?? "" }}
             <div class="cybrid-amount-divider"></div>
           </div>
           <mat-error *ngIf="depositAddressFormGroup.controls.amount.hasError('pattern')">{{ 'trade.error' | translate }}</mat-error>
@@ -38,6 +38,7 @@
         </button>
       </mat-dialog-actions>
     </ng-container>
+  </ng-container>
 </ng-container>
 
 <ng-template #loading>

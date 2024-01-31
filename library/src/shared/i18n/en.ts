@@ -263,6 +263,43 @@ export default {
     }
   },
 
+  // EXternal Wallet
+  externalWallet: {
+    title: 'My wallets',
+    listWallets: {
+      name: 'Wallet name',
+      state: 'State'
+    },
+    addWallet: 'Add wallet'
+  },
+
+  // EXternal Wallet Detail
+  externalWalletDetail: {
+    title: 'My wallet',
+    asset: 'Asset',
+    name: 'Name',
+    address: 'Address',
+    tag: 'Tag',
+    deleteWallet: 'Delete'
+  },
+
+  // EXternal Wallet Detail
+  externalWalletCreate: {
+    title: 'Create new wallet',
+    asset: 'Asset',
+    name: 'Name',
+    nameHint: 'Enter wallet name',
+    address: 'Address',
+    addressHint: 'Enter wallet address',
+    tag: 'Tag',
+    tagHint: 'Enter tag (optional)',
+    warning: 'You can lose all your coins ...',
+    createButton: 'Create wallet',
+    errors: {
+      empty: 'Cannot be empty'
+    }
+  },
+
   // Auth service
   auth: {
     expired: 'User session has expired. Please login again.'

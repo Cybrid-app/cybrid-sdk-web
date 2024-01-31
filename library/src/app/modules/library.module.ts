@@ -43,7 +43,8 @@ import {
   IdentityVerificationService,
   BankAccountService,
   PriceService,
-  DepositAddressService
+  DepositAddressService,
+  ExternalWalletService
 } from '@services';
 
 // Interceptors
@@ -76,7 +77,10 @@ import {
   BankAccountDisconnectComponent,
   BankAccountDetailsComponent,
   DepositAddressComponent,
-  DepositAddressPaymentComponent
+  DepositAddressPaymentComponent,
+  ExternalWalletListComponent,
+  ExternalWalletDetailComponent,
+  ExternalWalletCreateComponent
 } from '@components';
 
 // Utility
@@ -117,6 +121,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     TransferSummaryComponent,
     DepositAddressComponent,
     DepositAddressPaymentComponent,
+    ExternalWalletListComponent,
+    ExternalWalletDetailComponent,
+    ExternalWalletCreateComponent,
     AssetFormatPipe,
     TruncatePipe,
     AssetIconPipe,
@@ -161,6 +168,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     PriceService,
     AccountService,
     DepositAddressService,
+    ExternalWalletService,
     AssetIconPipe,
     IdentityVerificationService,
     BankAccountService,

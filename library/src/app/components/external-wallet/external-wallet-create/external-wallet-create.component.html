@@ -1,0 +1,93 @@
+<ng-container *ngIf="(isRecoverable$ | async) !== false; else error">
+    <app-navigation [routingData]="routingData"></app-navigation>
+    <ng-container *ngIf="(isLoadingAccounts$ | async) !== true; else loading">
+      <ng-continer *ngIf="accounts$ | async as accounts">
+        <div class="cybrid-header">
+          <span class="cybrid-h2 cybrid-strong">{{ 'externalWalletCreate.title' | translate }}</span>
+        </div>
+        <div class="create-form">
+          <ng-container [formGroup]="newWalletFormGroup">
+            <!--Asset -->
+            <div class="cybrid-input-wrapper">
+              <div class="cybrid-input-flex">
+                <label class="mat-hint cybrid-h5">{{
+                  'externalWalletCreate.asset' | translate
+                  }}</label>
+                <mat-form-field id="account" appearance="outline">
+                  <mat-select #account formControlName="account">
+                    <mat-select-trigger>
+                      <div class="cybrid-option">
+                        <img matPrefix class="cybrid-trigger-icon" alt="Crypto currency icon"
+                          src="{{ account.value.asset | assetIcon }}" />
+                        <span class="cybrid-trigger-name">{{
+                          account.value.asset
+                          }}</span>
+                      </div>
+                    </mat-select-trigger>
+                    <mat-option *ngFor="let account of accounts" [value]="account">
+                      <div class="cybrid-option">
+                        <img class="cybrid-option-icon" alt="Crypto currency icon" src="{{ account.asset | assetIcon }}" />
+                        <span>{{ account.asset }}</span>
+                      </div>
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+            <!-- Name -->
+            <div class="cybrid-input-flex name-input">
+              <label class="mat-hint cybrid-h5">{{
+                'externalWalletCreate.name' | translate
+                }}</label>
+              <mat-form-field appearance="outline">
+                <input matInput #name="matInput" id="name" formControlName="name" 
+                type="text" placeholder="{{ 'externalWalletCreate.nameHint' | translate }}" />
+                <mat-error *ngIf="newWalletFormGroup.controls.name.hasError('empty')">{{ 'externalWalletCreate.errors.empty' | translate }}</mat-error>
+              </mat-form-field>
+            </div>
+            <!-- Address -->
+            <div class="cybrid-input-flex address-input">
+              <label class="mat-hint cybrid-h5">{{
+                'externalWalletCreate.address' | translate
+                }}</label>
+              <mat-form-field appearance="outline">
+                <input matInput #address="matInput" id="address" formControlName="address" 
+                type="text" placeholder="{{ 'externalWalletCreate.addressHint' | translate }}" />
+                <mat-error *ngIf="newWalletFormGroup.controls.address.hasError('empty')">{{ 'externalWalletCreate.errors.empty' | translate }}</mat-error>
+              </mat-form-field>
+            </div>
+            <!-- Tag -->
+            <div class="cybrid-input-flex tag-input">
+              <label class="mat-hint cybrid-h5">{{
+                'externalWalletCreate.tag' | translate
+                }}</label>
+              <mat-form-field appearance="outline">
+                <input matInput #tag="matInput" id="tag" formControlName="tag" 
+                type="text" placeholder="{{ 'externalWalletCreate.tagHint' | translate }}" />
+              </mat-form-field>
+            </div>
+          </ng-container>
+        </div>
+        <div class="warning">
+          <span class="cybrid-h4 cybrid-strong">{{ 'externalWalletCreate.warning' | translate }}</span>
+        </div>
+        <div class="cybrid-actions">
+          <button id="create-wallet" mat-flat-button color="primary" (click)="onCreateWallet()">
+            {{ 'externalWalletCreate.createButton' | translate }}
+          </button>
+      </div>
+      </ng-continer>
+    </ng-container>
+</ng-container>
+<ng-template #loading>
+    <app-loading></app-loading>
+</ng-template>
+<ng-template #error>
+    <mat-card>
+      <mat-card-content>
+        <div class="cybrid-fatal">
+          <p>{{ 'fatal' | translate }}</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+</ng-template>
