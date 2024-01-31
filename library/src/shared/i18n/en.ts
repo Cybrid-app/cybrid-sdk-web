@@ -294,7 +294,10 @@ export default {
     tag: 'Tag',
     tagHint: 'Enter tag (optional)',
     warning: 'You can lose all your coins ...',
-    createButton: 'Create wallet'
+    createButton: 'Create wallet',
+    errors: {
+      empty: 'Cannot be empty'
+    }
   },
 
   // Auth service

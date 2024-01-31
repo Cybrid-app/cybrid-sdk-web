@@ -42,7 +42,7 @@
               <mat-form-field appearance="outline">
                 <input matInput #name="matInput" id="name" formControlName="name" 
                 type="text" placeholder="{{ 'externalWalletCreate.nameHint' | translate }}" />
-                <mat-error *ngIf="newWalletFormGroup.controls.name.hasError('empty')">Cannot be empty</mat-error>
+                <mat-error *ngIf="newWalletFormGroup.controls.name.hasError('empty')">{{ 'externalWalletCreate.errors.empty' | translate }}</mat-error>
               </mat-form-field>
             </div>
             <!-- Address -->
@@ -53,7 +53,7 @@
               <mat-form-field appearance="outline">
                 <input matInput #address="matInput" id="address" formControlName="address" 
                 type="text" placeholder="{{ 'externalWalletCreate.addressHint' | translate }}" />
-                <mat-error *ngIf="newWalletFormGroup.controls.address.hasError('empty')">Cannot be empty</mat-error>
+                <mat-error *ngIf="newWalletFormGroup.controls.address.hasError('empty')">{{ 'externalWalletCreate.errors.empty' | translate }}</mat-error>
               </mat-form-field>
             </div>
             <!-- Tag -->
