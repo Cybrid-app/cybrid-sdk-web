@@ -8,16 +8,15 @@
     <h5 class="mat-hint cybrid-h5">
       <span *ngIf="Pending; else settled">
         {{
-          (Pending | assetFormat : account.asset!) +
-            ' ' +
-            account.asset +
-            ' ' +
-            ('accountBalance.pending' | translate)
-        }}</span
-      >
+        (Pending | assetFormat : account.asset!) +
+        ' ' +
+        account.asset +
+        ' ' +
+        ('accountBalance.pending' | translate)
+        }}</span>
       <ng-template #settled>{{
         'accountBalance.settled' | translate
-      }}</ng-template>
+        }}</ng-template>
     </h5>
   </div>
 </div>
