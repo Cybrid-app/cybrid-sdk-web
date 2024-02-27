@@ -42,5 +42,5 @@
     "strictTemplates": true
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules/cypress"]
+  "exclude": ["src/**/*/spec.ts", "src/test.ts","node_modules/cypress"]
 }
