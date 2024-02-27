@@ -37,12 +37,12 @@
     "@cybrid/cybrid-api-id-angular": "^0.113.70",
     "@ngx-translate/core": "14.0.0",
     "@ngx-translate/http-loader": "7.0.0",
-    "angularx-qrcode": "15.0.1",
     "big.js": "6.2.1",
     "jwt-decode": "3.1.2",
     "rxjs": "7.8.1",
     "tslib": "2.6.2",
-    "zone.js": "0.13.3"
+    "zone.js": "0.13.3",
+    "angularx-qrcode": "15.0.1"
   },
   "devDependencies": {
     "@angular-builders/custom-webpack": "15.0.0",
@@ -58,8 +58,8 @@
     "@types/big.js": "6.2.2",
     "@types/jasmine": "5.1.4",
     "@types/node": "20.11.20",
-    "@typescript-eslint/eslint-plugin": "7.1.0",
-    "@typescript-eslint/parser": "7.1.0",
+    "@typescript-eslint/eslint-plugin": "5.56.0",
+    "@typescript-eslint/parser": "5.56.0",
     "css-loader": "6.10.0",
     "cypress": "13.6.6",
     "eslint": "8.56.0",

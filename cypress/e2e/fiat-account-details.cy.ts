@@ -17,7 +17,7 @@ describe('account-details test', () => {
       //@ts-ignore
       cy.authenticate();
       cy.visit('/');
-  
+
       cy.intercept('GET', 'api/prices*').as('listPrices');
       cy.intercept('GET', 'api/accounts/*').as('listAccount');
       cy.intercept('GET', 'api/trades*').as('listTrades');
@@ -26,11 +26,11 @@ describe('account-details test', () => {
       cy.intercept('GET', 'api/transfers/*').as('getTransfer');
       fiatAccountDetailsSetup();
     });
-    
+
     it('should render account details', () => {
       app().should('exist');
     });
-    
+
     it('should display account data', () => {
       app()
         .find('.cybrid-header')
@@ -38,7 +38,7 @@ describe('account-details test', () => {
         .should('contain.text', 'United States Dollar')
         .should('contain.text', 'USD')
     });
-    
+
     it('should display transfer data', () => {
       app()
         .find('tr')
@@ -46,15 +46,15 @@ describe('account-details test', () => {
         .should('contain.text', 'Deposit')
         .should('contain.text', 'USD');
     });
-    
-    it('should display transfer summary', () => {
+
+    it.only('should display transfer summary', () => {
 
         var selectedTr = "";
       // Select first trade in the table
       app().get('tbody').find('tr').first().click().invoke('text').then((text) => { selectedTr = text; });
 
       cy.intercept('api/transfers/*').as('getTransfer');
-  
+
       cy.wait('@getTransfer').then(() => {
 
         var selectedTrParts = selectedTr.split(' ');
@@ -112,12 +112,12 @@ describe('account-details test', () => {
         cy.get('app-transfer-summary').find('button').click();
       });
     });
-    
+
     it('should navigate back', () => {
       app().find('app-navigation').find('button').click();
       app().should('not.exist');
     });
-    
+
     it('should refresh the account and paginate', () => {
       // Intercept listAccount response
       let account;
@@ -131,31 +131,31 @@ describe('account-details test', () => {
         // @ts-ignore
         transfers = interception.response.body;
       });
-  
+
       // Check for new data
       cy.wait('@listAccount').its('response.body').should('not.eq', account);
       cy.wait('@listTransfers').its('response.body').should('not.eq', transfers);
-  
+
       // Paginate: next
       app().find('.mat-paginator-navigation-next').click({ force: true });
-  
+
       // Check for new data
       cy.wait('@listTransfers').its('response.body').should('not.eq', transfers);
-  
+
       // Paginate: previous
       app().find('.mat-paginator-navigation-previous').click({ force: true });
-  
+
       // Check for new data
       cy.wait('@listTransfers').its('response.body').should('not.eq', transfers);
-  
+
       // Paginate: change items per page
       app().find('.mat-paginator-page-size-select').click();
       cy.get('mat-option').contains('10').click();
-  
+
       cy.wait('@listTransfers').its('response.body').should('not.eq', transfers);
       app().find('tr').should('have.length', 11);
     });
-    
+
     it('should handle errors returned by transfers api', () => {
       // Force trades error
       cy.wait('@listTransfers').then(() =>
@@ -163,7 +163,7 @@ describe('account-details test', () => {
           .intercept('GET', 'api/transfers*', { forceNetworkError: true })
           .as('listTransfers')
       );
-  
+
       cy.wait('@listTransfers').then(() =>
         app().find('.cybrid-fatal').should('exist')
       );

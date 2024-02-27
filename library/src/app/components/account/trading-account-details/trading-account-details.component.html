@@ -9,15 +9,11 @@
             <div class="cybrid-asset">
               <div class="cybrid-asset-name">
                 <span class="cybrid-h2 cybrid-strong">{{ asset?.name }} </span>
-                <span class="cybrid-h2 mat-hint">{{
-                  account?.asset
-                  }}</span>
+                <span class="cybrid-h2 mat-hint">{{ account?.asset }}</span>
               </div>
               <div *ngIf="account?.price" class="cybrid-asset-value">
                 <span>
-                  {{
-                    account?.price?.buy_price! | assetFormat : config.fiat
-                  }}
+                  {{ account?.price?.buy_price! | assetFormat : config.fiat }}
                 </span>
                 <span class="mat-hint">{{ config.fiat }}</span>
               </div>
@@ -30,9 +26,7 @@
                 | assetFormat : account?.asset! : 'trade'
                 }}
               </span>
-              <span class="cybrid-h2 mat-hint">{{
-                ' ' + account?.asset
-                }}</span>
+              <span class="cybrid-h2 mat-hint">{{ ' ' + account?.asset }}</span>
             </div>
             <div *ngIf="account?.price">
               <span>{{
@@ -74,7 +68,7 @@
                     </div>
                   </td>
                 </ng-container>
-    
+
                 <!-- Balance -->
                 <ng-container matColumnDef="balance">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header="" arrowPosition="before">

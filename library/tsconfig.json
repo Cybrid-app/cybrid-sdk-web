@@ -38,6 +38,6 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/main.ts", "src/polyfills.ts", "node_modules/cypress"],
   "exclude": ["node_modules/cypress"]
 }
