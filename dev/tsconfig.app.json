@@ -1,14 +1,43 @@
-/* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
-  "extends": "../tsconfig.json",
+  "compileOnSave": false,
   "compilerOptions": {
-    "outDir": "../../out-tsc/app",
-    "types": []
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "es2020",
+    "module": "es2020",
+    "lib": ["es2020", "dom"],
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "@environment": ["src/environments/index"],
+      "@modules": ["src/shared/modules/index"],
+      "@models": ["src/shared/models/index"],
+      "@components": ["src/app/components/index"],
+      "@services": ["src/shared/services/index"],
+      "@interceptors": ["src/shared/interceptors/index"],
+      "@guards": ["src/shared/guards/index"],
+      "@pipes": ["src/shared/pipes/index"],
+      "@constants": ["src/shared/constants/index"],
+      "@utility": ["src/shared/utility/index"]
+    }
   },
-  "files": [
-    "src/main.ts"
-  ],
-  "include": [
-    "src/**/*.d.ts"
-  ]
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules/cypress"]
 }
