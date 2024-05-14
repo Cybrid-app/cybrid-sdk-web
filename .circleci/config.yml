@@ -10,12 +10,12 @@ orbs:
 executors:
   cypress:
     docker:
-      - image: cypress/base:20.11.1
+      - image: cypress/base:22.0.0
 
 jobs:
   publish:
     docker:
-      - image: cimg/node:21.7.1
+      - image: cimg/node:22.1.0
     working_directory: ~/project
     steps:
       - checkout
@@ -37,7 +37,7 @@ jobs:
 
   check-versions:
     docker:
-      - image: cimg/node:21.7.1
+      - image: cimg/node:22.1.0
     working_directory: ~/project
     steps:
       - checkout
@@ -55,7 +55,7 @@ jobs:
 
   deploy-demo:
     docker:
-      - image: cimg/node:21.7.1
+      - image: cimg/node:22.1.0
     steps:
       - run:
           name: Trigger Github workflow
