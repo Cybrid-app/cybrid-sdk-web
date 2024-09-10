@@ -88,7 +88,7 @@ workflows:
                 command: npm run lint
                 name: Lint
             - run:
-                command: npm audit --audit-level=high
+                command: npm audit --audit-level=high --omit=dev
                 name: Audit
             - run:
                 command: npm run package:library

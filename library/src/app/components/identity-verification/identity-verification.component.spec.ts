@@ -507,6 +507,23 @@ describe('IdentityVerificationComponent', () => {
           MockIdentityVerificationService.createIdentityVerification
         ).toHaveBeenCalled();
       });
+
+      it('when the persona_state is null', () => {
+        let identityVerificationBankModel = {
+          ...TestConstants.IDENTITY_VERIFICATION_BANK_MODEL
+        };
+        identityVerificationBankModel.persona_state = null;
+
+        MockIdentityVerificationService.getIdentityVerification.and.returnValue(
+          of(identityVerificationBankModel)
+        );
+
+        component.verifyIdentity();
+
+        expect(
+          MockIdentityVerificationService.createIdentityVerification
+        ).not.toHaveBeenCalled();
+      });
     });
 
     it('should handle errors from listing identity verifications', fakeAsync(() => {

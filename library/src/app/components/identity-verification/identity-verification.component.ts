@@ -88,7 +88,8 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   validPersonaState = [
     IdentityVerificationWithDetails.PersonaStateEnum.Waiting,
     IdentityVerificationWithDetails.PersonaStateEnum.Reviewing,
-    IdentityVerificationWithDetails.PersonaStateEnum.Processing
+    IdentityVerificationWithDetails.PersonaStateEnum.Processing,
+    null
   ];
 
   constructor(
