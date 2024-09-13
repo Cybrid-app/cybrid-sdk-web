@@ -164,7 +164,7 @@ workflows:
                 name: Install libraries
                 command: |
                   apt update -y
-                  apt install -y software-properties-common apt-transport-https wget fonts-liberation xdg-utils gnupg libu2f-udev
+                  apt install -y software-properties-common apt-transport-https wget fonts-liberation xdg-utils gnupg libu2f-udev libvulkan1
             - run:
                 name: Download/Install Chrome stable
                 command: |
@@ -194,7 +194,7 @@ workflows:
                 name: Download/Install Edge stable
                 command: |
                   wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add -
-                  add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
+                  add-apt-repository -y "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
                   apt update -y
                   apt-get -f install -y microsoft-edge-stable
           start: npm start
