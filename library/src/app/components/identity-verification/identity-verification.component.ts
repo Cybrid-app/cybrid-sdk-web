@@ -25,7 +25,12 @@ import {
   tap
 } from 'rxjs';
 
-import { CustomersService } from '@cybrid/cybrid-api-bank-angular';
+import {
+  CustomersService,
+  CustomerStateBankModel,
+  IdentityVerificationPersonaStateBankModel,
+  IdentityVerificationStateBankModel
+} from '@cybrid/cybrid-api-bank-angular';
 
 // Services
 import {
@@ -135,7 +140,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
           return this.customersService.getCustomer(<string>customer.guid);
         }),
         takeUntil(merge(poll.session$, this.unsubscribe$)),
-        skipWhile((customer) => customer.state === 'storing'),
+        skipWhile((customer) => customer.state === CustomerStateBankModel.Storing),
         map((customer) => {
           poll.stop();
           this.isVerifying = true;
@@ -160,14 +165,14 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
 
   handleCustomerState(customer: CustomerBankModel): void {
     switch (customer.state) {
-      case 'unverified':
+      case CustomerStateBankModel.Unverified:
         this.verifyIdentity();
         break;
-      case 'verified':
+      case CustomerStateBankModel.Verified:
         this.customer$.next(customer);
         this.isLoading$.next(false);
         break;
-      case 'rejected':
+      case CustomerStateBankModel.Rejected:
         this.eventService.handleEvent(
           LEVEL.WARNING,
           CODE.KYC_REJECTED,
@@ -176,7 +181,7 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
         this.customer$.next(customer);
         this.isLoading$.next(false);
         break;
-      case 'frozen':
+      case CustomerStateBankModel.Frozen:
         this.eventService.handleEvent(
           LEVEL.WARNING,
           CODE.CUSTOMER_FROZEN,
@@ -263,24 +268,14 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   handleIdentityVerificationState(
     identity: IdentityVerificationBankModel
   ): void {
-    switch (identity.state) {
-      case 'waiting':
-        this.handlePersonaState(identity);
-        break;
-      case 'completed':
-        this.isLoading$.next(false);
-        this.identity$.next(identity);
-        break;
+    if (identity.state == IdentityVerificationStateBankModel.Completed) {
+      this.isLoading$.next(false);
+      this.identity$.next(identity);
+    } else {
+      this.handlePersonaState(identity);
     }
   }
 
-  /**
-   * Checks identity status by polling on GET identity_verifications
-   *
-   * Skips an IDV with an outcome of null for the duration of the polling period
-   * Sets and IDV with a non-null outcome, or after the polling duration
-   *
-   **/
   checkIdentity(): void {
     this.identityVerificationService
       .getIdentityVerification(<string>this.identityVerificationGuid)
@@ -295,29 +290,29 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   handlePersonaState(identity: IdentityVerificationWithDetailsBankModel): void {
     this.ngZone.run(() => {
       switch (identity.persona_state) {
-        case 'waiting':
+        case IdentityVerificationPersonaStateBankModel.Waiting:
           this.bootstrapPersona(identity.persona_inquiry_id!);
           break;
-        case 'pending':
+        case IdentityVerificationPersonaStateBankModel.Pending:
           this.isLoading$.next(false);
           this.identity$.next(identity);
           break;
-        case 'reviewing':
+        case IdentityVerificationPersonaStateBankModel.Reviewing:
           this.isLoading$.next(false);
           this.identity$.next(identity);
           break;
-        case 'processing':
+        case IdentityVerificationPersonaStateBankModel.Processing:
           this.isLoading$.next(false);
           this.identity$.next(identity);
           break;
-        case 'expired':
+        case IdentityVerificationPersonaStateBankModel.Expired:
           this.getCustomerState();
           break;
-        case 'completed':
+        case IdentityVerificationPersonaStateBankModel.Completed:
           this.isLoading$.next(false);
           this.identity$.next(identity);
           break;
-        case 'unknown':
+        case IdentityVerificationPersonaStateBankModel.Unknown:
           this.error$.next(true);
       }
     });
