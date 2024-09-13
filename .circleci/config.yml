@@ -46,10 +46,12 @@ jobs:
           command: |
             export LATEST=$(curl https://registry.npmjs.org/persona/latest | jq -r '. | .version')
             export CURRENT=$(grep 'PERSONA' -A 1 library/src/shared/constants/constants.ts | grep 'https' | sed 's/.*-v\(.*\).js.*/\1/')
+            echo "Current Persona version: $CURRENT"
+            echo "Latest Persona version: $LATEST"
             if [[ "$LATEST" == "$CURRENT" ]]; then
               echo "Persona is up to date."
             else
-              echo "Error: new Persona version available."
+              echo "Error: New Persona version available: $LATEST"
               exit 1
             fi
 
