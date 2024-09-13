@@ -140,7 +140,9 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
           return this.customersService.getCustomer(<string>customer.guid);
         }),
         takeUntil(merge(poll.session$, this.unsubscribe$)),
-        skipWhile((customer) => customer.state === CustomerStateBankModel.Storing),
+        skipWhile(
+          (customer) => customer.state === CustomerStateBankModel.Storing
+        ),
         map((customer) => {
           poll.stop();
           this.isVerifying = true;
