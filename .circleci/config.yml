@@ -194,7 +194,7 @@ workflows:
                 name: Download/Install Edge stable
                 command: |
                   wget -qO - https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /etc/apt/trusted.gpg.d/microsoft.asc.gpg
-                  add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
+                  add-apt-repository -y "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
                   apt update -y
                   apt install -y microsoft-edge-stable
           start: npm start
