@@ -189,7 +189,7 @@ workflows:
                 name: Install libraries
                 command: |
                   apt update -y
-                  apt install -y software-properties-common apt-transport-https wget fonts-liberation xdg-utils gnupg
+                  apt install -y software-properties-common apt-transport-https wget fonts-liberation xdg-utils gnupg libvulkan1 mesa-vulkan-drivers
             - run:
                 name: Download/Install Edge stable
                 command: |
