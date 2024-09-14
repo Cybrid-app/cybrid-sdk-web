@@ -193,10 +193,10 @@ workflows:
             - run:
                 name: Download/Install Edge stable
                 command: |
-                  wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add -
-                  add-apt-repository -y "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
+                  wget -qO - https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /etc/apt/trusted.gpg.d/microsoft.asc.gpg
+                  add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
                   apt update -y
-                  apt-get -f install -y microsoft-edge-stable
+                  apt install -y microsoft-edge-stable
           start: npm start
           command: npx cypress run --browser edge
           no-workspace: true
