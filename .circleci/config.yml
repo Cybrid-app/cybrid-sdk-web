@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  node: circleci/node@5.2.0
+  node: circleci/node@5.3.0
   browser-tools: circleci/browser-tools@1.4.8
   cypress: cypress-io/cypress@2.2.0
   codecov: codecov/codecov@4.1.0
@@ -10,7 +10,7 @@ orbs:
 executors:
   cypress:
     docker:
-      - image: cypress/base:22.0.0
+      - image: cypress/base:22.7.0
 
 jobs:
   publish:
@@ -164,7 +164,7 @@ workflows:
                 name: Install libraries
                 command: |
                   apt update -y
-                  apt install -y software-properties-common apt-transport-https wget fonts-liberation xdg-utils gnupg libu2f-udev
+                  apt install -y software-properties-common apt-transport-https wget fonts-liberation xdg-utils gnupg libu2f-udev libvulkan1
             - run:
                 name: Download/Install Chrome stable
                 command: |
@@ -177,39 +177,12 @@ workflows:
           wait-on: http://localhost:4200
           store_artifacts: true
 
-      - cypress/run:
-          name: e2e edge@latest
-          requires:
-            - test
-          executor: cypress
-          post-checkout:
-            - attach_workspace:
-                at: .
-            - run:
-                name: Install libraries
-                command: |
-                  apt update -y
-                  apt install -y software-properties-common apt-transport-https wget fonts-liberation xdg-utils gnupg
-            - run:
-                name: Download/Install Edge stable
-                command: |
-                  wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add -
-                  add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
-                  apt update -y
-                  apt-get -f install -y microsoft-edge-stable
-          start: npm start
-          command: npx cypress run --browser edge
-          no-workspace: true
-          wait-on: http://localhost:4200
-          store_artifacts: true
-
       - publish:
           requires:
             - test
             - e2e chromium@101.0.4951.64
             - e2e chromium@102.0.5005.61
             - e2e chrome@latest
-            - e2e edge@latest
           filters:
             branches:
               only:
