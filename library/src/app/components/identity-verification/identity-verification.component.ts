@@ -85,9 +85,10 @@ export class IdentityVerificationComponent implements OnInit, OnDestroy {
   personaScriptSrc = Constants.PERSONA_SCRIPT_SRC;
 
   validIdentityState = [
-    IdentityVerificationWithDetails.StateEnum.Storing,
-    IdentityVerificationWithDetails.StateEnum.Waiting,
-    IdentityVerificationWithDetails.StateEnum.Completed
+    IdentityVerificationStateBankModel.Storing,
+    IdentityVerificationStateBankModel.Waiting,
+    IdentityVerificationStateBankModel.Reviewing,
+    IdentityVerificationStateBankModel.Completed
   ];
 
   validPersonaState = [
