@@ -15,11 +15,7 @@ More information: [README](library/README.md)
 
 # Demo
 
-## Live
-
-The current demo is continually updated and live for testing at: https://cybrid-app.github.io/cybrid-sdk-web/
-
-To login you will need to have the following:
+To use the demo you will need to have the following:
 
 - Bank Api keys (Id and Secret) or a valid Bearer token
 - Customer GUID

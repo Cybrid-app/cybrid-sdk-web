@@ -55,19 +55,6 @@ jobs:
               exit 1
             fi
 
-  deploy-demo:
-    docker:
-      - image: cimg/node:22.8.0
-    steps:
-      - run:
-          name: Trigger Github workflow
-          command: |
-            curl -H "Accept: application/vnd.github+json" \
-              -H "Authorization: token $github_TOKEN" \
-              --request POST \
-              --data '{"event_type": "deploy"}' \
-              https://api.github.com/repos/Cybrid-app/cybrid-sdk-web/dispatches
-
 workflows:
   web-build-and-test:
     jobs:
@@ -183,14 +170,6 @@ workflows:
             - e2e chromium@101.0.4951.64
             - e2e chromium@102.0.5005.61
             - e2e chrome@latest
-          filters:
-            branches:
-              only:
-                - main
-
-      - deploy-demo:
-          requires:
-            - publish
           filters:
             branches:
               only:
